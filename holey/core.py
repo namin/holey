@@ -46,3 +46,192 @@ class SymbolicTracer:
         finally:
             self.path_conditions = old_conditions
             self.solver = old_solver
+
+class SymbolicBool:
+    """Wrapper class for symbolic boolean expressions"""
+    def __init__(self, value, tracer: Optional[SymbolicTracer] = None):
+        """Initialize boolean expression with optional tracer"""
+        self.tracer = tracer or SymbolicTracer()
+        self.z3_expr = value
+
+    def __bool__(self):
+        self.tracer.add_constraint(self.z3_expr)
+        return True
+
+    def __and__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicBool(self.tracer.backend.And(self.z3_expr, other.z3_expr), tracer=self.tracer)
+    
+    def __or__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicBool(self.tracer.backend.Or(self.z3_expr, other.z3_expr), tracer=self.tracer)
+    
+    def __not__(self):
+        return SymbolicBool(self.tracer.backend.Not(self.z3_expr), tracer=self.tracer)
+    
+    def _ensure_symbolic(self, other):
+        if isinstance(other, bool):
+            return SymbolicBool(self.tracer.backend.BoolVal(other), tracer=self.tracer)
+        return other
+
+class SymbolicInt:
+    """Wrapper class for symbolic integer expressions"""
+    def __init__(self, value: Optional[Any] = None, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
+        self.tracer = tracer or SymbolicTracer()
+        if name is not None:
+            self.z3_expr = self.tracer.backend.Int(name)
+        elif isinstance(value, int):
+            self.z3_expr = self.tracer.backend.IntVal(value)
+        else:
+            self.z3_expr = value
+        self.name = name
+
+    def __str__(self):
+        return f"SymbolicInt({self.name})"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __bool__(self):
+        condition = self.z3_expr != 0
+        self.tracer.add_constraint(condition)
+        return True
+
+    def __add__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicInt(self.z3_expr + other.z3_expr, tracer=self.tracer)
+    
+    def __sub__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicInt(self.z3_expr - other.z3_expr, tracer=self.tracer)
+    
+    def __mul__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicInt(self.z3_expr * other.z3_expr, tracer=self.tracer)
+        
+    def __eq__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicBool(self.z3_expr == other.z3_expr, tracer=self.tracer)
+    
+    def __lt__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicBool(self.z3_expr < other.z3_expr, tracer=self.tracer)
+    
+    def __gt__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicBool(self.z3_expr > other.z3_expr, tracer=self.tracer)
+    
+    def __rmul__(self, other):
+        return self.__mul__(other)
+    
+    def __truediv__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicInt(self.z3_expr / other.z3_expr, tracer=self.tracer)
+    
+    def __rtruediv__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicInt(other.z3_expr / self.z3_expr, tracer=self.tracer)
+    
+    def __floordiv__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicInt(self.z3_expr / other.z3_expr, tracer=self.tracer)
+    
+    def __rfloordiv__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicInt(other.z3_expr / self.z3_expr, tracer=self.tracer)
+    
+    def __radd__(self, other):
+        return self.__add__(other)
+    
+    def __rsub__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicInt(other.z3_expr - self.z3_expr, tracer=self.tracer)
+    
+    def __hash__(self):
+        return hash(str(self.z3_expr))
+
+    def _ensure_symbolic(self, other):
+        if isinstance(other, int):
+            return SymbolicInt(value=int(other), tracer=self.tracer)
+        return other
+
+    def __abs__(self):
+        return SymbolicInt(self.tracer.backend.If(self.z3_expr >= 0, 
+                                                  self.z3_expr, 
+                                                  -self.z3_expr), 
+                           tracer=self.tracer)
+
+    def __mod__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicInt(self.tracer.backend.Mod(self.z3_expr, other.z3_expr), tracer=self.tracer)
+
+    def __rmod__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicInt(self.tracer.backend.Mod(other.z3_expr, self.z3_expr), tracer=self.tracer)
+
+    def __index__(self):
+        return self.__int__()
+
+    def __pow__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicInt(self.tracer.backend.Pow(self.z3_expr, other.z3_expr), tracer=self.tracer)
+
+    def __rpow__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicInt(self.tracer.backend.Pow(other.z3_expr, self.z3_expr), tracer=self.tracer)
+
+    def __le__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicBool(self.z3_expr <= other.z3_expr, tracer=self.tracer)
+    
+    def __ge__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicBool(self.z3_expr >= other.z3_expr, tracer=self.tracer)
+
+    def __eq__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicBool(self.z3_expr == other.z3_expr, tracer=self.tracer)
+    
+    def __ne__(self, other):
+        other = self._ensure_symbolic(other)
+        return SymbolicBool(self.z3_expr != other.z3_expr, tracer=self.tracer)
+
+    def __divmod__(self, other):
+        other = self._ensure_symbolic(other)
+        q = SymbolicInt(self.z3_expr / other.z3_expr, tracer=self.tracer)
+        r = SymbolicInt(self.z3_expr % other.z3_expr, tracer=self.tracer)
+        return (q, r)
+
+    def __rdivmod__(self, other):
+        other = self._ensure_symbolic(other)
+        return divmod(other, self)
+
+    def __lshift__(self, other):
+        if isinstance(other, (int, SymbolicInt)):
+            other = self._ensure_symbolic(other)
+            return SymbolicInt(self.z3_expr * (2 ** other.z3_expr), tracer=self.tracer)
+        return NotImplemented
+
+    def __rshift__(self, other):
+        """Support right shift (>>)"""
+        if isinstance(other, (int, SymbolicInt)):
+            other = self._ensure_symbolic(other)
+            return SymbolicInt(self.z3_expr / (2 ** other.z3_expr), tracer=self.tracer)
+        return NotImplemented
+
+    def __neg__(self):
+        return SymbolicInt(-self.z3_expr, tracer=self.tracer)
+
+def make_symbolic(typ: Type, name: str, tracer: Optional[SymbolicTracer] = None) -> Any:
+    """Create a new symbolic variable of given type"""
+    if typ == int:
+        sym = SymbolicInt(name=name, tracer=tracer)
+        if tracer:
+            tracer.add_constraint(sym.z3_expr >= -1000)
+            tracer.add_constraint(sym.z3_expr < 1000)
+    elif typ == bool:
+        sym = SymbolicBool(name=name, tracer=tracer)
+    else:
+        raise ValueError(f"Unsupported symbolic type: {typ}")
+    return sym
+
