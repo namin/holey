@@ -26,6 +26,7 @@ class SymbolicTracer:
             self.solver.add(old_assertions)
     
     def add_constraint(self, constraint):
+        constraint = constraint.z3_expr if isinstance(constraint, SymbolicBool) else constraint
         self.path_conditions.append(constraint)
         self.solver.add(constraint)
     

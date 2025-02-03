@@ -6,7 +6,7 @@ from func_timeout import func_timeout, FunctionTimedOut
 import traceback
 from typing import List, Any, Dict, Optional, Tuple
 
-class StringWrapper(ast.NodeTransformer):
+class HoleyWrapper(ast.NodeTransformer):
     def __init__(self):
         self.path = []
 
@@ -15,10 +15,20 @@ class StringWrapper(ast.NodeTransformer):
         result = super().visit(node)
         self.path.pop()
         return result
+
+    def visit_Assert(self, node):
+        # Convert: assert test [, msg]
+        # Into: _assert(test [, msg])
+        return ast.Expr(
+            value=ast.Call(
+                func=ast.Name(id='_assert', ctx=ast.Load()),
+                args=[node.test] + ([node.msg] if node.msg else []),
+                keywords=[]
+            )
+        )
         
     def visit_Constant(self, node):
         if isinstance(node.value, str):
-            # Check if we're in a count() call
             if not any(isinstance(parent, ast.Call) and 
                       isinstance(parent.func, ast.Attribute) and 
                       parent.func.attr == 'count' 
@@ -32,7 +42,7 @@ class StringWrapper(ast.NodeTransformer):
 
 def inject(sat_func):
     tree = ast.parse(sat_func)
-    modified_tree = StringWrapper().visit(tree)
+    modified_tree = HoleyWrapper().visit(tree)
     modified_func = ast.unparse(modified_tree)
     return modified_func
 
@@ -52,7 +62,8 @@ class PuzzleSolver:
         namespace = {
             'tracer': self.tracer,
             'SymbolicStr': SymbolicStr,
-            'wrap_str': lambda s: SymbolicStr(s, tracer=self.tracer)
+            'wrap_str': lambda s: SymbolicStr(s, tracer=self.tracer),
+            '_assert': lambda x, msg=None: self.tracer.add_constraint(x)
         }
         sym_var = make_symbolic(int, 'x', self.tracer)
         namespace['x'] = sym_var
