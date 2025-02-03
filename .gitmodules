@@ -1,0 +1,3 @@
+[submodule "benchmarks/PythonProgrammingPuzzles"]
+	path = benchmarks/PythonProgrammingPuzzles
+	url = https://github.com/microsoft/PythonProgrammingPuzzles.git
