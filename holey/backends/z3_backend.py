@@ -55,7 +55,13 @@ class Z3Backend(Backend):
     
     def Distinct(self, args) -> Any:
         return z3.Distinct(args)
-    
+
+    def Mod(self, a, b) -> Any:
+        return a % b
+
+    def Pow(self, a, b) -> Any:
+        return a ** b
+
     def Solver(self) -> Any:
         return z3.Solver()
     

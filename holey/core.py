@@ -34,6 +34,14 @@ class SymbolicTracer:
     
     def model(self):
         return self.solver.model()
+
+    def solution(self):
+        if self.backend.is_sat(self.check()):
+            return self.model()
+        return None
+
+    def solution_var(self, model, var):
+        return  model[var.z3_expr]
     
     @contextmanager
     def branch(self):
@@ -91,11 +99,6 @@ class SymbolicInt:
 
     def __repr__(self):
         return self.__str__()
-
-    def __bool__(self):
-        condition = self.z3_expr != 0
-        self.tracer.add_constraint(condition)
-        return True
 
     def __add__(self, other):
         other = self._ensure_symbolic(other)
@@ -168,9 +171,6 @@ class SymbolicInt:
     def __rmod__(self, other):
         other = self._ensure_symbolic(other)
         return SymbolicInt(self.tracer.backend.Mod(other.z3_expr, self.z3_expr), tracer=self.tracer)
-
-    def __index__(self):
-        return self.__int__()
 
     def __pow__(self, other):
         other = self._ensure_symbolic(other)
