@@ -1,9 +1,40 @@
-from holey import SymbolicTracer, make_symbolic
-from holey.backends import Z3Backend
+from holey import SymbolicTracer, make_symbolic, SymbolicStr
+from holey.backends import Z3Backend, MockBackend
+import ast
 import json
 from func_timeout import func_timeout, FunctionTimedOut
 import traceback
 from typing import List, Any, Dict, Optional, Tuple
+
+class StringWrapper(ast.NodeTransformer):
+    def __init__(self):
+        self.path = []
+
+    def visit(self, node):
+        self.path.append(node)
+        result = super().visit(node)
+        self.path.pop()
+        return result
+        
+    def visit_Constant(self, node):
+        if isinstance(node.value, str):
+            # Check if we're in a count() call
+            if not any(isinstance(parent, ast.Call) and 
+                      isinstance(parent.func, ast.Attribute) and 
+                      parent.func.attr == 'count' 
+                      for parent in self.path):
+                return ast.Call(
+                    func=ast.Name(id='wrap_str', ctx=ast.Load()),
+                    args=[ast.Constant(value=node.value)],
+                    keywords=[]
+                )
+        return node
+
+def inject(sat_func):
+    tree = ast.parse(sat_func)
+    modified_tree = StringWrapper().visit(tree)
+    modified_func = ast.unparse(modified_tree)
+    return modified_func
 
 class PuzzleSolver:
     def __init__(self):
@@ -17,11 +48,15 @@ class PuzzleSolver:
         if not typ:
             print("Unsupported answer type", ans_type)
             return None
-        sym_var = make_symbolic(int, 'x', self.tracer)
+
         namespace = {
-            'x': sym_var
+            'tracer': self.tracer,
+            'SymbolicStr': SymbolicStr,
+            'wrap_str': lambda s: SymbolicStr(s, tracer=self.tracer)
         }
-        exec(sat_func, namespace)
+        sym_var = make_symbolic(int, 'x', self.tracer)
+        namespace['x'] = sym_var
+        exec(inject(sat_func), namespace)
         sat = namespace['sat']
         result = sat(sym_var)
         solution = self.tracer.solution()
@@ -32,7 +67,9 @@ class PuzzleSolver:
         if solution_var is None:
             print("Could not find any solution var")
             return None
-        return str(solution_var)
+        result = str(solution_var)
+        print("Found solution", result)
+        return result
 
     def solve_puzzle(self, puzzle_data: Any) -> Optional[str]:
         sat_func = puzzle_data.get('sat_function', puzzle_data.get('sat', ''))

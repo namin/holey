@@ -36,7 +36,8 @@ class SymbolicTracer:
         return self.solver.model()
 
     def solution(self):
-        if self.backend.is_sat(self.check()):
+        result = self.check()
+        if self.backend.is_sat(result):
             return self.model()
         return None
 
@@ -222,13 +223,127 @@ class SymbolicInt:
     def __neg__(self):
         return SymbolicInt(-self.z3_expr, tracer=self.tracer)
 
+class SymbolicStr:
+    def __init__(self, concrete_str: str, tracer: Optional[SymbolicTracer] = None):
+        self.concrete = concrete_str
+        self.tracer = tracer
+        self._count_cache = {}
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            if (not isinstance(key.start, SymbolicInt) and 
+                not isinstance(key.stop, SymbolicInt) and 
+                not isinstance(key.step, SymbolicInt)):
+                return SymbolicStr(self.concrete[key], tracer=self.tracer)
+            return SymbolicSlice(self.concrete, key.start, key.stop, self.tracer)
+        elif isinstance(key, SymbolicInt):
+            return SymbolicSlice(self.concrete, key, key+1, self.tracer)
+        return self.concrete[key]
+        
+    def __len__(self):
+        return len(self.concrete)
+        
+    def count(self, char: str) -> SymbolicInt:
+        if char not in self._count_cache:
+            if isinstance(self, SymbolicStr):
+                # Create new symbolic variable for the count
+                result = self.tracer.backend.Int(f'str_count_{char}_{id(self)}')
+
+                # The real count in the concrete string
+                concrete_count = self.concrete.count(char)
+
+                # Add constraint that our symbolic count equals the concrete count
+                self.tracer.add_constraint(result == concrete_count)
+
+                result = SymbolicInt(result, tracer=self.tracer)
+            else:
+                result = self.concrete.count(char)
+            self._count_cache[char] = result
+        return self._count_cache[char]
+
+    def __str__(self):
+        return self.concrete
+
+    def __repr__(self):
+        return f"SymbolicStr({self.concrete!r}, tracer={self.tracer!r})"
+
+    def __add__(self, other):
+        if isinstance(other, SymbolicStr):
+            return SymbolicStr(self.concrete + other.concrete, tracer=self.tracer)
+        elif isinstance(other, str):
+            return SymbolicStr(self.concrete + other, tracer=self.tracer)
+        return NotImplemented
+
+    def __radd__(self, other):
+        if isinstance(other, str):
+            return SymbolicStr(other + self.concrete, tracer=self.tracer)
+        return NotImplemented
+
+    # For comparison operations
+    def __eq__(self, other):
+        if isinstance(other, (str, SymbolicStr)):
+            other_str = other.concrete if isinstance(other, SymbolicStr) else other
+            result = self.concrete == other_str
+            if self.tracer:
+                return SymbolicBool(self.tracer.backend.BoolVal(result), tracer=self.tracer)
+            return result
+        return NotImplemented
+
+    def __ne__(self, other):
+        eq = self.__eq__(other)
+        if eq is NotImplemented:
+            return NotImplemented
+        if isinstance(eq, SymbolicBool):
+            return SymbolicBool(self.tracer.backend.Not(eq.z3_expr), tracer=self.tracer)
+        return not eq
+
+    # Optional but useful string methods
+    def startswith(self, prefix):
+        result = self.concrete.startswith(prefix)
+        if self.tracer:
+            return SymbolicBool(self.tracer.backend.BoolVal(result), tracer=self.tracer)
+        return result
+
+    def endswith(self, suffix):
+        result = self.concrete.endswith(suffix)
+        if self.tracer:
+            return SymbolicBool(self.tracer.backend.BoolVal(result), tracer=self.tracer)
+        return result
+
+class SymbolicSlice:
+    def __init__(self, concrete_str: str, start, end, tracer: Optional[SymbolicTracer] = None):
+        self.concrete = concrete_str
+        self.start = start
+        self.end = end
+        self.tracer = tracer
+
+    def count(self, char: str) -> SymbolicInt:
+        if isinstance(self.start, SymbolicInt) or isinstance(self.end, SymbolicInt):
+            result = self.tracer.backend.Int(f'slice_count_{char}_{id(self)}')
+            half_len = len(self.concrete) // 2
+
+            # Add constraints for all possible slices
+            for i in range(len(self.concrete)):
+                if i + half_len <= len(self.concrete):
+                    slice_count = self.concrete[i:i + half_len].count(char)
+                    self.tracer.add_constraint(
+                        self.tracer.backend.Implies(
+                            self.start.z3_expr == i,
+                            result == slice_count
+                        )
+                    )
+
+            # Add constraint that we're only looking at half-length slices
+            if isinstance(self.end, SymbolicInt):
+                self.tracer.add_constraint(self.end.z3_expr == self.start.z3_expr + half_len)
+
+            return SymbolicInt(result, tracer=self.tracer)
+        return self.concrete[self.start:self.end].count(char)
+
 def make_symbolic(typ: Type, name: str, tracer: Optional[SymbolicTracer] = None) -> Any:
     """Create a new symbolic variable of given type"""
     if typ == int:
         sym = SymbolicInt(name=name, tracer=tracer)
-        if tracer:
-            tracer.add_constraint(sym.z3_expr >= -1000)
-            tracer.add_constraint(sym.z3_expr < 1000)
     elif typ == bool:
         sym = SymbolicBool(name=name, tracer=tracer)
     else:

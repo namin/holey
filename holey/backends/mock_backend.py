@@ -42,9 +42,11 @@ class MockExpr:
         return MockExpr('*', [self, other])
         
     def __neg__(self):
-        """Unary negation operator"""
         return MockExpr('neg', [self])
-    
+
+    def __truediv__(self, other):
+        return MockExpr('/', [self, other])
+
     def decl(self):
         return self
         
@@ -112,6 +114,12 @@ class MockBackend(Backend):
 
     def Distinct(self, args) -> MockExpr:
         return MockExpr('Distinct', args)
+
+    def Mod(self, a, b) -> Any:
+        return a + ' % ' + b
+
+    def Pow(self, a, b) -> Any:
+        return a + ' ** ' + b
 
     def Solver(self) -> MockSolver:
         return MockSolver()

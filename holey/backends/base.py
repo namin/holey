@@ -43,6 +43,12 @@ class Backend:
     
     def Distinct(self, args) -> Any:
         raise NotImplementedError
+
+    def Mod(self, a, b) -> Any:
+        raise NotImplementedError
+
+    def Pow(self, a, b) -> Any:
+        raise NotImplementedError
     
     def Solver(self) -> Any:
         raise NotImplementedError
