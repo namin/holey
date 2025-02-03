@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "holey"
+version = "0.2.0"
+authors = [
+  { name="Nada Amin", email="namin@seas.harvard.edu" },
+]
+description = "Python library for symbolic execution and synthesis with Z3 and LLM support"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "func-timeout>=4.3.5",
+    "requests>=2.28.0",
+    "z3-solver>=4.8.0"
+]
+
+[project.optional-dependencies]
+test = ["pytest>=6.0"]
+llm = ["requests>=2.28.0"]
+
+[project.urls]
+"Homepage" = "https://github.com/namin/holey"
+"Bug Tracker" = "https://github.com/namin/holey/issues"
