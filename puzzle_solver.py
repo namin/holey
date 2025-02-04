@@ -1,5 +1,5 @@
 from holey import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicInt, SymbolicStr
-from holey.backends import Z3Backend, MockBackend
+from holey.backends import CVC5Backend, Z3Backend, MockBackend
 import ast
 import json
 from func_timeout import func_timeout, FunctionTimedOut
