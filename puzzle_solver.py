@@ -32,6 +32,15 @@ def symbolic_any(iterable):
         result = result.__or__(cond)
     return result
 
+def symbolic_all(iterable):
+    conditions = list(iterable)
+    if not conditions:
+        return SymbolicBool(True)
+    result = conditions[0]
+    for cond in conditions[1:]:
+        result = result.__and__(cond)
+    return result
+
 class HoleyWrapper(ast.NodeTransformer):
     def __init__(self):
         self.path = []
@@ -96,11 +105,15 @@ def inject(sat_func):
 
 class PuzzleSolver:
     def __init__(self):
-        self.backend = Z3Backend()
+        self.backend = None
         self.count = 0
 
+    def new_tracer(self):
+        self.backend = Z3Backend()
+        return SymbolicTracer(backend=self.backend)
+
     def symbolic_solve(self, sat_func: str, ans_type: str) -> Optional[str]:
-        tracer = SymbolicTracer(backend=self.backend)
+        tracer = self.new_tracer()
         typ = None
         if ans_type == 'int':
             typ = int
@@ -115,6 +128,7 @@ class PuzzleSolver:
             'wrap_str': lambda s: SymbolicStr(s, tracer=tracer),
             '_assert': lambda x, msg=None: tracer.add_constraint(x),
             'any': symbolic_any,
+            'all': symbolic_all,
             'sym_not': symbolic_not,
             'sym_in': symbolic_in
         }
