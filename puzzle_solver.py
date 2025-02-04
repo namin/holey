@@ -51,9 +51,9 @@ class HoleyWrapper(ast.NodeTransformer):
     def visit_Constant(self, node):
         if isinstance(node.value, str):
             if not any(isinstance(parent, ast.Call) and 
-                      isinstance(parent.func, ast.Attribute) and 
-                      parent.func.attr == 'count' 
-                      for parent in self.path):
+                       isinstance(parent.func, ast.Attribute) and 
+                       (parent.func.attr in ['count', 'startswith'])
+                       for parent in self.path):
                 return ast.Call(
                     func=ast.Name(id='wrap_str', ctx=ast.Load()),
                     args=[ast.Constant(value=node.value)],
@@ -99,7 +99,7 @@ class PuzzleSolver:
             'any': symbolic_any,
             'sym_in': symbolic_in
         }
-        sym_var = make_symbolic(int, 'x', tracer)
+        sym_var = make_symbolic(typ, 'x', tracer)
         namespace['x'] = sym_var
         exec(inject(sat_func), namespace)
         sat = namespace['sat']
@@ -119,8 +119,8 @@ class PuzzleSolver:
 
     def solve_puzzle(self, puzzle_data: Any) -> Optional[str]:
         name = puzzle_data.get('name', '')
-        if name.startswith('LCM'):
-            print('Skipping LCM...')
+        if name.startswith('LCM') or name.startswith('IntNegSquareRoot') or name.startswith('Factoring'):
+            print('Skipping...')
             return None
         sat_func = puzzle_data.get('sat_function', puzzle_data.get('sat', ''))
         if not sat_func:
