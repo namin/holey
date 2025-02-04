@@ -1,10 +1,15 @@
-from holey import SymbolicTracer, make_symbolic, SymbolicInt, SymbolicStr
+from holey import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicInt, SymbolicStr
 from holey.backends import Z3Backend, MockBackend
 import ast
 import json
 from func_timeout import func_timeout, FunctionTimedOut
 import traceback
 from typing import List, Any, Dict, Optional, Tuple
+
+def symbolic_not(x):
+    if isinstance(x, SymbolicBool):
+        return SymbolicBool(x.tracer.backend.Not(x.z3_expr), x.tracer)
+    return not x
 
 def symbolic_in(x, container):
     if isinstance(x, SymbolicInt):
@@ -72,6 +77,17 @@ class HoleyWrapper(ast.NodeTransformer):
             )
         return node
 
+    def visit_UnaryOp(self, node):
+        # Transform: not x
+        # Into: sym_not(x)
+        if isinstance(node.op, ast.Not):
+            return ast.Call(
+                func=ast.Name(id='sym_not', ctx=ast.Load()),
+                args=[self.visit(node.operand)],
+                keywords=[]
+            )
+        return node
+
 def inject(sat_func):
     tree = ast.parse(sat_func)
     modified_tree = HoleyWrapper().visit(tree)
@@ -97,6 +113,7 @@ class PuzzleSolver:
             'wrap_str': lambda s: SymbolicStr(s, tracer=tracer),
             '_assert': lambda x, msg=None: tracer.add_constraint(x),
             'any': symbolic_any,
+            'sym_not': symbolic_not,
             'sym_in': symbolic_in
         }
         sym_var = make_symbolic(typ, 'x', tracer)
