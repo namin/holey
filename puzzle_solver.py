@@ -175,8 +175,12 @@ def run_benchmarks(puzzle_file: str):
         if result:
             success_count += 1
     
-    print("Success count", success_count)
-    print("Total considered", solver.count)
+    print('')
+    print('STATS')
+    print("Success count:", success_count)
+    print("Total considered:", solver.count)
+    success_percentage = 100.0 * success_count / solver.count
+    print(f"Success percentage: {success_percentage:.0f}%")
 
 if __name__ == "__main__":
     puzzle_file = "benchmarks/PythonProgrammingPuzzles/puzzles/puzzles.json"
