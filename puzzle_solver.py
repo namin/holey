@@ -1,10 +1,31 @@
-from holey import SymbolicTracer, make_symbolic, SymbolicStr
+from holey import SymbolicTracer, make_symbolic, SymbolicInt, SymbolicStr
 from holey.backends import Z3Backend, MockBackend
 import ast
 import json
 from func_timeout import func_timeout, FunctionTimedOut
 import traceback
 from typing import List, Any, Dict, Optional, Tuple
+
+def symbolic_in(x, container):
+    if isinstance(x, SymbolicInt):
+        # Create disjunction of equalities
+        equalities = [x == val for val in container]
+        result = equalities[0]
+        for eq in equalities[1:]:
+            result = result.__or__(eq)
+        return result
+    return x in container
+
+def symbolic_any(iterable):
+    # For generator expressions, convert to list
+    conditions = list(iterable)
+    if not conditions:
+        return SymbolicBool(False)
+    # Create disjunction
+    result = conditions[0]
+    for cond in conditions[1:]:
+        result = result.__or__(cond)
+    return result
 
 class HoleyWrapper(ast.NodeTransformer):
     def __init__(self):
@@ -40,6 +61,17 @@ class HoleyWrapper(ast.NodeTransformer):
                 )
         return node
 
+    def visit_Compare(self, node):
+        # Transform: x in y
+        # Into: sym_in(x, y)
+        if len(node.ops) == 1 and isinstance(node.ops[0], ast.In):
+            return ast.Call(
+                func=ast.Name(id='sym_in', ctx=ast.Load()),
+                args=[node.left, node.comparators[0]],
+                keywords=[]
+            )
+        return node
+
 def inject(sat_func):
     tree = ast.parse(sat_func)
     modified_tree = HoleyWrapper().visit(tree)
@@ -49,9 +81,9 @@ def inject(sat_func):
 class PuzzleSolver:
     def __init__(self):
         self.backend = Z3Backend()
-        self.tracer = SymbolicTracer(backend=self.backend)
 
     def symbolic_solve(self, sat_func: str, ans_type: str) -> Optional[str]:
+        tracer = SymbolicTracer(backend=self.backend)
         typ = None
         if ans_type == 'int':
             typ = int
@@ -60,21 +92,24 @@ class PuzzleSolver:
             return None
 
         namespace = {
-            'tracer': self.tracer,
+            'tracer': tracer,
             'SymbolicStr': SymbolicStr,
-            'wrap_str': lambda s: SymbolicStr(s, tracer=self.tracer),
-            '_assert': lambda x, msg=None: self.tracer.add_constraint(x)
+            'wrap_str': lambda s: SymbolicStr(s, tracer=tracer),
+            '_assert': lambda x, msg=None: tracer.add_constraint(x),
+            'any': symbolic_any,
+            'sym_in': symbolic_in
         }
-        sym_var = make_symbolic(int, 'x', self.tracer)
+        sym_var = make_symbolic(int, 'x', tracer)
         namespace['x'] = sym_var
         exec(inject(sat_func), namespace)
         sat = namespace['sat']
         result = sat(sym_var)
-        solution = self.tracer.solution()
+        tracer.add_constraint(result)
+        solution = tracer.solution()
         if solution is None:
             print("Could not find any solution")
             return None
-        solution_var = self.tracer.solution_var(solution, sym_var)
+        solution_var = tracer.solution_var(solution, sym_var)
         if solution_var is None:
             print("Could not find any solution var")
             return None
@@ -83,6 +118,10 @@ class PuzzleSolver:
         return result
 
     def solve_puzzle(self, puzzle_data: Any) -> Optional[str]:
+        name = puzzle_data.get('name', '')
+        if name.startswith('LCM'):
+            print('Skipping LCM...')
+            return None
         sat_func = puzzle_data.get('sat_function', puzzle_data.get('sat', ''))
         if not sat_func:
             print("Missing sat_func")
@@ -97,6 +136,7 @@ class PuzzleSolver:
         except FunctionTimedOut:
             print("Timed out")
         except Exception as e:
+            print("Exception: ", e)
             traceback.print_exc()
         return None
 
