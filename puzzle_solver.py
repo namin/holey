@@ -97,6 +97,7 @@ def inject(sat_func):
 class PuzzleSolver:
     def __init__(self):
         self.backend = Z3Backend()
+        self.count = 0
 
     def symbolic_solve(self, sat_func: str, ans_type: str) -> Optional[str]:
         tracer = SymbolicTracer(backend=self.backend)
@@ -107,6 +108,7 @@ class PuzzleSolver:
             print("Unsupported answer type", ans_type)
             return None
 
+        self.count += 1
         namespace = {
             'tracer': tracer,
             'SymbolicStr': SymbolicStr,
@@ -174,6 +176,7 @@ def run_benchmarks(puzzle_file: str):
             success_count += 1
     
     print("Success count", success_count)
+    print("Total considered", solver.count)
 
 if __name__ == "__main__":
     puzzle_file = "benchmarks/PythonProgrammingPuzzles/puzzles/puzzles.json"
