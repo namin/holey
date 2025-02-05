@@ -168,6 +168,7 @@ class PuzzleSolver:
             return None
         solution_var = tracer.solution_var(solution, sym_var)
         if solution_var is None:
+            print('Solution', solution)
             print("Could not find any solution var")
             return None
         result = str(solution_var)

@@ -190,3 +190,7 @@ class CVC5Backend(Backend):
     
     def is_sat(self, result) -> bool:
         return result.isSat()
+
+    def Real(self, val: float) -> Any:
+        """Create a real number constant"""
+        return self.solver.mkRealVal(val)  # Pass float directly to CVC5

@@ -108,9 +108,14 @@ class SymbolicInt:
         return SymbolicInt(self.tracer.backend.Add(self.z3_expr, other.z3_expr), tracer=self.tracer)
     
     def __sub__(self, other):
-        if isinstance(other, (int, float)):
-            other = SymbolicInt(self.tracer.backend.IntVal(other), tracer=self.tracer)
-        return SymbolicInt(self.tracer.backend.Sub(self.z3_expr, other.z3_expr), tracer=self.tracer)
+        if isinstance(other, float):
+            float_other = self.tracer.backend.Real(other)
+            sub_result = self.tracer.backend.Sub(self.z3_expr, float_other)
+            return SymbolicFloat(sub_result, tracer=self.tracer)
+        if isinstance(other, (int, SymbolicInt)):
+            other = self._ensure_symbolic(other)
+            return SymbolicInt(self.tracer.backend.Sub(self.z3_expr, other.z3_expr), tracer=self.tracer)
+        return NotImplemented
     
     def __mul__(self, other):
         if isinstance(other, (int, float)):
@@ -230,6 +235,30 @@ class SymbolicInt:
         # Use backend's Sub method with 0 for negation
         zero = SymbolicInt(self.tracer.backend.IntVal(0), tracer=self.tracer)
         return SymbolicInt(self.tracer.backend.Sub(zero.z3_expr, self.z3_expr), tracer=self.tracer)
+
+class SymbolicFloat:
+    def __init__(self, value, tracer=None):
+        self.tracer = tracer
+        self.z3_expr = value
+
+    def __sub__(self, other):
+        if isinstance(other, (int, float)):
+            result = SymbolicFloat(self.tracer.backend.Sub(self.z3_expr, self.tracer.backend.Real(other)), tracer=self.tracer)
+            return result
+        return NotImplemented
+
+    def __abs__(self):
+        result = SymbolicFloat(
+            self.tracer.backend.If(self.z3_expr >= 0,
+                                 self.z3_expr,
+                                 -self.z3_expr),
+            tracer=self.tracer)
+        return result
+
+    def __le__(self, other):
+        if isinstance(other, (int, float)):
+            return SymbolicBool(self.z3_expr <= self.tracer.backend.Real(other), tracer=self.tracer)
+        return NotImplemented
 
 class SymbolicStr:
     def __init__(self, concrete_str: str, tracer: Optional[SymbolicTracer] = None):

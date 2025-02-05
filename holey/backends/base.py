@@ -55,3 +55,7 @@ class Backend:
     
     def is_sat(self, result) -> bool:
         raise NotImplementedError
+
+    def Real(self, val: float) -> Any:
+        """Create a real number constant"""
+        raise NotImplementedError

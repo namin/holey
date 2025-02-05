@@ -126,3 +126,7 @@ class Z3Backend(Backend):
     
     def Eq(self, a, b) -> Any:
         return a == b
+
+    def Real(self, val: float) -> Any:
+        """Create a real number constant"""
+        return z3.RealVal(val)  # Pass float directly to Z3
