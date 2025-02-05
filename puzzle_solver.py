@@ -97,6 +97,28 @@ class HoleyWrapper(ast.NodeTransformer):
             )
         return node
 
+    def visit_BoolOp(self, node):
+        """Transform: 
+        a and b and c  ->  a.__and__(b).__and__(c)
+        a or b or c    ->  a.__or__(b).__or__(c)
+        """
+        # Visit all values to handle nested operations
+        values = [self.visit(val) for val in node.values]
+        # Build up the chain
+        result = values[0]
+        for val in values[1:]:
+            attr = '__and__' if isinstance(node.op, ast.And) else '__or__'
+            result = ast.Call(
+                func=ast.Attribute(
+                    value=result,
+                    attr=attr,
+                    ctx=ast.Load()
+                ),
+                args=[val],
+                keywords=[]
+            )
+        return result
+
 def inject(sat_func):
     tree = ast.parse(sat_func)
     modified_tree = HoleyWrapper().visit(tree)
