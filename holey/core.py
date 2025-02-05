@@ -243,9 +243,9 @@ class SymbolicStr:
                 not isinstance(key.stop, SymbolicInt) and 
                 not isinstance(key.step, SymbolicInt)):
                 return SymbolicStr(self.concrete[key], tracer=self.tracer)
-            return SymbolicSlice(self.concrete, key.start, key.stop, self.tracer)
+            return SymbolicSlice(self.concrete, key.start, key.stop, key.step, self.tracer)
         elif isinstance(key, SymbolicInt):
-            return SymbolicSlice(self.concrete, key, key+1, self.tracer)
+            return SymbolicSlice(self.concrete, key, key+1, key.step, self.tracer)
         return self.concrete[key]
         
     def __len__(self):
@@ -319,34 +319,58 @@ class SymbolicStr:
         return result
 
 class SymbolicSlice:
-    def __init__(self, concrete_str: str, start, end, tracer: Optional[SymbolicTracer] = None):
+    def __init__(self, concrete_str: str, start, end, step=None, tracer: Optional[SymbolicTracer] = None):
         self.concrete = concrete_str
         self.start = start
         self.end = end
+        self.step = step
         self.tracer = tracer
 
-    def count(self, char: str) -> SymbolicInt:
-        if isinstance(self.start, SymbolicInt) or isinstance(self.end, SymbolicInt):
-            result = self.tracer.backend.Int(f'slice_count_{char}_{id(self)}')
-            half_len = len(self.concrete) // 2
-
-            # Add constraints for all possible slices
-            for i in range(len(self.concrete)):
-                if i + half_len <= len(self.concrete):
-                    slice_count = self.concrete[i:i + half_len].count(char)
+    def count(self, substr: str) -> SymbolicInt:
+        """For a slice s[start:end], return count of substr in that slice"""
+        if isinstance(self.start, SymbolicInt):
+            result = self.tracer.backend.Int(f'count_{substr}_{id(self)}')
+            str_len = len(self.concrete)
+            
+            # Check if end is start + constant
+            if (isinstance(self.end, SymbolicInt) and 
+                hasattr(self.end, 'z3_expr') and 
+                str(self.end.z3_expr).startswith(str(self.start.z3_expr) + " + ")):
+                # Extract the constant
+                constant = int(str(self.end.z3_expr).split(" + ")[1])
+                
+                # Add bounds constraints
+                self.tracer.add_constraint(self.start >= 0)
+                self.tracer.add_constraint(self.start + constant <= str_len)
+                
+                # Only iterate through valid start positions
+                for start in range(str_len - constant + 1):
+                    count_here = self.concrete[start:start + constant].count(substr)
                     self.tracer.add_constraint(
                         self.tracer.backend.Implies(
-                            self.start.z3_expr == i,
-                            result == slice_count
+                            self.tracer.backend.And(
+                                self.start == start,
+                                self.end == start + constant
+                            ),
+                            result == count_here
                         )
                     )
-
-            # Add constraint that we're only looking at half-length slices
-            if isinstance(self.end, SymbolicInt):
-                self.tracer.add_constraint(self.end.z3_expr == self.start.z3_expr + half_len)
-
+            else:
+                # Fall back to general case for arbitrary start/end
+                for start in range(str_len):
+                    for end in range(start, str_len + 1):
+                        count_here = self.concrete[start:end].count(substr)
+                        self.tracer.add_constraint(
+                            self.tracer.backend.Implies(
+                                self.tracer.backend.And(
+                                    self.start == start,
+                                    self.end == end
+                                ),
+                                result == count_here
+                            )
+                        )
             return SymbolicInt(result, tracer=self.tracer)
-        return self.concrete[self.start:self.end].count(char)
+        return self.concrete[self.start:self.end].count(substr)
 
 def make_symbolic(typ: Type, name: str, tracer: Optional[SymbolicTracer] = None) -> Any:
     """Create a new symbolic variable of given type"""
