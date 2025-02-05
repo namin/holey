@@ -105,15 +105,14 @@ def inject(sat_func):
 
 class PuzzleSolver:
     def __init__(self):
-        self.backend = None
+        self.backend = Z3Backend()
         self.count = 0
 
     def new_tracer(self):
-        self.backend = Z3Backend()
+        self.backend.reset()
         return SymbolicTracer(backend=self.backend)
 
     def symbolic_solve(self, sat_func: str, ans_type: str) -> Optional[str]:
-        tracer = self.new_tracer()
         typ = None
         if ans_type == 'int':
             typ = int
@@ -121,6 +120,9 @@ class PuzzleSolver:
             print("Unsupported answer type", ans_type)
             return None
 
+        self.tracer = self.new_tracer()
+        tracer = self.tracer
+        
         self.count += 1
         namespace = {
             'tracer': tracer,
@@ -152,9 +154,6 @@ class PuzzleSolver:
 
     def solve_puzzle(self, puzzle_data: Any) -> Optional[str]:
         name = puzzle_data.get('name', '')
-        if name.startswith('LCM') or name.startswith('IntNegSquareRoot') or name.startswith('Factoring'):
-            print('Skipping...')
-            return None
         sat_func = puzzle_data.get('sat_function', puzzle_data.get('sat', ''))
         if not sat_func:
             print("Missing sat_func")

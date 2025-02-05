@@ -16,8 +16,36 @@ class Z3Backend(Backend):
     def __init__(self):
         if not HAS_Z3:
             raise ImportError("Z3 is required for this backend")
-        super().__init__()
+        self.solver = None
+        self.reset()
     
+    def reset(self):
+        """Reset the solver state"""
+        try:
+            # Clean up old solver if it exists
+            if self.solver is not None:
+                self.cleanup()
+            
+            # Create new solver
+            self.solver = z3.Solver()
+            # Set timeout in milliseconds (same as CVC5)
+            self.solver.set(timeout=5000)
+        except Exception as e:
+            print(f"Error during Z3 reset: {e}")
+            self.solver = None
+            raise
+
+    def cleanup(self):
+        """Cleanup solver resources"""
+        if self.solver is not None:
+            self.solver = None
+            # Force garbage collection
+            import gc
+            gc.collect()
+
+    def __del__(self):
+        self.cleanup()
+
     @staticmethod
     def is_available() -> bool:
         """Check if Z3 is available"""
@@ -63,7 +91,38 @@ class Z3Backend(Backend):
         return a ** b
 
     def Solver(self) -> Any:
-        return z3.Solver()
+        return self.solver
     
     def is_sat(self, result) -> bool:
         return result == z3.sat
+
+    def Mul(self, a, b) -> Any:
+        return a * b
+    
+    def Add(self, a, b) -> Any:
+        return a + b
+    
+    def Sub(self, a, b) -> Any:
+        return a - b
+    
+    def Div(self, a, b) -> Any:
+        return a / b
+    
+    def UDiv(self, a, b) -> Any:
+        # Integer division
+        return a / b
+    
+    def LT(self, a, b) -> Any:
+        return a < b
+    
+    def LE(self, a, b) -> Any:
+        return a <= b
+    
+    def GT(self, a, b) -> Any:
+        return a > b
+    
+    def GE(self, a, b) -> Any:
+        return a >= b
+    
+    def Eq(self, a, b) -> Any:
+        return a == b

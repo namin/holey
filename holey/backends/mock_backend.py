@@ -126,3 +126,34 @@ class MockBackend(Backend):
     
     def is_sat(self, result) -> bool:
         return result == 'sat'
+
+    def Mul(self, a, b) -> Any:
+        return MockExpr('*', [a, b])
+    
+    def Add(self, a, b) -> Any:
+        return MockExpr('+', [a, b])
+    
+    def Sub(self, a, b) -> Any:
+        return MockExpr('-', [a, b])
+    
+    def Div(self, a, b) -> Any:
+        return MockExpr('/', [a, b])
+    
+    def UDiv(self, a, b) -> Any:
+        # Integer division
+        return MockExpr('//', [a, b])
+    
+    def LT(self, a, b) -> Any:
+        return MockExpr('<', [a, b])
+    
+    def LE(self, a, b) -> Any:
+        return MockExpr('<=', [a, b])
+    
+    def GT(self, a, b) -> Any:
+        return MockExpr('>', [a, b])
+    
+    def GE(self, a, b) -> Any:
+        return MockExpr('>=', [a, b])
+    
+    def Eq(self, a, b) -> Any:
+        return MockExpr('==', [a, b])

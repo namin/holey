@@ -103,28 +103,34 @@ class SymbolicInt:
         return self.__str__()
 
     def __add__(self, other):
-        other = self._ensure_symbolic(other)
-        return SymbolicInt(self.z3_expr + other.z3_expr, tracer=self.tracer)
+        if isinstance(other, (int, float)):
+            other = SymbolicInt(self.tracer.backend.IntVal(other), tracer=self.tracer)
+        return SymbolicInt(self.tracer.backend.Add(self.z3_expr, other.z3_expr), tracer=self.tracer)
     
     def __sub__(self, other):
-        other = self._ensure_symbolic(other)
-        return SymbolicInt(self.z3_expr - other.z3_expr, tracer=self.tracer)
+        if isinstance(other, (int, float)):
+            other = SymbolicInt(self.tracer.backend.IntVal(other), tracer=self.tracer)
+        return SymbolicInt(self.tracer.backend.Sub(self.z3_expr, other.z3_expr), tracer=self.tracer)
     
     def __mul__(self, other):
-        other = self._ensure_symbolic(other)
-        return SymbolicInt(self.z3_expr * other.z3_expr, tracer=self.tracer)
+        if isinstance(other, (int, float)):
+            other = SymbolicInt(self.tracer.backend.IntVal(other), tracer=self.tracer)
+        return SymbolicInt(self.tracer.backend.Mul(self.z3_expr, other.z3_expr), tracer=self.tracer)
         
     def __eq__(self, other):
-        other = self._ensure_symbolic(other)
-        return SymbolicBool(self.z3_expr == other.z3_expr, tracer=self.tracer)
+        if isinstance(other, (int, float)):
+            other = SymbolicInt(self.tracer.backend.IntVal(other), tracer=self.tracer)
+        return self.tracer.backend.Eq(self.z3_expr, other.z3_expr)
     
     def __lt__(self, other):
-        other = self._ensure_symbolic(other)
-        return SymbolicBool(self.z3_expr < other.z3_expr, tracer=self.tracer)
+        if isinstance(other, (int, float)):
+            other = SymbolicInt(self.tracer.backend.IntVal(other), tracer=self.tracer)
+        return self.tracer.backend.LT(self.z3_expr, other.z3_expr)
     
     def __gt__(self, other):
-        other = self._ensure_symbolic(other)
-        return SymbolicBool(self.z3_expr > other.z3_expr, tracer=self.tracer)
+        if isinstance(other, (int, float)):
+            other = SymbolicInt(self.tracer.backend.IntVal(other), tracer=self.tracer)
+        return self.tracer.backend.GT(self.z3_expr, other.z3_expr)
     
     def __rmul__(self, other):
         return self.__mul__(other)
@@ -149,8 +155,9 @@ class SymbolicInt:
         return self.__add__(other)
     
     def __rsub__(self, other):
-        other = self._ensure_symbolic(other)
-        return SymbolicInt(other.z3_expr - self.z3_expr, tracer=self.tracer)
+        if isinstance(other, (int, float)):
+            other = SymbolicInt(self.tracer.backend.IntVal(other), tracer=self.tracer)
+        return SymbolicInt(self.tracer.backend.Sub(other.z3_expr, self.z3_expr), tracer=self.tracer)
     
     def __hash__(self):
         return hash(str(self.z3_expr))
@@ -183,17 +190,15 @@ class SymbolicInt:
         return SymbolicInt(self.tracer.backend.Pow(other.z3_expr, self.z3_expr), tracer=self.tracer)
 
     def __le__(self, other):
-        other = self._ensure_symbolic(other)
-        return SymbolicBool(self.z3_expr <= other.z3_expr, tracer=self.tracer)
+        if isinstance(other, (int, float)):
+            other = SymbolicInt(self.tracer.backend.IntVal(other), tracer=self.tracer)
+        return self.tracer.backend.LE(self.z3_expr, other.z3_expr)
     
     def __ge__(self, other):
-        other = self._ensure_symbolic(other)
-        return SymbolicBool(self.z3_expr >= other.z3_expr, tracer=self.tracer)
+        if isinstance(other, (int, float)):
+            other = SymbolicInt(self.tracer.backend.IntVal(other), tracer=self.tracer)
+        return self.tracer.backend.GE(self.z3_expr, other.z3_expr)
 
-    def __eq__(self, other):
-        other = self._ensure_symbolic(other)
-        return SymbolicBool(self.z3_expr == other.z3_expr, tracer=self.tracer)
-    
     def __ne__(self, other):
         other = self._ensure_symbolic(other)
         return SymbolicBool(self.z3_expr != other.z3_expr, tracer=self.tracer)
@@ -222,7 +227,9 @@ class SymbolicInt:
         return NotImplemented
 
     def __neg__(self):
-        return SymbolicInt(-self.z3_expr, tracer=self.tracer)
+        # Use backend's Sub method with 0 for negation
+        zero = SymbolicInt(self.tracer.backend.IntVal(0), tracer=self.tracer)
+        return SymbolicInt(self.tracer.backend.Sub(zero.z3_expr, self.z3_expr), tracer=self.tracer)
 
 class SymbolicStr:
     def __init__(self, concrete_str: str, tracer: Optional[SymbolicTracer] = None):
