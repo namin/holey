@@ -1,10 +1,50 @@
-from holey import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicInt, SymbolicStr
+from holey import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicInt, SymbolicRange,SymbolicStr
 from holey.backends import CVC5Backend, Z3Backend, MockBackend
 import ast
 import json
 from func_timeout import func_timeout, FunctionTimedOut
 import traceback
 from typing import List, Any, Dict, Optional, Tuple
+
+def sym_int(x):
+    if isinstance(x, SymbolicStr):
+        return SymbolicInt(x.tracer.backend.StrToInt(x.z3_expr), tracer=x.tracer)
+    if isinstance(x, SymbolicInt):
+        return x
+    return int(x)
+
+def sym_len(x):
+    if isinstance(x, SymbolicStr):
+        return x.__len__()
+    return len(x)
+
+def sym_str(x):
+    if isinstance(x, SymbolicInt):
+        return SymbolicStr(x.tracer.backend.IntToStr(x.z3_expr), tracer=x.tracer)
+    return str(x)
+
+def first_tracer(xs):
+    if xs==[]:
+        return None
+    elif hasattr(xs[0], 'tracer'):
+        return xs[0].tracer
+    else:
+        return first_tracer(xs[1:])
+
+def sym_range(a, b=None, c=None):
+    if b is None:
+        start = 0
+        end = a
+        step = 1
+    else:
+        start = a
+        end = b
+        step = c if c is not None else 1
+        
+    if all(isinstance(x, (int, type(None))) for x in (start, end, step)):
+        return range(start, end, step) if step is not None else range(start, end)
+    
+    return SymbolicRange(start, end, step, tracer=first_tracer([start, end, step]))
 
 def symbolic_not(x):
     if isinstance(x, SymbolicBool):
@@ -25,7 +65,7 @@ def symbolic_any(iterable):
     # For generator expressions, convert to list
     conditions = list(iterable)
     if not conditions:
-        return SymbolicBool(False)
+        return False
     # Create disjunction
     result = conditions[0]
     for cond in conditions[1:]:
@@ -35,7 +75,7 @@ def symbolic_any(iterable):
 def symbolic_all(iterable):
     conditions = list(iterable)
     if not conditions:
-        return SymbolicBool(True)
+        return True
     result = conditions[0]
     for cond in conditions[1:]:
         result = result.__and__(cond)
@@ -52,6 +92,7 @@ class HoleyWrapper(ast.NodeTransformer):
         return result
 
     def visit_Assert(self, node):
+        node = self.generic_visit(node)
         # Convert: assert test [, msg]
         # Into: _assert(test [, msg])
         return ast.Expr(
@@ -63,6 +104,7 @@ class HoleyWrapper(ast.NodeTransformer):
         )
         
     def visit_Constant(self, node):
+        node = self.generic_visit(node)
         if isinstance(node.value, str):
             if not any(isinstance(parent, ast.Call) and 
                        isinstance(parent.func, ast.Attribute) and 
@@ -73,9 +115,21 @@ class HoleyWrapper(ast.NodeTransformer):
                     args=[ast.Constant(value=node.value)],
                     keywords=[]
                 )
+        elif isinstance(node.value, int) and not isinstance(node.value, bool):
+            if not any((isinstance(parent, ast.Call) and 
+                       ((isinstance(parent.func, ast.Name) and parent.func.id == 'range') or
+                        (isinstance(parent.func, ast.Attribute) and parent.func.attr == 'range'))) or
+                        isinstance(parent, (ast.Slice, ast.Index))
+                       for parent in self.path):
+                return ast.Call(
+                        func=ast.Name(id='wrap_int', ctx=ast.Load()),
+                        args=[ast.Constant(value=node.value)],
+                        keywords=[]
+                )
         return node
 
     def visit_Compare(self, node):
+        node = self.generic_visit(node)
         # Transform: x in y
         # Into: sym_in(x, y)
         if len(node.ops) == 1 and isinstance(node.ops[0], ast.In):
@@ -87,6 +141,7 @@ class HoleyWrapper(ast.NodeTransformer):
         return node
 
     def visit_UnaryOp(self, node):
+        node = self.generic_visit(node)
         # Transform: not x
         # Into: sym_not(x)
         if isinstance(node.op, ast.Not):
@@ -102,8 +157,8 @@ class HoleyWrapper(ast.NodeTransformer):
         a and b and c  ->  a.__and__(b).__and__(c)
         a or b or c    ->  a.__or__(b).__or__(c)
         """
-        # Visit all values to handle nested operations
-        values = [self.visit(val) for val in node.values]
+        node = self.generic_visit(node)
+        values = node.values
         # Build up the chain
         result = values[0]
         for val in values[1:]:
@@ -119,15 +174,54 @@ class HoleyWrapper(ast.NodeTransformer):
             )
         return result
 
+    def visit_Call(self, node):
+        node = self.generic_visit(node)
+        if isinstance(node.func, ast.Name):
+            if node.func.id in ['int', 'str', 'len', 'range']:
+                return ast.Call(
+                    func=ast.Name(id='sym_'+node.func.id, ctx=ast.Load()),
+                    args=node.args,
+                    keywords=[]
+                )
+        return node
+
+    def visit_JoinedStr(self, node):
+        """Transform f-string into concatenation"""
+        node = self.generic_visit(node)
+        
+        # Convert each part into a string
+        parts = []
+        for value in node.values:
+            if isinstance(value, ast.Constant):
+                # String literal part
+                parts.append(ast.Constant(value=value.value))
+            elif isinstance(value, ast.FormattedValue):
+                # Expression part {expr}
+                parts.append(
+                    ast.Call(
+                        func=ast.Name(id='str', ctx=ast.Load()),
+                        args=[value.value],
+                        keywords=[]
+                    )
+                )
+        
+        # Join parts with '+'
+        result = parts[0]
+        for part in parts[1:]:
+            result = ast.BinOp(left=result, op=ast.Add(), right=part)
+            
+        return result
+
 def inject(sat_func):
     tree = ast.parse(sat_func)
     modified_tree = HoleyWrapper().visit(tree)
     modified_func = ast.unparse(modified_tree)
+    print('modified_func', modified_func)
     return modified_func
 
 class PuzzleSolver:
     def __init__(self):
-        self.backend = Z3Backend()
+        self.backend = MockBackend()
         self.count = 0
 
     def new_tracer(self):
@@ -149,12 +243,18 @@ class PuzzleSolver:
         namespace = {
             'tracer': tracer,
             'SymbolicStr': SymbolicStr,
+            'SymbolicInt': SymbolicInt,
             'wrap_str': lambda s: SymbolicStr(s, tracer=tracer),
+            'wrap_int': lambda n: SymbolicInt(n, tracer=tracer),
             '_assert': lambda x, msg=None: tracer.add_constraint(x),
             'any': symbolic_any,
             'all': symbolic_all,
             'sym_not': symbolic_not,
-            'sym_in': symbolic_in
+            'sym_in': symbolic_in,
+            'sym_str': sym_str,
+            'sym_int': sym_int,
+            'sym_len': sym_len,
+            'sym_range': sym_range
         }
         sym_var = make_symbolic(typ, 'x', tracer)
         namespace['x'] = sym_var
@@ -187,7 +287,7 @@ class PuzzleSolver:
             print("Missing ans_type")
             return None
         try:
-            result = func_timeout(2, self.symbolic_solve, args=(sat_func, ans_type))
+            result = func_timeout(3, self.symbolic_solve, args=(sat_func, ans_type))
             if result is not None:
                 namespace = {'x': result}
                 exec(sat_func, namespace)
