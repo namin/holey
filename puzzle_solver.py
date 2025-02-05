@@ -164,7 +164,15 @@ class PuzzleSolver:
             print("Missing ans_type")
             return None
         try:
-            return func_timeout(2, self.symbolic_solve, args=(sat_func, ans_type))
+            result = func_timeout(2, self.symbolic_solve, args=(sat_func, ans_type))
+            if result is not None:
+                namespace = {'x': result}
+                exec(sat_func, namespace)
+                sat = namespace['sat']
+                if not sat(int(result)):
+                    print("WARNING: Solution verification failed!")
+                    return None
+            return result
         except FunctionTimedOut:
             print("Timed out")
         except Exception as e:
