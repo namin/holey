@@ -92,6 +92,30 @@ class MockExpr:
                           for arg in self.args)
         return f"({op} {args_str})"
 
+library = {
+'python.mod':
+"""
+(define-fun python.mod ((a Int) (b Int)) Int
+  (let ((m (mod a b)))
+    (ite (and (< m 0) (> b 0)) (+ m b)
+         (ite (and (> m 0) (< b 0)) (+ m b) m))))
+"""
+,
+'str.count':
+"""
+(define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
+  (let ((idx (str.indexof s sub start)))
+    (ite (or (= idx (- 1)) (> start (str.len s)))
+         0
+         (+ 1 (str.count.rec s sub (+ idx (str.len sub)))))))
+
+(define-fun str.count ((s String) (sub String)) Int
+  (ite (= (str.len sub) 0)
+       (+ 1 (str.len s))
+       (str.count.rec s sub 0)))
+"""
+}
+
 @dataclass
 class MockSolver:
     def __init__(self):
@@ -107,25 +131,7 @@ class MockSolver:
 
     def check(self):
         # Generate SMT-LIB2 file
-        smt2 = "(set-logic ALL)\n"
-        
-        smt2 += """
-(define-fun python.mod ((a Int) (b Int)) Int
-  (let ((m (mod a b)))
-    (ite (and (< m 0) (> b 0)) (+ m b)
-         (ite (and (> m 0) (< b 0)) (+ m b) m))))
-
-(define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
-  (let ((idx (str.indexof s sub start)))
-    (ite (or (= idx (- 1)) (> start (str.len s)))
-         0
-         (+ 1 (str.count.rec s sub (+ idx (str.len sub)))))))
-
-(define-fun str.count ((s String) (sub String)) Int
-  (ite (= (str.len sub) 0)
-       (+ 1 (str.len s))
-       (str.count.rec s sub 0)))
-"""
+        smt2 = ""
 
         # Declare variables
         for decl in self.declarations:
@@ -141,7 +147,13 @@ class MockSolver:
                 smt2 += f"(assert {c.to_smt2()})\n"
             
         smt2 += "(check-sat)\n(get-model)\n"
-        
+
+        smt2_preambule = "(set-logic ALL)\n" 
+        for fun,defn in library.items():
+            if fun in smt2:
+                smt2_preambule += defn + "\n"
+        smt2 = smt2_preambule + smt2
+
         # Write to temporary file
         with tempfile.NamedTemporaryFile(mode='w', suffix='.smt2', delete=False) as f:
             f.write(smt2)
