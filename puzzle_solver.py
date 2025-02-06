@@ -6,6 +6,16 @@ from func_timeout import func_timeout, FunctionTimedOut
 import traceback
 from typing import List, Any, Dict, Optional, Tuple
 
+def sym_ord(x):
+    if isinstance(x, SymbolicStr):
+        return SymbolicInt(x.tracer.backend.StrToInt(x.z3_expr), tracer=x.tracer)
+    return ord(x)
+
+def sym_bin(x):
+    if isinstance(x, SymbolicInt):
+        return SymbolicStr(x.tracer.backend.Bin(x.z3_expr), tracer=x.tracer)
+    return bin(x)
+                           
 def sym_int(x):
     if isinstance(x, SymbolicStr):
         return SymbolicInt(x.tracer.backend.StrToInt(x.z3_expr), tracer=x.tracer)
@@ -177,7 +187,7 @@ class HoleyWrapper(ast.NodeTransformer):
     def visit_Call(self, node):
         node = self.generic_visit(node)
         if isinstance(node.func, ast.Name):
-            if node.func.id in ['int', 'str', 'len', 'range']:
+            if node.func.id in ['int', 'str', 'len', 'range', 'bin', 'ord']:
                 return ast.Call(
                     func=ast.Name(id='sym_'+node.func.id, ctx=ast.Load()),
                     args=node.args,
@@ -254,7 +264,9 @@ class PuzzleSolver:
             'sym_str': sym_str,
             'sym_int': sym_int,
             'sym_len': sym_len,
-            'sym_range': sym_range
+            'sym_range': sym_range,
+            'sym_bin': sym_bin,
+            'sym_ord': sym_ord
         }
         sym_var = make_symbolic(typ, 'x', tracer)
         namespace['x'] = sym_var

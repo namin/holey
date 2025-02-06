@@ -93,6 +93,21 @@ class MockExpr:
         return f"({op} {args_str})"
 
 library = {
+'isupper':
+"""
+(define-fun is-upper-char ((c String)) Bool
+  (and (>= (str.to_code c) 65) (<= (str.to_code c) 90))
+)
+
+(define-fun-rec isupper ((s String)) Bool
+  (ite (= s "")
+       true
+       (and (is-upper-char (str.at s 0))
+            (isupper (str.substr s 1 (- (str.len s) 1))))
+  )
+)
+"""
+,
 'python.mod':
 """
 (define-fun python.mod ((a Int) (b Int)) Int
@@ -113,6 +128,20 @@ library = {
   (ite (= (str.len sub) 0)
        (+ 1 (str.len s))
        (str.count.rec s sub 0)))
+"""
+,
+'bin':
+"""
+(define-fun-rec bin.rec ((x Int) (n Int)) String
+  (ite (<= n 0)
+       ""
+       (let ((bit (mod x 2))
+             (rest (div x 2)))
+         (str.++ (bin.rec rest (- n 1))
+                 (ite (= bit 0) "0" "1")))))
+
+(define-fun bin ((x Int)) String
+  (str.++ "0b" (bin.rec x 32)))
 """
 }
 
@@ -305,3 +334,9 @@ class MockBackend(Backend):
 
     def StrSubstr(self, s: Any, start: Any, end: Any) -> Any:
         return MockExpr('str.substr', [s, start, end])
+
+    def Bin(self, x: Any) -> Any:
+        return MockExpr('bin', [x])
+
+    def IsUpper(self, x):
+        return MockExpr('isupper', [x])

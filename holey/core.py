@@ -251,7 +251,8 @@ class SymbolicInt:
         return SymbolicBool(self.tracer.backend.Or(truthy(self).z3_expr, truthy(other).z3_expr), tracer=self.tracer)
 
     def __index__(self):
-        """Allow SymbolicInt to be used with bin(), hex(), etc."""
+        if self.concrete is not None:
+            return self.concrete
         if hasattr(self.z3_expr, 'as_long'):
             return self.z3_expr.as_long()
         raise ValueError("Cannot convert symbolic integer to index")
@@ -307,16 +308,39 @@ class SymbolicStr:
         raise ValueError("Split not implemented for symbolic strings.")
 
     def __getitem__(self, key):
-        if isinstance(key, slice):
-            if (not isinstance(key.start, SymbolicInt) and 
-                not isinstance(key.stop, SymbolicInt) and 
-                not isinstance(key.step, SymbolicInt)):
-                return SymbolicStr(self.concrete[key], tracer=self.tracer)
-            return SymbolicSlice(self.concrete, key.start, key.stop, key.step, tracer=self.tracer)
-        elif isinstance(key, SymbolicInt):
-            return SymbolicSlice(self.concrete, key, key+1, key.step, tracer=self.tracer)
-        return self.concrete[key]
-        
+        if self.concrete is not None:
+            if isinstance(key, slice):
+                if (not isinstance(key.start, SymbolicInt) and 
+                    not isinstance(key.stop, SymbolicInt) and 
+                    not isinstance(key.step, SymbolicInt)):
+                    return SymbolicStr(self.concrete[key], tracer=self.tracer)
+                return SymbolicSlice(self.concrete, key.start, key.stop, key.step, tracer=self.tracer)
+            elif isinstance(key, SymbolicInt):
+                return SymbolicSlice(self.concrete, key, key+1, None, tracer=self.tracer)
+            return SymbolicStr(self.concrete[key], tracer=self.tracer)
+        else:
+            if isinstance(key, slice):
+                start = key.start if key.start is not None else 0
+                stop = key.stop if key.stop is not None else self.tracer.backend.StrLen(self.z3_expr)
+                return SymbolicStr(
+                    self.tracer.backend.StrSubstr(
+                        self.z3_expr,
+                        start if isinstance(start, SymbolicInt) else SymbolicInt(start, tracer=self.tracer),
+                        stop if isinstance(stop, SymbolicInt) else SymbolicInt(stop, tracer=self.tracer)
+                    ),
+                    tracer=self.tracer
+                )
+            else:
+                # Single index access
+                return SymbolicStr(
+                    self.tracer.backend.StrSubstr(
+                        self.z3_expr,
+                        key if isinstance(key, SymbolicInt) else SymbolicInt(key, tracer=self.tracer),
+                        key + 1 if isinstance(key, SymbolicInt) else SymbolicInt(key + 1, tracer=self.tracer)
+                    ),
+                    tracer=self.tracer
+                )
+
     def __len__(self):
         if self.concrete is not None:
             return SymbolicInt(len(self.concrete), tracer=self.tracer)
@@ -378,6 +402,9 @@ class SymbolicStr:
     def startswith(self, prefix):
         prefix = self.tracer.ensure_symbolic(prefix)
         return SymbolicBool(self.tracer.backend.StrPrefixOf(prefix.z3_expr, self.z3_expr), tracer=self.tracer)
+
+    def isupper(self):
+        return SymbolicBool(self.tracer.backend.IsUpper(self.z3_expr), tracer=self.tracer)
 
 class SymbolicSlice:
     def __init__(self, concrete_str: str, start, end, step=None, tracer: Optional[SymbolicTracer] = None):
