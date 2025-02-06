@@ -206,8 +206,7 @@ class SymbolicInt:
         return SymbolicInt(self.tracer.backend.Pow(other.z3_expr, self.z3_expr), tracer=self.tracer)
 
     def __le__(self, other):
-        if isinstance(other, (int, float)):
-            other = SymbolicInt(self.tracer.backend.IntVal(other), tracer=self.tracer)
+        other = self.tracer.ensure_symbolic(other)
         return SymbolicBool(self.tracer.backend.LE(self.z3_expr, other.z3_expr), tracer=self.tracer)
     
     def __ge__(self, other):
@@ -237,8 +236,7 @@ class SymbolicInt:
         return SymbolicInt(self.z3_expr / (2 ** other.z3_expr), tracer=self.tracer)
 
     def __neg__(self):
-        zero = SymbolicInt(0, tracer=self.tracer)
-        return SymbolicInt(self.tracer.backend.Sub(zero.z3_expr, self.z3_expr), tracer=self.tracer)
+        return SymbolicInt(-self.z3_expr, tracer=self.tracer)
 
     def is_integer(self):
         """Always returns True since SymbolicInt is always an integer"""
@@ -264,23 +262,20 @@ class SymbolicFloat:
         self.z3_expr = value
 
     def __sub__(self, other):
-        if isinstance(other, (int, float)):
-            result = SymbolicFloat(self.tracer.backend.Sub(self.z3_expr, self.tracer.backend.Real(other)), tracer=self.tracer)
-            return result
-        return NotImplemented
+        other = self.tracer.ensure_symbolic(other)
+        return SymbolicFloat(self.tracer.backend.Sub(self.z3_expr, other.z3_expr), tracer=self.tracer)
 
     def __abs__(self):
         result = SymbolicFloat(
             self.tracer.backend.If(self.z3_expr >= 0,
-                                 self.z3_expr,
-                                 -self.z3_expr),
+                                   self.z3_expr,
+                                   -self.z3_expr),
             tracer=self.tracer)
         return result
 
     def __le__(self, other):
-        if isinstance(other, (int, float)):
-            return SymbolicBool(self.z3_expr <= self.tracer.backend.Real(other), tracer=self.tracer)
-        return NotImplemented
+        other = self.tracer.ensure_symbolic(other)
+        return SymbolicBool(self.z3_expr <= other.z3_expr, tracer=self.tracer)
 
     def is_integer(self):
         """Returns True if the number equals its floor"""

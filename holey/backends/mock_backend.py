@@ -60,7 +60,7 @@ class MockExpr:
         return MockExpr('*', [self, other])
         
     def __neg__(self):
-        return MockExpr('neg', [self])
+        return MockExpr('-', [self])
 
     def __truediv__(self, other):
         return MockExpr('/', [self, other])
