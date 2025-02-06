@@ -48,7 +48,7 @@ class MockExpr:
         return MockExpr('<=', [self, other])
         
     def __eq__(self, other):
-        return MockExpr('==', [self, other])
+        return MockExpr('=', [self, other])
     
     def __add__(self, other):
         return MockExpr('+', [self, other])
