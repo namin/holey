@@ -173,6 +173,29 @@ class HoleyWrapper(ast.NodeTransformer):
                 args=[node.left, node.comparators[0]],
                 keywords=[]
             )
+        # Handle chained comparisons like a < b <= c
+        elif len(node.ops) > 1:
+            values = [node.left] + node.comparators
+            result = None
+            for i in range(len(node.ops)):
+                comp = ast.Compare(
+                    left=values[i],
+                    ops=[node.ops[i]],
+                    comparators=[values[i+1]]
+                )
+                if result is None:
+                    result = comp
+                else:
+                    result = ast.Call(
+                        func=ast.Attribute(
+                            value=result,
+                            attr='__and__',
+                            ctx=ast.Load()
+                        ),
+                        args=[comp],
+                        keywords=[]
+                    )
+            return result
         return node
 
     def visit_UnaryOp(self, node):
