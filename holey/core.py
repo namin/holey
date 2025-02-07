@@ -203,7 +203,11 @@ class SymbolicInt:
         return SymbolicInt(self.tracer.backend.Pow(self.z3_expr, other.z3_expr), tracer=self.tracer)
 
     def __rpow__(self, other):
-        return self.__pow__(other)
+        other = self.tracer.ensure_symbolic(other)
+        if isinstance(other, SymbolicFloat):
+            return SymbolicFloat(self.tracer.backend.Pow(other.z3_expr, self.z3_expr), tracer=self.tracer)
+        return SymbolicInt(self.tracer.backend.Pow(other.z3_expr, self.z3_expr), tracer=self.tracer)
+
 
     def __le__(self, other):
         other = self.tracer.ensure_symbolic(other)
