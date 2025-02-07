@@ -142,6 +142,8 @@ class SymbolicInt:
         
     def __eq__(self, other):
         other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicBool(self.concrete == other.concrete, tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.Eq(self.z3_expr, other.z3_expr), tracer=self.tracer)
     
     def __lt__(self, other):
@@ -190,11 +192,16 @@ class SymbolicInt:
 
     def __mod__(self, other):
         other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicInt(self.concrete % other.concrete, tracer=self.tracer)
         return SymbolicInt(self.tracer.backend.Mod(self.z3_expr, other.z3_expr), tracer=self.tracer)
 
     def __rmod__(self, other):
         other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicInt(other.concrete % self.concrete, tracer=self.tracer)
         return SymbolicInt(self.tracer.backend.Mod(other.z3_expr, self.z3_expr), tracer=self.tracer)
+
 
     def __pow__(self, other):
         other = self.tracer.ensure_symbolic(other)
@@ -240,6 +247,8 @@ class SymbolicInt:
         return SymbolicInt(self.z3_expr / (2 ** other.z3_expr), tracer=self.tracer)
 
     def __neg__(self):
+        if self.concrete is not None:
+            return SymbolicInt(-self.concrete, tracer=self.tracer)
         return SymbolicInt(-self.z3_expr, tracer=self.tracer)
 
     def is_integer(self):
