@@ -315,13 +315,20 @@ class PuzzleSolver:
             traceback.print_exc()
         return None
 
-def run_benchmarks(puzzle_file: str):
+def run_benchmarks(puzzle_file: str, name_prefix: str = None):
     with open(puzzle_file) as f:
         puzzles = json.load(f)
+    
+    # Filter puzzles if name_prefix is provided
+    if name_prefix:
+        puzzles = [p for p in puzzles if p.get('name', '').startswith(name_prefix)]
+        
     solver = PuzzleSolver()
     success_count = 0
 
     print(f"Running benchmarks on {len(puzzles)} puzzles...")
+    if name_prefix:
+        print(f"Filtered to puzzles starting with '{name_prefix}'")
 
     for i, puzzle in enumerate(puzzles):
         name = puzzle.get('name', 'Unknown')
@@ -335,9 +342,15 @@ def run_benchmarks(puzzle_file: str):
     print('STATS')
     print("Success count:", success_count)
     print("Total considered:", solver.count)
-    success_percentage = 100.0 * success_count / solver.count
+    success_percentage = 100.0 * success_count / solver.count if solver.count > 0 else 0
     print(f"Success percentage: {success_percentage:.0f}%")
 
 if __name__ == "__main__":
-    puzzle_file = "benchmarks/PythonProgrammingPuzzles/puzzles/puzzles.json"
-    run_benchmarks(puzzle_file)
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--puzzle-file', default="benchmarks/PythonProgrammingPuzzles/puzzles/puzzles.json",
+                      help='Path to the puzzle JSON file')
+    parser.add_argument('--name-prefix', help='Only run puzzles whose names start with this prefix')
+    args = parser.parse_args()
+    
+    run_benchmarks(args.puzzle_file, args.name_prefix)

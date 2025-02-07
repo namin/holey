@@ -252,6 +252,10 @@ class MockBackend(Backend):
         return MockExpr('bool_val', [val], _name=str(val))
 
     def And(self, *args) -> MockExpr:
+        if not args:
+            return self.BoolVal(True)
+        if len(args) == 1:
+            return args[0]
         return MockExpr('and', list(args))
 
     def Or(self, *args) -> MockExpr:
@@ -261,7 +265,7 @@ class MockBackend(Backend):
         return MockExpr('not', [arg])
 
     def Implies(self, a, b) -> MockExpr:
-        return MockExpr('implies', [a, b])
+        return MockExpr('=>', [a, b])
 
     def If(self, cond, t, f) -> MockExpr:
         return MockExpr('if', [cond, t, f])

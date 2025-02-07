@@ -511,12 +511,20 @@ class SymbolicRange:
             return self.end - self.start
         return (self.end - self.start) / self.step
 
+def fresh_symbolic(var):
+    typ = type(var).__name__.lower().replace('symbolic', '')
+    return make_symbolic(typ, var.name, var.tracer)
+
 def make_symbolic(typ: Type, name: str, tracer: Optional[SymbolicTracer] = None) -> Any:
     """Create a new symbolic variable of given type"""
-    if typ == int:
+    if typ == int or typ == 'int':
         sym = SymbolicInt(name=name, tracer=tracer)
-    elif typ == bool:
+    elif typ == bool or typ == 'bool':
         sym = SymbolicBool(name=name, tracer=tracer)
+    elif typ == float or typ == 'float':
+        sym = SymbolicFloat(name=name, tracer=tracer)
+    elif typ == str or typ == 'str':
+        sym = SymbolicStr(name=name, tracer=tracer)
     else:
         raise ValueError(f"Unsupported symbolic type: {typ}")
     return sym
