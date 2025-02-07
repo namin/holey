@@ -309,6 +309,8 @@ class PuzzleSolver:
                 if not sat(int(result)):
                     print("WARNING: Solution verification failed!")
                     return None
+                else:
+                    print("Yes! Solved", name)
             return result
         except FunctionTimedOut:
             print("Timed out")
