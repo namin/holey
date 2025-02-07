@@ -32,8 +32,8 @@ class MockExpr:
     def __str__(self):
         if self._name is not None:
             return self._name
-        args_str = ", ".join(str(arg) for arg in self.args)
-        return f"{self.op}({args_str})"
+        args_str = " ".join(str(arg) for arg in self.args)
+        return f"({self.op} {args_str})"
     
     def __gt__(self, other):
         return MockExpr('>', [self, other])

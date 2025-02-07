@@ -81,8 +81,7 @@ class SymbolicBool:
     def __bool__(self):
         if isinstance(self.z3_expr, bool):
             return self.z3_expr
-        self.tracer.add_constraint(self.z3_expr)
-        return True
+        raise ValueError("Symbolic bool cannot be concretized: " + str(self.z3_expr))
 
     def __and__(self, other):
         other = self.tracer.ensure_symbolic(other)
@@ -148,6 +147,8 @@ class SymbolicInt:
     
     def __lt__(self, other):
         other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicBool(self.concrete < other.concrete, tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.LT(self.z3_expr, other.z3_expr), tracer=self.tracer)
     
     def __gt__(self, other):
@@ -185,6 +186,8 @@ class SymbolicInt:
         return hash(str(self.z3_expr))
 
     def __abs__(self):
+        if self.concrete is not None:
+            return abs(self.concrete)
         return SymbolicInt(self.tracer.backend.If(self.z3_expr >= 0, 
                                                   self.z3_expr, 
                                                   -self.z3_expr), 
