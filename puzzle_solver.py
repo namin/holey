@@ -1,4 +1,4 @@
-from holey import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicInt, SymbolicRange,SymbolicStr
+from holey import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicRange,SymbolicStr
 from holey.backends import CVC5Backend, Z3Backend, MockBackend
 import ast
 import json
@@ -19,6 +19,8 @@ def sym_bin(x):
 def sym_int(x):
     if isinstance(x, SymbolicStr):
         return SymbolicInt(x.tracer.backend.StrToInt(x.z3_expr), tracer=x.tracer)
+    if isinstance(x, SymbolicFloat):
+        return SymbolicInt(x.tracer.backend.ToInt(x.z3_expr), tracer=x.tracer)
     if isinstance(x, SymbolicInt):
         return x
     return int(x)

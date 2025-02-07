@@ -318,6 +318,9 @@ class MockBackend(Backend):
     def Eq(self, a, b) -> Any:
         return MockExpr('=', [a, b])
 
+    def ToInt(self, x: Any) -> Any:
+        return MockExpr('to_int', [x])
+
     def IntToStr(self, x: Any) -> Any:
         return MockExpr('int.to.str', [x])
 

@@ -93,6 +93,8 @@ class SymbolicBool:
         return SymbolicBool(self.tracer.backend.Or(self.z3_expr, other.z3_expr), tracer=self.tracer)
     
     def __not__(self):
+        if isinstance(self.z3_expr, bool):
+            return SymbolicBool(not self.z3_expr, tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.Not(self.z3_expr), tracer=self.tracer)
     
 class SymbolicInt:
@@ -124,24 +126,19 @@ class SymbolicInt:
         other = self.tracer.ensure_symbolic(other)
         if isinstance(other, SymbolicFloat):
             return SymbolicFloat(self.tracer.backend.Add(self.z3_expr, other.z3_expr), tracer=self.tracer)
-        if isinstance(other, (int, SymbolicInt)):
-            return SymbolicInt(self.tracer.backend.Add(self.z3_expr, other.z3_expr), tracer=self.tracer)
+        return SymbolicInt(self.tracer.backend.Add(self.z3_expr, other.z3_expr), tracer=self.tracer)
     
     def __sub__(self, other):
         other = self.tracer.ensure_symbolic(other)
         if isinstance(other, SymbolicFloat):
             return SymbolicFloat(self.tracer.backend.Sub(self.z3_expr, other.z3_expr), tracer=self.tracer)
-        if isinstance(other, (int, SymbolicInt)):
-            return SymbolicInt(self.tracer.backend.Sub(self.z3_expr, other.z3_expr), tracer=self.tracer)
-        return NotImplemented
+        return SymbolicInt(self.tracer.backend.Sub(self.z3_expr, other.z3_expr), tracer=self.tracer)
     
     def __mul__(self, other):
         other = self.tracer.ensure_symbolic(other)
         if isinstance(other, SymbolicFloat):
             return SymbolicFloat(self.tracer.backend.Mul(self.z3_expr, other.z3_expr), tracer=self.tracer)
-        if isinstance(other, (int, SymbolicInt)):
-            return SymbolicInt(self.tracer.backend.Mul(self.z3_expr, other.z3_expr), tracer=self.tracer)
-        return NotImplemented
+        return SymbolicInt(self.tracer.backend.Mul(self.z3_expr, other.z3_expr), tracer=self.tracer)
         
     def __eq__(self, other):
         other = self.tracer.ensure_symbolic(other)
@@ -201,11 +198,12 @@ class SymbolicInt:
 
     def __pow__(self, other):
         other = self.tracer.ensure_symbolic(other)
+        if isinstance(other, SymbolicFloat):
+            return SymbolicFloat(self.tracer.backend.Pow(self.z3_expr, other.z3_expr), tracer=self.tracer)
         return SymbolicInt(self.tracer.backend.Pow(self.z3_expr, other.z3_expr), tracer=self.tracer)
 
     def __rpow__(self, other):
-        other = self.tracer.ensure_symbolic(other)
-        return SymbolicInt(self.tracer.backend.Pow(other.z3_expr, self.z3_expr), tracer=self.tracer)
+        return self.__pow__(other)
 
     def __le__(self, other):
         other = self.tracer.ensure_symbolic(other)
@@ -285,9 +283,7 @@ class SymbolicFloat:
         return SymbolicBool(
             self.tracer.backend.Eq(
                 self.z3_expr,
-                self.tracer.backend.ToReal(
-                    self.tracer.backend.ToInt(self.z3_expr)
-                )
+                self.tracer.backend.ToInt(self.z3_expr)
             ),
             tracer=self.tracer
         )
