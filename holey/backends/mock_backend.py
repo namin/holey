@@ -321,6 +321,9 @@ class MockBackend(Backend):
     def IntToStr(self, x: Any) -> Any:
         return MockExpr('int.to.str', [x])
 
+    def StrToCode(self, x: Any) -> Any:
+        return MockExpr('str.to_code', [x])
+
     def StrToInt(self, x: Any) -> Any:
         return MockExpr('str.to.int', [x])
 

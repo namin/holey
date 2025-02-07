@@ -8,7 +8,7 @@ from typing import List, Any, Dict, Optional, Tuple
 
 def sym_ord(x):
     if isinstance(x, SymbolicStr):
-        return SymbolicInt(x.tracer.backend.StrToInt(x.z3_expr), tracer=x.tracer)
+        return SymbolicInt(x.tracer.backend.StrToCode(x.z3_expr), tracer=x.tracer)
     return ord(x)
 
 def sym_bin(x):

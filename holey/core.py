@@ -79,6 +79,8 @@ class SymbolicBool:
         self.z3_expr = value
 
     def __bool__(self):
+        if isinstance(self.z3_expr, bool):
+            return self.z3_expr
         self.tracer.add_constraint(self.z3_expr)
         return True
 
@@ -404,6 +406,8 @@ class SymbolicStr:
         return SymbolicBool(self.tracer.backend.StrPrefixOf(prefix.z3_expr, self.z3_expr), tracer=self.tracer)
 
     def isupper(self):
+        if self.concrete is not None:
+            return SymbolicBool(self.concrete.isupper(), tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.IsUpper(self.z3_expr), tracer=self.tracer)
 
 class SymbolicSlice:
