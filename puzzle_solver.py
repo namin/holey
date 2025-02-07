@@ -1,10 +1,11 @@
-from holey import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicRange,SymbolicStr
+from holey import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicRange, SymbolicRangeIterator, SymbolicStr, truthy
 from holey.backends import CVC5Backend, Z3Backend, MockBackend
 import ast
 import json
 from func_timeout import func_timeout, FunctionTimedOut
 import traceback
 from typing import List, Any, Dict, Optional, Tuple
+import types
 
 def sym_ord(x):
     if isinstance(x, SymbolicStr):
@@ -74,17 +75,39 @@ def symbolic_in(x, container):
     return x in container
 
 def symbolic_any(iterable):
-    # For generator expressions, convert to list
+    if isinstance(iterable, types.GeneratorType):
+        iterator = iter(iterable.gi_frame.f_locals['.0'])
+        if isinstance(iterator, SymbolicRangeIterator):
+            predicate = next(iterable)
+            bounds = iterator.get_bounds()
+            return SymbolicBool(iterator.tracer.backend.Not(
+                iterator.tracer.backend.Implies(
+                    bounds.z3_expr,
+                    iterator.tracer.backend.Not(truthy(predicate).z3_expr)
+                )
+            ), tracer=iterator.tracer)
+
+    # Default case for concrete lists/other iterables
     conditions = list(iterable)
     if not conditions:
         return False
-    # Create disjunction
     result = conditions[0]
     for cond in conditions[1:]:
         result = result.__or__(cond)
     return result
 
 def symbolic_all(iterable):
+    if isinstance(iterable, types.GeneratorType):
+        iterator = iter(iterable.gi_frame.f_locals['.0'])
+        if isinstance(iterator, SymbolicRangeIterator):
+            predicate = next(iterable)
+            bounds = iterator.get_bounds()
+            return SymbolicBool(iterator.tracer.backend.Implies(
+                bounds.z3_expr,
+                truthy(predicate).z3_expr
+            ), tracer=iterator.tracer)
+
+    # Default case for concrete lists/other iterables
     conditions = list(iterable)
     if not conditions:
         return True

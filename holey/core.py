@@ -219,7 +219,7 @@ class SymbolicInt:
 
     def __ne__(self, other):
         other = self.tracer.ensure_symbolic(other)
-        return SymbolicBool(self.z3_expr != other.z3_expr, tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.Not(self.tracer.backend.Eq(self.z3_expr, other.z3_expr)), tracer=self.tracer)
 
     def __divmod__(self, other):
         other = self.tracer.ensure_symbolic(other)
@@ -468,9 +468,43 @@ class SymbolicSlice:
             
         return result
 
-class SymbolicRange:
-    _counter = 0  # Class variable to generate unique variable names
+class SymbolicRangeIterator:
+    def __init__(self, sym_range):
+        self.tracer = sym_range.tracer
+        self.sym_range = sym_range
+        # Create fresh variable for the iterator
+        self.var = SymbolicInt(name=f'i_{SymbolicRange._counter}', tracer=sym_range.tracer)
+        SymbolicRange._counter += 1
+        self.used = False
     
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        if self.used:
+            raise StopIteration
+        self.used = True
+        return self.var
+    
+    def get_bounds(self):
+        """Get bounds constraints including step if present"""
+        bounds = (self.var >= self.sym_range.start).__and__(
+                 self.var < self.sym_range.end)
+        
+        if self.sym_range.step is not None:
+            # i = start + k * step for some k >= 0
+            k = SymbolicInt(name=f'k_{SymbolicRange._counter}', tracer=self.sym_range.tracer)
+            SymbolicRange._counter += 1
+            step_constraint = (self.var == self.sym_range.start + k * self.sym_range.step).__and__(
+                             k >= 0).__and__(
+                             k < (self.sym_range.end - self.sym_range.start) / self.sym_range.step)
+            bounds = bounds.__and__(step_constraint)
+            
+        return bounds
+
+class SymbolicRange:
+    _counter = 0
+
     def __init__(self, start, end, step=None, tracer=None):
         self.start = start if isinstance(start, SymbolicInt) else SymbolicInt(start, tracer=tracer)
         self.end = end if isinstance(end, SymbolicInt) else SymbolicInt(end, tracer=tracer)
@@ -478,27 +512,7 @@ class SymbolicRange:
         self.tracer = tracer or self.start.tracer
 
     def __iter__(self):
-        # Generate a unique variable name for this range iteration
-        SymbolicRange._counter += 1
-        var_name = f'i_{SymbolicRange._counter}'
-        
-        # Create a symbolic integer for the loop variable
-        i = SymbolicInt(name=var_name, tracer=self.tracer)
-        
-        # Add range constraints
-        self.tracer.add_constraint((i >= self.start).z3_expr)
-        self.tracer.add_constraint((i < self.end).z3_expr)
-        
-        if self.step is not None:
-            # i = start + k * step for some k
-            k = SymbolicInt(name=f'k_{SymbolicRange._counter}', tracer=self.tracer)
-            self.tracer.add_constraint((i == self.start + k * self.step).z3_expr)
-            
-            # Add constraint that k is within valid range
-            self.tracer.add_constraint((k >= 0).z3_expr)
-            self.tracer.add_constraint((k < (self.end - self.start) / self.step).z3_expr)
-            
-        yield i
+        return SymbolicRangeIterator(self)
 
     def __contains__(self, item):
         item = self.tracer.ensure_symbolic(item)
