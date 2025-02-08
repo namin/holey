@@ -82,12 +82,15 @@ class SymbolicBool:
         self.z3_expr = value
         if isinstance(value, bool):
             self.concrete = value
+        # TODO: weird that we need this
+        elif str(value) in ['true', 'false']:
+            self.concrete = str(value)!='false'
         else:
             self.concrete = None
 
     def __bool__(self):
-        if isinstance(self.z3_expr, bool):
-            return self.z3_expr
+        if self.concrete is not None:
+            return self.concrete
         return self.tracer.branch(self)
 
     def __and__(self, other):
@@ -99,8 +102,8 @@ class SymbolicBool:
         return SymbolicBool(self.tracer.backend.Or(self.z3_expr, other.z3_expr), tracer=self.tracer)
     
     def __not__(self):
-        if isinstance(self.z3_expr, bool):
-            return SymbolicBool(not self.z3_expr, tracer=self.tracer)
+        if self.concrete is not None:
+            return SymbolicBool(not self.concrete, tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.Not(self.z3_expr), tracer=self.tracer)
     
 class SymbolicInt:
@@ -225,6 +228,8 @@ class SymbolicInt:
         other = self.tracer.ensure_symbolic(other)
         if isinstance(other, SymbolicFloat):
             return SymbolicFloat(self.tracer.backend.Pow(self.z3_expr, other.z3_expr), tracer=self.tracer)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicInt(other.concrete ** self.concrete, tracer=self.tracer)
         return SymbolicInt(self.tracer.backend.Pow(self.z3_expr, other.z3_expr), tracer=self.tracer)
 
     def __rpow__(self, other):
@@ -440,7 +445,7 @@ class SymbolicList:
         return SymbolicInt(count, tracer=self.tracer)
 
 class SymbolicStr:
-    def __init__(self, value: str, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
+    def __init__(self, value: Optional[Any] = None, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
         self.tracer = tracer
         self.concrete = None
         if name is not None:
@@ -450,6 +455,7 @@ class SymbolicStr:
             self.z3_expr = self.tracer.backend.StringVal(value)
         else:
             self.z3_expr = value
+        self.name = name
 
     def split(self, sep=None):
         """Split string into list of strings"""
@@ -466,7 +472,23 @@ class SymbolicStr:
         result = self.tracer.backend.StrSplit(self.z3_expr, self.tracer.backend.StringVal(sep))
         return SymbolicList(result, tracer=self.tracer)
 
+    def __contains__(self, item):
+        item = self.tracer.ensure_symbolic(item)
+        if self.concrete is not None and item.concrete is not None:
+            return SymbolicBool(item.concrete in self.concrete, tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.StrContains(self.z3_expr, item.z3_expr), tracer=self.tracer)
+
     def __getitem__(self, key):
+        if self.concrete is None:
+            if isinstance(key, slice):
+                start = key.start if key.start else 0
+                stop = key.stop if key.stop else self.__len__()
+                start = self.tracer.ensure_symbolic(start)
+                stop = self.tracer.ensure_symbolic(stop)
+                # TODO: use SymbolicSlice (specialized to Str) if we have a step
+                return SymbolicStr(self.tracer.backend.StrSubstr(self.z3_expr, start.z3_expr, stop.z3_expr), tracer=self.tracer)
+            key = self.tracer.ensure_symbolic(key)
+            return SymbolicStr(self.tracer.backend.StrIndex(self.z3_expr, key.z3_expr), tracer=self.tracer)
         if isinstance(key, slice):
             if (not isinstance(key.start, SymbolicInt) and 
                 not isinstance(key.stop, SymbolicInt) and 
@@ -519,7 +541,7 @@ class SymbolicStr:
                 ),
                 tracer=self.tracer
             )
-        return NotImplemented
+        raise ValueError("Not implemented: __add__")
 
     def __radd__(self, other):
         if isinstance(other, str):
@@ -530,25 +552,35 @@ class SymbolicStr:
                 ),
                 tracer=self.tracer
             )
-        return NotImplemented
+        raise ValueError("Not implemented: __radd__")
 
     # For comparison operations
     def __eq__(self, other):
         if isinstance(other, (str, SymbolicStr)):
-            other_str = other.concrete if isinstance(other, SymbolicStr) else other
-            result = self.concrete == other_str
-            if self.tracer:
-                return SymbolicBool(self.tracer.backend.BoolVal(result), tracer=self.tracer)
-            return result
-        return NotImplemented
+            other = self.tracer.ensure_symbolic(other)
+            if self.concrete is not None and other.concrete is not None:
+                result = self.concrete == other_str
+            else:
+                result = self.z3_expr == other.z3_expr
+            return SymbolicBool(result, tracer=self.tracer)
+        else:
+            return SymbolBool(self.tracer.backend.BoolVal(False), tracer=self.tracer)
 
     def __ne__(self, other):
         eq = self.__eq__(other)
-        if eq is NotImplemented:
-            return NotImplemented
         if isinstance(eq, SymbolicBool):
+            if eq.concrete is not None:
+                return SymbolicBool(not eq.concrete, tracer=self.tracer)
             return SymbolicBool(self.tracer.backend.Not(eq.z3_expr), tracer=self.tracer)
         return not eq
+
+    def __and__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        return SymbolicBool(self.tracer.backend.And(truthy(self).z3_expr, truthy(other).z3_expr), tracer=self.tracer)
+    
+    def __or__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        return SymbolicBool(self.tracer.backend.Or(truthy(self).z3_expr, truthy(other).z3_expr), tracer=self.tracer)
 
     def startswith(self, prefix):
         prefix = self.tracer.ensure_symbolic(prefix)
@@ -567,7 +599,15 @@ class SymbolicSlice:
         self.end = end
         self.step = step
         self.tracer = tracer
+
+    def __and__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        return SymbolicBool(self.tracer.backend.And(truthy(self).z3_expr, truthy(other).z3_expr), tracer=self.tracer)
     
+    def __or__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        return SymbolicBool(self.tracer.backend.Or(truthy(self).z3_expr, truthy(other).z3_expr), tracer=self.tracer)
+
     def __getitem__(self, key):
         """Handle indexing into the slice"""
         if isinstance(key, SymbolicInt):
@@ -648,7 +688,7 @@ class SymbolicSlice:
             )
         else:
             # For lists, we still need to implement this
-            raise NotImplementedError("Symbolic list slicing not yet implemented")
+            raise ValueError("Not implemented: symbolic list slicing")
 
 class SymbolicRangeIterator:
     def __init__(self, sym_range):
@@ -734,6 +774,9 @@ def truthy(x):
         return x
     elif isinstance(x, SymbolicInt):
         return x != 0
+    elif isinstance(x, SymbolicStr):
+        return x != ""
+    elif isinstance(x, SymbolicSlice):
+        return x != "" # TODO for list too
     else:
         return x
-

@@ -44,7 +44,7 @@ class MockExpr:
             return str(self.args[0]).lower()
         elif self.op == 'str.val':
             return to_smtlib_string(self.args[0])
-        elif self.op == "Int":
+        elif self.op in ["Int", "String"]:
             # For variable references, just return the name
             return str(self.args[0])
         elif not self.args:
@@ -152,6 +152,7 @@ class MockSolver:
         self._model = {}
     
     def add(self, constraint):
+        assert isinstance(constraint, MockExpr), "found bad constraint " + str(constraint) + " of type " + str(type(constraint))
         self.constraints.append(constraint)
     
     def model(self):
@@ -162,16 +163,16 @@ class MockSolver:
         smt2 = ""
 
         # Declare variables
-        for decl in self.declarations:
-            smt2 += f"(declare-const {decl} Int)\n"
-            
+        for decl,sort in self.declarations:
+            smt2 += f"(declare-const {decl} {sort})\n"
+        
         # Assert constraints
         for c in self.constraints:
             if isinstance(c, bool):
                 if not c:
                     smt2 += f"(assert (= 1 0))\n"
             else:
-                assert isinstance(c, MockExpr)
+                assert isinstance(c, MockExpr), "found " + str(c) + " of type " + str(type(c))
                 smt2 += f"(assert {c.to_smt2()})\n"
             
         smt2 += "(check-sat)\n(get-model)\n"
@@ -189,7 +190,10 @@ class MockSolver:
 
         print('### smt2')
         print(smt2)
-        
+
+        import sys
+        sys.stdout.flush()
+
         try:
             # Run Z3 (or CVC5) on the file
             result = subprocess.run(['z3', '-T:2', smt2_file], capture_output=True, text=True)
@@ -242,6 +246,7 @@ class MockBackend(Backend):
     def _record(self, op: str, *args) -> Any:
         """Record operation and return a MockExpr"""
         self.operations.append((op, args))
+        assert all(arg is not None for arg in args), "some arg is none: " + str(args)
         return MockExpr(op, args)
 
     def push(self):
@@ -270,7 +275,7 @@ class MockBackend(Backend):
         self._record("reset")
 
     def Int(self, name: str) -> MockExpr:
-        self.solver.declarations.add(name)
+        self.solver.declarations.add((name, 'Int'))
         return self._record("Int", name)
 
     def IntVal(self, val: int) -> MockExpr:
@@ -361,17 +366,27 @@ class MockBackend(Backend):
     def StrToInt(self, x) -> MockExpr:
         return self._record("str.to.int", x)
 
+    def StrIndex(self, x, y) -> MockExpr:
+        return self._record("str.index", x, y)
+
     def StrLen(self, x) -> MockExpr:
         return self._record("str.len", x)
 
     def StrPrefixOf(self, x, y) -> MockExpr:
         return self._record("str.prefixof", x, y)
 
+    def String(self, name: str) -> MockExpr:
+        self.solver.declarations.add((name, 'String'))
+        return self._record("String", name)
+
     def StringVal(self, val: str) -> MockExpr:
         return self._record("str.val", val)
 
     def StrCount(self, s, sub) -> MockExpr:
         return self._record("str.count", s, sub)
+
+    def StrContains(self, x, y) -> MockExpr:
+        return self._record("str.contains", x, y)
 
     def StrSubstr(self, s, start, length) -> MockExpr:
         return self._record("str.substr", s, start, length)

@@ -37,8 +37,10 @@ def sym_len(x):
 
 def sym_str(x):
     if isinstance(x, SymbolicInt):
-        return SymbolicStr(x.tracer.backend.IntToStr(x.z3_expr), tracer=x.tracer)
-    return str(x)
+        return SymbolicStr(str(x.concrete) if x.concrete else x.tracer.backend.IntToStr(x.z3_expr), tracer=x.tracer)
+    if isinstance(x, SymbolicStr):
+        return x
+    return x.__str__()
 
 def first_tracer(xs):
     if xs==[]:
@@ -75,9 +77,7 @@ def sym_range(*args):
     return [i]
 
 def sym_not(x):
-    if isinstance(x, SymbolicBool):
-        return SymbolicBool(x.tracer.backend.Not(x.z3_expr), x.tracer)
-    return not x
+    return x.__not__()
 
 def sym_in(x, container):
     if isinstance(x, SymbolicInt):
@@ -87,6 +87,8 @@ def sym_in(x, container):
         for eq in equalities[1:]:
             result = result.__or__(eq)
         return result
+    if isinstance(container, SymbolicStr):
+        return container.__contains__(x)
     return x in container
 
 def sym_any(iterable):
@@ -305,6 +307,8 @@ class PuzzleSolver:
         typ = None
         if ans_type == 'int':
             typ = int
+        elif ans_type == 'str':
+            typ = str
         if not typ:
             print("Unsupported answer type", ans_type)
             return None
@@ -346,7 +350,7 @@ class PuzzleSolver:
             print('Solution', solution)
             print("Could not find any solution var")
             return None
-        result = str(solution_var)
+        result = typ(str(solution_var))
         print("Found solution", result)
         return result
 
@@ -367,7 +371,7 @@ class PuzzleSolver:
                 namespace = {'x': result}
                 exec(sat_func, namespace)
                 sat = namespace['sat']
-                if not sat(int(result)):
+                if not sat(result):
                     print("WARNING: Solution verification failed!")
                     return None
                 else:
