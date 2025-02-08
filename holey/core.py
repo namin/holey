@@ -539,6 +539,7 @@ class SymbolicStr:
 
 class SymbolicSlice:
     def __init__(self, concrete_seq, start, end, step=None, tracer: Optional[SymbolicTracer] = None):
+        assert concrete_seq is not None
         self.concrete = concrete_seq  # Can be str or list
         self.start = start
         self.end = end
@@ -610,6 +611,22 @@ class SymbolicSlice:
             result = self.concrete[start:end:step]
             return (SymbolicStr(result, tracer=self.tracer) if isinstance(self.concrete, str)
                    else SymbolicList(result, tracer=self.tracer))
+        
+        # For symbolic indices, use substring operation
+        start = self.start if self.start is not None else 0
+        end = self.end if self.end is not None else len(self.concrete)
+        
+        if isinstance(self.concrete, str):
+            # Use Z3's Extract for strings
+            start_expr = start.z3_expr if isinstance(start, SymbolicInt) else self.tracer.backend.IntVal(start)
+            length_expr = (end.z3_expr if isinstance(end, SymbolicInt) else self.tracer.backend.IntVal(end)) - start_expr
+            return SymbolicStr(
+                self.tracer.backend.StrSubstr(self.tracer.backend.StringVal(self.concrete), start_expr, length_expr),
+                tracer=self.tracer
+            )
+        else:
+            # For lists, we still need to implement this
+            raise NotImplementedError("Symbolic list slicing not yet implemented")
 
 class SymbolicRangeIterator:
     def __init__(self, sym_range):
