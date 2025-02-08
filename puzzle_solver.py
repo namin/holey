@@ -336,8 +336,7 @@ class PuzzleSolver:
         namespace['x'] = sym_var
         exec(inject(sat_func), namespace)
         sat = namespace['sat']
-        result = sat(sym_var)
-        tracer.add_constraint(result)
+        tracer.driver(lambda: sat(sym_var))
         solution = tracer.solution()
         if solution is None:
             print("Could not find any solution")

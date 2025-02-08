@@ -10,48 +10,39 @@ class SymbolicTracer:
         self.backend = backend or default_backend()
         self.path_conditions = []
         self.branch_counter = 0
-        
+        self.current_branch_exploration = []
+        self.remaining_branch_explorations = []
+
+    def driver(self, thunk):
+        while True:
+            result = thunk()
+            self.add_constraint(result)
+            if self.remaining_branch_explorations == []:
+                return
+            else:
+                self.current_branch_exploration = self.remaining_branch_explorations.pop()
+                self.branch_counter = 0
+                self.path_conditions = []
+
     def branch(self, condition):
         """Handle a branching point in execution"""
-        self.backend.push()
-        self.backend.add(condition.z3_expr)  # Try true path
-        
-        # If true path is possible, take it and record in trace
-        if self.backend.check() == "sat":
-            self.path_conditions.append(condition.z3_expr)
-            self.backend.pop()
-            return True
-            
-        # If true path impossible, must take false path
-        self.backend.pop()
-        self.backend.push()
-        not_cond = self.backend.Not(condition.z3_expr)
-        self.backend.add(not_cond)
-        if self.backend.check() == "sat":
-            self.path_conditions.append(not_cond)
-            self.backend.pop()
-            return False
-            
-        self.backend.pop()
-        raise ValueError("No feasible branches found")
+        if len(self.current_branch_exploration) > self.branch_counter:
+            branch = self.current_branch_exploration[self.branch_counter]
+        else:
+            branch = True
+            self.remaining_branch_explorations.append(self.current_branch_exploration + [False])
+            self.current_branch_exploration += [branch]
 
-    def __enter__(self):
-        self._stack.append((self.path_conditions.copy(), self.backend.solver.assertions()))
-        return self
-    
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if self._stack:
-            old_conditions, old_assertions = self._stack.pop()
-            self.path_conditions = old_conditions
-            self.backend.solver = self.backend.Solver()
-            self.backend.solver.add(old_assertions)
-    
+        condition = self.ensure_symbolic(condition)
+        self.path_conditions.append(condition.z3_expr if branch else self.backend.Not(condition.z3_expr))
+        return branch
+
     def add_constraint(self, constraint):
-        if isinstance(constraint, SymbolicBool):
-            constraint = constraint.z3_expr
-        elif isinstance(constraint, SymbolicInt):
-            constraint = (constraint != 0).z3_expr
-        self.path_conditions.append(constraint)
+        constraint = self.ensure_symbolic(truthy(constraint)).z3_expr
+        if self.path_conditions:
+            constraint = self.backend.Implies(
+                self.backend.And(*self.path_conditions),
+                constraint)
         self.backend.solver.add(constraint)
     
     def check(self):
