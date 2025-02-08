@@ -19,7 +19,7 @@ def from_stmlib_int(v):
     if isinstance(v, list):
         if len(v)==2 and isinstance(v[0], sexpdata.Symbol) and v[0].value()=='-':
             return -int(v[1])
-        print("Unparseable as int", v)
+        #print("Unparseable as int", v)
         return None
     return int(v)
 
@@ -113,14 +113,6 @@ library = {
             (isupper (str.substr s 1 (- (str.len s) 1))))
   )
 )
-"""
-,
-'python.mod':
-"""
-(define-fun python.mod ((a Int) (b Int)) Int
-  (let ((m (mod a b)))
-    (ite (and (< m 0) (> b 0)) (+ m b)
-         (ite (and (> m 0) (< b 0)) (+ m b) m))))
 """
 ,
 'str.count':
@@ -314,6 +306,8 @@ class MockBackend(Backend):
         return self._record("distinct", *args)
 
     def Mod(self, a, b) -> MockExpr:
+        """Create modulo expression with non-zero divisor constraint"""
+        self.add(self.Not(self.Eq(b, self.IntVal(0))))  # Add constraint: b != 0
         return self._record("mod", a, b)
 
     def Pow(self, a, b) -> MockExpr:

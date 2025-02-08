@@ -6,6 +6,10 @@ from func_timeout import func_timeout, FunctionTimedOut
 import traceback
 from typing import List, Any, Dict, Optional, Tuple
 import types
+import itertools
+
+# Counter for generating unique variable names
+counter = itertools.count()
 
 def sym_ord(x):
     if isinstance(x, SymbolicStr):
@@ -44,27 +48,38 @@ def first_tracer(xs):
     else:
         return first_tracer(xs[1:])
 
-def sym_range(a, b=None, c=None):
-    if b is None:
-        start = 0
-        end = a
+def sym_range(*args):
+    """Symbolic version of range that adds proper bounds"""
+    if all(isinstance(arg, int) for arg in args):
+        return range(*args)
+
+    if len(args) == 1:
+        start, stop, step = 0, args[0], 1
+    elif len(args) == 2:
+        start, stop = args
         step = 1
     else:
-        start = a
-        end = b
-        step = c if c is not None else 1
-        
-    if all(isinstance(x, (int, type(None))) for x in (start, end, step)):
-        return range(start, end, step) if step is not None else range(start, end)
+        start, stop, step = args
     
-    return SymbolicRange(start, end, step, tracer=first_tracer([start, end, step]))
+    tracer = first_tracer(args)
+    [start, stop, step] = [tracer.ensure_symbolic(arg) for arg in [start, stop, step]]
+    i = make_symbolic(int, f"i_{next(counter)}", tracer=tracer)
+    # Add range constraints
+    i.tracer.add_constraint(i >= start)
+    i.tracer.add_constraint(i < stop)
+    if step != 1:
+        k = make_symbolic(int, f"k_{next(counter)}", tracer=tracer)
+        i.tracer.add_constraint(k >= 0)
+        i.tracer.add_constraint(i == start + k * step)
+        i.tracer.add_constraint(k < (stop - start) // step)
+    return [i]
 
-def symbolic_not(x):
+def sym_not(x):
     if isinstance(x, SymbolicBool):
         return SymbolicBool(x.tracer.backend.Not(x.z3_expr), x.tracer)
     return not x
 
-def symbolic_in(x, container):
+def sym_in(x, container):
     if isinstance(x, SymbolicInt):
         # Create disjunction of equalities
         equalities = [x == val for val in container]
@@ -74,7 +89,7 @@ def symbolic_in(x, container):
         return result
     return x in container
 
-def symbolic_any(iterable):
+def sym_any(iterable):
     if isinstance(iterable, types.GeneratorType):
         iterator = iter(iterable.gi_frame.f_locals['.0'])
         if isinstance(iterator, SymbolicRangeIterator):
@@ -96,25 +111,18 @@ def symbolic_any(iterable):
         result = result.__or__(cond)
     return result
 
-def symbolic_all(iterable):
+def sym_all(iterable):
+    """Handle all() for symbolic values"""
     if isinstance(iterable, types.GeneratorType):
-        iterator = iter(iterable.gi_frame.f_locals['.0'])
-        if isinstance(iterator, SymbolicRangeIterator):
-            predicate = next(iterable)
-            bounds = iterator.get_bounds()
-            return SymbolicBool(iterator.tracer.backend.Implies(
-                bounds.z3_expr,
-                truthy(predicate).z3_expr
-            ), tracer=iterator.tracer)
-
-    # Default case for concrete lists/other iterables
-    conditions = list(iterable)
-    if not conditions:
-        return True
-    result = conditions[0]
-    for cond in conditions[1:]:
-        result = result.__and__(cond)
-    return result
+        # Convert generator to list and ensure boolean conditions
+        iterable = [truthy(x) for x in list(iterable)]
+    result = None
+    for item in iterable:
+        if result is None:
+            result = item
+        else:
+            result = result.__and__(item)
+    return result if result is not None else True
 
 class HoleyWrapper(ast.NodeTransformer):
     def __init__(self):
@@ -305,10 +313,10 @@ class PuzzleSolver:
             'wrap_str': lambda s: SymbolicStr(s, tracer=tracer),
             'wrap_int': lambda n: SymbolicInt(n, tracer=tracer),
             '_assert': lambda x, msg=None: tracer.add_constraint(x),
-            'any': symbolic_any,
-            'all': symbolic_all,
-            'sym_not': symbolic_not,
-            'sym_in': symbolic_in,
+            'any': sym_any,
+            'all': sym_all,
+            'sym_not': sym_not,
+            'sym_in': sym_in,
             'sym_str': sym_str,
             'sym_int': sym_int,
             'sym_len': sym_len,
