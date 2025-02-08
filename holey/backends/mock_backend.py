@@ -29,11 +29,33 @@ class MockExpr:
     args: List[Any]
     _name: Optional[str] = None
 
-    def __str__(self):
+    def __init__(self, op: str, args):
+        self.op = op
+        self.args = args
+        self._name = None
+
+    def to_smt2(self) -> str:
+        """Convert expression to SMT-LIB2 format"""
         if self._name is not None:
             return self._name
-        args_str = " ".join(str(arg) for arg in self.args)
+        if self.op == "IntVal":
+            return str(self.args[0])
+        elif self.op == "BoolVal":
+            return str(self.args[0]).lower()
+        elif self.op == 'str.val':
+            return to_smtlib_string(self.args[0])
+        elif self.op == "Int":
+            # For variable references, just return the name
+            return str(self.args[0])
+        elif not self.args:
+            return self.op
+            
+        args_str = " ".join(arg.to_smt2() if isinstance(arg, MockExpr) else str(arg).lower() if isinstance(arg, bool) else str(arg)
+                          for arg in self.args)
         return f"({self.op} {args_str})"
+
+    def __str__(self):
+        return self.to_smt2()
     
     def __gt__(self, other):
         return MockExpr('>', [self, other])
@@ -76,21 +98,6 @@ class MockExpr:
         
     def name(self) -> str:
         return self._name if self._name else str(self)
-
-    def to_smt2(self) -> str:
-        """Convert expression to SMT-LIB2 format"""
-        if self._name is not None:
-            return self._name
-        if not self.args:
-            return self.op
-        if self.op == 'str.val':
-            return to_smtlib_string(self.args[0])
-            
-        op = self.op
-        
-        args_str = " ".join(arg.to_smt2() if isinstance(arg, MockExpr) else str(arg).lower() if isinstance(arg, bool) else str(arg)
-                          for arg in self.args)
-        return f"({op} {args_str})"
 
 library = {
 'isupper':
@@ -236,117 +243,147 @@ class MockSolver:
 
 class MockBackend(Backend):
     def __init__(self):
-        self.reset()
+        self.operations = []
+        self.solver = MockSolver()
+        self.stack = []
+
+    def _record(self, op: str, *args) -> Any:
+        """Record operation and return a MockExpr"""
+        self.operations.append((op, args))
+        return MockExpr(op, args)
+
+    def push(self):
+        self.stack.append(self.solver.constraints.copy())
+        return self._record("push")
+
+    def pop(self):
+        if self.stack:
+            self.solver.constraints = self.stack.pop()
+        return self._record("pop")
+
+    def add(self, constraint):
+        self.solver.add(constraint)
+        return self._record("assert", constraint)
+
+    def check(self):
+        result = self.solver.check()
+        self._record("check")
+        return result
+
+    def Not(self, x):
+        return self._record("not", x)
 
     def reset(self):
         self.solver = MockSolver()
+        self._record("reset")
 
     def Int(self, name: str) -> MockExpr:
         self.solver.declarations.add(name)
-        return MockExpr('Int', [], _name=name)
+        return self._record("Int", name)
 
     def IntVal(self, val: int) -> MockExpr:
-        return MockExpr('int_val', [val], _name=str(val))
+        return self._record("IntVal", val)
 
     def BoolVal(self, val: bool) -> MockExpr:
-        return MockExpr('bool_val', [val], _name=str(val))
+        return self._record("BoolVal", val)
 
     def And(self, *args) -> MockExpr:
         if not args:
             return self.BoolVal(True)
         if len(args) == 1:
             return args[0]
-        return MockExpr('and', list(args))
+        return self._record("and", *args)
 
     def Or(self, *args) -> MockExpr:
-        return MockExpr('or', list(args))
-
-    def Not(self, arg) -> MockExpr:
-        return MockExpr('not', [arg])
+        if not args:
+            return self.BoolVal(False)
+        if len(args) == 1:
+            return args[0]
+        return self._record("or", *args)
 
     def Implies(self, a, b) -> MockExpr:
-        return MockExpr('=>', [a, b])
+        return self._record("=>", a, b)
 
     def If(self, cond, t, f) -> MockExpr:
-        return MockExpr('if', [cond, t, f])
+        return self._record("ite", cond, t, f)
 
     def ForAll(self, vars, body) -> MockExpr:
-        return MockExpr('forall', [vars, body])
+        return self._record("forall", vars, body)
 
-    def Distinct(self, args) -> MockExpr:
-        return MockExpr('distinct', args)
+    def Distinct(self, *args) -> MockExpr:
+        return self._record("distinct", *args)
 
     def Mod(self, a, b) -> MockExpr:
-        return MockExpr('python.mod', [a, b])
+        return self._record("mod", a, b)
 
     def Pow(self, a, b) -> MockExpr:
-        return MockExpr('^', [a, b])
+        return self._record("^", a, b)
 
     def Solver(self) -> MockSolver:
         return self.solver
-    
+
     def is_sat(self, result) -> bool:
         return result == 'sat'
 
     def Mul(self, a, b) -> MockExpr:
-        return MockExpr('*', [a, b])
+        return self._record("*", a, b)
     
     def Add(self, a, b) -> MockExpr:
-        return MockExpr('+', [a, b])
+        return self._record("+", a, b)
     
     def Sub(self, a, b) -> MockExpr:
-        return MockExpr('-', [a, b])
+        return self._record("-", a, b)
     
-    def Div(self, a, b) -> Any:
-        return MockExpr('/', [a, b])
+    def Div(self, a, b) -> MockExpr:
+        return self._record("/", a, b)
     
-    def UDiv(self, a, b) -> Any:
-        return MockExpr('div', [a, b])
+    def UDiv(self, a, b) -> MockExpr:
+        return self._record("div", a, b)
     
-    def LT(self, a, b) -> Any:
-        return MockExpr('<', [a, b])
+    def LT(self, a, b) -> MockExpr:
+        return self._record("<", a, b)
     
-    def LE(self, a, b) -> Any:
-        return MockExpr('<=', [a, b])
+    def LE(self, a, b) -> MockExpr:
+        return self._record("<=", a, b)
     
-    def GT(self, a, b) -> Any:
-        return MockExpr('>', [a, b])
+    def GT(self, a, b) -> MockExpr:
+        return self._record(">", a, b)
     
-    def GE(self, a, b) -> Any:
-        return MockExpr('>=', [a, b])
+    def GE(self, a, b) -> MockExpr:
+        return self._record(">=", a, b)
     
-    def Eq(self, a, b) -> Any:
-        return MockExpr('=', [a, b])
+    def Eq(self, a, b) -> MockExpr:
+        return self._record("=", a, b)
 
-    def ToInt(self, x: Any) -> Any:
-        return MockExpr('to_int', [x])
+    def ToInt(self, x) -> MockExpr:
+        return self._record("to_int", x)
 
-    def IntToStr(self, x: Any) -> Any:
-        return MockExpr('int.to.str', [x])
+    def IntToStr(self, x) -> MockExpr:
+        return self._record("int.to.str", x)
 
-    def StrToCode(self, x: Any) -> Any:
-        return MockExpr('str.to_code', [x])
+    def StrToCode(self, x) -> MockExpr:
+        return self._record("str.to_code", x)
 
-    def StrToInt(self, x: Any) -> Any:
-        return MockExpr('str.to.int', [x])
+    def StrToInt(self, x) -> MockExpr:
+        return self._record("str.to.int", x)
 
-    def StrLen(self, x: Any) -> Any:
-       return MockExpr('str.len', [x])
+    def StrLen(self, x) -> MockExpr:
+        return self._record("str.len", x)
 
-    def StrPrefixOf(self, x: Any, y: Any) -> Any:
-       return MockExpr('str.prefixof', [x, y])
+    def StrPrefixOf(self, x, y) -> MockExpr:
+        return self._record("str.prefixof", x, y)
 
-    def StringVal(self, val: str) -> Any:
-        return MockExpr('str.val', [val])
+    def StringVal(self, val: str) -> MockExpr:
+        return self._record("str.val", val)
 
-    def StrCount(self, s: Any, sub: Any) -> Any:
-        return MockExpr('str.count', [s, sub])
+    def StrCount(self, s, sub) -> MockExpr:
+        return self._record("str.count", s, sub)
 
-    def StrSubstr(self, s: Any, start: Any, end: Any) -> Any:
-        return MockExpr('str.substr', [s, start, end])
+    def StrSubstr(self, s, start, length) -> MockExpr:
+        return self._record("str.substr", s, start, length)
 
-    def Bin(self, x: Any) -> Any:
-        return MockExpr('bin', [x])
+    def Bin(self, x) -> MockExpr:
+        return self._record("bin", x)
 
-    def IsUpper(self, x):
-        return MockExpr('isupper', [x])
+    def IsUpper(self, x) -> MockExpr:
+        return self._record("str.is.upper", x)

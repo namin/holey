@@ -4,26 +4,47 @@ from contextlib import contextmanager
 import z3
 from .backends import default_backend, Backend
 
+@dataclass 
 class SymbolicTracer:
-    """Tracer for symbolic execution"""
-
-    def __init__(self, backend: Optional[Backend] = None):
-        """Initialize tracer with optional backend"""
+    def __init__(self, backend=None):
         self.backend = backend or default_backend()
-        self.solver = self.backend.Solver()
         self.path_conditions = []
-        self._stack = []
+        self.branch_counter = 0
         
+    def branch(self, condition):
+        """Handle a branching point in execution"""
+        self.backend.push()
+        self.backend.add(condition.z3_expr)  # Try true path
+        
+        # If true path is possible, take it and record in trace
+        if self.backend.check() == "sat":
+            self.path_conditions.append(condition.z3_expr)
+            self.backend.pop()
+            return True
+            
+        # If true path impossible, must take false path
+        self.backend.pop()
+        self.backend.push()
+        not_cond = self.backend.Not(condition.z3_expr)
+        self.backend.add(not_cond)
+        if self.backend.check() == "sat":
+            self.path_conditions.append(not_cond)
+            self.backend.pop()
+            return False
+            
+        self.backend.pop()
+        raise ValueError("No feasible branches found")
+
     def __enter__(self):
-        self._stack.append((self.path_conditions.copy(), self.solver.assertions()))
+        self._stack.append((self.path_conditions.copy(), self.backend.solver.assertions()))
         return self
     
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self._stack:
             old_conditions, old_assertions = self._stack.pop()
             self.path_conditions = old_conditions
-            self.solver = self.backend.Solver()
-            self.solver.add(old_assertions)
+            self.backend.solver = self.backend.Solver()
+            self.backend.solver.add(old_assertions)
     
     def add_constraint(self, constraint):
         if isinstance(constraint, SymbolicBool):
@@ -31,13 +52,13 @@ class SymbolicTracer:
         elif isinstance(constraint, SymbolicInt):
             constraint = (constraint != 0).z3_expr
         self.path_conditions.append(constraint)
-        self.solver.add(constraint)
+        self.backend.solver.add(constraint)
     
     def check(self):
-        return self.solver.check()
+        return self.backend.solver.check()
     
     def model(self):
-        return self.solver.model()
+        return self.backend.solver.model()
 
     def solution(self):
         result = self.check()
@@ -48,18 +69,6 @@ class SymbolicTracer:
     def solution_var(self, model, var):
         return  model[var.name]
     
-    @contextmanager
-    def branch(self):
-        """Context manager for handling branches in symbolic execution"""
-        old_conditions = self.path_conditions.copy()
-        old_solver = self.backend.Solver()
-        old_solver.add(self.solver.assertions())
-        try:
-            yield
-        finally:
-            self.path_conditions = old_conditions
-            self.solver = old_solver
-
     def ensure_symbolic(self, other):
         if isinstance(other, bool):
             return SymbolicBool(other, tracer=self)
@@ -81,7 +90,7 @@ class SymbolicBool:
     def __bool__(self):
         if isinstance(self.z3_expr, bool):
             return self.z3_expr
-        raise ValueError("Symbolic bool cannot be concretized: " + str(self.z3_expr))
+        return self.tracer.branch(self)
 
     def __and__(self, other):
         other = self.tracer.ensure_symbolic(other)
@@ -153,6 +162,8 @@ class SymbolicInt:
     
     def __gt__(self, other):
         other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicBool(self.concrete > other.concrete, tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.GT(self.z3_expr, other.z3_expr), tracer=self.tracer)
     
     def __rmul__(self, other):
@@ -269,8 +280,6 @@ class SymbolicInt:
     def __index__(self):
         if self.concrete is not None:
             return self.concrete
-        if hasattr(self.z3_expr, 'as_long'):
-            return self.z3_expr.as_long()
         raise ValueError("Cannot convert symbolic integer to index")
 
 class SymbolicFloat:
