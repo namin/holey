@@ -410,13 +410,15 @@ def run_benchmarks(puzzle_file: str, name_prefix: str = None, answer_types = Non
     print(f"Running benchmarks on {len(puzzles)} puzzles...")
     if name_prefix:
         print(f"Filtered to puzzles starting with '{name_prefix}'")
+    if answer_types:
+        print(f"Filtered to puzzles of answer types: {answer_types}")
 
     for i, puzzle in enumerate(puzzles):
         name = puzzle.get('name', 'Unknown')
         print(f"\nSolving puzzle {i+1}/{len(puzzles)}: {name}")
 
         result = solver.solve_puzzle(puzzle)
-        if result:
+        if result is not None:
             success_count += 1
     
     print('')
