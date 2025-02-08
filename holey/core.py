@@ -374,6 +374,14 @@ class SymbolicList:
     def __len__(self):
         return len(self.concrete)
 
+    def __add__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        return SymbolicList(self.concrete + other.concrete, tracer=self.tracer)
+
+    def __radd__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        return SymbolicList(other.concrete + self.concrete, tracer=self.tracer)
+
     def index(self, item):
         # Return first index where item appears as SymbolicInt
         result = None
