@@ -55,7 +55,13 @@ class SymbolicTracer:
         self.backend.solver.add(constraint)
     
     def check(self):
-        return self.backend.solver.check()
+        """Check satisfiability including path conditions"""
+        self.backend.push()
+        for cond in self.path_conditions:
+            self.backend.add(cond)
+        result = self.backend.check()
+        self.backend.pop()
+        return result
     
     def model(self):
         return self.backend.solver.model()

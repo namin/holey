@@ -16,7 +16,7 @@ class Z3Backend(Backend):
     def __init__(self):
         if not HAS_Z3:
             raise ImportError("Z3 is required for this backend")
-        self.solver = None
+        self.solver = z3.Solver()
         self.reset()
     
     def reset(self):
@@ -93,8 +93,25 @@ class Z3Backend(Backend):
     def Solver(self) -> Any:
         return self.solver
     
-    def is_sat(self, result) -> bool:
-        return result == z3.sat
+    def push(self):
+        """Push a new scope for backtracking"""
+        self.solver.push()
+        
+    def pop(self):
+        """Pop the most recent scope"""
+        self.solver.pop()
+        
+    def add(self, constraint):
+        """Add constraint to current scope"""
+        self.solver.add(constraint)
+
+    def check(self):
+        """Check satisfiability, returning string result for consistency with mock backend"""
+        return str(self.solver.check())
+
+    def is_sat(self, result: str) -> bool:
+        """Check if string result indicates satisfiability"""
+        return result == 'sat'
 
     def Mul(self, a, b) -> Any:
         return a * b
