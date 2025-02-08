@@ -340,10 +340,15 @@ class SymbolicList:
                 return SymbolicList(self.concrete[key], tracer=self.tracer)
             return SymbolicSlice(self.concrete, key.start, key.stop, key.step, tracer=self.tracer)
         elif isinstance(key, SymbolicInt):
+            # If we have a concrete value, use it directly
+            if key.concrete is not None:
+                return self.concrete[key.concrete]
+                
             # Add bounds check
             self.tracer.add_constraint(key >= 0)
             self.tracer.add_constraint(key < len(self))
             
+            # Build an If expression to select the right value
             result = None
             for i, item in enumerate(self.concrete):
                 if result is None:
