@@ -222,7 +222,7 @@ class HoleyWrapper(ast.NodeTransformer):
         if isinstance(node.op, ast.Not):
             return ast.Call(
                 func=ast.Name(id='sym_not', ctx=ast.Load()),
-                args=[self.visit(node.operand)],
+                args=[node.operand],
                 keywords=[]
             )
         return node
