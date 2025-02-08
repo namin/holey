@@ -115,9 +115,10 @@ def sym_all(iterable):
     """Handle all() for symbolic values"""
     if isinstance(iterable, types.GeneratorType):
         # Convert generator to list and ensure boolean conditions
-        iterable = [truthy(x) for x in list(iterable)]
+        iterable = [x for x in list(iterable)]
     result = None
     for item in iterable:
+        item = truthy(item)
         if result is None:
             result = item
         else:
