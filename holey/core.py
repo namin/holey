@@ -327,10 +327,25 @@ class SymbolicFloat:
 
 class SymbolicList:
     def __init__(self, value, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
-        self.tracer = tracer        
-        assert name is None       
-        assert isinstance(value, list)
-        self.concrete = value
+        self.tracer = tracer
+        self.concrete = None
+        if name is not None:
+            self.z3_expr = self.tracer.backend.String(name)
+        elif isinstance(value, str):
+            self.concrete = value
+            self.z3_expr = self.tracer.backend.StringVal(value)
+        else:
+            self.z3_expr = value
+
+    def __iter__(self):
+        if self.concrete is not None:
+            return iter(self.concrete)
+        raise ValueError("Symbolic list iteration not implemented")
+
+    def __len__(self):
+        if self.concrete is not None:
+            return len(self.concrete)
+        return SymbolicInt(self.tracer.backend.Length(self.z3_expr), tracer=self.tracer)
 
     def __getitem__(self, key):
         if isinstance(key, slice):
@@ -364,12 +379,6 @@ class SymbolicList:
                     )
             return result
         return self.concrete[key]
-
-    def __iter__(self):
-        return iter(self.concrete)
-
-    def __len__(self):
-        return len(self.concrete)
 
     def __add__(self, other):
         other = self.tracer.ensure_symbolic(other)
