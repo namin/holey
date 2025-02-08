@@ -334,25 +334,20 @@ class SymbolicList:
 
     def __getitem__(self, key):
         if isinstance(key, slice):
-            # Handle slice
-            start = key.start or 0
-            stop = key.stop or len(self.concrete)
-            step = key.step or 1
-            return SymbolicList([self.concrete[i] for i in range(start, stop, step)], tracer=self.tracer)
-        # Handle integer index
-        if isinstance(key, SymbolicInt):
-            # For symbolic index, we need to build an If expression
+            if (not isinstance(key.start, SymbolicInt) and 
+                not isinstance(key.stop, SymbolicInt) and 
+                not isinstance(key.step, SymbolicInt)):
+                return SymbolicList(self.concrete[key], tracer=self.tracer)
+            return SymbolicSlice(self.concrete, key.start, key.stop, key.step, tracer=self.tracer)
+        elif isinstance(key, SymbolicInt):
+            # Add bounds check
+            self.tracer.add_constraint(key >= 0)
+            self.tracer.add_constraint(key < len(self))
+            
             result = None
             for i, item in enumerate(self.concrete):
                 if result is None:
-                    result = SymbolicInt(
-                        self.tracer.backend.If(
-                            key.z3_expr == i,
-                            item.z3_expr,
-                            self.tracer.backend.IntVal(0)  # default value
-                        ),
-                        tracer=self.tracer
-                    )
+                    result = item
                 else:
                     result = SymbolicInt(
                         self.tracer.backend.If(
@@ -460,38 +455,15 @@ class SymbolicStr:
         raise ValueError("Split not implemented for symbolic strings.")
 
     def __getitem__(self, key):
-        if self.concrete is not None:
-            if isinstance(key, slice):
-                if (not isinstance(key.start, SymbolicInt) and 
-                    not isinstance(key.stop, SymbolicInt) and 
-                    not isinstance(key.step, SymbolicInt)):
-                    return SymbolicStr(self.concrete[key], tracer=self.tracer)
-                return SymbolicSlice(self.concrete, key.start, key.stop, key.step, tracer=self.tracer)
-            elif isinstance(key, SymbolicInt):
-                return SymbolicSlice(self.concrete, key, key+1, None, tracer=self.tracer)
-            return SymbolicStr(self.concrete[key], tracer=self.tracer)
-        else:
-            if isinstance(key, slice):
-                start = key.start if key.start is not None else 0
-                stop = key.stop if key.stop is not None else self.tracer.backend.StrLen(self.z3_expr)
-                return SymbolicStr(
-                    self.tracer.backend.StrSubstr(
-                        self.z3_expr,
-                        start if isinstance(start, SymbolicInt) else SymbolicInt(start, tracer=self.tracer),
-                        stop if isinstance(stop, SymbolicInt) else SymbolicInt(stop, tracer=self.tracer)
-                    ),
-                    tracer=self.tracer
-                )
-            else:
-                # Single index access
-                return SymbolicStr(
-                    self.tracer.backend.StrSubstr(
-                        self.z3_expr,
-                        key if isinstance(key, SymbolicInt) else SymbolicInt(key, tracer=self.tracer),
-                        key + 1 if isinstance(key, SymbolicInt) else SymbolicInt(key + 1, tracer=self.tracer)
-                    ),
-                    tracer=self.tracer
-                )
+        if isinstance(key, slice):
+            if (not isinstance(key.start, SymbolicInt) and 
+                not isinstance(key.stop, SymbolicInt) and 
+                not isinstance(key.step, SymbolicInt)):
+                return SymbolicStr(self.concrete[key], tracer=self.tracer)
+            return SymbolicSlice(self.concrete, key.start, key.stop, key.step, tracer=self.tracer)
+        elif isinstance(key, SymbolicInt):
+            return SymbolicSlice(self.concrete, key, key+1, None, tracer=self.tracer)
+        return SymbolicStr(self.concrete[key], tracer=self.tracer)
 
     def __len__(self):
         if self.concrete is not None:
@@ -561,29 +533,68 @@ class SymbolicStr:
         return SymbolicBool(self.tracer.backend.IsUpper(self.z3_expr), tracer=self.tracer)
 
 class SymbolicSlice:
-    def __init__(self, concrete_str: str, start, end, step=None, tracer: Optional[SymbolicTracer] = None):
-        self.concrete = concrete_str
+    def __init__(self, concrete_seq, start, end, step=None, tracer: Optional[SymbolicTracer] = None):
+        self.concrete = concrete_seq  # Can be str or list
         self.start = start
         self.end = end
         self.step = step
         self.tracer = tracer
+    
+    def __getitem__(self, key):
+        """Handle indexing into the slice"""
+        if isinstance(key, SymbolicInt):
+            # Build an If expression to select the right value
+            result = None
+            for i, item in enumerate(self.concrete):
+                if result is None:
+                    result = SymbolicInt(
+                        self.tracer.backend.If(
+                            key.z3_expr == i,
+                            item.z3_expr,
+                            self.tracer.backend.IntVal(0)  # default value
+                        ),
+                        tracer=self.tracer
+                    )
+                else:
+                    result = SymbolicInt(
+                        self.tracer.backend.If(
+                            key.z3_expr == i,
+                            item.z3_expr,
+                            result.z3_expr
+                        ),
+                        tracer=self.tracer
+                    )
+            return result
+        return self.concrete[key]
 
-    def count(self, sub: str) -> 'SymbolicInt':
-        """Count occurrences of substring in sliced string"""
-        if not isinstance(sub, (str, SymbolicStr)):
-            raise TypeError(f"Can't count occurrences of {type(sub)}")
-            
-        if isinstance(sub, str):
-            sub = SymbolicStr(sub, tracer=self.tracer)
-            
-        # Get the sliced string as a SymbolicStr
-        sliced = self.get_slice()
+    def __iter__(self):
+        # If all indices are concrete, use concrete slice
+        if (isinstance(self.start, (int, type(None))) and 
+            isinstance(self.end, (int, type(None))) and 
+            isinstance(self.step, (int, type(None)))):
+            start = self.start if self.start is not None else 0
+            end = self.end if self.end is not None else len(self.concrete)
+            step = self.step if self.step is not None else 1
+            return iter(self.concrete[start:end:step])
         
-        # Use the SymbolicStr count method
+        # For symbolic indices, return only up to the symbolic end
+        if isinstance(self.end, SymbolicInt):
+            # For now, just use the concrete value if available
+            if hasattr(self.end, 'concrete') and self.end.concrete is not None:
+                return iter(self.concrete[:self.end.concrete])
+        
+        # Default to full sequence if we can't determine bounds
+        return iter(self.concrete)
+
+    def count(self, sub):
+        """Count occurrences in sliced sequence"""
+        # Get the sliced sequence
+        sliced = self.get_slice()
+        # Use the appropriate count method
         return sliced.count(sub)
 
-    def get_slice(self) -> SymbolicStr:
-        """Convert slice to SymbolicStr with appropriate constraints"""
+    def get_slice(self):
+        """Convert slice to appropriate symbolic type (SymbolicStr or SymbolicList)"""
         # If all indices are concrete, just return the concrete slice
         if (isinstance(self.start, (int, type(None))) and 
             isinstance(self.end, (int, type(None))) and 
@@ -591,32 +602,9 @@ class SymbolicSlice:
             start = self.start if self.start is not None else 0
             end = self.end if self.end is not None else len(self.concrete)
             step = self.step if self.step is not None else 1
-            return SymbolicStr(self.concrete[start:end:step], tracer=self.tracer)
-        
-        start = (self.start.z3_expr if isinstance(self.start, SymbolicInt) 
-                else self.tracer.backend.IntVal(self.start if self.start is not None else 0))
-        end = (self.end.z3_expr if isinstance(self.end, SymbolicInt)
-               else self.tracer.backend.IntVal(self.end if self.end is not None else len(self.concrete)))
-        
-        result = SymbolicStr(
-            self.tracer.backend.StrSubstr(
-                self.tracer.backend.StringVal(self.concrete),
-                start,
-                end
-            ), 
-            tracer=self.tracer
-        )
-        
-        # Add constraints for valid indices
-        str_len = len(self.concrete)
-        if isinstance(self.start, SymbolicInt):
-            self.tracer.add_constraint(self.start.z3_expr >= 0)
-            self.tracer.add_constraint(self.start.z3_expr <= str_len)
-        if isinstance(self.end, SymbolicInt):
-            self.tracer.add_constraint(self.end.z3_expr >= 0)
-            self.tracer.add_constraint(self.end.z3_expr <= str_len)
-            
-        return result
+            result = self.concrete[start:end:step]
+            return (SymbolicStr(result, tracer=self.tracer) if isinstance(self.concrete, str)
+                   else SymbolicList(result, tracer=self.tracer))
 
 class SymbolicRangeIterator:
     def __init__(self, sym_range):
