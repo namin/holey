@@ -27,15 +27,15 @@ class SymbolicTracer:
     def branch(self, condition):
         """Handle a branching point in execution"""
         if len(self.current_branch_exploration) > self.branch_counter:
-            branch = self.current_branch_exploration[self.branch_counter]
+            branch_val = self.current_branch_exploration[self.branch_counter]
         else:
-            branch = True
+            branch_val = True
             self.remaining_branch_explorations.append(self.current_branch_exploration + [False])
-            self.current_branch_exploration += [branch]
+            self.current_branch_exploration += [branch_val]
 
         condition = self.ensure_symbolic(condition)
-        self.path_conditions.append(condition.z3_expr if branch else self.backend.Not(condition.z3_expr))
-        return branch
+        self.path_conditions.append(condition.z3_expr if branch_val else self.backend.Not(condition.z3_expr))
+        return branch_val
 
     def add_constraint(self, constraint):
         constraint = self.ensure_symbolic(truthy(constraint)).z3_expr
@@ -47,11 +47,7 @@ class SymbolicTracer:
     
     def check(self):
         """Check satisfiability including path conditions"""
-        self.backend.push()
-        for cond in self.path_conditions:
-            self.backend.add(cond)
         result = self.backend.check()
-        self.backend.pop()
         return result
     
     def model(self):
@@ -135,18 +131,24 @@ class SymbolicInt:
         other = self.tracer.ensure_symbolic(other)
         if isinstance(other, SymbolicFloat):
             return SymbolicFloat(self.tracer.backend.Add(self.z3_expr, other.z3_expr), tracer=self.tracer)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicInt(self.concrete + other.concrete, tracer=self.tracer)
         return SymbolicInt(self.tracer.backend.Add(self.z3_expr, other.z3_expr), tracer=self.tracer)
     
     def __sub__(self, other):
         other = self.tracer.ensure_symbolic(other)
         if isinstance(other, SymbolicFloat):
             return SymbolicFloat(self.tracer.backend.Sub(self.z3_expr, other.z3_expr), tracer=self.tracer)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicInt(self.concrete - other.concrete, tracer=self.tracer)
         return SymbolicInt(self.tracer.backend.Sub(self.z3_expr, other.z3_expr), tracer=self.tracer)
     
     def __mul__(self, other):
         other = self.tracer.ensure_symbolic(other)
         if isinstance(other, SymbolicFloat):
             return SymbolicFloat(self.tracer.backend.Mul(self.z3_expr, other.z3_expr), tracer=self.tracer)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicInt(self.concrete * other.concrete, tracer=self.tracer)
         return SymbolicInt(self.tracer.backend.Mul(self.z3_expr, other.z3_expr), tracer=self.tracer)
         
     def __eq__(self, other):
@@ -237,6 +239,8 @@ class SymbolicInt:
     
     def __ge__(self, other):
         other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicBool(self.concrete >= other.concrete, tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.GE(self.z3_expr, other.z3_expr), tracer=self.tracer)
 
     def __ne__(self, other):
