@@ -341,9 +341,10 @@ class SymbolicList:
                 return self.concrete[key.concrete]
                 
             # Add bounds check
-            self.tracer.add_constraint(key >= 0)
-            self.tracer.add_constraint(key < len(self))
-            
+            n = len(self)
+            self.tracer.add_constraint(key < n)
+            self.tracer.add_constraint(key > -n)
+
             # Build an If expression to select the right value
             result = None
             for i, item in enumerate(self.concrete):
@@ -352,7 +353,7 @@ class SymbolicList:
                 else:
                     result = SymbolicInt(
                         self.tracer.backend.If(
-                            key.z3_expr == i,
+                            self.tracer.backend.Or(key.z3_expr == i, key.z3_expr == -n+i),
                             item.z3_expr,
                             result.z3_expr
                         ),
