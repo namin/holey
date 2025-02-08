@@ -394,13 +394,15 @@ class PuzzleSolver:
             traceback.print_exc()
         return None
 
-def run_benchmarks(puzzle_file: str, name_prefix: str = None):
+def run_benchmarks(puzzle_file: str, name_prefix: str = None, answer_types = None):
     with open(puzzle_file) as f:
         puzzles = json.load(f)
     
-    # Filter puzzles if name_prefix is provided
+    # Filter puzzles
     if name_prefix:
         puzzles = [p for p in puzzles if p.get('name', '').startswith(name_prefix)]
+    if answer_types:
+        puzzles = [p for p in puzzles if p['ans_type'] in answer_types]
         
     solver = PuzzleSolver()
     success_count = 0
@@ -430,6 +432,11 @@ if __name__ == "__main__":
     parser.add_argument('--puzzle-file', default="benchmarks/PythonProgrammingPuzzles/puzzles/puzzles.json",
                       help='Path to the puzzle JSON file')
     parser.add_argument('--name-prefix', help='Only run puzzles whose names start with this prefix')
+    parser.add_argument('--answer-types',
+                        nargs='+',
+                        choices=['int', 'str'],
+                        default=['int', 'str'],
+                        help='Only run some answer types')
     args = parser.parse_args()
     
-    run_benchmarks(args.puzzle_file, args.name_prefix)
+    run_benchmarks(args.puzzle_file, args.name_prefix, args.answer_types)
