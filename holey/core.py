@@ -454,10 +454,20 @@ class SymbolicStr:
         else:
             self.z3_expr = value
 
-    def split(self):
+    def split(self, sep=None):
+        """Split string into list of strings"""
         if self.concrete is not None:
-            return self.concrete.split()
-        raise ValueError("Split not implemented for symbolic strings.")
+            # If we have a concrete string, use Python's split
+            parts = self.concrete.split(sep)
+            return SymbolicList([SymbolicStr(p, tracer=self.tracer) for p in parts], tracer=self.tracer)
+        
+        # For symbolic strings, we need to use Z3's string operations
+        if sep is None:
+            sep = " "  # Default separator is whitespace
+            
+        # Use Z3's string operations to split
+        result = self.tracer.backend.StrSplit(self.z3_expr, self.tracer.backend.StringVal(sep))
+        return SymbolicList(result, tracer=self.tracer)
 
     def __getitem__(self, key):
         if isinstance(key, slice):
@@ -500,14 +510,29 @@ class SymbolicStr:
 
     def __add__(self, other):
         if isinstance(other, SymbolicStr):
-            return SymbolicStr(self.concrete + other.concrete, tracer=self.tracer)
+            return SymbolicStr(
+                self.tracer.backend.StrConcat(self.z3_expr, other.z3_expr),
+                tracer=self.tracer
+            )
         elif isinstance(other, str):
-            return SymbolicStr(self.concrete + other, tracer=self.tracer)
+            return SymbolicStr(
+                self.tracer.backend.StrConcat(
+                    self.z3_expr,
+                    self.tracer.backend.StringVal(other)
+                ),
+                tracer=self.tracer
+            )
         return NotImplemented
 
     def __radd__(self, other):
         if isinstance(other, str):
-            return SymbolicStr(other + self.concrete, tracer=self.tracer)
+            return SymbolicStr(
+                self.tracer.backend.StrConcat(
+                    self.tracer.backend.StringVal(other),
+                    self.z3_expr
+                ),
+                tracer=self.tracer
+            )
         return NotImplemented
 
     # For comparison operations

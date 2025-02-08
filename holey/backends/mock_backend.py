@@ -376,6 +376,13 @@ class MockBackend(Backend):
     def StrSubstr(self, s, start, length) -> MockExpr:
         return self._record("str.substr", s, start, length)
 
+    def StrConcat(self, *args) -> MockExpr:
+        return self._record("str.++", *args)
+
+    def StrSplit(self, s, sep) -> MockExpr:
+        """Split string by separator"""
+        return self._record("str.to.re", s, sep)
+
     def Bin(self, x) -> MockExpr:
         return self._record("bin", x)
 
