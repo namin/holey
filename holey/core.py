@@ -330,10 +330,7 @@ class SymbolicList:
         self.tracer = tracer        
         assert name is None       
         assert isinstance(value, list)
-        self.concrete = [
-            self.tracer.ensure_symbolic(item) if tracer else item 
-            for item in value
-        ]
+        self.concrete = value
 
     def __getitem__(self, key):
         if isinstance(key, slice):
@@ -410,6 +407,40 @@ class SymbolicList:
                     tracer=self.tracer
                 )
         return result
+
+    def count(self, item):
+        """Count occurrences of item in list"""
+        count = 0
+        for x in self.concrete:
+            eq = (x == item)  # This gives us a SymbolicBool
+            if eq.concrete is not None:  # If we can evaluate it concretely
+                count += int(eq.concrete)
+            else:
+                # For now, just return a symbolic int for the whole count
+                # This could be made more precise later
+                result = None
+                for x in self.concrete:
+                    eq = (x == item)
+                    if result is None:
+                        result = SymbolicInt(
+                            self.tracer.backend.If(
+                                eq.z3_expr,
+                                self.tracer.backend.IntVal(1),
+                                self.tracer.backend.IntVal(0)
+                            ),
+                            tracer=self.tracer
+                        )
+                    else:
+                        result = result + SymbolicInt(
+                            self.tracer.backend.If(
+                                eq.z3_expr,
+                                self.tracer.backend.IntVal(1),
+                                self.tracer.backend.IntVal(0)
+                            ),
+                            tracer=self.tracer
+                        )
+                return result
+        return SymbolicInt(count, tracer=self.tracer)
 
 class SymbolicStr:
     def __init__(self, value: str, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
