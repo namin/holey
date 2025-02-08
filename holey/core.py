@@ -92,6 +92,10 @@ class SymbolicBool:
         """Initialize boolean expression with optional tracer"""
         self.tracer = tracer or SymbolicTracer()
         self.z3_expr = value
+        if isinstance(value, bool):
+            self.concrete = value
+        else:
+            self.concrete = None
 
     def __bool__(self):
         if isinstance(self.z3_expr, bool):
@@ -320,6 +324,52 @@ class SymbolicFloat:
             ),
             tracer=self.tracer
         )
+
+class SymbolicList:
+    def __init__(self, value, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
+        self.tracer = tracer        
+        assert name is None       
+        assert isinstance(value, list)
+        self.concrete = value
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            # Handle slice
+            start = key.start or 0
+            stop = key.stop or len(self.concrete)
+            step = key.step or 1
+            return SymbolicList([self.concrete[i] for i in range(start, stop, step)], tracer=self.tracer)
+        # Handle integer index
+        if isinstance(key, SymbolicInt):
+            # For symbolic index, we need to build an If expression
+            result = None
+            for i, item in enumerate(self.concrete):
+                if result is None:
+                    result = SymbolicInt(
+                        self.tracer.backend.If(
+                            key.z3_expr == i,
+                            item.z3_expr,
+                            self.tracer.backend.IntVal(0)  # default value
+                        ),
+                        tracer=self.tracer
+                    )
+                else:
+                    result = SymbolicInt(
+                        self.tracer.backend.If(
+                            key.z3_expr == i,
+                            item.z3_expr,
+                            result.z3_expr
+                        ),
+                        tracer=self.tracer
+                    )
+            return result
+        return self.concrete[key]
+
+    def __iter__(self):
+        return iter(self.concrete)
+
+    def __len__(self):
+        return len(self.concrete)
 
 class SymbolicStr:
     def __init__(self, value: str, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):

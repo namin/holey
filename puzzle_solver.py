@@ -1,4 +1,4 @@
-from holey import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicRange, SymbolicRangeIterator, SymbolicStr, truthy
+from holey import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicList,SymbolicRange, SymbolicRangeIterator, SymbolicStr, truthy
 from holey.backends import CVC5Backend, Z3Backend, MockBackend
 import ast
 import json
@@ -207,6 +207,14 @@ class HoleyWrapper(ast.NodeTransformer):
             return result
         return node
 
+    def visit_List(self, node):
+        node = self.generic_visit(node)
+        return ast.Call(
+            func=ast.Name(id='wrap_list', ctx=ast.Load()),
+            args=[node],
+            keywords=[]
+        )
+
     def visit_UnaryOp(self, node):
         node = self.generic_visit(node)
         # Transform: not x
@@ -313,6 +321,7 @@ class PuzzleSolver:
             'SymbolicInt': SymbolicInt,
             'wrap_str': lambda s: SymbolicStr(s, tracer=tracer),
             'wrap_int': lambda n: SymbolicInt(n, tracer=tracer),
+            'wrap_list': lambda l: SymbolicList(l, tracer=tracer),
             '_assert': lambda x, msg=None: tracer.add_constraint(x),
             'any': sym_any,
             'all': sym_all,
