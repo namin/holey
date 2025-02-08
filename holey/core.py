@@ -330,7 +330,10 @@ class SymbolicList:
         self.tracer = tracer        
         assert name is None       
         assert isinstance(value, list)
-        self.concrete = value
+        self.concrete = [
+            self.tracer.ensure_symbolic(item) if tracer else item 
+            for item in value
+        ]
 
     def __getitem__(self, key):
         if isinstance(key, slice):
@@ -370,6 +373,35 @@ class SymbolicList:
 
     def __len__(self):
         return len(self.concrete)
+
+    def index(self, item):
+        # Return first index where item appears as SymbolicInt
+        result = None
+        for i, x in enumerate(self.concrete):
+            eq = (x == item)  # This gives us a SymbolicBool
+            if result is None:
+                result = SymbolicInt(
+                    self.tracer.backend.If(
+                        eq.z3_expr,  # condition
+                        self.tracer.backend.IntVal(i),  # then
+                        self.tracer.backend.IntVal(-1)  # else
+                    ),
+                    tracer=self.tracer
+                )
+            else:
+                result = SymbolicInt(
+                    self.tracer.backend.If(
+                        eq.z3_expr,  # condition
+                        self.tracer.backend.If(
+                            result.z3_expr == -1,  # if not found yet
+                            self.tracer.backend.IntVal(i),  # use this index
+                            result.z3_expr  # keep previous index
+                        ),
+                        result.z3_expr  # else keep previous result
+                    ),
+                    tracer=self.tracer
+                )
+        return result
 
 class SymbolicStr:
     def __init__(self, value: str, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
