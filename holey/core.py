@@ -574,7 +574,7 @@ class SymbolicStr:
                 result = self.z3_expr == other.z3_expr
             return SymbolicBool(result, tracer=self.tracer)
         else:
-            return SymbolBool(self.tracer.backend.BoolVal(False), tracer=self.tracer)
+            return SymbolicBool(self.tracer.backend.BoolVal(False), tracer=self.tracer)
 
     def __ne__(self, other):
         eq = self.__eq__(other)
