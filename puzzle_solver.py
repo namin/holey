@@ -267,24 +267,22 @@ class HoleyWrapper(ast.NodeTransformer):
         # Convert each part into a string
         parts = []
         for value in node.values:
-            if isinstance(value, ast.Constant):
-                # String literal part
-                parts.append(ast.Constant(value=value.value))
-            elif isinstance(value, ast.FormattedValue):
+            if isinstance(value, ast.FormattedValue):
                 # Expression part {expr}
                 parts.append(
                     ast.Call(
-                        func=ast.Name(id='str', ctx=ast.Load()),
+                        func=ast.Name(id='sym_str', ctx=ast.Load()),
                         args=[value.value],
                         keywords=[]
                     )
                 )
+            else:
+                parts.append(value)
         
         # Join parts with '+'
         result = parts[0]
         for part in parts[1:]:
             result = ast.BinOp(left=result, op=ast.Add(), right=part)
-            
         return result
 
 def inject(sat_func):
