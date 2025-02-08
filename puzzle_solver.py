@@ -30,6 +30,15 @@ def sym_int(x):
         return x
     return int(x)
 
+def sym_float(x):
+    if isinstance(x, SymbolicStr):
+        return SymbolicFloat(x.tracer.backend.StrToFloat(x.z3_expr), tracer=x.tracer)
+    if isinstance(x, SymbolicFloat):
+        return x
+    if isinstance(x, SymbolicInt):
+        return SymbolicFloat(x.tracer.backend.IntToFloat(x.z3_expr), tracer=x.tracer)
+    return float(x)
+
 def sym_len(x):
     if isinstance(x, SymbolicStr):
         return x.__len__()
@@ -254,7 +263,7 @@ class HoleyWrapper(ast.NodeTransformer):
     def visit_Call(self, node):
         node = self.generic_visit(node)
         if isinstance(node.func, ast.Name):
-            if node.func.id in ['int', 'str', 'len', 'range', 'bin', 'ord']:
+            if node.func.id in ['int', 'float', 'str', 'len', 'range', 'bin', 'ord']:
                 return ast.Call(
                     func=ast.Name(id='sym_'+node.func.id, ctx=ast.Load()),
                     args=node.args,
@@ -331,6 +340,7 @@ class PuzzleSolver:
             'sym_in': sym_in,
             'sym_str': sym_str,
             'sym_int': sym_int,
+            'sym_float': sym_float,
             'sym_len': sym_len,
             'sym_range': sym_range,
             'sym_bin': sym_bin,

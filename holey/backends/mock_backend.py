@@ -100,6 +100,21 @@ class MockExpr:
         return self._name if self._name else str(self)
 
 library = {
+'str.to.float':
+"""
+(define-fun str.to.float ((s String)) Real
+  (let ((dot_pos (str.indexof s "." 0)))
+    (ite (= dot_pos (- 1))
+      ; No decimal point - convert whole string as integer
+      (to_real (str.to_int s))
+      ; Has decimal point - handle integer and decimal parts
+      (let ((int_part (str.substr s 0 dot_pos))
+            (dec_part (str.substr s (+ dot_pos 1) (- (str.len s) (+ dot_pos 1)))))
+        (+ (to_real (str.to_int int_part))
+           (/ (to_real (str.to_int dec_part))
+              (^ 10.0 (- (str.len s) (+ dot_pos 1)))))))))
+"""
+,
 'str.reverse':
 """
 (define-fun-rec str.reverse ((s String)) String
@@ -374,6 +389,9 @@ class MockBackend(Backend):
 
     def StrToInt(self, x) -> MockExpr:
         return self._record("str.to.int", x)
+
+    def StrToFloat(self, x) -> MockExpr:
+        return self._record("str.to.float", x)
 
     def StrIndex(self, x, y) -> MockExpr:
         return self._record("str.index", x, y)

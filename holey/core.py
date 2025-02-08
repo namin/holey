@@ -316,6 +316,10 @@ class SymbolicFloat:
         other = self.tracer.ensure_symbolic(other)
         return SymbolicBool(self.z3_expr <= other.z3_expr, tracer=self.tracer)
 
+    def __eq__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        return SymbolicBool(self.tracer.backend.Eq(self.z3_expr, other.z3_expr), tracer=self.tracer)
+
     def is_integer(self):
         """Returns True if the number equals its floor"""
         return SymbolicBool(
