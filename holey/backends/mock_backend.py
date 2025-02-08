@@ -100,6 +100,15 @@ class MockExpr:
         return self._name if self._name else str(self)
 
 library = {
+'str.reverse':
+"""
+(define-fun-rec str.reverse ((s String)) String
+  (ite (= s "")
+       ""
+       (str.++ (str.substr s (- (str.len s) 1) 1)
+               (str.reverse (str.substr s 0 (- (str.len s) 1))))))
+"""
+,
 'isupper':
 """
 (define-fun is-upper-char ((c String)) Bool
@@ -381,6 +390,9 @@ class MockBackend(Backend):
 
     def StringVal(self, val: str) -> MockExpr:
         return self._record("str.val", val)
+
+    def StrReverse(self, s) -> MockExpr:
+        return self._record("str.reverse", s)
 
     def StrCount(self, s, sub) -> MockExpr:
         return self._record("str.count", s, sub)

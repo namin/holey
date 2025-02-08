@@ -481,12 +481,18 @@ class SymbolicStr:
     def __getitem__(self, key):
         if self.concrete is None:
             if isinstance(key, slice):
-                start = key.start if key.start else 0
-                stop = key.stop if key.stop else self.__len__()
-                start = self.tracer.ensure_symbolic(start)
-                stop = self.tracer.ensure_symbolic(stop)
-                # TODO: use SymbolicSlice (specialized to Str) if we have a step
-                return SymbolicStr(self.tracer.backend.StrSubstr(self.z3_expr, start.z3_expr, stop.z3_expr), tracer=self.tracer)
+                step = key.step or 1
+                if step == -1 and key.start is None and key.stop is None:
+                    # special case
+                    return SymbolicStr(self.tracer.backend.StrReverse(self.z3_expr), tracer=self.tracer)
+                elif step == 1:
+                    start = key.start if key.start else 0
+                    stop = key.stop if key.stop else self.__len__()
+                    start = self.tracer.ensure_symbolic(start)
+                    stop = self.tracer.ensure_symbolic(stop)
+                    return SymbolicStr(self.tracer.backend.StrSubstr(self.z3_expr, start.z3_expr, stop.z3_expr), tracer=self.tracer)
+                else:
+                    raise ValueError("Slicing on symbolic strings not fully implemented.")
             key = self.tracer.ensure_symbolic(key)
             return SymbolicStr(self.tracer.backend.StrIndex(self.z3_expr, key.z3_expr), tracer=self.tracer)
         if isinstance(key, slice):
