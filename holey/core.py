@@ -38,7 +38,8 @@ class SymbolicTracer:
         return branch_val
 
     def add_constraint(self, constraint):
-        constraint = self.ensure_symbolic(truthy(constraint)).z3_expr
+        if isinstance(constraint, (SymbolicInt, SymbolicBool)):
+            constraint = truthy(constraint).z3_expr
         if self.path_conditions:
             constraint = self.backend.Implies(
                 self.backend.And(*self.path_conditions),
