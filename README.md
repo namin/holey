@@ -84,6 +84,8 @@ See a detailed [stdout log](log/results.txt) of the current run.
 │   ├── core.py (! includes tracer, symbolic classes, ... !)
 │   ├── llm.py (! support for LLM generation and code extraction !)
 │   └── preprocessor.py (! includes node transformer and sat driver !)
+├── log
+│   └── results.txt (! example run !)
 ├── puzzle_solver.py (! main routine for benchmark solver !)
 ├── pyproject.toml
 └── tests
