@@ -177,6 +177,51 @@ library = {
 )
 """
 ,
+'islower':
+"""
+(define-fun is-lower-char ((c String)) Bool
+  (and (>= (str.to_code c) (str.to_code "a")) (<= (str.to_code c) (str.to_code "z")))
+)
+
+(define-fun-rec islower ((s String)) Bool
+  (ite (= s "")
+       true
+       (and (is-lower-char (str.at s 0))
+            (islower (str.substr s 1 (- (str.len s) 1))))
+  )
+)
+"""
+,
+'str.upper':
+"""
+(define-fun-rec str.upper ((s String)) String
+  (let ((len (str.len s)))
+    (ite (= len 0) 
+         ""
+         (let ((first (str.at s 0)))
+           (str.++ 
+             (ite (and (str.< "a" first) (str.< first "z"))
+                  (let ((offset (- (str.to.int first) (str.to.int "a"))))
+                    (str.from.int (+ (str.to.int "A") offset)))
+                  first)
+             (str.upper (str.substr s 1 (- len 1))))))))
+"""
+,
+'str.lower':
+"""
+(define-fun-rec str.lower ((s String)) String
+  (let ((len (str.len s)))
+    (ite (= len 0) 
+         ""
+         (let ((first (str.at s 0)))
+           (str.++ 
+             (ite (and (str.< "A" first) (str.< first "Z"))
+                  (let ((offset (- (str.to.int first) (str.to.int "A"))))
+                    (str.from.int (+ (str.to.int "a") offset)))
+                  first)
+             (str.lower (str.substr s 1 (- len 1))))))))
+"""
+,
 'str.count':
 """
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
@@ -473,4 +518,13 @@ class MockBackend(Backend):
         return self._record("bin", x)
 
     def IsUpper(self, x) -> MockExpr:
-        return self._record("str.is.upper", x)
+        return self._record("isupper", x)
+
+    def IsLower(self, x) -> MockExpr:
+        return self._record("islower", x)
+
+    def StrUpper(self, x) -> MockExpr:
+        return self._record("str.upper", x)
+
+    def StrLower(self, x) -> MockExpr:
+        return self._record("str.lower", x)

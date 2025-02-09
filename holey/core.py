@@ -299,6 +299,7 @@ class SymbolicFloat:
     def __init__(self, value, tracer=None):
         self.tracer = tracer
         self.z3_expr = value
+        self.concrete = value if isinstance(value, (int, float)) else None
 
     def __sub__(self, other):
         other = self.tracer.ensure_symbolic(other)
@@ -461,6 +462,11 @@ class SymbolicStr:
             self.z3_expr = value
         self.name = name
 
+    def __hash__(self):
+        if self.concrete is not None:
+            return hash(self.concrete)
+        raise ValueError("Symbolic hash not yet implemented")
+
     def split(self, sep=None):
         """Split string into list of strings"""
         if self.concrete is not None:
@@ -569,7 +575,7 @@ class SymbolicStr:
         if isinstance(other, (str, SymbolicStr)):
             other = self.tracer.ensure_symbolic(other)
             if self.concrete is not None and other.concrete is not None:
-                result = self.concrete == other_str
+                result = self.concrete == other.concrete
             else:
                 result = self.z3_expr == other.z3_expr
             return SymbolicBool(result, tracer=self.tracer)
@@ -601,6 +607,21 @@ class SymbolicStr:
             return SymbolicBool(self.concrete.isupper(), tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.IsUpper(self.z3_expr), tracer=self.tracer)
 
+    def islower(self):
+        if self.concrete is not None:
+            return SymbolicBool(self.concrete.islower(), tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.IsLower(self.z3_expr), tracer=self.tracer)
+
+    def upper(self):
+        if self.concrete is not None:
+            return SymbolicStr(self.concrete.upper(), tracer=self.tracer)
+        return SymbolicStr(self.tracer.backend.StrUpper(self.z3_expr), tracer=self.tracer)
+
+    def lower(self):
+        if self.concrete is not None:
+            return SymbolicStr(self.concrete.lower(), tracer=self.tracer)
+        return SymbolicStr(self.tracer.backend.StrLower(self.z3_expr), tracer=self.tracer)
+
 class SymbolicSlice:
     def __init__(self, concrete_seq, start, end, step=None, tracer: Optional[SymbolicTracer] = None):
         assert concrete_seq is not None
@@ -609,6 +630,9 @@ class SymbolicSlice:
         self.end = end
         self.step = step
         self.tracer = tracer
+
+    def __add__(self, other):
+        return self.get_slice() + other.get_slice()
 
     def __and__(self, other):
         other = self.tracer.ensure_symbolic(other)
