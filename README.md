@@ -69,6 +69,8 @@ We have errors of all kinds still:
 - 121 generated SMTLIB programs return non-`sat`, such as `unsat`, `unknown` or time out after 2 seconds.
 - 1715-723=992 puzzles are not yet run, because their answer type is not `int` or `str`, such as `float`, `list` (of various specializations), etc.
 
+See a detailed [stdout log](log/results.txt) of the current run.
+
 # Source map
 
 ```
