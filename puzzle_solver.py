@@ -404,7 +404,7 @@ class PuzzleSolver:
         try:
             result, log = func_timeout(3, self.symbolic_solve, args=(sat_func, ans_type, name))
             if result is not None:
-                if check_result(result, sat_func):
+                if not check_result(result, sat_func):
                     print("WARNING: Solution verification failed!")
                     return None
                 else:
@@ -439,10 +439,11 @@ Return only the new SMTLIB program without any context.
         return None
 
 def check_result(result, sat_func):
-    namespace = {'x': result}
+    namespace = {}
     exec(sat_func, namespace)
     sat = namespace['sat']
-    if not sat(result):
+    outcome = sat(result)
+    if not outcome:
         return False
     return True
 
