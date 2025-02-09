@@ -195,16 +195,15 @@ def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, sm
     
     print('')
     print('STATS')
-    print("Success count:", success_count)
-    print("Total considered:", solver.count)
-    print("\n")
     print("timeout staging count", solver.timeout_staging_count)
     print("error staging count", solver.error_staging_count)
     print("error verify count", solver.error_verify_count)
     print("error smt count", solver.error_smt_count)
     print("error smt var count", solver.error_smt_var_count)
     print("unsupported answer type", solver.error_unsupported_answer_type)
-    
+    print("")
+    print("Success count:", success_count)
+    print("Total considered:", solver.count)
     success_percentage = 100.0 * success_count / solver.count if solver.count > 0 else 0
     print(f"Success percentage: {success_percentage:.0f}%")
 
