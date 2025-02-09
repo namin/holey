@@ -40,7 +40,7 @@ python puzzle_solver.py --name-prefix HelloWorld:0
 ### Run all puzzles, saving stdout/stderr to file results.txt
 
 ```
-python puzzle_solver.py  >results_wip.txt 2>&
+python puzzle_solver.py  >results.txt 2>&
 ```
 
 ### Fallback to LLMs
