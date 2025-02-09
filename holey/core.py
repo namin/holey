@@ -492,9 +492,9 @@ class SymbolicStr:
         # For symbolic strings, we need to use Z3's string operations
         if sep is None:
             sep = " "  # Default separator is whitespace
-            
+        sep = self.tracer.ensure_symbolic(sep)
         # Use Z3's string operations to split
-        result = self.tracer.backend.StrSplit(self.z3_expr, self.tracer.backend.StringVal(sep))
+        result = self.tracer.backend.StrSplit(self.z3_expr, sep)
         return SymbolicList(result, tracer=self.tracer)
 
     def __contains__(self, item):
