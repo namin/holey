@@ -59,7 +59,7 @@ The symbolic execution alone currently solves:
 
 We have errors of all kinds still:
 - 59 puzzles timeout after 3 seconds at staging time (while building the SMTLIB program),
-- 71 generated SMTLIB programs return `sat` but the solution doesn't verify,
+- 71 generated SMTLIB programs return `sat` but the solution doesn't verify (so code generation is buggy),
 - 130 generated SMTLIB programs return non-`sat`, such as `unsat`, `unknown` or time out after 2 seconds.
 - 1715-723=992 puzzles are not yet run, because their answer type is not `int` or `str`, such as `float`, `list` (of various specializations), etc.
 
