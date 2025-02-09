@@ -73,7 +73,7 @@ See a detailed [stdout log](log/results.txt) of the current run.
 
 # Source map
 
-`.`
+`.`<br/>
 `├──` [README.md](README.md)<br/>
 `├──` [benchmarks](benchmarks)<br/>
 `│   └──` [PythonProgrammingPuzzles](benchmarks/PythonProgrammingPuzzles) _benchmark added as `git` submodule_<br/>
