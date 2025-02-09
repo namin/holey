@@ -6,4 +6,4 @@ The symbolic execution is
 based on Philip Zucker's blog post [_"Symbolic Execution by Overloading `__bool__`"_](https://www.philipzucker.com/overload_bool/),
 but explores all branches exhaustively instead of randomly and fleshes out the concepts towards solving [Python Programming Puzzles](https://github.com/microsoft/PythonProgrammingPuzzles).
 
-Future work will incorporate heuristics from LLMs in addition to symbolic execution.
+The solver incorporates heuristics from LLMs in addition to symbolic execution.
