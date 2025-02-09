@@ -21,14 +21,21 @@ def sym_bin(x):
         return SymbolicStr(x.tracer.backend.Bin(x.z3_expr), tracer=x.tracer)
     return bin(x)
                            
-def sym_int(x):
+def sym_int(x, base=None):
     if isinstance(x, SymbolicStr):
-        return SymbolicInt(x.tracer.backend.StrToInt(x.z3_expr), tracer=x.tracer)
+        if base:
+            base = x.ensure_symbolic(base).z3_expr
+        return SymbolicInt(x.tracer.backend.StrToInt(x.z3_expr, base), tracer=x.tracer)
     if isinstance(x, SymbolicFloat):
+        assert base is None
         return SymbolicInt(x.tracer.backend.ToInt(x.z3_expr), tracer=x.tracer)
     if isinstance(x, SymbolicInt):
+        assert base is None
         return x
-    return int(x)
+    if base:
+        return int(x, base)
+    else:
+        return int(x)
 
 def sym_float(x):
     if isinstance(x, SymbolicStr):

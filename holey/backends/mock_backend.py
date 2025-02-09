@@ -100,12 +100,42 @@ class MockExpr:
         return self._name if self._name else str(self)
 
 library = {
+'python.int':
+"""
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+"""
+,
+'python.str.at':
+"""
+(define-fun python.str.at ((s String) (start Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start)))
+    (str.substr s start 1)))
+"""
+,
 'python.str.substr':
 """
 (define-fun python.str.substr ((s String) (start Int) (end Int)) String
   (let ((start (ite (< start 0) (+ (str.len s) start) start))
         (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start end)))
+    (str.substr s start (- end start))))
 """
 ,
 'str.to.float':
@@ -398,14 +428,14 @@ class MockBackend(Backend):
     def StrToCode(self, x) -> MockExpr:
         return self._record("str.to_code", x)
 
-    def StrToInt(self, x) -> MockExpr:
-        return self._record("str.to.int", x)
+    def StrToInt(self, x, base=None) -> MockExpr:
+        return self._record("python.int", x, base if base else self.IntVal(10))
 
     def StrToFloat(self, x) -> MockExpr:
         return self._record("str.to.float", x)
 
     def StrIndex(self, x, y) -> MockExpr:
-        return self._record("python.str.substr", x, y, self.IntVal(1))
+        return self._record("python.str.at", x, y)
 
     def StrLen(self, x) -> MockExpr:
         return self._record("str.len", x)
