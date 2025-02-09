@@ -130,11 +130,11 @@ Return only the Python constant without any context.
                 if not check_result(result, sat_func):
                     self.error_verify_count += 1
                     print("WARNING: Solution verification failed for puzzle "+name)
-                    return None
+                    result = None
                 else:
                     self.success_count += 1
                     print("Yes! Solved for puzzle ", name)
-            elif llm:
+            if llm and result is None:
                 print('\nFallback to LLM!')
                 result = self.llm_solve(sat_func, ans_type, name) or self.llm_smtlib_solve(sat_func, ans_type, name, log)
             return result
