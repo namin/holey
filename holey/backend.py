@@ -56,6 +56,8 @@ def run_smt(smt2, cmds=None):
 
         parsed = []
         for (cmd, output) in outs:
+            output = output.replace(smt2_file, "tmp.smt2")
+
             print('### output' + ' for ' + cmd if cmd is not None else '')
             print(output)
 

@@ -198,7 +198,7 @@ running backend cvc5
 unknown
 (error "line 18 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp9o6sjv8u.smt2:13.52: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:13.52: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle Study_16:0
 
@@ -2120,7 +2120,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp7zcardfo.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:0
 
@@ -2152,7 +2152,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpkcfsmkjb.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:1
 
@@ -2184,7 +2184,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpc9lc68wa.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:2
 
@@ -2216,7 +2216,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpb3ozv6ml.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:3
 
@@ -2248,7 +2248,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpntoihip_.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:4
 
@@ -3553,7 +3553,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpkghvnnrb.smt2:16.169: Branches of the ITE must have comparable type.
+(error "Parse Error: tmp.smt2:16.169: Branches of the ITE must have comparable type.
 then branch: (mod 101076 i_1)
 its type   : Int
 else branch: (not (not (= (mod i_1 i_2) 0)))
@@ -3616,7 +3616,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpclawdike.smt2:16.166: Branches of the ITE must have comparable type.
+(error "Parse Error: tmp.smt2:16.166: Branches of the ITE must have comparable type.
 then branch: (mod 15132 i_1)
 its type   : Int
 else branch: (not (not (= (mod i_1 i_2) 0)))
@@ -3679,7 +3679,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpgjqwcgoh.smt2:16.166: Branches of the ITE must have comparable type.
+(error "Parse Error: tmp.smt2:16.166: Branches of the ITE must have comparable type.
 then branch: (mod 22184 i_1)
 its type   : Int
 else branch: (not (not (= (mod i_1 i_2) 0)))
@@ -3742,7 +3742,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpzbdu7t2v.smt2:16.166: Branches of the ITE must have comparable type.
+(error "Parse Error: tmp.smt2:16.166: Branches of the ITE must have comparable type.
 then branch: (mod 70875 i_1)
 its type   : Int
 else branch: (not (not (= (mod i_1 i_2) 0)))
@@ -3805,7 +3805,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp42ivu5cs.smt2:16.166: Branches of the ITE must have comparable type.
+(error "Parse Error: tmp.smt2:16.166: Branches of the ITE must have comparable type.
 then branch: (mod 63088 i_1)
 its type   : Int
 else branch: (not (not (= (mod i_1 i_2) 0)))
@@ -6841,7 +6841,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp5sfv2ruj.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+(error "Parse Error: tmp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:0
 
@@ -6886,7 +6886,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpfnls88l_.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+(error "Parse Error: tmp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:1
 
@@ -6931,7 +6931,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp67_52s39.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+(error "Parse Error: tmp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:2
 
@@ -6976,7 +6976,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp43w38qwx.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+(error "Parse Error: tmp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:3
 
@@ -7021,7 +7021,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpgzvwss8m.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+(error "Parse Error: tmp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:4
 
@@ -17065,7 +17065,7 @@ sat
     185)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpel24jkgt.smt2:6.53: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:6.53: expecting same arithmetic types to POW")
 
 Found solution 185
 WARNING: Solution verification failed for puzzle BirthdayParadox:0
@@ -17102,7 +17102,7 @@ sat
     30093)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpzmby_7sp.smt2:6.57: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:6.57: expecting same arithmetic types to POW")
 
 Found solution 30093
 WARNING: Solution verification failed for puzzle BirthdayParadox:1
@@ -17139,7 +17139,7 @@ sat
     1)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp04y3d0rc.smt2:6.49: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:6.49: expecting same arithmetic types to POW")
 
 Found solution 1
 Yes! Solved for puzzle  BirthdayParadox:2
@@ -17176,7 +17176,7 @@ sat
     1)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp19h2h4o8.smt2:6.49: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:6.49: expecting same arithmetic types to POW")
 
 Found solution 1
 Yes! Solved for puzzle  BirthdayParadox:3
@@ -17502,7 +17502,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpa2r2yj_j.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: tmp.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:0
 
@@ -17528,7 +17528,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp9vyfj43g.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: tmp.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:1
 
@@ -17554,7 +17554,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpylgupzkm.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: tmp.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:2
 
@@ -17580,7 +17580,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp_9arjrjy.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: tmp.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:3
 
@@ -17606,7 +17606,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmptljehrx5.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: tmp.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:4
 
@@ -17632,7 +17632,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpoe8o31l9.smt2:3.25: expecting an arithmetic subterm")
+(error "Parse Error: tmp.smt2:3.25: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:0
 
@@ -17658,7 +17658,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpp4q98qdz.smt2:3.22: expecting an arithmetic subterm")
+(error "Parse Error: tmp.smt2:3.22: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:1
 
@@ -17684,7 +17684,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpjx1cnhyz.smt2:3.31: expecting an arithmetic subterm")
+(error "Parse Error: tmp.smt2:3.31: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:2
 
@@ -17710,7 +17710,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp1e484wap.smt2:3.33: expecting an arithmetic subterm")
+(error "Parse Error: tmp.smt2:3.33: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:3
 
@@ -17736,7 +17736,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp_bwswbam.smt2:3.55: expecting an arithmetic subterm")
+(error "Parse Error: tmp.smt2:3.55: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:4
 
