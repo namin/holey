@@ -62,6 +62,54 @@ class PuzzleSolver:
         print("Found solution", result)
         return result, log
 
+    def llm_smtlib_solve(self, sat_func: str, ans_type: str, name: str, log: str) -> Optional[str]:
+        print('Asking LLM for SMTLIB')
+        prompt = f"""Return a modified SMTLIB z3 program that captures the intent of the `sat` function of puzzle {name}:
+{sat_func}
+
+This is the log, you may copy most of any SMTLIB program below.
+{log}
+
+Return only the new SMTLIB program without any context.
+"""
+        blocks = extract_code_blocks(llm_generate(prompt))
+        model = None
+        result = None
+        for smt in blocks:
+            flag, model = run_smt(smt)
+            if flag == "sat":
+                break
+        if model:
+            llm_result = model['x']
+            if check_result(llm_result, sat_func):
+                print("LLM result confirmed for puzzle " + name)
+                result = llm_result
+        return None
+
+    def llm_solve(self, sat_func: str, ans_type: str, name: str) -> Optional[str]:
+        print('Asking LLM for whole answer')
+        prompt = f"""Return a constant Python value of type {ans_type} to solve puzzle {name}, where your goal is to synthesize the first argument that makes this `sat` function return `True`:
+{sat_func}
+
+Return only the Python constant without any context.
+"""
+        results = extract_code_blocks(llm_generate(prompt))
+        for result in results:
+            print('LLM result', result)
+            if ans_type == 'int':
+                try:
+                    result = int(result)
+                except ValueError as e:
+                    print('LLM returned bad type for int', e)
+                    break
+            if not check_result(result, sat_func):
+                print('LLM result fails to verify for puzzle '+name)
+            else:
+                print('LLM result verifies for puzzle '+name)
+                return result
+        return None
+
+
     def solve_puzzle(self, puzzle_data: Any, llm) -> Optional[str]:
         name = puzzle_data.get('name', '')
         sat_func = puzzle_data.get('sat_function', puzzle_data.get('sat', ''))
@@ -85,25 +133,7 @@ class PuzzleSolver:
                     print("Yes! Solved for puzzle ", name)
             elif llm:
                 print('\nFallback to LLM!')
-                prompt = f"""Return a modified SMTLIB z3 program that captures the intent of the `sat` function of puzzle {name}:
-{sat_func}
-
-This is the log, you may copy most of any SMTLIB program below.
-{log}
-
-Return only the new SMTLIB program without any context.
-"""
-                blocks = extract_code_blocks(llm_generate(prompt))
-                model = None
-                for smt in blocks:
-                    flag, model = run_smt(smt)
-                    if flag == "sat":
-                        break
-                if model:
-                    llm_result = model['x']
-                    if check_result(llm_result, sat_func):
-                        print("LLM result confirmed for puzzle " + name)
-                        result = llm_result
+                result = self.llm_solve(sat_func, ans_type, name) or self.llm_smtlib_solve(sat_func, ans_type, name, log)
             return result
         except FunctionTimedOut:
             print("Timed out for puzzle "+name)
@@ -119,7 +149,11 @@ def check_result(result, sat_func):
     namespace = {}
     exec(sat_func, namespace)
     sat = namespace['sat']
-    outcome = sat(result)
+    try:
+        outcome = sat(result)
+    except Exception as e:
+        print('Exception in checking result:', e)
+        return False
     if not outcome:
         return False
     return True
