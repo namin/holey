@@ -167,6 +167,8 @@ def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, ll
     with open(puzzle_file) as f:
         puzzles = json.load(f)
     
+    print(f"Starting with {len(puzzles)} puzzles...")
+
     # Filter puzzles
     if name_prefix:
         puzzles = [p for p in puzzles if p.get('name', '').startswith(name_prefix)]
