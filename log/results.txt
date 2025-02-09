@@ -997,7 +997,58 @@ sat_func def sat(str_num: str, nums=['100011101100001', '100101100101110']):
 modified_func def sat(str_num: str, nums=wrap_list([wrap_str('100011101100001'), wrap_str('100101100101110')])):
     a, b = nums
     return sym_int(str_num, wrap_int(2)) == sym_int(a, wrap_int(2)) ^ sym_int(b, wrap_int(2))
-Exception -- for puzzle BinaryStrXOR:0 unsupported operand type(s) for ^: 'SymbolicInt' and 'SymbolicInt'
+### smt2
+(set-logic ALL)
+
+(define-fun bool-to-int ((b Bool)) Int
+  (ite b 1 0))
+
+(define-fun int2bits ((x Int)) Bool
+  (= (mod (abs x) 2) 1))
+
+(define-fun python.int.xor ((x Int) (y Int)) Int
+  (let ((bits (bool-to-int (xor (int2bits x) (int2bits y)))))
+    bits))
+
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (> (str.len x) 0))
+(assert (> (str.len "100011101100001") 0))
+(assert (> (str.len "100101100101110") 0))
+(assert (= (python.int x 2) (python.int.xor (python.int "100011101100001" 2) (python.int "100101100101110" 2))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unknown
+(error "line 40 column 10: model is not available")
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+
+Could not find any solution for puzzle BinaryStrXOR:0
 
 Solving puzzle 37/723: BinaryStrXOR:1
 sat_func def sat(str_num: str, nums=['1101101111', '11001100']):
@@ -1006,7 +1057,58 @@ sat_func def sat(str_num: str, nums=['1101101111', '11001100']):
 modified_func def sat(str_num: str, nums=wrap_list([wrap_str('1101101111'), wrap_str('11001100')])):
     a, b = nums
     return sym_int(str_num, wrap_int(2)) == sym_int(a, wrap_int(2)) ^ sym_int(b, wrap_int(2))
-Exception -- for puzzle BinaryStrXOR:1 unsupported operand type(s) for ^: 'SymbolicInt' and 'SymbolicInt'
+### smt2
+(set-logic ALL)
+
+(define-fun bool-to-int ((b Bool)) Int
+  (ite b 1 0))
+
+(define-fun int2bits ((x Int)) Bool
+  (= (mod (abs x) 2) 1))
+
+(define-fun python.int.xor ((x Int) (y Int)) Int
+  (let ((bits (bool-to-int (xor (int2bits x) (int2bits y)))))
+    bits))
+
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (> (str.len x) 0))
+(assert (> (str.len "1101101111") 0))
+(assert (> (str.len "11001100") 0))
+(assert (= (python.int x 2) (python.int.xor (python.int "1101101111" 2) (python.int "11001100" 2))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unknown
+(error "line 40 column 10: model is not available")
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+
+Could not find any solution for puzzle BinaryStrXOR:1
 
 Solving puzzle 38/723: BinaryStrXOR:2
 sat_func def sat(str_num: str, nums=['11011111', '1101001110']):
@@ -1015,7 +1117,58 @@ sat_func def sat(str_num: str, nums=['11011111', '1101001110']):
 modified_func def sat(str_num: str, nums=wrap_list([wrap_str('11011111'), wrap_str('1101001110')])):
     a, b = nums
     return sym_int(str_num, wrap_int(2)) == sym_int(a, wrap_int(2)) ^ sym_int(b, wrap_int(2))
-Exception -- for puzzle BinaryStrXOR:2 unsupported operand type(s) for ^: 'SymbolicInt' and 'SymbolicInt'
+### smt2
+(set-logic ALL)
+
+(define-fun bool-to-int ((b Bool)) Int
+  (ite b 1 0))
+
+(define-fun int2bits ((x Int)) Bool
+  (= (mod (abs x) 2) 1))
+
+(define-fun python.int.xor ((x Int) (y Int)) Int
+  (let ((bits (bool-to-int (xor (int2bits x) (int2bits y)))))
+    bits))
+
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (> (str.len x) 0))
+(assert (> (str.len "11011111") 0))
+(assert (> (str.len "1101001110") 0))
+(assert (= (python.int x 2) (python.int.xor (python.int "11011111" 2) (python.int "1101001110" 2))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unknown
+(error "line 40 column 10: model is not available")
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+
+Could not find any solution for puzzle BinaryStrXOR:2
 
 Solving puzzle 39/723: BinaryStrXOR:3
 sat_func def sat(str_num: str, nums=['100000001', '1010001001']):
@@ -1024,7 +1177,58 @@ sat_func def sat(str_num: str, nums=['100000001', '1010001001']):
 modified_func def sat(str_num: str, nums=wrap_list([wrap_str('100000001'), wrap_str('1010001001')])):
     a, b = nums
     return sym_int(str_num, wrap_int(2)) == sym_int(a, wrap_int(2)) ^ sym_int(b, wrap_int(2))
-Exception -- for puzzle BinaryStrXOR:3 unsupported operand type(s) for ^: 'SymbolicInt' and 'SymbolicInt'
+### smt2
+(set-logic ALL)
+
+(define-fun bool-to-int ((b Bool)) Int
+  (ite b 1 0))
+
+(define-fun int2bits ((x Int)) Bool
+  (= (mod (abs x) 2) 1))
+
+(define-fun python.int.xor ((x Int) (y Int)) Int
+  (let ((bits (bool-to-int (xor (int2bits x) (int2bits y)))))
+    bits))
+
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (> (str.len x) 0))
+(assert (> (str.len "100000001") 0))
+(assert (> (str.len "1010001001") 0))
+(assert (= (python.int x 2) (python.int.xor (python.int "100000001" 2) (python.int "1010001001" 2))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unknown
+(error "line 40 column 10: model is not available")
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+
+Could not find any solution for puzzle BinaryStrXOR:3
 
 Solving puzzle 40/723: BinaryStrXOR:4
 sat_func def sat(str_num: str, nums=['10010110', '10000']):
@@ -1033,7 +1237,58 @@ sat_func def sat(str_num: str, nums=['10010110', '10000']):
 modified_func def sat(str_num: str, nums=wrap_list([wrap_str('10010110'), wrap_str('10000')])):
     a, b = nums
     return sym_int(str_num, wrap_int(2)) == sym_int(a, wrap_int(2)) ^ sym_int(b, wrap_int(2))
-Exception -- for puzzle BinaryStrXOR:4 unsupported operand type(s) for ^: 'SymbolicInt' and 'SymbolicInt'
+### smt2
+(set-logic ALL)
+
+(define-fun bool-to-int ((b Bool)) Int
+  (ite b 1 0))
+
+(define-fun int2bits ((x Int)) Bool
+  (= (mod (abs x) 2) 1))
+
+(define-fun python.int.xor ((x Int) (y Int)) Int
+  (let ((bits (bool-to-int (xor (int2bits x) (int2bits y)))))
+    bits))
+
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (> (str.len x) 0))
+(assert (> (str.len "10010110") 0))
+(assert (> (str.len "10000") 0))
+(assert (= (python.int x 2) (python.int.xor (python.int "10010110" 2) (python.int "10000" 2))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unknown
+(error "line 40 column 10: model is not available")
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+
+Could not find any solution for puzzle BinaryStrXOR:4
 
 Solving puzzle 41/723: LongestStr:0
 sat_func def sat(ans: str, words=['these', 'are', 'some', 'pretty', 'long', 'words']):
@@ -2516,6 +2771,7 @@ modified_func def sat(s: str, n=wrap_int(142), base=wrap_int(7)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
+(assert (> (str.len x) 0))
 (assert (= (python.int x 7) 142))
 (check-sat)
 (get-model)
@@ -2524,7 +2780,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unknown
-(error "line 26 column 10: model is not available")
+(error "line 27 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ 7.0 (to_real (+ (- 1) (str.len x))))")
@@ -2560,6 +2816,7 @@ modified_func def sat(s: str, n=wrap_int(85328), base=wrap_int(2)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
+(assert (> (str.len x) 0))
 (assert (= (python.int x 2) 85328))
 (check-sat)
 (get-model)
@@ -2568,7 +2825,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unknown
-(error "line 26 column 10: model is not available")
+(error "line 27 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ 2.0 (to_real (+ (- 1) (str.len x))))")
@@ -2604,6 +2861,7 @@ modified_func def sat(s: str, n=wrap_int(9576751), base=wrap_int(10)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
+(assert (> (str.len x) 0))
 (assert (= (python.int x 10) 9576751))
 (check-sat)
 (get-model)
@@ -2652,6 +2910,7 @@ modified_func def sat(s: str, n=wrap_int(5160280), base=wrap_int(5)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
+(assert (> (str.len x) 0))
 (assert (= (python.int x 5) 5160280))
 (check-sat)
 (get-model)
@@ -2660,7 +2919,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unknown
-(error "line 26 column 10: model is not available")
+(error "line 27 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ 5.0 (to_real (+ (- 1) (str.len x))))")
@@ -2696,6 +2955,7 @@ modified_func def sat(s: str, n=wrap_int(4884658), base=wrap_int(6)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
+(assert (> (str.len x) 0))
 (assert (= (python.int x 6) 4884658))
 (check-sat)
 (get-model)
@@ -2704,7 +2964,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unknown
-(error "line 26 column 10: model is not available")
+(error "line 27 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ 6.0 (to_real (+ (- 1) (str.len x))))")
@@ -4043,6 +4303,7 @@ modified_func def sat(shifted: str, n=wrap_int(124582369835), shift=wrap_int(3))
     (str.substr s start (- end start))))
 
 (declare-const x String)
+(assert (> (str.len (str.++ (python.str.substr x -3 (str.len x)) (python.str.substr x 0 -3))) 0))
 (assert (= 124582369835 (python.int (str.++ (python.str.substr x -3 (str.len x)) (python.str.substr x 0 -3)) 10)))
 (check-sat)
 (get-model)
@@ -4053,13 +4314,13 @@ running backend cvc5
 sat
 (
   (define-fun x () String
-    "0000000124582369835000")
+    "0124582369835000")
 )
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
-  (^ 2.0 (to_real (+ (- 1) (str.len @purify_3))))")
+  (^ 2.0 (to_real (+ (- 1) (str.len (str.substr x 0 (+ (- 3) (str.len x)))))))")
 
-Found solution 0000000124582369835000
+Found solution 0124582369835000
 Yes! Solved for puzzle  CircularShiftNum:0
 
 Solving puzzle 137/723: CircularShiftNum:1
@@ -4102,6 +4363,7 @@ modified_func def sat(shifted: str, n=wrap_int(6852918492), shift=wrap_int(12)):
                (str.reverse (str.substr s 0 (- (str.len s) 1))))))
 
 (declare-const x String)
+(assert (> (str.len (str.reverse x)) 0))
 (assert (= 6852918492 (python.int (str.reverse x) 10)))
 (check-sat)
 (get-model)
@@ -4112,13 +4374,13 @@ running backend cvc5
 sat
 (
   (define-fun x () String
-    "2948192586")
+    "29481925860")
 )
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ 2.0 (to_real (+ (- 1) (str.len x))))")
 
-Found solution 2948192586
+Found solution 29481925860
 Yes! Solved for puzzle  CircularShiftNum:1
 
 Solving puzzle 138/723: CircularShiftNum:2
@@ -4161,6 +4423,7 @@ modified_func def sat(shifted: str, n=wrap_int(32928510691049616), shift=wrap_in
                (str.reverse (str.substr s 0 (- (str.len s) 1))))))
 
 (declare-const x String)
+(assert (> (str.len (str.reverse x)) 0))
 (assert (= 32928510691049616 (python.int (str.reverse x) 10)))
 (check-sat)
 (get-model)
@@ -4215,6 +4478,7 @@ modified_func def sat(shifted: str, n=wrap_int(237), shift=wrap_int(26)):
                (str.reverse (str.substr s 0 (- (str.len s) 1))))))
 
 (declare-const x String)
+(assert (> (str.len (str.reverse x)) 0))
 (assert (= 237 (python.int (str.reverse x) 10)))
 (check-sat)
 (get-model)
@@ -4274,6 +4538,7 @@ modified_func def sat(shifted: str, n=wrap_int(6), shift=wrap_int(26)):
                (str.reverse (str.substr s 0 (- (str.len s) 1))))))
 
 (declare-const x String)
+(assert (> (str.len (str.reverse x)) 0))
 (assert (= 6 (python.int (str.reverse x) 10)))
 (check-sat)
 (get-model)
@@ -6880,9 +7145,11 @@ modified_func def sat(s: str, a=-wrap_int(103252), b=wrap_int(10657)):
 (declare-const x String)
 (declare-const i_0 Int)
 (declare-const i_1 Int)
+(assert (> (str.len x) 0))
 (assert (>= i_0 -103252))
 (assert (< i_0 10657))
 (assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))
+(assert (> (str.len x) 0))
 (assert (>= i_1 -103252))
 (assert (< i_1 10657))
 (assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))
@@ -6892,22 +7159,13 @@ modified_func def sat(s: str, a=-wrap_int(103252), b=wrap_int(10657)):
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun i_0 () Int
-    0)
-  (define-fun x () String
-    "")
-  (define-fun i_1 () Int
-    (- 1))
-)
+unknown
+(error "line 35 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ 2.0 (to_real (+ (- 1) (str.len x))))")
 
-Found solution 
-Exception in checking result: invalid literal for int() with base 2: ''
-WARNING: Solution verification failed for puzzle BinaryAverage:0
+Could not find any solution for puzzle BinaryAverage:0
 
 Solving puzzle 237/723: BinaryAverage:1
 sat_func def sat(s: str, a=70421, b=70421):
@@ -6950,9 +7208,11 @@ modified_func def sat(s: str, a=wrap_int(70421), b=wrap_int(70421)):
 (declare-const x String)
 (declare-const i_0 Int)
 (declare-const i_1 Int)
+(assert (> (str.len x) 0))
 (assert (>= i_0 70421))
 (assert (< i_0 70421))
 (assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))
+(assert (> (str.len x) 0))
 (assert (>= i_1 70421))
 (assert (< i_1 70421))
 (assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))
@@ -6963,7 +7223,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 33 column 10: model is not available")
+(error "line 35 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -7011,9 +7271,11 @@ modified_func def sat(s: str, a=-wrap_int(10299), b=-wrap_int(10300)):
 (declare-const x String)
 (declare-const i_0 Int)
 (declare-const i_1 Int)
+(assert (> (str.len x) 0))
 (assert (>= i_0 -10299))
 (assert (< i_0 -10300))
 (assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))
+(assert (> (str.len x) 0))
 (assert (>= i_1 -10299))
 (assert (< i_1 -10300))
 (assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))
@@ -7024,7 +7286,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 33 column 10: model is not available")
+(error "line 35 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -7072,9 +7334,11 @@ modified_func def sat(s: str, a=wrap_int(0), b=wrap_int(52)):
 (declare-const x String)
 (declare-const i_0 Int)
 (declare-const i_1 Int)
+(assert (> (str.len x) 0))
 (assert (>= i_0 0))
 (assert (< i_0 52))
 (assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))
+(assert (> (str.len x) 0))
 (assert (>= i_1 0))
 (assert (< i_1 52))
 (assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))
@@ -7084,22 +7348,13 @@ modified_func def sat(s: str, a=wrap_int(0), b=wrap_int(52)):
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun i_0 () Int
-    0)
-  (define-fun x () String
-    "")
-  (define-fun i_1 () Int
-    0)
-)
+unknown
+(error "line 35 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
-  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+  (^ 2.0 (to_real (+ (- 1) (str.len @purify_8))))")
 
-Found solution 
-Exception in checking result: invalid literal for int() with base 2: ''
-WARNING: Solution verification failed for puzzle BinaryAverage:3
+Could not find any solution for puzzle BinaryAverage:3
 
 Solving puzzle 240/723: BinaryAverage:4
 sat_func def sat(s: str, a=-89, b=0):
@@ -7142,9 +7397,11 @@ modified_func def sat(s: str, a=-wrap_int(89), b=wrap_int(0)):
 (declare-const x String)
 (declare-const i_0 Int)
 (declare-const i_1 Int)
+(assert (> (str.len x) 0))
 (assert (>= i_0 -89))
 (assert (< i_0 0))
 (assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))
+(assert (> (str.len x) 0))
 (assert (>= i_1 -89))
 (assert (< i_1 0))
 (assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))
@@ -8284,30 +8541,46 @@ modified_func def sat(prod: int, n=wrap_int(8502)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x Int)
+(assert (> (str.len "8") 0))
 (assert (not (= 2 0)))
 (assert (not (= (python.int "8" 10) 0)))
 (assert (=> (= (mod (python.int "8" 10) 2) 1) (= (mod x (python.int "8" 10)) 0)))
+(assert (=> (= (mod (python.int "8" 10) 2) 1) (> (str.len "5") 0)))
 (assert (not (= 2 0)))
 (assert (not (= (python.int "5" 10) 0)))
 (assert (=> (and (= (mod (python.int "8" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1)) (= (mod (div x (python.int "8" 10)) (python.int "5" 10)) 0)))
+(assert (=> (and (= (mod (python.int "8" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1)) (> (str.len "0") 0)))
 (assert (not (= 2 0)))
 (assert (not (= (python.int "0" 10) 0)))
 (assert (=> (and (= (mod (python.int "8" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "0" 10) 2) 1)) (= (mod (div (div x (python.int "8" 10)) (python.int "5" 10)) (python.int "0" 10)) 0)))
+(assert (=> (and (= (mod (python.int "8" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "0" 10) 2) 1)) (> (str.len "2") 0)))
 (assert (not (= 2 0)))
 (assert (not (= (python.int "2" 10) 0)))
 (assert (=> (and (= (mod (python.int "8" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "0" 10) 2) 1) (= (mod (python.int "2" 10) 2) 1)) (= (mod (div (div (div x (python.int "8" 10)) (python.int "5" 10)) (python.int "0" 10)) (python.int "2" 10)) 0)))
+(assert (=> (and (= (mod (python.int "8" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "0" 10) 2) 1) (= (mod (python.int "2" 10) 2) 1)) (> (str.len "8") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (= (mod (python.int "8" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "0" 10) 2) 1) (= (mod (python.int "2" 10) 2) 1)) (> (str.len "5") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (= (mod (python.int "8" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "0" 10) 2) 1) (= (mod (python.int "2" 10) 2) 1)) (> (str.len "0") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (= (mod (python.int "8" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "0" 10) 2) 1) (= (mod (python.int "2" 10) 2) 1)) (> (str.len "2") 0)))
 (assert (not (= 2 0)))
 (assert (=> (and (= (mod (python.int "8" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "0" 10) 2) 1) (= (mod (python.int "2" 10) 2) 1)) (= (div (div (div (div x (python.int "8" 10)) (python.int "5" 10)) (python.int "0" 10)) (python.int "2" 10)) (ite (not (= (ite (not (= (ite (not (= (mod (python.int "8" 10) 2) 0)) (mod (python.int "8" 10) 2) (mod (python.int "5" 10) 2)) 0)) (ite (not (= (mod (python.int "8" 10) 2) 0)) (mod (python.int "8" 10) 2) (mod (python.int "5" 10) 2)) (mod (python.int "0" 10) 2)) 0)) (ite (not (= (ite (not (= (mod (python.int "8" 10) 2) 0)) (mod (python.int "8" 10) 2) (mod (python.int "5" 10) 2)) 0)) (ite (not (= (mod (python.int "8" 10) 2) 0)) (mod (python.int "8" 10) 2) (mod (python.int "5" 10) 2)) (mod (python.int "0" 10) 2)) (mod (python.int "2" 10) 2)))))
+(assert (> (str.len "8") 0))
 (assert (not (= 2 0)))
+(assert (=> (not (= (mod (python.int "8" 10) 2) 1)) (> (str.len "5") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (not (= (mod (python.int "8" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1))) (> (str.len "0") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (not (= (mod (python.int "8" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1)) (not (= (mod (python.int "0" 10) 2) 1))) (> (str.len "2") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (not (= (mod (python.int "8" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1)) (not (= (mod (python.int "0" 10) 2) 1)) (not (= (mod (python.int "2" 10) 2) 1))) (> (str.len "8") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (not (= (mod (python.int "8" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1)) (not (= (mod (python.int "0" 10) 2) 1)) (not (= (mod (python.int "2" 10) 2) 1))) (> (str.len "5") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (not (= (mod (python.int "8" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1)) (not (= (mod (python.int "0" 10) 2) 1)) (not (= (mod (python.int "2" 10) 2) 1))) (> (str.len "0") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (not (= (mod (python.int "8" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1)) (not (= (mod (python.int "0" 10) 2) 1)) (not (= (mod (python.int "2" 10) 2) 1))) (> (str.len "2") 0)))
 (assert (not (= 2 0)))
 (assert (=> (and (not (= (mod (python.int "8" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1)) (not (= (mod (python.int "0" 10) 2) 1)) (not (= (mod (python.int "2" 10) 2) 1))) (= x (ite (not (= (ite (not (= (ite (not (= (mod (python.int "8" 10) 2) 0)) (mod (python.int "8" 10) 2) (mod (python.int "5" 10) 2)) 0)) (ite (not (= (mod (python.int "8" 10) 2) 0)) (mod (python.int "8" 10) 2) (mod (python.int "5" 10) 2)) (mod (python.int "0" 10) 2)) 0)) (ite (not (= (ite (not (= (mod (python.int "8" 10) 2) 0)) (mod (python.int "8" 10) 2) (mod (python.int "5" 10) 2)) 0)) (ite (not (= (mod (python.int "8" 10) 2) 0)) (mod (python.int "8" 10) 2) (mod (python.int "5" 10) 2)) (mod (python.int "0" 10) 2)) (mod (python.int "2" 10) 2)))))
 (check-sat)
@@ -8317,7 +8590,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 51 column 10: model is not available")
+(error "line 67 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -8364,36 +8637,56 @@ modified_func def sat(prod: int, n=wrap_int(95973)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x Int)
+(assert (> (str.len "9") 0))
 (assert (not (= 2 0)))
 (assert (not (= (python.int "9" 10) 0)))
 (assert (=> (= (mod (python.int "9" 10) 2) 1) (= (mod x (python.int "9" 10)) 0)))
+(assert (=> (= (mod (python.int "9" 10) 2) 1) (> (str.len "5") 0)))
 (assert (not (= 2 0)))
 (assert (not (= (python.int "5" 10) 0)))
 (assert (=> (and (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1)) (= (mod (div x (python.int "9" 10)) (python.int "5" 10)) 0)))
+(assert (=> (and (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1)) (> (str.len "9") 0)))
 (assert (not (= 2 0)))
 (assert (not (= (python.int "9" 10) 0)))
 (assert (=> (and (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "9" 10) 2) 1)) (= (mod (div (div x (python.int "9" 10)) (python.int "5" 10)) (python.int "9" 10)) 0)))
+(assert (=> (and (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "9" 10) 2) 1)) (> (str.len "7") 0)))
 (assert (not (= 2 0)))
 (assert (not (= (python.int "7" 10) 0)))
 (assert (=> (and (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "7" 10) 2) 1)) (= (mod (div (div (div x (python.int "9" 10)) (python.int "5" 10)) (python.int "9" 10)) (python.int "7" 10)) 0)))
+(assert (=> (and (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "7" 10) 2) 1)) (> (str.len "3") 0)))
 (assert (not (= 2 0)))
 (assert (not (= (python.int "3" 10) 0)))
 (assert (=> (and (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "7" 10) 2) 1) (= (mod (python.int "3" 10) 2) 1)) (= (mod (div (div (div (div x (python.int "9" 10)) (python.int "5" 10)) (python.int "9" 10)) (python.int "7" 10)) (python.int "3" 10)) 0)))
+(assert (=> (and (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "7" 10) 2) 1) (= (mod (python.int "3" 10) 2) 1)) (> (str.len "9") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "7" 10) 2) 1) (= (mod (python.int "3" 10) 2) 1)) (> (str.len "5") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "7" 10) 2) 1) (= (mod (python.int "3" 10) 2) 1)) (> (str.len "9") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "7" 10) 2) 1) (= (mod (python.int "3" 10) 2) 1)) (> (str.len "7") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "7" 10) 2) 1) (= (mod (python.int "3" 10) 2) 1)) (> (str.len "3") 0)))
 (assert (not (= 2 0)))
 (assert (=> (and (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "5" 10) 2) 1) (= (mod (python.int "9" 10) 2) 1) (= (mod (python.int "7" 10) 2) 1) (= (mod (python.int "3" 10) 2) 1)) (= (div (div (div (div (div x (python.int "9" 10)) (python.int "5" 10)) (python.int "9" 10)) (python.int "7" 10)) (python.int "3" 10)) (ite (not (= (ite (not (= (ite (not (= (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) 0)) (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) (mod (python.int "9" 10) 2)) 0)) (ite (not (= (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) 0)) (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) (mod (python.int "9" 10) 2)) (mod (python.int "7" 10) 2)) 0)) (ite (not (= (ite (not (= (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) 0)) (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) (mod (python.int "9" 10) 2)) 0)) (ite (not (= (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) 0)) (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) (mod (python.int "9" 10) 2)) (mod (python.int "7" 10) 2)) (mod (python.int "3" 10) 2)))))
+(assert (> (str.len "9") 0))
 (assert (not (= 2 0)))
+(assert (=> (not (= (mod (python.int "9" 10) 2) 1)) (> (str.len "5") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1))) (> (str.len "9") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1)) (not (= (mod (python.int "9" 10) 2) 1))) (> (str.len "7") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1)) (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "7" 10) 2) 1))) (> (str.len "3") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1)) (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "7" 10) 2) 1)) (not (= (mod (python.int "3" 10) 2) 1))) (> (str.len "9") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1)) (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "7" 10) 2) 1)) (not (= (mod (python.int "3" 10) 2) 1))) (> (str.len "5") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1)) (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "7" 10) 2) 1)) (not (= (mod (python.int "3" 10) 2) 1))) (> (str.len "9") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1)) (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "7" 10) 2) 1)) (not (= (mod (python.int "3" 10) 2) 1))) (> (str.len "7") 0)))
 (assert (not (= 2 0)))
+(assert (=> (and (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1)) (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "7" 10) 2) 1)) (not (= (mod (python.int "3" 10) 2) 1))) (> (str.len "3") 0)))
 (assert (not (= 2 0)))
 (assert (=> (and (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "5" 10) 2) 1)) (not (= (mod (python.int "9" 10) 2) 1)) (not (= (mod (python.int "7" 10) 2) 1)) (not (= (mod (python.int "3" 10) 2) 1))) (= x (ite (not (= (ite (not (= (ite (not (= (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) 0)) (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) (mod (python.int "9" 10) 2)) 0)) (ite (not (= (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) 0)) (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) (mod (python.int "9" 10) 2)) (mod (python.int "7" 10) 2)) 0)) (ite (not (= (ite (not (= (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) 0)) (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) (mod (python.int "9" 10) 2)) 0)) (ite (not (= (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) 0)) (ite (not (= (mod (python.int "9" 10) 2) 0)) (mod (python.int "9" 10) 2) (mod (python.int "5" 10) 2)) (mod (python.int "9" 10) 2)) (mod (python.int "7" 10) 2)) (mod (python.int "3" 10) 2)))))
 (check-sat)
@@ -9607,6 +9900,7 @@ modified_func def sat(s: str, word=wrap_str('antidisestablishmentarianism'), max
 
 (declare-const x String)
 (assert (=> (<= 28 10) (= "antidisestablishmentarianism" x)))
+(assert (=> (not (<= 28 10)) (> (str.len (python.str.substr x 1 -1)) 0)))
 (assert (=> (not (<= 28 10)) (and (and (= (python.int (python.str.substr x 1 -1) 10) 26) false) false)))
 (check-sat)
 (get-model)
@@ -9615,7 +9909,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 33 column 10: model is not available")
+(error "line 34 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -9662,6 +9956,7 @@ modified_func def sat(s: str, word=wrap_str('pawuzorythalirinasubyg'), max_len=w
 
 (declare-const x String)
 (assert (=> (<= 22 12) (= "pawuzorythalirinasubyg" x)))
+(assert (=> (not (<= 22 12)) (> (str.len (python.str.substr x 1 -1)) 0)))
 (assert (=> (not (<= 22 12)) (and (and (= (python.int (python.str.substr x 1 -1) 10) 20) false) false)))
 (check-sat)
 (get-model)
@@ -9670,7 +9965,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 33 column 10: model is not available")
+(error "line 34 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -9717,6 +10012,7 @@ modified_func def sat(s: str, word=wrap_str('jomodosigezyfulach'), max_len=wrap_
 
 (declare-const x String)
 (assert (=> (<= 18 5) (= "jomodosigezyfulach" x)))
+(assert (=> (not (<= 18 5)) (> (str.len (python.str.substr x 1 -1)) 0)))
 (assert (=> (not (<= 18 5)) (and (and (= (python.int (python.str.substr x 1 -1) 10) 16) false) false)))
 (check-sat)
 (get-model)
@@ -9725,7 +10021,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 33 column 10: model is not available")
+(error "line 34 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -9772,6 +10068,7 @@ modified_func def sat(s: str, word=wrap_str('bybakichop'), max_len=wrap_int(12))
 
 (declare-const x String)
 (assert (=> (<= 10 12) (= "bybakichop" x)))
+(assert (=> (not (<= 10 12)) (> (str.len (python.str.substr x 1 -1)) 0)))
 (assert (=> (not (<= 10 12)) (and (and (= (python.int (python.str.substr x 1 -1) 10) 8) false) false)))
 (check-sat)
 (get-model)
@@ -9833,6 +10130,7 @@ modified_func def sat(s: str, word=wrap_str('wywaxizodetextonigijalate'), max_le
 
 (declare-const x String)
 (assert (=> (<= 25 5) (= "wywaxizodetextonigijalate" x)))
+(assert (=> (not (<= 25 5)) (> (str.len (python.str.substr x 1 -1)) 0)))
 (assert (=> (not (<= 25 5)) (and (and (= (python.int (python.str.substr x 1 -1) 10) 23) false) false)))
 (check-sat)
 (get-model)
@@ -9841,7 +10139,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 33 column 10: model is not available")
+(error "line 34 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -13545,6 +13843,7 @@ modified_func def sat(s: str, n=wrap_int(7012)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
+(assert (> (str.len (str.++ "169515547674460088" x)) 0))
 (assert (= (python.int (str.++ "169515547674460088" x) 10) 16951554767446008832))
 (check-sat)
 (get-model)
@@ -13600,6 +13899,7 @@ modified_func def sat(s: str, n=wrap_int(0)):
     (str.substr s start (- end start))))
 
 (declare-const x String)
+(assert (> (str.len (str.++ (python.str.substr (str.from_int 0) 0 -2) x)) 0))
 (assert (= (python.int (str.++ (python.str.substr (str.from_int 0) 0 -2) x) 10) 0))
 (check-sat)
 (get-model)
@@ -13648,6 +13948,7 @@ modified_func def sat(s: str, n=wrap_int(1)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
+(assert (> (str.len (str.++ "" x)) 0))
 (assert (= (python.int (str.++ "" x) 10) 1))
 (check-sat)
 (get-model)
@@ -13696,6 +13997,7 @@ modified_func def sat(s: str, n=wrap_int(2)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
+(assert (> (str.len (str.++ "" x)) 0))
 (assert (= (python.int (str.++ "" x) 10) 32))
 (check-sat)
 (get-model)
@@ -13744,6 +14046,7 @@ modified_func def sat(s: str, n=wrap_int(3)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
+(assert (> (str.len (str.++ "2" x)) 0))
 (assert (= (python.int (str.++ "2" x) 10) 243))
 (check-sat)
 (get-model)
@@ -21052,9 +21355,9 @@ The symbolic execution alone currently solves:
 
 with the following errors:
 - 54 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
-- 215 errors at at staging time
-- 68 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- 123 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
+- 210 errors at at staging time
+- 66 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- 130 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
 - 992 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 

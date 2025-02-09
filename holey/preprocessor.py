@@ -20,12 +20,17 @@ def sym_bin(x):
     if isinstance(x, SymbolicInt):
         return SymbolicStr(x.tracer.backend.Bin(x.z3_expr), tracer=x.tracer)
     return bin(x)
-                           
+
+def valid_int_inputs(x, b, tracer):
+    tracer.add_constraint(tracer.backend.GT(tracer.backend.StrLen(x), 0))
+                   
 def sym_int(x, base=None):
     if isinstance(x, SymbolicStr):
         if base:
             base = x.tracer.ensure_symbolic(base).z3_expr
-        return SymbolicInt(x.tracer.backend.StrToInt(x.z3_expr, base), tracer=x.tracer)
+        args = (x.z3_expr, base)
+        valid_int_inputs(*args, tracer=x.tracer)
+        return SymbolicInt(x.tracer.backend.StrToInt(*args), tracer=x.tracer)
     if isinstance(x, SymbolicFloat):
         assert base is None
         return SymbolicInt(x.tracer.backend.ToInt(x.z3_expr), tracer=x.tracer)
