@@ -410,6 +410,7 @@ class PuzzleSolver:
                 else:
                     print("Yes! Solved", name)
             elif llm:
+                print('\nFallback to LLM!')
                 prompt = f"""Return a modified SMTLIB z3 program that captures the intent of the `sat` function of puzzle {name}:
 {sat_func}
 
