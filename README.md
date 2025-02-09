@@ -84,5 +84,5 @@ We have errors of all kinds still:
 ├── puzzle_solver.py (! main routine for benchmark solver !)
 ├── pyproject.toml
 └── tests
-    └── test_core.py (ran with python -m pytest, LLM-generated, not much there)
+    └── test_core.py (ran with python -m pytest, basic and LLM-generated)
 ```
