@@ -10,6 +10,11 @@ The solver incorporates heuristics from LLMs in addition to symbolic execution.
 
 ## Setup
 
+### Install dependencies
+
+- `python` with support for `pip` (e.g. `conda`), tested with Python 3.12
+- `z3` or `cvc5` or both -- on mac with Homebrew, can install with `brew install z3 cvc5`
+  
 ### Clone recursive
 
 ```
