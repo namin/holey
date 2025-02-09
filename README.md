@@ -48,18 +48,18 @@ python puzzle_solver.py  >results.txt 2>&
 Set `ANTHROPIC_API_KEY` for Claude or default to local Ollama.
 
 ```
-python puzzle_solver.py --name-prefix ListIn:0  --llm
+python puzzle_solver.py --name-prefix ListIn:1  --llm
 ```
 
 ## Current status
 
 The symbolic execution alone currently solves:
 - 53% (192 out of 360) of `int` puzzles,
-- 34% (243 out of 723) of `int` and `str` puzzles.
+- 34% (244 out of 723) of `int` and `str` puzzles.
 
 We have errors of all kinds still:
 - 59 puzzles timeout after 3 seconds at staging time (while building the SMTLIB program),
-- 71 generated SMTLIB programs return `sat` but the solution doesn't verify (so code generation is buggy),
+- 70 generated SMTLIB programs return `sat` but the solution doesn't verify (so code generation is buggy),
 - 130 generated SMTLIB programs return non-`sat`, such as `unsat`, `unknown` or time out after 2 seconds.
 - 1715-723=992 puzzles are not yet run, because their answer type is not `int` or `str`, such as `float`, `list` (of various specializations), etc.
 

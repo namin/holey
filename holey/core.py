@@ -337,6 +337,12 @@ class SymbolicList:
         assert isinstance(value, list), "Symbolic lists not yet supported: found "+str(value)+" of type "+str(type(value))
         self.concrete = value
 
+    def __contains__(self, item):
+        item = self.tracer.ensure_symbolic(item)
+        if self.concrete is not None and item.concrete is not None:
+            return item.concrete in self.concrete
+        return SymbolicBool(self.tracer.backend.Or(*[(item == x).z3_expr for x in self.concrete]), tracer=self.tracer)
+
     def __getitem__(self, key):
         if isinstance(key, slice):
             if (not isinstance(key.start, SymbolicInt) and 
