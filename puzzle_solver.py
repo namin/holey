@@ -4,6 +4,7 @@ from func_timeout import func_timeout, FunctionTimedOut
 import traceback
 from typing import List, Any, Dict, Optional, Tuple
 import sys
+from collections import defaultdict
 from contextlib import contextmanager
 from io import StringIO
 @contextmanager
@@ -22,7 +23,9 @@ def capture_output():
 class PuzzleSolver:
     def __init__(self):
         self.count = 0
+        self.counts = defaultdict(int)
         self.success_count = 0
+        self.success_counts = defaultdict(int)
         self.timeout_staging_count = 0
         self.error_verify_count = 0
         self.error_staging_count = 0
@@ -42,6 +45,7 @@ class PuzzleSolver:
             return None
 
         self.count += 1
+        self.counts[ans_type] += 1
         sym_var = drive_sat(sat_func, typ, cmds)
         tracer = sym_var.tracer
         with capture_output() as captured:
@@ -134,6 +138,7 @@ Return only the Python constant without any context.
                     result = None
                 else:
                     self.success_count += 1
+                    self.success_counts[ans_type] += 1
                     print("Yes! Solved for puzzle ", name)
             if llm and result is None:
                 print('\nFallback to LLM!')
@@ -150,6 +155,35 @@ Return only the Python constant without any context.
             print('\nFallback to LLM after error!')
             return self.llm_solve(sat_func, ans_type, name)
         return None
+
+    def pretty_counts(self):
+        r = ""
+        for ans_type, total in self.counts.items():
+            success = self.success_counts[ans_type]
+            success_percentage = 100.0 * success / total
+            r += (f"- {success_percentage:.0f}% ({success} out of {total}) of `{ans_type}` puzzles,")
+            r += '\n'
+        total = self.count
+        success = self.success_count
+        success_percentage = 100.0 * success / total
+        r += (f"- {success_percentage:.0f}% ({success} out of {total}) overall.")
+        r += '\n'
+        return r
+
+    def pretty_stats(self):
+        return f"""
+## Current status
+
+The symbolic execution{'' if self.llm else ' alone'} currently solves:
+{self.pretty_counts()}
+with the following errors:
+- {self.timeout_staging_count} timeouts after 3 seconds at staging time (while generating the SMTLIB program)
+- {self.error_staging_count} errors at at staging time
+- {self.error_verify_count} SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- {self.error_smt_count + self.error_smt_var_count} SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
+timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
+- {self.total_count-self.count} (out of {self.total_count}) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
+"""
 
 def check_result(result, sat_func):
     namespace = {}
@@ -168,7 +202,8 @@ def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, sm
     with open(puzzle_file) as f:
         puzzles = json.load(f)
     
-    print(f"Starting with {len(puzzles)} puzzles...")
+    total = len(puzzles)
+    print(f"Starting with {total} puzzles...")
 
     # Filter puzzles
     if name_prefix:
@@ -177,7 +212,8 @@ def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, sm
         puzzles = [p for p in puzzles if p['ans_type'] in answer_types]
         
     solver = PuzzleSolver()
-    success_count = 0
+    solver.total_count = total
+    solver.llm = llm
 
     print(f"Running benchmarks on {len(puzzles)} puzzles...")
     if name_prefix:
@@ -190,22 +226,8 @@ def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, sm
         print(f"\nSolving puzzle {i+1}/{len(puzzles)}: {name}")
 
         result = solver.solve_puzzle(puzzle, smtlib_backends, llm)
-        if result is not None:
-            success_count += 1
     
-    print('')
-    print('STATS')
-    print("timeout staging count", solver.timeout_staging_count)
-    print("error staging count", solver.error_staging_count)
-    print("error verify count", solver.error_verify_count)
-    print("error smt count", solver.error_smt_count)
-    print("error smt var count", solver.error_smt_var_count)
-    print("unsupported answer type", solver.error_unsupported_answer_type)
-    print("")
-    print("Success count:", success_count)
-    print("Total considered:", solver.count)
-    success_percentage = 100.0 * success_count / solver.count if solver.count > 0 else 0
-    print(f"Success percentage: {success_percentage:.0f}%")
+    print(solver.pretty_stats())
 
 if __name__ == "__main__":
     import argparse

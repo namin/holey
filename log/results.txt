@@ -198,7 +198,7 @@ running backend cvc5
 unknown
 (error "line 18 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpsxfn0nhs.smt2:13.52: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmppbebptn4.smt2:13.52: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle Study_16:0
 
@@ -219,7 +219,7 @@ running backend cvc5
 ### output for z3
 timeout
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpma16u2bs.smt2:3.43: Symbol 'int.to.str' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp0nib867w.smt2:3.43: Symbol 'int.to.str' not declared as a variable")
 
 Could not find any solution for puzzle Study_17:0
 
@@ -679,7 +679,7 @@ running backend cvc5
 ### output for z3
 timeout
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpctmq2s4u.smt2:15.43: Symbol 'int.to.str' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpk80yc1ee.smt2:15.43: Symbol 'int.to.str' not declared as a variable")
 
 Could not find any solution for puzzle PandigitalSquare:0
 
@@ -731,7 +731,7 @@ modified_func def sat(expr: str, nums=wrap_list([wrap_int(1), wrap_int(3), wrap_
         digits += expr[i] if sym_in(expr[i], wrap_str('0123456789')) else wrap_str(' ')
     _assert(sorted((sym_int(s) for s in digits.split())) == sorted(nums), wrap_str('Each number must occur exactly once'))
     return abs(eval(expr) - 24.0) < 1e-06
-Exception -- for puzzle CardGame24:1 Symbolic lists not yet supported: found (str.to.re (str.++ "" (python.str.at (str.replace x " " "") i_1)) " ") of type <class 'holey.backend.MockExpr'>
+Exception -- for puzzle CardGame24:1 Symbolic lists not yet supported: found (str.to.re (str.++ "" (python.str.at (str.replace x " " "") i_0)) " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 26/723: CardGame24:2
 sat_func def sat(expr: str, nums=[10, 7, 3, 1]):
@@ -756,7 +756,7 @@ modified_func def sat(expr: str, nums=wrap_list([wrap_int(10), wrap_int(7), wrap
         digits += expr[i] if sym_in(expr[i], wrap_str('0123456789')) else wrap_str(' ')
     _assert(sorted((sym_int(s) for s in digits.split())) == sorted(nums), wrap_str('Each number must occur exactly once'))
     return abs(eval(expr) - 24.0) < 1e-06
-Exception -- for puzzle CardGame24:2 Symbolic lists not yet supported: found (str.to.re (str.++ "" (python.str.at (str.replace x " " "") i_2)) " ") of type <class 'holey.backend.MockExpr'>
+Exception -- for puzzle CardGame24:2 Symbolic lists not yet supported: found (str.to.re (str.++ "" (python.str.at (str.replace x " " "") i_0)) " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 27/723: CardGame24:3
 sat_func def sat(expr: str, nums=[8, 3, 12, 1]):
@@ -781,7 +781,7 @@ modified_func def sat(expr: str, nums=wrap_list([wrap_int(8), wrap_int(3), wrap_
         digits += expr[i] if sym_in(expr[i], wrap_str('0123456789')) else wrap_str(' ')
     _assert(sorted((sym_int(s) for s in digits.split())) == sorted(nums), wrap_str('Each number must occur exactly once'))
     return abs(eval(expr) - 24.0) < 1e-06
-Exception -- for puzzle CardGame24:3 Symbolic lists not yet supported: found (str.to.re (str.++ "" (python.str.at (str.replace x " " "") i_3)) " ") of type <class 'holey.backend.MockExpr'>
+Exception -- for puzzle CardGame24:3 Symbolic lists not yet supported: found (str.to.re (str.++ "" (python.str.at (str.replace x " " "") i_0)) " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 28/723: CardGame24:4
 sat_func def sat(expr: str, nums=[10, 12, 1, 7]):
@@ -806,7 +806,7 @@ modified_func def sat(expr: str, nums=wrap_list([wrap_int(10), wrap_int(12), wra
         digits += expr[i] if sym_in(expr[i], wrap_str('0123456789')) else wrap_str(' ')
     _assert(sorted((sym_int(s) for s in digits.split())) == sorted(nums), wrap_str('Each number must occur exactly once'))
     return abs(eval(expr) - 24.0) < 1e-06
-Exception -- for puzzle CardGame24:4 Symbolic lists not yet supported: found (str.to.re (str.++ "" (python.str.at (str.replace x " " "") i_4)) " ") of type <class 'holey.backend.MockExpr'>
+Exception -- for puzzle CardGame24:4 Symbolic lists not yet supported: found (str.to.re (str.++ "" (python.str.at (str.replace x " " "") i_0)) " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 29/723: Easy63:0
 sat_func def sat(s: str):
@@ -1267,13 +1267,13 @@ modified_func def sat(d: int, n=wrap_int(123456)):
     return (n % d == wrap_int(0)).__and__(d < n).__and__(all((n % e for e in sym_range(d + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_5 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (not (= x 0)))
-(assert (>= i_5 (+ x 1)))
-(assert (< i_5 123456))
-(assert (not (= i_5 0)))
-(assert (and (and (= (mod 123456 x) 0) (< x 123456)) (not (= (mod 123456 i_5) 0))))
+(assert (>= i_0 (+ x 1)))
+(assert (< i_0 123456))
+(assert (not (= i_0 0)))
+(assert (and (and (= (mod 123456 x) 0) (< x 123456)) (not (= (mod 123456 i_0) 0))))
 (check-sat)
 (get-model)
 
@@ -1282,10 +1282,10 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun i_0 () Int
+    5)
   (define-fun x () Int
     1)
-  (define-fun i_5 () Int
-    5)
   (define-fun div0 ((x!0 Int) (x!1 Int)) Int
     (ite (and (= x!0 123456) (= x!1 5)) 24691
       123456))
@@ -1295,8 +1295,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_5 () Int (- 24692))
 (define-fun x () Int (- 61728))
+(define-fun i_0 () Int (- 24692))
 )
 
 Found solution 1
@@ -1309,13 +1309,13 @@ modified_func def sat(d: int, n=wrap_int(17836)):
     return (n % d == wrap_int(0)).__and__(d < n).__and__(all((n % e for e in sym_range(d + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_6 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (not (= x 0)))
-(assert (>= i_6 (+ x 1)))
-(assert (< i_6 17836))
-(assert (not (= i_6 0)))
-(assert (and (and (= (mod 17836 x) 0) (< x 17836)) (not (= (mod 17836 i_6) 0))))
+(assert (>= i_0 (+ x 1)))
+(assert (< i_0 17836))
+(assert (not (= i_0 0)))
+(assert (and (and (= (mod 17836 x) 0) (< x 17836)) (not (= (mod 17836 i_0) 0))))
 (check-sat)
 (get-model)
 
@@ -1324,10 +1324,10 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun i_0 () Int
+    3)
   (define-fun x () Int
     1)
-  (define-fun i_6 () Int
-    3)
   (define-fun div0 ((x!0 Int) (x!1 Int)) Int
     (ite (and (= x!0 17836) (= x!1 3)) 5945
       17836))
@@ -1337,8 +1337,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_6 () Int (- 3568))
 (define-fun x () Int (- 8918))
+(define-fun i_0 () Int (- 3568))
 )
 
 Found solution 1
@@ -1351,13 +1351,13 @@ modified_func def sat(d: int, n=wrap_int(71793)):
     return (n % d == wrap_int(0)).__and__(d < n).__and__(all((n % e for e in sym_range(d + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_7 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (not (= x 0)))
-(assert (>= i_7 (+ x 1)))
-(assert (< i_7 71793))
-(assert (not (= i_7 0)))
-(assert (and (and (= (mod 71793 x) 0) (< x 71793)) (not (= (mod 71793 i_7) 0))))
+(assert (>= i_0 (+ x 1)))
+(assert (< i_0 71793))
+(assert (not (= i_0 0)))
+(assert (and (and (= (mod 71793 x) 0) (< x 71793)) (not (= (mod 71793 i_0) 0))))
 (check-sat)
 (get-model)
 
@@ -1366,10 +1366,10 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun i_0 () Int
+    2)
   (define-fun x () Int
     1)
-  (define-fun i_7 () Int
-    2)
   (define-fun div0 ((x!0 Int) (x!1 Int)) Int
     (ite (and (= x!0 71793) (= x!1 2)) 35896
       71793))
@@ -1379,8 +1379,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_7 () Int (- 11966))
 (define-fun x () Int (- 23931))
+(define-fun i_0 () Int (- 11966))
 )
 
 Found solution 1
@@ -1394,12 +1394,12 @@ modified_func def sat(d: int, n=wrap_int(15466)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_8 Int)
+(declare-const i_0 Int)
 (assert (not (= x 0)))
-(assert (>= i_8 (+ x 1)))
-(assert (< i_8 15466))
-(assert (not (= i_8 0)))
-(assert (and (and (= (mod 15466 x) 0) (< x 15466)) (not (= (mod 15466 i_8) 0))))
+(assert (>= i_0 (+ x 1)))
+(assert (< i_0 15466))
+(assert (not (= i_0 0)))
+(assert (and (and (= (mod 15466 x) 0) (< x 15466)) (not (= (mod 15466 i_0) 0))))
 (check-sat)
 (get-model)
 
@@ -1408,10 +1408,10 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun i_0 () Int
+    3)
   (define-fun x () Int
     1)
-  (define-fun i_8 () Int
-    3)
   (define-fun div0 ((x!0 Int) (x!1 Int)) Int
     (ite (and (= x!0 15466) (= x!1 3)) 5155
       15466))
@@ -1422,7 +1422,7 @@ sat
 sat
 (
 (define-fun x () Int (- 7733))
-(define-fun i_8 () Int (- 3094))
+(define-fun i_0 () Int (- 3094))
 )
 
 Found solution 1
@@ -1435,13 +1435,13 @@ modified_func def sat(d: int, n=wrap_int(57567)):
     return (n % d == wrap_int(0)).__and__(d < n).__and__(all((n % e for e in sym_range(d + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_9 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (not (= x 0)))
-(assert (>= i_9 (+ x 1)))
-(assert (< i_9 57567))
-(assert (not (= i_9 0)))
-(assert (and (and (= (mod 57567 x) 0) (< x 57567)) (not (= (mod 57567 i_9) 0))))
+(assert (>= i_0 (+ x 1)))
+(assert (< i_0 57567))
+(assert (not (= i_0 0)))
+(assert (and (and (= (mod 57567 x) 0) (< x 57567)) (not (= (mod 57567 i_0) 0))))
 (check-sat)
 (get-model)
 
@@ -1450,10 +1450,10 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun i_0 () Int
+    2)
   (define-fun x () Int
     1)
-  (define-fun i_9 () Int
-    2)
   (define-fun div0 ((x!0 Int) (x!1 Int)) Int
     (ite (and (= x!0 57567) (= x!1 2)) 28783
       57567))
@@ -1463,8 +1463,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_9 () Int (- 9595))
 (define-fun x () Int (- 19189))
+(define-fun i_0 () Int (- 9595))
 )
 
 Found solution 1
@@ -2103,13 +2103,13 @@ modified_func def sat(n: int, lower=wrap_int(123456)):
     return n > lower
 ### smt2
 (set-logic ALL)
-(declare-const i_10 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (or (= (^ (- (* (* 5 x) x) 4) 0.5) (to_int (^ (- (* (* 5 x) x) 4) 0.5))) (= (^ (+ (* (* 5 x) x) 4) 0.5) (to_int (^ (+ (* (* 5 x) x) 4) 0.5)))))
-(assert (>= i_10 2))
-(assert (< i_10 (+ (to_int (^ x 0.5)) 1)))
-(assert (not (= i_10 0)))
-(assert (not (= (mod x i_10) 0)))
+(assert (>= i_0 2))
+(assert (< i_0 (+ (to_int (^ x 0.5)) 1)))
+(assert (not (= i_0 0)))
+(assert (not (= (mod x i_0) 0)))
 (assert (> x 123456))
 (check-sat)
 (get-model)
@@ -2120,7 +2120,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp4toupizc.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpk1nw1qis.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:0
 
@@ -2135,13 +2135,13 @@ modified_func def sat(n: int, lower=wrap_int(3)):
     return n > lower
 ### smt2
 (set-logic ALL)
-(declare-const i_11 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (or (= (^ (- (* (* 5 x) x) 4) 0.5) (to_int (^ (- (* (* 5 x) x) 4) 0.5))) (= (^ (+ (* (* 5 x) x) 4) 0.5) (to_int (^ (+ (* (* 5 x) x) 4) 0.5)))))
-(assert (>= i_11 2))
-(assert (< i_11 (+ (to_int (^ x 0.5)) 1)))
-(assert (not (= i_11 0)))
-(assert (not (= (mod x i_11) 0)))
+(assert (>= i_0 2))
+(assert (< i_0 (+ (to_int (^ x 0.5)) 1)))
+(assert (not (= i_0 0)))
+(assert (not (= (mod x i_0) 0)))
 (assert (> x 3))
 (check-sat)
 (get-model)
@@ -2152,7 +2152,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmptxkpyzrs.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpmnfbugr9.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:1
 
@@ -2167,13 +2167,13 @@ modified_func def sat(n: int, lower=wrap_int(458)):
     return n > lower
 ### smt2
 (set-logic ALL)
-(declare-const i_12 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (or (= (^ (- (* (* 5 x) x) 4) 0.5) (to_int (^ (- (* (* 5 x) x) 4) 0.5))) (= (^ (+ (* (* 5 x) x) 4) 0.5) (to_int (^ (+ (* (* 5 x) x) 4) 0.5)))))
-(assert (>= i_12 2))
-(assert (< i_12 (+ (to_int (^ x 0.5)) 1)))
-(assert (not (= i_12 0)))
-(assert (not (= (mod x i_12) 0)))
+(assert (>= i_0 2))
+(assert (< i_0 (+ (to_int (^ x 0.5)) 1)))
+(assert (not (= i_0 0)))
+(assert (not (= (mod x i_0) 0)))
 (assert (> x 458))
 (check-sat)
 (get-model)
@@ -2184,7 +2184,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpxsv_leud.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpx8bf1_05.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:2
 
@@ -2199,13 +2199,13 @@ modified_func def sat(n: int, lower=wrap_int(384)):
     return n > lower
 ### smt2
 (set-logic ALL)
-(declare-const i_13 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (or (= (^ (- (* (* 5 x) x) 4) 0.5) (to_int (^ (- (* (* 5 x) x) 4) 0.5))) (= (^ (+ (* (* 5 x) x) 4) 0.5) (to_int (^ (+ (* (* 5 x) x) 4) 0.5)))))
-(assert (>= i_13 2))
-(assert (< i_13 (+ (to_int (^ x 0.5)) 1)))
-(assert (not (= i_13 0)))
-(assert (not (= (mod x i_13) 0)))
+(assert (>= i_0 2))
+(assert (< i_0 (+ (to_int (^ x 0.5)) 1)))
+(assert (not (= i_0 0)))
+(assert (not (= (mod x i_0) 0)))
 (assert (> x 384))
 (check-sat)
 (get-model)
@@ -2216,7 +2216,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpk1s2k3rj.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmphqx90xaa.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:3
 
@@ -2231,13 +2231,13 @@ modified_func def sat(n: int, lower=wrap_int(4)):
     return n > lower
 ### smt2
 (set-logic ALL)
-(declare-const i_14 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (or (= (^ (- (* (* 5 x) x) 4) 0.5) (to_int (^ (- (* (* 5 x) x) 4) 0.5))) (= (^ (+ (* (* 5 x) x) 4) 0.5) (to_int (^ (+ (* (* 5 x) x) 4) 0.5)))))
-(assert (>= i_14 2))
-(assert (< i_14 (+ (to_int (^ x 0.5)) 1)))
-(assert (not (= i_14 0)))
-(assert (not (= (mod x i_14) 0)))
+(assert (>= i_0 2))
+(assert (< i_0 (+ (to_int (^ x 0.5)) 1)))
+(assert (not (= i_0 0)))
+(assert (not (= (mod x i_0) 0)))
 (assert (> x 4))
 (check-sat)
 (get-model)
@@ -2248,7 +2248,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpoed0tza_.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp3d7nw0r3.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:4
 
@@ -2265,13 +2265,13 @@ modified_func def sat(count: int, n=wrap_int(981)):
     return count == wrap_int(0)
 ### smt2
 (set-logic ALL)
-(declare-const i_16 Int)
 (declare-const x Int)
-(declare-const i_15 Int)
-(assert (>= i_15 0))
-(assert (< i_15 981))
-(assert (>= i_16 0))
-(assert (< i_16 981))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 981))
+(assert (>= i_1 0))
+(assert (< i_1 981))
 (assert (= (- x 1) 0))
 (check-sat)
 (get-model)
@@ -2281,9 +2281,9 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_16 () Int
+  (define-fun i_0 () Int
     0)
-  (define-fun i_15 () Int
+  (define-fun i_1 () Int
     0)
   (define-fun x () Int
     1)
@@ -2291,9 +2291,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_16 () Int 0)
 (define-fun x () Int 1)
-(define-fun i_15 () Int 0)
+(define-fun i_1 () Int 0)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 1
@@ -2312,13 +2312,13 @@ modified_func def sat(count: int, n=wrap_int(123)):
     return count == wrap_int(0)
 ### smt2
 (set-logic ALL)
-(declare-const i_17 Int)
-(declare-const i_18 Int)
 (declare-const x Int)
-(assert (>= i_17 0))
-(assert (< i_17 123))
-(assert (>= i_18 0))
-(assert (< i_18 123))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 123))
+(assert (>= i_1 0))
+(assert (< i_1 123))
 (assert (= (- x 1) 0))
 (check-sat)
 (get-model)
@@ -2328,9 +2328,9 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_18 () Int
+  (define-fun i_0 () Int
     0)
-  (define-fun i_17 () Int
+  (define-fun i_1 () Int
     0)
   (define-fun x () Int
     1)
@@ -2338,9 +2338,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_17 () Int 0)
-(define-fun i_18 () Int 0)
 (define-fun x () Int 1)
+(define-fun i_1 () Int 0)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 1
@@ -2359,13 +2359,13 @@ modified_func def sat(count: int, n=wrap_int(239)):
     return count == wrap_int(0)
 ### smt2
 (set-logic ALL)
-(declare-const i_20 Int)
-(declare-const i_19 Int)
 (declare-const x Int)
-(assert (>= i_19 0))
-(assert (< i_19 239))
-(assert (>= i_20 0))
-(assert (< i_20 239))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 239))
+(assert (>= i_1 0))
+(assert (< i_1 239))
 (assert (= (- x 1) 0))
 (check-sat)
 (get-model)
@@ -2375,9 +2375,9 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_20 () Int
+  (define-fun i_0 () Int
     0)
-  (define-fun i_19 () Int
+  (define-fun i_1 () Int
     0)
   (define-fun x () Int
     1)
@@ -2385,9 +2385,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_20 () Int 0)
-(define-fun i_19 () Int 0)
 (define-fun x () Int 1)
+(define-fun i_1 () Int 0)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 1
@@ -2406,13 +2406,13 @@ modified_func def sat(count: int, n=wrap_int(378)):
     return count == wrap_int(0)
 ### smt2
 (set-logic ALL)
-(declare-const i_22 Int)
-(declare-const i_21 Int)
 (declare-const x Int)
-(assert (>= i_21 0))
-(assert (< i_21 378))
-(assert (>= i_22 0))
-(assert (< i_22 378))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 378))
+(assert (>= i_1 0))
+(assert (< i_1 378))
 (assert (= (- x 1) 0))
 (check-sat)
 (get-model)
@@ -2422,9 +2422,9 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_21 () Int
+  (define-fun i_0 () Int
     0)
-  (define-fun i_22 () Int
+  (define-fun i_1 () Int
     0)
   (define-fun x () Int
     1)
@@ -2432,9 +2432,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_22 () Int 0)
-(define-fun i_21 () Int 0)
 (define-fun x () Int 1)
+(define-fun i_1 () Int 0)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 1
@@ -2453,13 +2453,13 @@ modified_func def sat(count: int, n=wrap_int(501)):
     return count == wrap_int(0)
 ### smt2
 (set-logic ALL)
-(declare-const i_23 Int)
-(declare-const i_24 Int)
 (declare-const x Int)
-(assert (>= i_23 0))
-(assert (< i_23 501))
-(assert (>= i_24 0))
-(assert (< i_24 501))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 501))
+(assert (>= i_1 0))
+(assert (< i_1 501))
 (assert (= (- x 1) 0))
 (check-sat)
 (get-model)
@@ -2469,9 +2469,9 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_24 () Int
+  (define-fun i_0 () Int
     0)
-  (define-fun i_23 () Int
+  (define-fun i_1 () Int
     0)
   (define-fun x () Int
     1)
@@ -2479,9 +2479,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_23 () Int 0)
-(define-fun i_24 () Int 0)
 (define-fun x () Int 1)
+(define-fun i_1 () Int 0)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 1
@@ -3514,21 +3514,21 @@ modified_func def sat(p: int, n=wrap_int(101076)):
     return is_prime(p).__and__(n % p == wrap_int(0)).__and__(p > wrap_int(0)).__and__(all(((n % i).__or__(sym_not(is_prime(i))) for i in sym_range(p + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_31 Int)
-(declare-const i_30 Int)
-(declare-const i_32 Int)
 (declare-const x Int)
-(assert (>= i_30 2))
-(assert (< i_30 (- x 1)))
-(assert (not (= i_30 0)))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(declare-const i_2 Int)
+(assert (>= i_0 2))
+(assert (< i_0 (- x 1)))
+(assert (not (= i_0 0)))
 (assert (not (= x 0)))
-(assert (>= i_31 (+ x 1)))
-(assert (< i_31 101076))
-(assert (not (= i_31 0)))
-(assert (>= i_32 2))
-(assert (< i_32 (- i_31 1)))
-(assert (not (= i_32 0)))
-(assert (and (and (and (not (= (mod x i_30) 0)) (= (mod 101076 x) 0)) (> x 0)) (not (= (ite (not (= (mod 101076 i_31) 0)) (mod 101076 i_31) (not (not (= (mod i_31 i_32) 0)))) 0))))
+(assert (>= i_1 (+ x 1)))
+(assert (< i_1 101076))
+(assert (not (= i_1 0)))
+(assert (>= i_2 2))
+(assert (< i_2 (- i_1 1)))
+(assert (not (= i_2 0)))
+(assert (and (and (and (not (= (mod x i_0) 0)) (= (mod 101076 x) 0)) (> x 0)) (not (= (ite (not (= (mod 101076 i_1) 0)) (mod 101076 i_1) (not (not (= (mod i_1 i_2) 0)))) 0))))
 (check-sat)
 (get-model)
 
@@ -3537,14 +3537,14 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_31 () Int
-    8)
-  (define-fun i_30 () Int
+  (define-fun i_0 () Int
     4)
   (define-fun x () Int
     6)
-  (define-fun i_32 () Int
+  (define-fun i_2 () Int
     3)
+  (define-fun i_1 () Int
+    8)
   (define-fun div0 ((x!0 Int) (x!1 Int)) Int
     (ite (and (= x!0 101076) (= x!1 6)) 16846
     (ite (and (= x!0 101076) (= x!1 8)) 12634
@@ -3553,10 +3553,10 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmptr7v1v17.smt2:16.174: Branches of the ITE must have comparable type.
-then branch: (mod 101076 i_31)
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpbmc0pvp0.smt2:16.169: Branches of the ITE must have comparable type.
+then branch: (mod 101076 i_1)
 its type   : Int
-else branch: (not (not (= (mod i_31 i_32) 0)))
+else branch: (not (not (= (mod i_1 i_2) 0)))
 its type   : Bool
 ")
 
@@ -3577,21 +3577,21 @@ modified_func def sat(p: int, n=wrap_int(15132)):
     return is_prime(p).__and__(n % p == wrap_int(0)).__and__(p > wrap_int(0)).__and__(all(((n % i).__or__(sym_not(is_prime(i))) for i in sym_range(p + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_33 Int)
-(declare-const i_34 Int)
-(declare-const i_35 Int)
 (declare-const x Int)
-(assert (>= i_33 2))
-(assert (< i_33 (- x 1)))
-(assert (not (= i_33 0)))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(declare-const i_2 Int)
+(assert (>= i_0 2))
+(assert (< i_0 (- x 1)))
+(assert (not (= i_0 0)))
 (assert (not (= x 0)))
-(assert (>= i_34 (+ x 1)))
-(assert (< i_34 15132))
-(assert (not (= i_34 0)))
-(assert (>= i_35 2))
-(assert (< i_35 (- i_34 1)))
-(assert (not (= i_35 0)))
-(assert (and (and (and (not (= (mod x i_33) 0)) (= (mod 15132 x) 0)) (> x 0)) (not (= (ite (not (= (mod 15132 i_34) 0)) (mod 15132 i_34) (not (not (= (mod i_34 i_35) 0)))) 0))))
+(assert (>= i_1 (+ x 1)))
+(assert (< i_1 15132))
+(assert (not (= i_1 0)))
+(assert (>= i_2 2))
+(assert (< i_2 (- i_1 1)))
+(assert (not (= i_2 0)))
+(assert (and (and (and (not (= (mod x i_0) 0)) (= (mod 15132 x) 0)) (> x 0)) (not (= (ite (not (= (mod 15132 i_1) 0)) (mod 15132 i_1) (not (not (= (mod i_1 i_2) 0)))) 0))))
 (check-sat)
 (get-model)
 
@@ -3600,14 +3600,14 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun i_0 () Int
+    4)
   (define-fun x () Int
     6)
-  (define-fun i_34 () Int
-    8)
-  (define-fun i_33 () Int
-    4)
-  (define-fun i_35 () Int
+  (define-fun i_2 () Int
     3)
+  (define-fun i_1 () Int
+    8)
   (define-fun div0 ((x!0 Int) (x!1 Int)) Int
     (ite (and (= x!0 15132) (= x!1 6)) 2522
     (ite (and (= x!0 15132) (= x!1 8)) 1891
@@ -3616,10 +3616,10 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpdlrp49el.smt2:16.171: Branches of the ITE must have comparable type.
-then branch: (mod 15132 i_34)
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpjzq8915n.smt2:16.166: Branches of the ITE must have comparable type.
+then branch: (mod 15132 i_1)
 its type   : Int
-else branch: (not (not (= (mod i_34 i_35) 0)))
+else branch: (not (not (= (mod i_1 i_2) 0)))
 its type   : Bool
 ")
 
@@ -3640,21 +3640,21 @@ modified_func def sat(p: int, n=wrap_int(22184)):
     return is_prime(p).__and__(n % p == wrap_int(0)).__and__(p > wrap_int(0)).__and__(all(((n % i).__or__(sym_not(is_prime(i))) for i in sym_range(p + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_37 Int)
-(declare-const i_38 Int)
 (declare-const x Int)
-(declare-const i_36 Int)
-(assert (>= i_36 2))
-(assert (< i_36 (- x 1)))
-(assert (not (= i_36 0)))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(declare-const i_2 Int)
+(assert (>= i_0 2))
+(assert (< i_0 (- x 1)))
+(assert (not (= i_0 0)))
 (assert (not (= x 0)))
-(assert (>= i_37 (+ x 1)))
-(assert (< i_37 22184))
-(assert (not (= i_37 0)))
-(assert (>= i_38 2))
-(assert (< i_38 (- i_37 1)))
-(assert (not (= i_38 0)))
-(assert (and (and (and (not (= (mod x i_36) 0)) (= (mod 22184 x) 0)) (> x 0)) (not (= (ite (not (= (mod 22184 i_37) 0)) (mod 22184 i_37) (not (not (= (mod i_37 i_38) 0)))) 0))))
+(assert (>= i_1 (+ x 1)))
+(assert (< i_1 22184))
+(assert (not (= i_1 0)))
+(assert (>= i_2 2))
+(assert (< i_2 (- i_1 1)))
+(assert (not (= i_2 0)))
+(assert (and (and (and (not (= (mod x i_0) 0)) (= (mod 22184 x) 0)) (> x 0)) (not (= (ite (not (= (mod 22184 i_1) 0)) (mod 22184 i_1) (not (not (= (mod i_1 i_2) 0)))) 0))))
 (check-sat)
 (get-model)
 
@@ -3663,13 +3663,13 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun i_0 () Int
+    6)
   (define-fun x () Int
     8)
-  (define-fun i_36 () Int
-    6)
-  (define-fun i_38 () Int
+  (define-fun i_2 () Int
     3)
-  (define-fun i_37 () Int
+  (define-fun i_1 () Int
     10)
   (define-fun div0 ((x!0 Int) (x!1 Int)) Int
     (ite (and (= x!0 22184) (= x!1 8)) 2773
@@ -3679,10 +3679,10 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp05cp67y8.smt2:16.171: Branches of the ITE must have comparable type.
-then branch: (mod 22184 i_37)
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpmt3uwgua.smt2:16.166: Branches of the ITE must have comparable type.
+then branch: (mod 22184 i_1)
 its type   : Int
-else branch: (not (not (= (mod i_37 i_38) 0)))
+else branch: (not (not (= (mod i_1 i_2) 0)))
 its type   : Bool
 ")
 
@@ -3703,21 +3703,21 @@ modified_func def sat(p: int, n=wrap_int(70875)):
     return is_prime(p).__and__(n % p == wrap_int(0)).__and__(p > wrap_int(0)).__and__(all(((n % i).__or__(sym_not(is_prime(i))) for i in sym_range(p + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_40 Int)
-(declare-const i_39 Int)
 (declare-const x Int)
-(declare-const i_41 Int)
-(assert (>= i_39 2))
-(assert (< i_39 (- x 1)))
-(assert (not (= i_39 0)))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(declare-const i_2 Int)
+(assert (>= i_0 2))
+(assert (< i_0 (- x 1)))
+(assert (not (= i_0 0)))
 (assert (not (= x 0)))
-(assert (>= i_40 (+ x 1)))
-(assert (< i_40 70875))
-(assert (not (= i_40 0)))
-(assert (>= i_41 2))
-(assert (< i_41 (- i_40 1)))
-(assert (not (= i_41 0)))
-(assert (and (and (and (not (= (mod x i_39) 0)) (= (mod 70875 x) 0)) (> x 0)) (not (= (ite (not (= (mod 70875 i_40) 0)) (mod 70875 i_40) (not (not (= (mod i_40 i_41) 0)))) 0))))
+(assert (>= i_1 (+ x 1)))
+(assert (< i_1 70875))
+(assert (not (= i_1 0)))
+(assert (>= i_2 2))
+(assert (< i_2 (- i_1 1)))
+(assert (not (= i_2 0)))
+(assert (and (and (and (not (= (mod x i_0) 0)) (= (mod 70875 x) 0)) (> x 0)) (not (= (ite (not (= (mod 70875 i_1) 0)) (mod 70875 i_1) (not (not (= (mod i_1 i_2) 0)))) 0))))
 (check-sat)
 (get-model)
 
@@ -3726,14 +3726,14 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun i_0 () Int
+    2)
   (define-fun x () Int
     5)
-  (define-fun i_39 () Int
-    2)
-  (define-fun i_40 () Int
-    8)
-  (define-fun i_41 () Int
+  (define-fun i_2 () Int
     3)
+  (define-fun i_1 () Int
+    8)
   (define-fun div0 ((x!0 Int) (x!1 Int)) Int
     (ite (and (= x!0 70875) (= x!1 5)) 14175
     (ite (and (= x!0 70875) (= x!1 8)) 8859
@@ -3742,10 +3742,10 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmps8y8rjrg.smt2:16.171: Branches of the ITE must have comparable type.
-then branch: (mod 70875 i_40)
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp3vdwhqbg.smt2:16.166: Branches of the ITE must have comparable type.
+then branch: (mod 70875 i_1)
 its type   : Int
-else branch: (not (not (= (mod i_40 i_41) 0)))
+else branch: (not (not (= (mod i_1 i_2) 0)))
 its type   : Bool
 ")
 
@@ -3766,21 +3766,21 @@ modified_func def sat(p: int, n=wrap_int(63088)):
     return is_prime(p).__and__(n % p == wrap_int(0)).__and__(p > wrap_int(0)).__and__(all(((n % i).__or__(sym_not(is_prime(i))) for i in sym_range(p + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_42 Int)
-(declare-const i_44 Int)
 (declare-const x Int)
-(declare-const i_43 Int)
-(assert (>= i_42 2))
-(assert (< i_42 (- x 1)))
-(assert (not (= i_42 0)))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(declare-const i_2 Int)
+(assert (>= i_0 2))
+(assert (< i_0 (- x 1)))
+(assert (not (= i_0 0)))
 (assert (not (= x 0)))
-(assert (>= i_43 (+ x 1)))
-(assert (< i_43 63088))
-(assert (not (= i_43 0)))
-(assert (>= i_44 2))
-(assert (< i_44 (- i_43 1)))
-(assert (not (= i_44 0)))
-(assert (and (and (and (not (= (mod x i_42) 0)) (= (mod 63088 x) 0)) (> x 0)) (not (= (ite (not (= (mod 63088 i_43) 0)) (mod 63088 i_43) (not (not (= (mod i_43 i_44) 0)))) 0))))
+(assert (>= i_1 (+ x 1)))
+(assert (< i_1 63088))
+(assert (not (= i_1 0)))
+(assert (>= i_2 2))
+(assert (< i_2 (- i_1 1)))
+(assert (not (= i_2 0)))
+(assert (and (and (and (not (= (mod x i_0) 0)) (= (mod 63088 x) 0)) (> x 0)) (not (= (ite (not (= (mod 63088 i_1) 0)) (mod 63088 i_1) (not (not (= (mod i_1 i_2) 0)))) 0))))
 (check-sat)
 (get-model)
 
@@ -3789,14 +3789,14 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_42 () Int
+  (define-fun i_0 () Int
     6)
   (define-fun x () Int
     8)
-  (define-fun i_43 () Int
-    10)
-  (define-fun i_44 () Int
+  (define-fun i_2 () Int
     3)
+  (define-fun i_1 () Int
+    10)
   (define-fun div0 ((x!0 Int) (x!1 Int)) Int
     (ite (and (= x!0 63088) (= x!1 8)) 7886
     (ite (and (= x!0 63088) (= x!1 10)) 6308
@@ -3805,10 +3805,10 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpj5epppad.smt2:16.171: Branches of the ITE must have comparable type.
-then branch: (mod 63088 i_43)
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmppnjvqm2w.smt2:16.166: Branches of the ITE must have comparable type.
+then branch: (mod 63088 i_1)
 its type   : Int
-else branch: (not (not (= (mod i_43 i_44) 0)))
+else branch: (not (not (= (mod i_1 i_2) 0)))
 its type   : Bool
 ")
 
@@ -3867,7 +3867,7 @@ sat
     "0000000124582369835000")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpo70t5kdu.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp895r4ct5.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Found solution 0000000124582369835000
 Yes! Solved for puzzle  CircularShiftNum:0
@@ -3925,7 +3925,7 @@ sat
     "2948192586")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpfir00xbv.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpxi4ckyzl.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Found solution 2948192586
 Yes! Solved for puzzle  CircularShiftNum:1
@@ -3979,7 +3979,7 @@ running backend cvc5
 ### output for z3
 timeout
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpfjx21dv7.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpaun71irk.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Could not find any solution for puzzle CircularShiftNum:2
 
@@ -4036,7 +4036,7 @@ sat
     "732")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpinxc2xvn.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp0ult_h6i.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Found solution 732
 Yes! Solved for puzzle  CircularShiftNum:3
@@ -4094,7 +4094,7 @@ sat
     "6")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpqe4z4rfy.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmplbn55q1q.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Found solution 6
 Yes! Solved for puzzle  CircularShiftNum:4
@@ -6428,17 +6428,17 @@ modified_func def sat(x: int, a=wrap_int(145), b=wrap_int(24126846790974)):
     return (a <= x).__and__(x <= b).__and__(all((i % wrap_int(2) == wrap_int(1) for i in sym_range(x + 1, b + 1))))
 ### smt2
 (set-logic ALL)
-(declare-const i_46 Int)
 (declare-const x Int)
-(declare-const i_45 Int)
-(assert (=> (= x -1) (>= i_45 145)))
-(assert (=> (= x -1) (< i_45 24126846790975)))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(assert (=> (= x -1) (>= i_0 145)))
+(assert (=> (= x -1) (< i_0 24126846790975)))
 (assert (not (= 2 0)))
-(assert (=> (= x -1) (= (mod i_45 2) 1)))
-(assert (=> (not (= x -1)) (>= i_46 (+ x 1))))
-(assert (=> (not (= x -1)) (< i_46 24126846790975)))
+(assert (=> (= x -1) (= (mod i_0 2) 1)))
+(assert (=> (not (= x -1)) (>= i_1 (+ x 1))))
+(assert (=> (not (= x -1)) (< i_1 24126846790975)))
 (assert (not (= 2 0)))
-(assert (=> (not (= x -1)) (and (and (<= 145 x) (<= x 24126846790974)) (= (mod i_46 2) 1))))
+(assert (=> (not (= x -1)) (and (and (<= 145 x) (<= x 24126846790974)) (= (mod i_1 2) 1))))
 (check-sat)
 (get-model)
 
@@ -6447,19 +6447,19 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun i_0 () Int
+    145)
   (define-fun x () Int
     (- 1))
-  (define-fun i_45 () Int
-    145)
-  (define-fun i_46 () Int
+  (define-fun i_1 () Int
     (- 2))
 )
 ### output for cvc5
 sat
 (
-(define-fun i_46 () Int 147)
 (define-fun x () Int 146)
-(define-fun i_45 () Int 145)
+(define-fun i_1 () Int 147)
+(define-fun i_0 () Int 145)
 )
 
 Found solution -1
@@ -6476,17 +6476,17 @@ modified_func def sat(x: int, a=wrap_int(17), b=wrap_int(17)):
     return (a <= x).__and__(x <= b).__and__(all((i % wrap_int(2) == wrap_int(1) for i in sym_range(x + 1, b + 1))))
 ### smt2
 (set-logic ALL)
-(declare-const i_48 Int)
-(declare-const i_47 Int)
 (declare-const x Int)
-(assert (=> (= x -1) (>= i_47 17)))
-(assert (=> (= x -1) (< i_47 18)))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(assert (=> (= x -1) (>= i_0 17)))
+(assert (=> (= x -1) (< i_0 18)))
 (assert (not (= 2 0)))
-(assert (=> (= x -1) (= (mod i_47 2) 1)))
-(assert (=> (not (= x -1)) (>= i_48 (+ x 1))))
-(assert (=> (not (= x -1)) (< i_48 18)))
+(assert (=> (= x -1) (= (mod i_0 2) 1)))
+(assert (=> (not (= x -1)) (>= i_1 (+ x 1))))
+(assert (=> (not (= x -1)) (< i_1 18)))
 (assert (not (= 2 0)))
-(assert (=> (not (= x -1)) (and (and (<= 17 x) (<= x 17)) (= (mod i_48 2) 1))))
+(assert (=> (not (= x -1)) (and (and (<= 17 x) (<= x 17)) (= (mod i_1 2) 1))))
 (check-sat)
 (get-model)
 
@@ -6495,19 +6495,19 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun i_0 () Int
+    17)
   (define-fun x () Int
     (- 1))
-  (define-fun i_47 () Int
-    17)
-  (define-fun i_48 () Int
+  (define-fun i_1 () Int
     (- 2))
 )
 ### output for cvc5
 sat
 (
-(define-fun i_48 () Int 1)
-(define-fun i_47 () Int 17)
 (define-fun x () Int (- 1))
+(define-fun i_1 () Int 1)
+(define-fun i_0 () Int 17)
 )
 
 Found solution -1
@@ -6524,17 +6524,17 @@ modified_func def sat(x: int, a=-wrap_int(10), b=-wrap_int(6)):
     return (a <= x).__and__(x <= b).__and__(all((i % wrap_int(2) == wrap_int(1) for i in sym_range(x + 1, b + 1))))
 ### smt2
 (set-logic ALL)
-(declare-const i_50 Int)
-(declare-const i_49 Int)
 (declare-const x Int)
-(assert (=> (= x -1) (>= i_49 -10)))
-(assert (=> (= x -1) (< i_49 -5)))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(assert (=> (= x -1) (>= i_0 -10)))
+(assert (=> (= x -1) (< i_0 -5)))
 (assert (not (= 2 0)))
-(assert (=> (= x -1) (= (mod i_49 2) 1)))
-(assert (=> (not (= x -1)) (>= i_50 (+ x 1))))
-(assert (=> (not (= x -1)) (< i_50 -5)))
+(assert (=> (= x -1) (= (mod i_0 2) 1)))
+(assert (=> (not (= x -1)) (>= i_1 (+ x 1))))
+(assert (=> (not (= x -1)) (< i_1 -5)))
 (assert (not (= 2 0)))
-(assert (=> (not (= x -1)) (and (and (<= -10 x) (<= x -6)) (= (mod i_50 2) 1))))
+(assert (=> (not (= x -1)) (and (and (<= -10 x) (<= x -6)) (= (mod i_1 2) 1))))
 (check-sat)
 (get-model)
 
@@ -6543,19 +6543,19 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun i_0 () Int
+    (- 7))
   (define-fun x () Int
     (- 1))
-  (define-fun i_50 () Int
+  (define-fun i_1 () Int
     (- 6))
-  (define-fun i_49 () Int
-    (- 7))
 )
 ### output for cvc5
 sat
 (
-(define-fun i_50 () Int (- 7))
-(define-fun i_49 () Int 0)
 (define-fun x () Int (- 8))
+(define-fun i_1 () Int (- 7))
+(define-fun i_0 () Int 0)
 )
 
 Found solution -1
@@ -6572,17 +6572,17 @@ modified_func def sat(x: int, a=wrap_int(100), b=wrap_int(84)):
     return (a <= x).__and__(x <= b).__and__(all((i % wrap_int(2) == wrap_int(1) for i in sym_range(x + 1, b + 1))))
 ### smt2
 (set-logic ALL)
-(declare-const i_52 Int)
-(declare-const i_51 Int)
 (declare-const x Int)
-(assert (=> (= x -1) (>= i_51 100)))
-(assert (=> (= x -1) (< i_51 85)))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(assert (=> (= x -1) (>= i_0 100)))
+(assert (=> (= x -1) (< i_0 85)))
 (assert (not (= 2 0)))
-(assert (=> (= x -1) (= (mod i_51 2) 1)))
-(assert (=> (not (= x -1)) (>= i_52 (+ x 1))))
-(assert (=> (not (= x -1)) (< i_52 85)))
+(assert (=> (= x -1) (= (mod i_0 2) 1)))
+(assert (=> (not (= x -1)) (>= i_1 (+ x 1))))
+(assert (=> (not (= x -1)) (< i_1 85)))
 (assert (not (= 2 0)))
-(assert (=> (not (= x -1)) (and (and (<= 100 x) (<= x 84)) (= (mod i_52 2) 1))))
+(assert (=> (not (= x -1)) (and (and (<= 100 x) (<= x 84)) (= (mod i_1 2) 1))))
 (check-sat)
 (get-model)
 
@@ -6608,17 +6608,17 @@ modified_func def sat(x: int, a=wrap_int(0), b=wrap_int(323523571223)):
     return (a <= x).__and__(x <= b).__and__(all((i % wrap_int(2) == wrap_int(1) for i in sym_range(x + 1, b + 1))))
 ### smt2
 (set-logic ALL)
-(declare-const i_53 Int)
-(declare-const i_54 Int)
 (declare-const x Int)
-(assert (=> (= x -1) (>= i_53 0)))
-(assert (=> (= x -1) (< i_53 323523571224)))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(assert (=> (= x -1) (>= i_0 0)))
+(assert (=> (= x -1) (< i_0 323523571224)))
 (assert (not (= 2 0)))
-(assert (=> (= x -1) (= (mod i_53 2) 1)))
-(assert (=> (not (= x -1)) (>= i_54 (+ x 1))))
-(assert (=> (not (= x -1)) (< i_54 323523571224)))
+(assert (=> (= x -1) (= (mod i_0 2) 1)))
+(assert (=> (not (= x -1)) (>= i_1 (+ x 1))))
+(assert (=> (not (= x -1)) (< i_1 323523571224)))
 (assert (not (= 2 0)))
-(assert (=> (not (= x -1)) (and (and (<= 0 x) (<= x 323523571223)) (= (mod i_54 2) 1))))
+(assert (=> (not (= x -1)) (and (and (<= 0 x) (<= x 323523571223)) (= (mod i_1 2) 1))))
 (check-sat)
 (get-model)
 
@@ -6627,19 +6627,19 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_54 () Int
-    (- 2))
+  (define-fun i_0 () Int
+    1)
   (define-fun x () Int
     (- 1))
-  (define-fun i_53 () Int
-    1)
+  (define-fun i_1 () Int
+    (- 2))
 )
 ### output for cvc5
 sat
 (
-(define-fun i_53 () Int 0)
-(define-fun i_54 () Int 1)
 (define-fun x () Int 0)
+(define-fun i_1 () Int 1)
+(define-fun i_0 () Int 0)
 )
 
 Found solution -1
@@ -6836,7 +6836,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmprubtfyu3.smt2:15.53: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmproparf6l.smt2:15.53: Symbol 'str.to.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:0
 
@@ -6881,7 +6881,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpib7nckiz.smt2:15.53: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp721rbqw7.smt2:15.53: Symbol 'str.to.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:1
 
@@ -6926,7 +6926,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpfqjjhdw1.smt2:15.53: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpss8oyd_g.smt2:15.53: Symbol 'str.to.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:2
 
@@ -6971,7 +6971,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpa8wkha0s.smt2:15.53: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp3u97uo5p.smt2:15.53: Symbol 'str.to.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:3
 
@@ -7016,7 +7016,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp6t9j9iez.smt2:15.53: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpzst5p2wn.smt2:15.53: Symbol 'str.to.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:4
 
@@ -7888,7 +7888,7 @@ running backend cvc5
 unsat
 (error "line 51 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpsvgm5dz4.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpdopuayqg.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Could not find any solution for puzzle OddProduct:1
 
@@ -7976,7 +7976,7 @@ sat
     8505)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpolgska74.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp3deqjbqu.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Found solution 8505
 Yes! Solved for puzzle  OddProduct:2
@@ -9182,7 +9182,7 @@ running backend cvc5
 unsat
 (error "line 33 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp2_nmm7u4.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpy07_shtj.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Could not find any solution for puzzle Abbreviate:0
 
@@ -9236,7 +9236,7 @@ running backend cvc5
 unsat
 (error "line 33 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpcvcw1w00.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpq7thfm6c.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Could not find any solution for puzzle Abbreviate:1
 
@@ -9290,7 +9290,7 @@ running backend cvc5
 unsat
 (error "line 33 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpaskfezm_.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp43h1sv3h.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Could not find any solution for puzzle Abbreviate:2
 
@@ -9347,7 +9347,7 @@ sat
     "bybakichop")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp_kiar6mv.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpz0m85jif.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Found solution bybakichop
 Yes! Solved for puzzle  Abbreviate:3
@@ -9402,7 +9402,7 @@ running backend cvc5
 unsat
 (error "line 33 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp885aj517.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpdysc0wp3.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Could not find any solution for puzzle Abbreviate:4
 
@@ -11436,11 +11436,11 @@ modified_func def sat(n: int, a=wrap_int(17), b=wrap_int(100), c=wrap_int(20)):
     return n + a == sum([b * i for i in sym_range(c)])
 ### smt2
 (set-logic ALL)
-(declare-const i_60 Int)
 (declare-const x Int)
-(assert (>= i_60 0))
-(assert (< i_60 20))
-(assert (= (+ x 17) (+ (* 100 i_60) 0)))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 20))
+(assert (= (+ x 17) (+ (* 100 i_0) 0)))
 (check-sat)
 (get-model)
 
@@ -11449,7 +11449,7 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_60 () Int
+  (define-fun i_0 () Int
     0)
   (define-fun x () Int
     (- 17))
@@ -11457,8 +11457,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_60 () Int 0)
 (define-fun x () Int (- 17))
+(define-fun i_0 () Int 0)
 )
 
 Found solution -17
@@ -11471,11 +11471,11 @@ modified_func def sat(n: int, a=wrap_int(62), b=wrap_int(92), c=wrap_int(24)):
     return n + a == sum([b * i for i in sym_range(c)])
 ### smt2
 (set-logic ALL)
-(declare-const i_61 Int)
 (declare-const x Int)
-(assert (>= i_61 0))
-(assert (< i_61 24))
-(assert (= (+ x 62) (+ (* 92 i_61) 0)))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 24))
+(assert (= (+ x 62) (+ (* 92 i_0) 0)))
 (check-sat)
 (get-model)
 
@@ -11484,7 +11484,7 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_61 () Int
+  (define-fun i_0 () Int
     0)
   (define-fun x () Int
     (- 62))
@@ -11492,8 +11492,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_61 () Int 0)
 (define-fun x () Int (- 62))
+(define-fun i_0 () Int 0)
 )
 
 Found solution -62
@@ -11506,11 +11506,11 @@ modified_func def sat(n: int, a=wrap_int(14), b=wrap_int(50), c=wrap_int(47)):
     return n + a == sum([b * i for i in sym_range(c)])
 ### smt2
 (set-logic ALL)
-(declare-const i_62 Int)
 (declare-const x Int)
-(assert (>= i_62 0))
-(assert (< i_62 47))
-(assert (= (+ x 14) (+ (* 50 i_62) 0)))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 47))
+(assert (= (+ x 14) (+ (* 50 i_0) 0)))
 (check-sat)
 (get-model)
 
@@ -11519,7 +11519,7 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_62 () Int
+  (define-fun i_0 () Int
     0)
   (define-fun x () Int
     (- 14))
@@ -11527,8 +11527,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_62 () Int 0)
 (define-fun x () Int (- 14))
+(define-fun i_0 () Int 0)
 )
 
 Found solution -14
@@ -11542,10 +11542,10 @@ modified_func def sat(n: int, a=wrap_int(62), b=wrap_int(63), c=wrap_int(13)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_63 Int)
-(assert (>= i_63 0))
-(assert (< i_63 13))
-(assert (= (+ x 62) (+ (* 63 i_63) 0)))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 13))
+(assert (= (+ x 62) (+ (* 63 i_0) 0)))
 (check-sat)
 (get-model)
 
@@ -11554,7 +11554,7 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_63 () Int
+  (define-fun i_0 () Int
     0)
   (define-fun x () Int
     (- 62))
@@ -11563,7 +11563,7 @@ sat
 sat
 (
 (define-fun x () Int (- 62))
-(define-fun i_63 () Int 0)
+(define-fun i_0 () Int 0)
 )
 
 Found solution -62
@@ -11577,10 +11577,10 @@ modified_func def sat(n: int, a=wrap_int(5), b=wrap_int(31), c=wrap_int(37)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_64 Int)
-(assert (>= i_64 0))
-(assert (< i_64 37))
-(assert (= (+ x 5) (+ (* 31 i_64) 0)))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 37))
+(assert (= (+ x 5) (+ (* 31 i_0) 0)))
 (check-sat)
 (get-model)
 
@@ -11589,7 +11589,7 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_64 () Int
+  (define-fun i_0 () Int
     36)
   (define-fun x () Int
     1111)
@@ -11598,7 +11598,7 @@ sat
 sat
 (
 (define-fun x () Int (- 5))
-(define-fun i_64 () Int 0)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 1111
@@ -11650,10 +11650,10 @@ modified_func def sat(n: int, v=wrap_int(609909721), w=wrap_int(872375011)):
 Skipping constant true constraint
 ### smt2
 (set-logic ALL)
-(declare-const i_67 Int)
 (declare-const x Int)
-(assert (>= i_67 0))
-(assert (< i_67 x))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 x))
 (assert (<= 609909721 872375011))
 (check-sat)
 (get-model)
@@ -11665,14 +11665,14 @@ sat
 (
   (define-fun x () Int
     1)
-  (define-fun i_67 () Int
+  (define-fun i_0 () Int
     0)
 )
 ### output for cvc5
 sat
 (
-(define-fun i_67 () Int 0)
 (define-fun x () Int 1)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 1
@@ -11720,9 +11720,9 @@ modified_func def sat(res: int, m=wrap_int(1234578987654321), n=wrap_int(4)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_70 Int)
-(assert (>= i_70 0))
-(assert (< i_70 4))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 4))
 (assert (= x 1234578987654320))
 (check-sat)
 (get-model)
@@ -11732,7 +11732,7 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_70 () Int
+  (define-fun i_0 () Int
     0)
   (define-fun x () Int
     1234578987654320)
@@ -11741,7 +11741,7 @@ sat
 sat
 (
 (define-fun x () Int 1234578987654320)
-(define-fun i_70 () Int 0)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 1234578987654320
@@ -11758,10 +11758,10 @@ modified_func def sat(res: int, m=wrap_int(52891398375817839454), n=wrap_int(3))
     return res == m
 ### smt2
 (set-logic ALL)
-(declare-const i_71 Int)
 (declare-const x Int)
-(assert (>= i_71 0))
-(assert (< i_71 3))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 3))
 (assert (= x 52891398375817839453))
 (check-sat)
 (get-model)
@@ -11771,7 +11771,7 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_71 () Int
+  (define-fun i_0 () Int
     0)
   (define-fun x () Int
     52891398375817839453)
@@ -11779,8 +11779,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_71 () Int 0)
 (define-fun x () Int 52891398375817839453)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 52891398375817839453
@@ -11797,10 +11797,10 @@ modified_func def sat(res: int, m=wrap_int(22262059435814874058), n=wrap_int(6))
     return res == m
 ### smt2
 (set-logic ALL)
-(declare-const i_72 Int)
 (declare-const x Int)
-(assert (>= i_72 0))
-(assert (< i_72 6))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 6))
 (assert (= x 22262059435814874057))
 (check-sat)
 (get-model)
@@ -11810,7 +11810,7 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_72 () Int
+  (define-fun i_0 () Int
     0)
   (define-fun x () Int
     22262059435814874057)
@@ -11818,8 +11818,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_72 () Int 0)
 (define-fun x () Int 22262059435814874057)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 22262059435814874057
@@ -11836,10 +11836,10 @@ modified_func def sat(res: int, m=wrap_int(23602903522227899062), n=wrap_int(2))
     return res == m
 ### smt2
 (set-logic ALL)
-(declare-const i_73 Int)
 (declare-const x Int)
-(assert (>= i_73 0))
-(assert (< i_73 2))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 2))
 (assert (= x 23602903522227899061))
 (check-sat)
 (get-model)
@@ -11849,7 +11849,7 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_73 () Int
+  (define-fun i_0 () Int
     0)
   (define-fun x () Int
     23602903522227899061)
@@ -11857,8 +11857,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_73 () Int 0)
 (define-fun x () Int 23602903522227899061)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 23602903522227899061
@@ -11875,10 +11875,10 @@ modified_func def sat(res: int, m=wrap_int(27368816582234104063), n=wrap_int(4))
     return res == m
 ### smt2
 (set-logic ALL)
-(declare-const i_74 Int)
 (declare-const x Int)
-(assert (>= i_74 0))
-(assert (< i_74 4))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 4))
 (assert (= x 27368816582234104062))
 (check-sat)
 (get-model)
@@ -11888,7 +11888,7 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_74 () Int
+  (define-fun i_0 () Int
     0)
   (define-fun x () Int
     27368816582234104062)
@@ -11896,8 +11896,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_74 () Int 0)
 (define-fun x () Int 27368816582234104062)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 27368816582234104062
@@ -13116,7 +13116,7 @@ sat
     "32")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp3ne7zjbk.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpk0cuw4td.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Found solution 32
 Exception in checking result: Exceeds the limit (4300 digits) for integer string conversion; use sys.set_int_max_str_digits() to increase the limit
@@ -13170,7 +13170,7 @@ sat
     "0")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpt9a6ydcv.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp9q3rik7_.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Found solution 0
 WARNING: Solution verification failed for puzzle FivePowers:1
@@ -13217,7 +13217,7 @@ sat
     "1")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpr2eajg9c.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpekf0mc_g.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Found solution 1
 WARNING: Solution verification failed for puzzle FivePowers:2
@@ -13264,7 +13264,7 @@ sat
     "32")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp7z6hl57h.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpzy50kmc9.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Found solution 32
 WARNING: Solution verification failed for puzzle FivePowers:3
@@ -13311,7 +13311,7 @@ sat
     "43")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmphcosz7ib.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmprzdpryby.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
 
 Found solution 43
 WARNING: Solution verification failed for puzzle FivePowers:4
@@ -13625,12 +13625,12 @@ modified_func def sat(start: int, k=wrap_int(3), lower=wrap_int(100000), seq=wra
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_75 Int)
-(assert (>= i_75 x))
-(assert (< i_75 (+ x 3)))
-(assert (< i_75 11))
-(assert (> i_75 -11))
-(assert (>= (* 1 (ite (or (= i_75 10) (= i_75 -1)) 18 (ite (or (= i_75 9) (= i_75 -2)) 65 (ite (or (= i_75 8) (= i_75 -3)) 3 (ite (or (= i_75 7) (= i_75 -4)) 100 (ite (or (= i_75 6) (= i_75 -5)) -30 (ite (or (= i_75 5) (= i_75 -6)) 91 (ite (or (= i_75 4) (= i_75 -7)) 18 (ite (or (= i_75 3) (= i_75 -8)) 64 (ite (or (= i_75 2) (= i_75 -9)) 2 (ite (or (= i_75 1) (= i_75 -10)) 1 91))))))))))) 100000))
+(declare-const i_0 Int)
+(assert (>= i_0 x))
+(assert (< i_0 (+ x 3)))
+(assert (< i_0 11))
+(assert (> i_0 -11))
+(assert (>= (* 1 (ite (or (= i_0 10) (= i_0 -1)) 18 (ite (or (= i_0 9) (= i_0 -2)) 65 (ite (or (= i_0 8) (= i_0 -3)) 3 (ite (or (= i_0 7) (= i_0 -4)) 100 (ite (or (= i_0 6) (= i_0 -5)) -30 (ite (or (= i_0 5) (= i_0 -6)) 91 (ite (or (= i_0 4) (= i_0 -7)) 18 (ite (or (= i_0 3) (= i_0 -8)) 64 (ite (or (= i_0 2) (= i_0 -9)) 2 (ite (or (= i_0 1) (= i_0 -10)) 1 91))))))))))) 100000))
 (check-sat)
 (get-model)
 
@@ -13658,13 +13658,13 @@ modified_func def sat(start: int, k=wrap_int(8), lower=wrap_int(774420991987500)
     return prod >= lower
 ### smt2
 (set-logic ALL)
-(declare-const i_76 Int)
 (declare-const x Int)
-(assert (>= i_76 x))
-(assert (< i_76 (+ x 8)))
-(assert (< i_76 8))
-(assert (> i_76 -8))
-(assert (>= (* 1 (ite (or (= i_76 7) (= i_76 -1)) 45 (ite (or (= i_76 6) (= i_76 -2)) 90 (ite (or (= i_76 5) (= i_76 -3)) -87 (ite (or (= i_76 4) (= i_76 -4)) -69 (ite (or (= i_76 3) (= i_76 -5)) -65 (ite (or (= i_76 2) (= i_76 -6)) -99 (ite (or (= i_76 1) (= i_76 -7)) -99 -50)))))))) 774420991987500))
+(declare-const i_0 Int)
+(assert (>= i_0 x))
+(assert (< i_0 (+ x 8)))
+(assert (< i_0 8))
+(assert (> i_0 -8))
+(assert (>= (* 1 (ite (or (= i_0 7) (= i_0 -1)) 45 (ite (or (= i_0 6) (= i_0 -2)) 90 (ite (or (= i_0 5) (= i_0 -3)) -87 (ite (or (= i_0 4) (= i_0 -4)) -69 (ite (or (= i_0 3) (= i_0 -5)) -65 (ite (or (= i_0 2) (= i_0 -6)) -99 (ite (or (= i_0 1) (= i_0 -7)) -99 -50)))))))) 774420991987500))
 (check-sat)
 (get-model)
 
@@ -13692,13 +13692,13 @@ modified_func def sat(start: int, k=wrap_int(6), lower=wrap_int(188917681120), s
     return prod >= lower
 ### smt2
 (set-logic ALL)
-(declare-const i_77 Int)
 (declare-const x Int)
-(assert (>= i_77 x))
-(assert (< i_77 (+ x 6)))
-(assert (< i_77 103))
-(assert (> i_77 -103))
-(assert (>= (* 1 (ite (or (= i_77 102) (= i_77 -1)) 70 (ite (or (= i_77 101) (= i_77 -2)) 97 (ite (or (= i_77 100) (= i_77 -3)) 82 (ite (or (= i_77 99) (= i_77 -4)) -83 (ite (or (= i_77 98) (= i_77 -5)) -56 (ite (or (= i_77 97) (= i_77 -6)) 58 (ite (or (= i_77 96) (= i_77 -7)) 32 (ite (or (= i_77 95) (= i_77 -8)) 43 (ite (or (= i_77 94) (= i_77 -9)) -99 (ite (or (= i_77 93) (= i_77 -10)) -39 (ite (or (= i_77 92) (= i_77 -11)) 81 (ite (or (= i_77 91) (= i_77 -12)) 9 (ite (or (= i_77 90) (= i_77 -13)) 73 (ite (or (= i_77 89) (= i_77 -14)) 78 (ite (or (= i_77 88) (= i_77 -15)) 58 (ite (or (= i_77 87) (= i_77 -16)) -30 (ite (or (= i_77 86) (= i_77 -17)) -89 (ite (or (= i_77 85) (= i_77 -18)) -56 (ite (or (= i_77 84) (= i_77 -19)) -65 (ite (or (= i_77 83) (= i_77 -20)) -21 (ite (or (= i_77 82) (= i_77 -21)) 24 (ite (or (= i_77 81) (= i_77 -22)) -28 (ite (or (= i_77 80) (= i_77 -23)) 59 (ite (or (= i_77 79) (= i_77 -24)) 45 (ite (or (= i_77 78) (= i_77 -25)) -89 (ite (or (= i_77 77) (= i_77 -26)) 81 (ite (or (= i_77 76) (= i_77 -27)) -67 (ite (or (= i_77 75) (= i_77 -28)) -69 (ite (or (= i_77 74) (= i_77 -29)) 1 (ite (or (= i_77 73) (= i_77 -30)) 99 (ite (or (= i_77 72) (= i_77 -31)) -77 (ite (or (= i_77 71) (= i_77 -32)) -53 (ite (or (= i_77 70) (= i_77 -33)) 27 (ite (or (= i_77 69) (= i_77 -34)) 6 (ite (or (= i_77 68) (= i_77 -35)) -60 (ite (or (= i_77 67) (= i_77 -36)) 28 (ite (or (= i_77 66) (= i_77 -37)) 50 (ite (or (= i_77 65) (= i_77 -38)) -22 (ite (or (= i_77 64) (= i_77 -39)) -53 (ite (or (= i_77 63) (= i_77 -40)) 99 (ite (or (= i_77 62) (= i_77 -41)) 74 (ite (or (= i_77 61) (= i_77 -42)) 60 (ite (or (= i_77 60) (= i_77 -43)) -89 (ite (or (= i_77 59) (= i_77 -44)) 55 (ite (or (= i_77 58) (= i_77 -45)) 92 (ite (or (= i_77 57) (= i_77 -46)) 61 (ite (or (= i_77 56) (= i_77 -47)) 0 (ite (or (= i_77 55) (= i_77 -48)) -1 (ite (or (= i_77 54) (= i_77 -49)) -69 (ite (or (= i_77 53) (= i_77 -50)) 0 (ite (or (= i_77 52) (= i_77 -51)) -81 (ite (or (= i_77 51) (= i_77 -52)) 78 (ite (or (= i_77 50) (= i_77 -53)) 69 (ite (or (= i_77 49) (= i_77 -54)) -40 (ite (or (= i_77 48) (= i_77 -55)) 83 (ite (or (= i_77 47) (= i_77 -56)) -35 (ite (or (= i_77 46) (= i_77 -57)) 70 (ite (or (= i_77 45) (= i_77 -58)) -65 (ite (or (= i_77 44) (= i_77 -59)) -65 (ite (or (= i_77 43) (= i_77 -60)) 83 (ite (or (= i_77 42) (= i_77 -61)) -28 (ite (or (= i_77 41) (= i_77 -62)) 76 (ite (or (= i_77 40) (= i_77 -63)) 71 (ite (or (= i_77 39) (= i_77 -64)) -82 (ite (or (= i_77 38) (= i_77 -65)) 32 (ite (or (= i_77 37) (= i_77 -66)) 52 (ite (or (= i_77 36) (= i_77 -67)) 71 (ite (or (= i_77 35) (= i_77 -68)) -22 (ite (or (= i_77 34) (= i_77 -69)) -78 (ite (or (= i_77 33) (= i_77 -70)) -46 (ite (or (= i_77 32) (= i_77 -71)) -57 (ite (or (= i_77 31) (= i_77 -72)) -63 (ite (or (= i_77 30) (= i_77 -73)) -74 (ite (or (= i_77 29) (= i_77 -74)) -7 (ite (or (= i_77 28) (= i_77 -75)) 54 (ite (or (= i_77 27) (= i_77 -76)) 87 (ite (or (= i_77 26) (= i_77 -77)) 71 (ite (or (= i_77 25) (= i_77 -78)) 91 (ite (or (= i_77 24) (= i_77 -79)) -73 (ite (or (= i_77 23) (= i_77 -80)) 68 (ite (or (= i_77 22) (= i_77 -81)) 14 (ite (or (= i_77 21) (= i_77 -82)) 38 (ite (or (= i_77 20) (= i_77 -83)) 63 (ite (or (= i_77 19) (= i_77 -84)) 79 (ite (or (= i_77 18) (= i_77 -85)) 37 (ite (or (= i_77 17) (= i_77 -86)) 31 (ite (or (= i_77 16) (= i_77 -87)) -31 (ite (or (= i_77 15) (= i_77 -88)) -18 (ite (or (= i_77 14) (= i_77 -89)) -91 (ite (or (= i_77 13) (= i_77 -90)) 78 (ite (or (= i_77 12) (= i_77 -91)) -86 (ite (or (= i_77 11) (= i_77 -92)) -83 (ite (or (= i_77 10) (= i_77 -93)) -16 (ite (or (= i_77 9) (= i_77 -94)) -97 (ite (or (= i_77 8) (= i_77 -95)) -59 (ite (or (= i_77 7) (= i_77 -96)) 40 (ite (or (= i_77 6) (= i_77 -97)) 31 (ite (or (= i_77 5) (= i_77 -98)) 8 (ite (or (= i_77 4) (= i_77 -99)) 73 (ite (or (= i_77 3) (= i_77 -100)) 92 (ite (or (= i_77 2) (= i_77 -101)) 30 (ite (or (= i_77 1) (= i_77 -102)) -32 73))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) 188917681120))
+(declare-const i_0 Int)
+(assert (>= i_0 x))
+(assert (< i_0 (+ x 6)))
+(assert (< i_0 103))
+(assert (> i_0 -103))
+(assert (>= (* 1 (ite (or (= i_0 102) (= i_0 -1)) 70 (ite (or (= i_0 101) (= i_0 -2)) 97 (ite (or (= i_0 100) (= i_0 -3)) 82 (ite (or (= i_0 99) (= i_0 -4)) -83 (ite (or (= i_0 98) (= i_0 -5)) -56 (ite (or (= i_0 97) (= i_0 -6)) 58 (ite (or (= i_0 96) (= i_0 -7)) 32 (ite (or (= i_0 95) (= i_0 -8)) 43 (ite (or (= i_0 94) (= i_0 -9)) -99 (ite (or (= i_0 93) (= i_0 -10)) -39 (ite (or (= i_0 92) (= i_0 -11)) 81 (ite (or (= i_0 91) (= i_0 -12)) 9 (ite (or (= i_0 90) (= i_0 -13)) 73 (ite (or (= i_0 89) (= i_0 -14)) 78 (ite (or (= i_0 88) (= i_0 -15)) 58 (ite (or (= i_0 87) (= i_0 -16)) -30 (ite (or (= i_0 86) (= i_0 -17)) -89 (ite (or (= i_0 85) (= i_0 -18)) -56 (ite (or (= i_0 84) (= i_0 -19)) -65 (ite (or (= i_0 83) (= i_0 -20)) -21 (ite (or (= i_0 82) (= i_0 -21)) 24 (ite (or (= i_0 81) (= i_0 -22)) -28 (ite (or (= i_0 80) (= i_0 -23)) 59 (ite (or (= i_0 79) (= i_0 -24)) 45 (ite (or (= i_0 78) (= i_0 -25)) -89 (ite (or (= i_0 77) (= i_0 -26)) 81 (ite (or (= i_0 76) (= i_0 -27)) -67 (ite (or (= i_0 75) (= i_0 -28)) -69 (ite (or (= i_0 74) (= i_0 -29)) 1 (ite (or (= i_0 73) (= i_0 -30)) 99 (ite (or (= i_0 72) (= i_0 -31)) -77 (ite (or (= i_0 71) (= i_0 -32)) -53 (ite (or (= i_0 70) (= i_0 -33)) 27 (ite (or (= i_0 69) (= i_0 -34)) 6 (ite (or (= i_0 68) (= i_0 -35)) -60 (ite (or (= i_0 67) (= i_0 -36)) 28 (ite (or (= i_0 66) (= i_0 -37)) 50 (ite (or (= i_0 65) (= i_0 -38)) -22 (ite (or (= i_0 64) (= i_0 -39)) -53 (ite (or (= i_0 63) (= i_0 -40)) 99 (ite (or (= i_0 62) (= i_0 -41)) 74 (ite (or (= i_0 61) (= i_0 -42)) 60 (ite (or (= i_0 60) (= i_0 -43)) -89 (ite (or (= i_0 59) (= i_0 -44)) 55 (ite (or (= i_0 58) (= i_0 -45)) 92 (ite (or (= i_0 57) (= i_0 -46)) 61 (ite (or (= i_0 56) (= i_0 -47)) 0 (ite (or (= i_0 55) (= i_0 -48)) -1 (ite (or (= i_0 54) (= i_0 -49)) -69 (ite (or (= i_0 53) (= i_0 -50)) 0 (ite (or (= i_0 52) (= i_0 -51)) -81 (ite (or (= i_0 51) (= i_0 -52)) 78 (ite (or (= i_0 50) (= i_0 -53)) 69 (ite (or (= i_0 49) (= i_0 -54)) -40 (ite (or (= i_0 48) (= i_0 -55)) 83 (ite (or (= i_0 47) (= i_0 -56)) -35 (ite (or (= i_0 46) (= i_0 -57)) 70 (ite (or (= i_0 45) (= i_0 -58)) -65 (ite (or (= i_0 44) (= i_0 -59)) -65 (ite (or (= i_0 43) (= i_0 -60)) 83 (ite (or (= i_0 42) (= i_0 -61)) -28 (ite (or (= i_0 41) (= i_0 -62)) 76 (ite (or (= i_0 40) (= i_0 -63)) 71 (ite (or (= i_0 39) (= i_0 -64)) -82 (ite (or (= i_0 38) (= i_0 -65)) 32 (ite (or (= i_0 37) (= i_0 -66)) 52 (ite (or (= i_0 36) (= i_0 -67)) 71 (ite (or (= i_0 35) (= i_0 -68)) -22 (ite (or (= i_0 34) (= i_0 -69)) -78 (ite (or (= i_0 33) (= i_0 -70)) -46 (ite (or (= i_0 32) (= i_0 -71)) -57 (ite (or (= i_0 31) (= i_0 -72)) -63 (ite (or (= i_0 30) (= i_0 -73)) -74 (ite (or (= i_0 29) (= i_0 -74)) -7 (ite (or (= i_0 28) (= i_0 -75)) 54 (ite (or (= i_0 27) (= i_0 -76)) 87 (ite (or (= i_0 26) (= i_0 -77)) 71 (ite (or (= i_0 25) (= i_0 -78)) 91 (ite (or (= i_0 24) (= i_0 -79)) -73 (ite (or (= i_0 23) (= i_0 -80)) 68 (ite (or (= i_0 22) (= i_0 -81)) 14 (ite (or (= i_0 21) (= i_0 -82)) 38 (ite (or (= i_0 20) (= i_0 -83)) 63 (ite (or (= i_0 19) (= i_0 -84)) 79 (ite (or (= i_0 18) (= i_0 -85)) 37 (ite (or (= i_0 17) (= i_0 -86)) 31 (ite (or (= i_0 16) (= i_0 -87)) -31 (ite (or (= i_0 15) (= i_0 -88)) -18 (ite (or (= i_0 14) (= i_0 -89)) -91 (ite (or (= i_0 13) (= i_0 -90)) 78 (ite (or (= i_0 12) (= i_0 -91)) -86 (ite (or (= i_0 11) (= i_0 -92)) -83 (ite (or (= i_0 10) (= i_0 -93)) -16 (ite (or (= i_0 9) (= i_0 -94)) -97 (ite (or (= i_0 8) (= i_0 -95)) -59 (ite (or (= i_0 7) (= i_0 -96)) 40 (ite (or (= i_0 6) (= i_0 -97)) 31 (ite (or (= i_0 5) (= i_0 -98)) 8 (ite (or (= i_0 4) (= i_0 -99)) 73 (ite (or (= i_0 3) (= i_0 -100)) 92 (ite (or (= i_0 2) (= i_0 -101)) 30 (ite (or (= i_0 1) (= i_0 -102)) -32 73))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) 188917681120))
 (check-sat)
 (get-model)
 
@@ -13726,13 +13726,13 @@ modified_func def sat(start: int, k=wrap_int(2), lower=wrap_int(5589), seq=wrap_
     return prod >= lower
 ### smt2
 (set-logic ALL)
-(declare-const i_78 Int)
 (declare-const x Int)
-(assert (>= i_78 x))
-(assert (< i_78 (+ x 2)))
-(assert (< i_78 11))
-(assert (> i_78 -11))
-(assert (>= (* 1 (ite (or (= i_78 10) (= i_78 -1)) -18 (ite (or (= i_78 9) (= i_78 -2)) 27 (ite (or (= i_78 8) (= i_78 -3)) 99 (ite (or (= i_78 7) (= i_78 -4)) -69 (ite (or (= i_78 6) (= i_78 -5)) -81 (ite (or (= i_78 5) (= i_78 -6)) 14 (ite (or (= i_78 4) (= i_78 -7)) 40 (ite (or (= i_78 3) (= i_78 -8)) 74 (ite (or (= i_78 2) (= i_78 -9)) 75 (ite (or (= i_78 1) (= i_78 -10)) -66 8))))))))))) 5589))
+(declare-const i_0 Int)
+(assert (>= i_0 x))
+(assert (< i_0 (+ x 2)))
+(assert (< i_0 11))
+(assert (> i_0 -11))
+(assert (>= (* 1 (ite (or (= i_0 10) (= i_0 -1)) -18 (ite (or (= i_0 9) (= i_0 -2)) 27 (ite (or (= i_0 8) (= i_0 -3)) 99 (ite (or (= i_0 7) (= i_0 -4)) -69 (ite (or (= i_0 6) (= i_0 -5)) -81 (ite (or (= i_0 5) (= i_0 -6)) 14 (ite (or (= i_0 4) (= i_0 -7)) 40 (ite (or (= i_0 3) (= i_0 -8)) 74 (ite (or (= i_0 2) (= i_0 -9)) 75 (ite (or (= i_0 1) (= i_0 -10)) -66 8))))))))))) 5589))
 (check-sat)
 (get-model)
 
@@ -13760,13 +13760,13 @@ modified_func def sat(start: int, k=wrap_int(10), lower=-wrap_int(83267974331942
     return prod >= lower
 ### smt2
 (set-logic ALL)
-(declare-const i_79 Int)
 (declare-const x Int)
-(assert (>= i_79 x))
-(assert (< i_79 (+ x 10)))
-(assert (< i_79 10))
-(assert (> i_79 -10))
-(assert (>= (* 1 (ite (or (= i_79 9) (= i_79 -1)) -47 (ite (or (= i_79 8) (= i_79 -2)) -52 (ite (or (= i_79 7) (= i_79 -3)) 13 (ite (or (= i_79 6) (= i_79 -4)) 37 (ite (or (= i_79 5) (= i_79 -5)) 13 (ite (or (= i_79 4) (= i_79 -6)) 54 (ite (or (= i_79 3) (= i_79 -7)) 26 (ite (or (= i_79 2) (= i_79 -8)) 80 (ite (or (= i_79 1) (= i_79 -9)) -99 49)))))))))) -8326797433194240))
+(declare-const i_0 Int)
+(assert (>= i_0 x))
+(assert (< i_0 (+ x 10)))
+(assert (< i_0 10))
+(assert (> i_0 -10))
+(assert (>= (* 1 (ite (or (= i_0 9) (= i_0 -1)) -47 (ite (or (= i_0 8) (= i_0 -2)) -52 (ite (or (= i_0 7) (= i_0 -3)) 13 (ite (or (= i_0 6) (= i_0 -4)) 37 (ite (or (= i_0 5) (= i_0 -5)) 13 (ite (or (= i_0 4) (= i_0 -6)) 54 (ite (or (= i_0 3) (= i_0 -7)) 26 (ite (or (= i_0 2) (= i_0 -8)) 80 (ite (or (= i_0 1) (= i_0 -9)) -99 49)))))))))) -8326797433194240))
 (check-sat)
 (get-model)
 
@@ -13775,16 +13775,16 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun x () Int
+  (define-fun i_0 () Int
     0)
-  (define-fun i_79 () Int
+  (define-fun x () Int
     0)
 )
 ### output for cvc5
 sat
 (
-(define-fun i_79 () Int 9)
 (define-fun x () Int 0)
+(define-fun i_0 () Int 9)
 )
 
 Found solution 0
@@ -14562,12 +14562,12 @@ modified_func def sat(x: str, s=wrap_list([wrap_str('a'), wrap_str('b'), wrap_st
     return (sym_len(x) == n).__and__(all([x[i] == s[i] for i in sym_range(n)]))
 ### smt2
 (set-logic ALL)
-(declare-const i_80 Int)
 (declare-const x String)
-(assert (>= i_80 0))
-(assert (< i_80 4))
-(assert (< i_80 6))
-(assert (> i_80 -6))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 4))
+(assert (< i_0 6))
+(assert (> i_0 -6))
 (assert (and (= (str.len x) 4) false))
 (check-sat)
 (get-model)
@@ -14591,11 +14591,11 @@ modified_func def sat(x: str, s=wrap_list([wrap_str('I'), wrap_str('&'), wrap_st
 ### smt2
 (set-logic ALL)
 (declare-const x String)
-(declare-const i_81 Int)
-(assert (>= i_81 0))
-(assert (< i_81 16))
-(assert (< i_81 31))
-(assert (> i_81 -31))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 16))
+(assert (< i_0 31))
+(assert (> i_0 -31))
 (assert (and (= (str.len x) 16) false))
 (check-sat)
 (get-model)
@@ -14618,12 +14618,12 @@ modified_func def sat(x: str, s=wrap_list([wrap_str('L'), wrap_str('C'), wrap_st
     return (sym_len(x) == n).__and__(all([x[i] == s[i] for i in sym_range(n)]))
 ### smt2
 (set-logic ALL)
-(declare-const i_82 Int)
 (declare-const x String)
-(assert (>= i_82 0))
-(assert (< i_82 13))
-(assert (< i_82 17))
-(assert (> i_82 -17))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 13))
+(assert (< i_0 17))
+(assert (> i_0 -17))
 (assert (and (= (str.len x) 13) false))
 (check-sat)
 (get-model)
@@ -14647,11 +14647,11 @@ modified_func def sat(x: str, s=wrap_list([wrap_str('-'), wrap_str('&'), wrap_st
 ### smt2
 (set-logic ALL)
 (declare-const x String)
-(declare-const i_83 Int)
-(assert (>= i_83 0))
-(assert (< i_83 8))
-(assert (< i_83 25))
-(assert (> i_83 -25))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 8))
+(assert (< i_0 25))
+(assert (> i_0 -25))
 (assert (and (= (str.len x) 8) false))
 (check-sat)
 (get-model)
@@ -14674,12 +14674,12 @@ modified_func def sat(x: str, s=wrap_list([wrap_str('0'), wrap_str('@'), wrap_st
     return (sym_len(x) == n).__and__(all([x[i] == s[i] for i in sym_range(n)]))
 ### smt2
 (set-logic ALL)
-(declare-const i_84 Int)
 (declare-const x String)
-(assert (>= i_84 0))
-(assert (< i_84 16))
-(assert (< i_84 18))
-(assert (> i_84 -18))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 16))
+(assert (< i_0 18))
+(assert (> i_0 -18))
 (assert (and (= (str.len x) 16) false))
 (check-sat)
 (get-model)
@@ -15453,14 +15453,14 @@ modified_func def sat(t: str, s=wrap_str('))(Add)some))parens()to()(balance(()((
        (+ 1 (str.len s))
        (str.count.rec s sub 0)))
 
-(declare-const i_85 Int)
 (declare-const x String)
-(assert (>= i_85 0))
-(assert (< i_85 (+ (str.len x) 1)))
-(assert (>= (str.count (python.str.substr x 0 i_85) "(") 0))
-(assert (>= (str.count (python.str.substr x 0 i_85) ")") 0))
-(assert (>= (- (str.count (python.str.substr x 0 i_85) "(") (str.count (python.str.substr x 0 i_85) ")")) 0))
-(assert (and (= (- (str.count (python.str.substr x 0 i_85) "(") (str.count (python.str.substr x 0 i_85) ")")) 0) (str.contains x "))(Add)some))parens()to()(balance(()(()(me!)((((")))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 (+ (str.len x) 1)))
+(assert (>= (str.count (python.str.substr x 0 i_0) "(") 0))
+(assert (>= (str.count (python.str.substr x 0 i_0) ")") 0))
+(assert (>= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0))
+(assert (and (= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0) (str.contains x "))(Add)some))parens()to()(balance(()(()(me!)((((")))
 (check-sat)
 (get-model)
 
@@ -15469,16 +15469,16 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun i_0 () Int
+    0)
   (define-fun x () String
     "))(Add)some))parens()to()(balance(()(()(me!)((((")
-  (define-fun i_85 () Int
-    0)
 )
 ### output for cvc5
 unknown
 (
-(define-fun i_85 () Int 0)
 (define-fun x () String "))(Add)some))parens()to()(balance(()(()(me!)((((")
+(define-fun i_0 () Int 0)
 )
 
 Found solution ))(Add)some))parens()to()(balance(()(()(me!)((((
@@ -15516,14 +15516,14 @@ modified_func def sat(t: str, s=wrap_str('(po)(())kf((((cy()))((tex()())(')):
        (+ 1 (str.len s))
        (str.count.rec s sub 0)))
 
-(declare-const i_86 Int)
 (declare-const x String)
-(assert (>= i_86 0))
-(assert (< i_86 (+ (str.len x) 1)))
-(assert (>= (str.count (python.str.substr x 0 i_86) "(") 0))
-(assert (>= (str.count (python.str.substr x 0 i_86) ")") 0))
-(assert (>= (- (str.count (python.str.substr x 0 i_86) "(") (str.count (python.str.substr x 0 i_86) ")")) 0))
-(assert (and (= (- (str.count (python.str.substr x 0 i_86) "(") (str.count (python.str.substr x 0 i_86) ")")) 0) (str.contains x "(po)(())kf((((cy()))((tex()())(")))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 (+ (str.len x) 1)))
+(assert (>= (str.count (python.str.substr x 0 i_0) "(") 0))
+(assert (>= (str.count (python.str.substr x 0 i_0) ")") 0))
+(assert (>= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0))
+(assert (and (= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0) (str.contains x "(po)(())kf((((cy()))((tex()())(")))
 (check-sat)
 (get-model)
 
@@ -15532,7 +15532,7 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_86 () Int
+  (define-fun i_0 () Int
     0)
   (define-fun x () String
     "(po)(())kf((((cy()))((tex()())(")
@@ -15540,8 +15540,8 @@ sat
 ### output for cvc5
 unknown
 (
-(define-fun i_86 () Int 0)
 (define-fun x () String "(po)(())kf((((cy()))((tex()())(")
+(define-fun i_0 () Int 0)
 )
 
 Found solution (po)(())kf((((cy()))((tex()())(
@@ -15578,14 +15578,14 @@ modified_func def sat(t: str, s=wrap_str('yf)()(()))hik()t(((')):
        (+ 1 (str.len s))
        (str.count.rec s sub 0)))
 
-(declare-const i_87 Int)
 (declare-const x String)
-(assert (>= i_87 0))
-(assert (< i_87 (+ (str.len x) 1)))
-(assert (>= (str.count (python.str.substr x 0 i_87) "(") 0))
-(assert (>= (str.count (python.str.substr x 0 i_87) ")") 0))
-(assert (>= (- (str.count (python.str.substr x 0 i_87) "(") (str.count (python.str.substr x 0 i_87) ")")) 0))
-(assert (and (= (- (str.count (python.str.substr x 0 i_87) "(") (str.count (python.str.substr x 0 i_87) ")")) 0) (str.contains x "yf)()(()))hik()t(((")))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 (+ (str.len x) 1)))
+(assert (>= (str.count (python.str.substr x 0 i_0) "(") 0))
+(assert (>= (str.count (python.str.substr x 0 i_0) ")") 0))
+(assert (>= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0))
+(assert (and (= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0) (str.contains x "yf)()(()))hik()t(((")))
 (check-sat)
 (get-model)
 
@@ -15594,7 +15594,7 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_87 () Int
+  (define-fun i_0 () Int
     0)
   (define-fun x () String
     "yf)()(()))hik()t(((")
@@ -15602,8 +15602,8 @@ sat
 ### output for cvc5
 unknown
 (
-(define-fun i_87 () Int 0)
 (define-fun x () String "yf)()(()))hik()t(((")
+(define-fun i_0 () Int 0)
 )
 
 Found solution yf)()(()))hik()t(((
@@ -15642,13 +15642,13 @@ modified_func def sat(t: str, s=wrap_str(')((le(()()chu)())nol))((sic(((da)()ty(
        (str.count.rec s sub 0)))
 
 (declare-const x String)
-(declare-const i_88 Int)
-(assert (>= i_88 0))
-(assert (< i_88 (+ (str.len x) 1)))
-(assert (>= (str.count (python.str.substr x 0 i_88) "(") 0))
-(assert (>= (str.count (python.str.substr x 0 i_88) ")") 0))
-(assert (>= (- (str.count (python.str.substr x 0 i_88) "(") (str.count (python.str.substr x 0 i_88) ")")) 0))
-(assert (and (= (- (str.count (python.str.substr x 0 i_88) "(") (str.count (python.str.substr x 0 i_88) ")")) 0) (str.contains x ")((le(()()chu)())nol))((sic(((da)()ty((()te))xy(())))))k")))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 (+ (str.len x) 1)))
+(assert (>= (str.count (python.str.substr x 0 i_0) "(") 0))
+(assert (>= (str.count (python.str.substr x 0 i_0) ")") 0))
+(assert (>= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0))
+(assert (and (= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0) (str.contains x ")((le(()()chu)())nol))((sic(((da)()ty((()te))xy(())))))k")))
 (check-sat)
 (get-model)
 
@@ -15657,7 +15657,7 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_88 () Int
+  (define-fun i_0 () Int
     0)
   (define-fun x () String
     ")((le(()()chu)())nol))((sic(((da)()ty((()te))xy(())))))k")
@@ -15666,7 +15666,7 @@ sat
 unknown
 (
 (define-fun x () String ")((le(()()chu)())nol))((sic(((da)()ty((()te))xy(())))))k")
-(define-fun i_88 () Int 0)
+(define-fun i_0 () Int 0)
 )
 
 Found solution )((le(()()chu)())nol))((sic(((da)()ty((()te))xy(())))))k
@@ -15704,14 +15704,14 @@ modified_func def sat(t: str, s=wrap_str('))())l')):
        (+ 1 (str.len s))
        (str.count.rec s sub 0)))
 
-(declare-const i_89 Int)
 (declare-const x String)
-(assert (>= i_89 0))
-(assert (< i_89 (+ (str.len x) 1)))
-(assert (>= (str.count (python.str.substr x 0 i_89) "(") 0))
-(assert (>= (str.count (python.str.substr x 0 i_89) ")") 0))
-(assert (>= (- (str.count (python.str.substr x 0 i_89) "(") (str.count (python.str.substr x 0 i_89) ")")) 0))
-(assert (and (= (- (str.count (python.str.substr x 0 i_89) "(") (str.count (python.str.substr x 0 i_89) ")")) 0) (str.contains x "))())l")))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 (+ (str.len x) 1)))
+(assert (>= (str.count (python.str.substr x 0 i_0) "(") 0))
+(assert (>= (str.count (python.str.substr x 0 i_0) ")") 0))
+(assert (>= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0))
+(assert (and (= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0) (str.contains x "))())l")))
 (check-sat)
 (get-model)
 
@@ -15720,7 +15720,7 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_89 () Int
+  (define-fun i_0 () Int
     0)
   (define-fun x () String
     "))())l")
@@ -15728,8 +15728,8 @@ sat
 ### output for cvc5
 unknown
 (
-(define-fun i_89 () Int 0)
 (define-fun x () String "))())l")
+(define-fun i_0 () Int 0)
 )
 
 Found solution ))())l
@@ -16858,14 +16858,14 @@ modified_func def sat(n: int, t=wrap_int(197), upper=wrap_int(20)):
     return (n == wrap_int(1)).__and__(m <= wrap_int(2) ** upper)
 ### smt2
 (set-logic ALL)
-(declare-const i_91 Int)
-(declare-const i_90 Int)
 (declare-const x Int)
-(assert (>= i_90 0))
-(assert (< i_90 197))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 197))
 (assert (=> (<= x 1) false))
-(assert (>= i_91 0))
-(assert (< i_91 197))
+(assert (>= i_1 0))
+(assert (< i_1 197))
 (assert (not (= 2 0)))
 (assert (=> (not (<= x 1)) (and (= (+ (* 3 x) 1) 1) (<= x 400))))
 (check-sat)
@@ -16899,14 +16899,14 @@ modified_func def sat(n: int, t=wrap_int(1000), upper=wrap_int(150)):
     return (n == wrap_int(1)).__and__(m <= wrap_int(2) ** upper)
 ### smt2
 (set-logic ALL)
-(declare-const i_92 Int)
-(declare-const i_93 Int)
 (declare-const x Int)
-(assert (>= i_92 0))
-(assert (< i_92 1000))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 1000))
 (assert (=> (<= x 1) false))
-(assert (>= i_93 0))
-(assert (< i_93 1000))
+(assert (>= i_1 0))
+(assert (< i_1 1000))
 (assert (not (= 2 0)))
 (assert (=> (not (<= x 1)) (and (= (+ (* 3 x) 1) 1) (<= x 22500))))
 (check-sat)
@@ -16940,14 +16940,14 @@ modified_func def sat(n: int, t=wrap_int(2000), upper=wrap_int(206)):
     return (n == wrap_int(1)).__and__(m <= wrap_int(2) ** upper)
 ### smt2
 (set-logic ALL)
-(declare-const i_95 Int)
-(declare-const i_94 Int)
 (declare-const x Int)
-(assert (>= i_94 0))
-(assert (< i_94 2000))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 2000))
 (assert (=> (<= x 1) false))
-(assert (>= i_95 0))
-(assert (< i_95 2000))
+(assert (>= i_1 0))
+(assert (< i_1 2000))
 (assert (not (= 2 0)))
 (assert (=> (not (<= x 1)) (and (= (+ (* 3 x) 1) 1) (<= x 42436))))
 (check-sat)
@@ -16981,14 +16981,14 @@ modified_func def sat(n: int, t=wrap_int(2283), upper=wrap_int(238)):
     return (n == wrap_int(1)).__and__(m <= wrap_int(2) ** upper)
 ### smt2
 (set-logic ALL)
-(declare-const i_97 Int)
-(declare-const i_96 Int)
 (declare-const x Int)
-(assert (>= i_96 0))
-(assert (< i_96 2283))
+(declare-const i_1 Int)
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 2283))
 (assert (=> (<= x 1) false))
-(assert (>= i_97 0))
-(assert (< i_97 2283))
+(assert (>= i_1 0))
+(assert (< i_1 2283))
 (assert (not (= 2 0)))
 (assert (=> (not (<= x 1)) (and (= (+ (* 3 x) 1) 1) (<= x 56644))))
 (check-sat)
@@ -17025,11 +17025,11 @@ modified_func def sat(n: int, year_len=wrap_int(365)):
     return (prob - 0.5) ** wrap_int(2) <= wrap_int(1) / year_len
 ### smt2
 (set-logic ALL)
-(declare-const i_98 Int)
 (declare-const x Int)
-(assert (>= i_98 0))
-(assert (< i_98 x))
-(assert (<= (^ (- (* (/ (- 365 i_98) 365) 1.0) 0.5) 2) (/ 1 365)))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 x))
+(assert (<= (^ (- (* (/ (- 365 i_0) 365) 1.0) 0.5) 2) (/ 1 365)))
 (check-sat)
 (get-model)
 
@@ -17038,13 +17038,13 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun i_0 () Int
+    184)
   (define-fun x () Int
     185)
-  (define-fun i_98 () Int
-    184)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp9800fbtw.smt2:6.54: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmph59xr07l.smt2:6.53: expecting same arithmetic types to POW")
 
 Found solution 185
 WARNING: Solution verification failed for puzzle BirthdayParadox:0
@@ -17062,11 +17062,11 @@ modified_func def sat(n: int, year_len=wrap_int(60182)):
     return (prob - 0.5) ** wrap_int(2) <= wrap_int(1) / year_len
 ### smt2
 (set-logic ALL)
-(declare-const i_99 Int)
 (declare-const x Int)
-(assert (>= i_99 0))
-(assert (< i_99 x))
-(assert (<= (^ (- (* (/ (- 60182 i_99) 60182) 1.0) 0.5) 2) (/ 1 60182)))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 x))
+(assert (<= (^ (- (* (/ (- 60182 i_0) 60182) 1.0) 0.5) 2) (/ 1 60182)))
 (check-sat)
 (get-model)
 
@@ -17075,13 +17075,13 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun i_0 () Int
+    30092)
   (define-fun x () Int
     30093)
-  (define-fun i_99 () Int
-    30092)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmphrax3mt2.smt2:6.58: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpgt6of4bv.smt2:6.57: expecting same arithmetic types to POW")
 
 Found solution 30093
 WARNING: Solution verification failed for puzzle BirthdayParadox:1
@@ -17100,10 +17100,10 @@ modified_func def sat(n: int, year_len=wrap_int(2)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_100 Int)
-(assert (>= i_100 0))
-(assert (< i_100 x))
-(assert (<= (^ (- (* (/ (- 2 i_100) 2) 1.0) 0.5) 2) (/ 1 2)))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 x))
+(assert (<= (^ (- (* (/ (- 2 i_0) 2) 1.0) 0.5) 2) (/ 1 2)))
 (check-sat)
 (get-model)
 
@@ -17112,13 +17112,13 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_100 () Int
+  (define-fun i_0 () Int
     0)
   (define-fun x () Int
     1)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpmuoxp5h4.smt2:6.51: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpsrawyil_.smt2:6.49: expecting same arithmetic types to POW")
 
 Found solution 1
 Yes! Solved for puzzle  BirthdayParadox:2
@@ -17136,11 +17136,11 @@ modified_func def sat(n: int, year_len=wrap_int(3)):
     return (prob - 0.5) ** wrap_int(2) <= wrap_int(1) / year_len
 ### smt2
 (set-logic ALL)
-(declare-const i_101 Int)
 (declare-const x Int)
-(assert (>= i_101 0))
-(assert (< i_101 x))
-(assert (<= (^ (- (* (/ (- 3 i_101) 3) 1.0) 0.5) 2) (/ 1 3)))
+(declare-const i_0 Int)
+(assert (>= i_0 0))
+(assert (< i_0 x))
+(assert (<= (^ (- (* (/ (- 3 i_0) 3) 1.0) 0.5) 2) (/ 1 3)))
 (check-sat)
 (get-model)
 
@@ -17149,13 +17149,13 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun i_0 () Int
+    0)
   (define-fun x () Int
     1)
-  (define-fun i_101 () Int
-    0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpe6hh2znl.smt2:6.51: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp08jwfkh0.smt2:6.49: expecting same arithmetic types to POW")
 
 Found solution 1
 Yes! Solved for puzzle  BirthdayParadox:3
@@ -17481,7 +17481,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp7gkpmyzc.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpd56p5y0w.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:0
 
@@ -17507,7 +17507,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp06d2ri91.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpn_rdw674.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:1
 
@@ -17533,7 +17533,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp4y1jxqow.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpuii0yx60.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:2
 
@@ -17559,7 +17559,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpzt_rvzov.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpcb5w5_q3.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:3
 
@@ -17585,7 +17585,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp6a6flkpl.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmppn291vsl.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:4
 
@@ -17611,7 +17611,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpjuf57rk7.smt2:3.25: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp_14u_5g5.smt2:3.25: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:0
 
@@ -17637,7 +17637,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpzrr5jof3.smt2:3.22: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmph7gt3enb.smt2:3.22: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:1
 
@@ -17663,7 +17663,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmppgu9ckoz.smt2:3.31: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpsudnvabd.smt2:3.31: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:2
 
@@ -17689,7 +17689,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp3ycjjvmx.smt2:3.33: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpiunc85c9.smt2:3.33: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:3
 
@@ -17715,7 +17715,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp77j4j82m.smt2:3.55: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp1mhhl8bq.smt2:3.55: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:4
 
@@ -20592,18 +20592,22 @@ running backend cvc5
 ### output for z3
 timeout
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpeqyzikrc.smt2:3.54: Symbol 'int.to.str' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpq12utdl9.smt2:3.54: Symbol 'int.to.str' not declared as a variable")
 
 Could not find any solution for puzzle Tutorial5:0
 
-STATS
-timeout staging count 54
-error staging count 225
-error verify count 66
-error smt count 116
-error smt var count 0
-unsupported answer type 0
+## Current status
 
-Success count: 262
-Total considered: 723
-Success percentage: 36%
+The symbolic execution alone currently solves:
+- 19% (70 out of 363) of `str` puzzles,
+- 53% (192 out of 360) of `int` puzzles,
+- 36% (262 out of 723) overall.
+
+with the following errors:
+- 54 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
+- 225 errors at at staging time
+- 66 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- 116 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
+timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
+- 992 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
+

@@ -59,15 +59,17 @@ python puzzle_solver.py --name-prefix ListIn:1  --llm
 ## Current status
 
 The symbolic execution alone currently solves:
+- 19% (70 out of 363) of `str` puzzles,
 - 53% (192 out of 360) of `int` puzzles,
-- 36% (262 out of 723) of `int` and `str` puzzles.
+- 36% (262 out of 723) overall.
 
-We have errors of all kinds still:
-- 54 puzzles time out after 3 seconds at staging time (while building the SMTLIB program),
-- 225 puzzles have an error during staging time,
-- 66 generated SMTLIB programs return `sat` but the solution doesn't verify,
-- 116 generated SMTLIB programs return non-`sat`, such as `unsat`, `unknown` or time out after 2 seconds.
-- 1715-723=992 puzzles are not yet run, because their answer type is not `int` or `str`, such as `float`, `list` (of various specializations), etc.
+with the following errors:
+- 54 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
+- 225 errors at at staging time
+- 66 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- 116 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
+timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
+- 992 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 
 See a detailed [stdout log](log/results.txt) of the current run.
 

@@ -7,6 +7,9 @@ import itertools
 
 # Counter for generating unique variable names
 counter = itertools.count()
+def reset():
+    global counter
+    counter = itertools.count()
 
 def sym_ord(x):
     if isinstance(x, SymbolicStr):
@@ -321,6 +324,7 @@ def create_namespace(tracer):
     }
 
 def driver(sat_func, typ, cmds=None):
+    reset()
     backend = default_backend(cmds)
     tracer = SymbolicTracer(backend=backend)
     namespace = create_namespace(tracer)
