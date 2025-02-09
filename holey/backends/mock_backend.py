@@ -23,6 +23,61 @@ def from_stmlib_int(v):
         return None
     return int(v)
 
+def run_smt(smt2):
+    print('### smt2')
+    print(smt2)
+
+    # Write to temporary file
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.smt2', delete=False) as f:
+        f.write(smt2)
+        smt2_file = f.name
+
+    try:
+        # Run Z3 (or CVC5) on the file
+        result = subprocess.run(['z3', '-T:2', smt2_file], capture_output=True, text=True)
+        output = result.stdout.strip()
+
+        print('### output')
+        print(output)
+
+        return parse_output(output)
+    finally:
+        os.unlink(smt2_file)
+
+def parse_output(output):
+    # Parse output
+    if output.startswith('sat'):
+        model = _parse_model(output)
+        return 'sat', model
+    elif output.startswith('unsat'):
+        return 'unsat', None
+    else:
+        return 'unknown', None
+
+def _parse_model(output):
+    # Parse the entire output as S-expressions
+    lines = output.strip().split('\n')
+    if not lines[0] == 'sat':
+        return {}
+
+    # Join all lines after 'sat' into a single string
+    model_str = ''.join(lines[1:])
+
+    # Parse the model
+    model_sexp = sexpdata.loads(model_str)
+    _model = {}
+
+    # Each definition in the model is a list like:
+    # (define-fun x () Int 42)
+    for defn in model_sexp:
+        if defn[0].value() == 'define-fun':
+            var_name = defn[1].value()
+            value = defn[-1]
+            typ = defn[3].value()
+            _model[var_name] = from_stmlib_int(value) if typ == 'Int' else value
+
+    return _model
+
 @dataclass
 class MockExpr:
     op: str
@@ -293,59 +348,9 @@ class MockSolver:
                 smt2_preambule += defn + "\n"
         smt2 = smt2_preambule + smt2
 
-        # Write to temporary file
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.smt2', delete=False) as f:
-            f.write(smt2)
-            smt2_file = f.name
-
-        print('### smt2')
-        print(smt2)
-
-        import sys
-        sys.stdout.flush()
-
-        try:
-            # Run Z3 (or CVC5) on the file
-            result = subprocess.run(['z3', '-T:2', smt2_file], capture_output=True, text=True)
-            output = result.stdout.strip()
-            
-            print('### output')
-            print(output)
-
-            # Parse output
-            if output.startswith('sat'):
-                self._model = self._parse_model(output)
-                return 'sat'
-            elif output.startswith('unsat'):
-                return 'unsat'
-            else:
-                return 'unknown'
-        finally:
-            os.unlink(smt2_file)
-    
-    def _parse_model(self, output):
-        # Parse the entire output as S-expressions
-        lines = output.strip().split('\n')
-        if not lines[0] == 'sat':
-            return {}
-            
-        # Join all lines after 'sat' into a single string
-        model_str = ''.join(lines[1:])
-        
-        # Parse the model
-        model_sexp = sexpdata.loads(model_str)
-        _model = {}
-        
-        # Each definition in the model is a list like:
-        # (define-fun x () Int 42)
-        for defn in model_sexp:
-            if defn[0].value() == 'define-fun':
-                var_name = defn[1].value()
-                value = defn[-1]
-                typ = defn[3].value()
-                _model[var_name] = from_stmlib_int(value) if typ == 'Int' else value
-                
-        return _model
+        flag, model = run_smt(smt2)
+        self._model = model
+        return flag
 
 class MockBackend(Backend):
     def __init__(self):

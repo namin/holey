@@ -1,4 +1,4 @@
-from holey import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicList,SymbolicRange, SymbolicRangeIterator, SymbolicStr, truthy
+from holey import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicList,SymbolicRange, SymbolicRangeIterator, SymbolicStr, truthy, llm_generate, extract_code_blocks, run_smt
 from holey.backends import CVC5Backend, Z3Backend, MockBackend
 import ast
 import json
@@ -7,6 +7,22 @@ import traceback
 from typing import List, Any, Dict, Optional, Tuple
 import types
 import itertools
+
+import sys
+from contextlib import contextmanager
+from io import StringIO
+@contextmanager
+def capture_output():
+    old_stdout = sys.stdout
+    old_stderr = sys.stderr
+    output = StringIO()
+    sys.stdout = output
+    sys.stderr = output
+    try:
+        yield output
+    finally:
+        sys.stdout = old_stdout
+        sys.stderr = old_stderr
 
 # Counter for generating unique variable names
 counter = itertools.count()
@@ -319,7 +335,7 @@ class PuzzleSolver:
         self.backend.reset()
         return SymbolicTracer(backend=self.backend)
 
-    def symbolic_solve(self, sat_func: str, ans_type: str) -> Optional[str]:
+    def symbolic_solve(self, sat_func: str, ans_type: str, name: str) -> Optional[str]:
         typ = None
         if ans_type == 'int':
             typ = int
@@ -358,20 +374,23 @@ class PuzzleSolver:
         exec(inject(sat_func), namespace)
         sat = namespace['sat']
         tracer.driver(lambda: sat(sym_var))
-        solution = tracer.solution()
+        with capture_output() as captured:
+            solution = tracer.solution()
+        log = captured.getvalue()
+        print(log)
         if solution is None:
-            print("Could not find any solution")
-            return None
+            print("Could not find any solution for puzzle " + name)
+            return None, log
         solution_var = tracer.solution_var(solution, sym_var)
         if solution_var is None:
             print('Solution', solution)
             print("Could not find any solution var")
-            return None
+            return None, log
         result = typ(str(solution_var))
         print("Found solution", result)
-        return result
+        return result, log
 
-    def solve_puzzle(self, puzzle_data: Any) -> Optional[str]:
+    def solve_puzzle(self, puzzle_data: Any, llm) -> Optional[str]:
         name = puzzle_data.get('name', '')
         sat_func = puzzle_data.get('sat_function', puzzle_data.get('sat', ''))
         if not sat_func:
@@ -383,16 +402,33 @@ class PuzzleSolver:
             print("Missing ans_type")
             return None
         try:
-            result = func_timeout(3, self.symbolic_solve, args=(sat_func, ans_type))
+            result, log = func_timeout(3, self.symbolic_solve, args=(sat_func, ans_type, name))
             if result is not None:
-                namespace = {'x': result}
-                exec(sat_func, namespace)
-                sat = namespace['sat']
-                if not sat(result):
+                if check_result(result, sat_func):
                     print("WARNING: Solution verification failed!")
                     return None
                 else:
                     print("Yes! Solved", name)
+            elif llm:
+                prompt = f"""Return a modified SMTLIB z3 program that captures the intent of the `sat` function of puzzle {name}:
+{sat_func}
+
+This is the log, you may copy most of any SMTLIB program below.
+{log}
+
+Return only the new SMTLIB program without any context.
+"""
+                blocks = extract_code_blocks(llm_generate(prompt))
+                model = None
+                for smt in blocks:
+                    flag, model = run_smt(smt)
+                    if flag == "sat":
+                        break
+                if model:
+                    llm_result = model['x']
+                    if check_result(llm_result, sat_func):
+                        print("LLM result confirmed!")
+                        result = llm_result
             return result
         except FunctionTimedOut:
             print("Timed out")
@@ -401,7 +437,15 @@ class PuzzleSolver:
             traceback.print_exc()
         return None
 
-def run_benchmarks(puzzle_file: str, name_prefix: str = None, answer_types = None):
+def check_result(result, sat_func):
+    namespace = {'x': result}
+    exec(sat_func, namespace)
+    sat = namespace['sat']
+    if not sat(result):
+        return False
+    return True
+
+def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, llm = False):
     with open(puzzle_file) as f:
         puzzles = json.load(f)
     
@@ -424,7 +468,7 @@ def run_benchmarks(puzzle_file: str, name_prefix: str = None, answer_types = Non
         name = puzzle.get('name', 'Unknown')
         print(f"\nSolving puzzle {i+1}/{len(puzzles)}: {name}")
 
-        result = solver.solve_puzzle(puzzle)
+        result = solver.solve_puzzle(puzzle, llm)
         if result is not None:
             success_count += 1
     
@@ -446,6 +490,7 @@ if __name__ == "__main__":
                         choices=['int', 'str'],
                         default=['int', 'str'],
                         help='Only run some answer types')
+    parser.add_argument('--llm', action='store_true')
     args = parser.parse_args()
     
-    run_benchmarks(args.puzzle_file, args.name_prefix, args.answer_types)
+    run_benchmarks(args.puzzle_file, args.name_prefix, args.answer_types, args.llm)
