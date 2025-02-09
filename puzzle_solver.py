@@ -102,6 +102,9 @@ Return only the Python constant without any context.
                 except ValueError as e:
                     print('LLM returned bad type for int', e)
                     break
+            elif ans_type == 'str':
+                if result and result[0] in ["'", '"']:
+                    result = result[1:-1] # TODO
             if not check_result(result, sat_func):
                 print('LLM result fails to verify for puzzle '+name)
             else:
@@ -138,11 +141,13 @@ Return only the Python constant without any context.
         except FunctionTimedOut:
             print("Timed out for puzzle "+name)
             self.timeout_staging_count += 1
-            print("Timed out")
         except Exception as e:
             self.error_staging_count += 1
             print("Exception -- for puzzle", name, e)
             traceback.print_exc()
+        if llm:
+            print('\nFallback to LLM after error!')
+            return self.llm_solve(sat_func, ans_type, name)
         return None
 
 def check_result(result, sat_func):
