@@ -56,7 +56,7 @@ def run_smt(smt2, cmds=None):
 
         parsed = []
         for (cmd, output) in outs:
-            print('### output' + 'for '+cmd if cmd is not None else '')
+            print('### output' + ' for ' + cmd if cmd is not None else '')
             print(output)
 
             parsed.append((cmd, parse_output(output)))
