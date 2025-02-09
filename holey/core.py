@@ -1,7 +1,7 @@
 from typing import Any, Optional, List, Type
 from dataclasses import dataclass
 from contextlib import contextmanager
-from .backends import default_backend, Backend
+from .backend import default_backend, Backend
 
 @dataclass 
 class SymbolicTracer:

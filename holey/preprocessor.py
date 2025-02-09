@@ -1,5 +1,5 @@
 from .core import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicList, SymbolicRange, SymbolicRangeIterator, SymbolicStr, truthy
-from .backends import default_backend
+from .backend import default_backend
 import ast
 from typing import List, Any, Dict, Optional, Tuple
 import types

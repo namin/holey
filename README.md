@@ -72,12 +72,7 @@ We have errors of all kinds still:
 │   └── PythonProgrammingPuzzles (benchmark added as git submodule)
 ├── holey
 │   ├── __init__.py
-│   ├── backends
-│   │   ├── __init__.py
-│   │   ├── base.py (stub)
-│   │   ├── cvc5_backend.py (unusable because cvc5 bindings segfaults)
-│   │   ├── mock_backend.py (! main backend)
-│   │   └── z3_backend.py (unusable because z3 bindings segfaults)
+│   ├── backend.py (! backend to SMTLIB batch processes !)
 │   ├── core.py (! includes tracer, symbolic classes, ... !)
 │   ├── llm.py (! support for LLM generation and code extraction !)
 │   └── preprocessor.py (! includes node transformer and sat driver !)
