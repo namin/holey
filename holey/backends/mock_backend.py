@@ -100,6 +100,14 @@ class MockExpr:
         return self._name if self._name else str(self)
 
 library = {
+'python.str.substr':
+"""
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start end)))
+"""
+,
 'str.to.float':
 """
 (define-fun str.to.float ((s String)) Real
@@ -422,7 +430,7 @@ class MockBackend(Backend):
         return self._record("str.contains", x, y)
 
     def StrSubstr(self, s, start, length) -> MockExpr:
-        return self._record("str.substr", s, start, length)
+        return self._record("python.str.substr", s, start, length)
 
     def StrConcat(self, *args) -> MockExpr:
         return self._record("str.++", *args)
