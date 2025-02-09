@@ -385,10 +385,6 @@ class MockBackend(Backend):
     def Not(self, x):
         return self._record("not", x)
 
-    def reset(self):
-        self.solver = MockSolver()
-        self._record("reset")
-
     def Int(self, name: str) -> MockExpr:
         self.solver.declarations.add((name, 'Int'))
         return self._record("Int", name)
