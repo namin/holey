@@ -93,16 +93,7 @@ def sym_not(x):
     return x.__not__()
 
 def sym_in(x, container):
-    if isinstance(x, SymbolicInt):
-        # Create disjunction of equalities
-        equalities = [x == val for val in container]
-        result = equalities[0]
-        for eq in equalities[1:]:
-            result = result.__or__(eq)
-        return result
-    if isinstance(container, SymbolicStr):
-        return container.__contains__(x)
-    return x in container
+    return container.contains(x)
 
 def sym_any(iterable):
     if isinstance(iterable, types.GeneratorType):

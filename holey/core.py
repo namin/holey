@@ -339,9 +339,15 @@ class SymbolicList:
 
     def __contains__(self, item):
         item = self.tracer.ensure_symbolic(item)
-        if self.concrete is not None and item.concrete is not None:
-            return item.concrete in self.concrete
-        return SymbolicBool(self.tracer.backend.Or(*[(item == x).z3_expr for x in self.concrete]), tracer=self.tracer)
+        if self.concrete is not None:
+            if item.concrete is not None:
+                return item.concrete in self.concrete
+            else:
+                return self.tracer.backend.Or(*[(item == x).z3_expr for x in self.concrete])
+        return ValueError("Cannot check contains symbolically")
+
+    def contains(self, item):
+        return SymbolicBool(self.__contains__(item), tracer=self.tracer)
 
     def __getitem__(self, key):
         if isinstance(key, slice):
@@ -490,8 +496,11 @@ class SymbolicStr:
     def __contains__(self, item):
         item = self.tracer.ensure_symbolic(item)
         if self.concrete is not None and item.concrete is not None:
-            return SymbolicBool(item.concrete in self.concrete, tracer=self.tracer)
-        return SymbolicBool(self.tracer.backend.StrContains(self.z3_expr, item.z3_expr), tracer=self.tracer)
+            return item.concrete in self.concrete
+        return self.tracer.backend.StrContains(self.z3_expr, item.z3_expr)
+
+    def contains(self, item):
+        return SymbolicBool(self.__contains__(item), tracer=self.tracer)
 
     def __getitem__(self, key):
         if self.concrete is None:
@@ -791,6 +800,9 @@ class SymbolicRange:
             k = SymbolicInt('k', tracer=self.tracer)
             result = result and (item == self.start + k * self.step)
         return result
+
+    def contains(self, item):
+        return SymbolicBool(self.__contains__(item), tracer=self.tracer)
 
     def __len__(self):
         if self.step is None or self.step == 1:
