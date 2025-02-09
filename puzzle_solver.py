@@ -30,7 +30,7 @@ class PuzzleSolver:
         self.error_smt_var_count = 0
         self.error_unsupported_answer_type = 0
 
-    def symbolic_solve(self, sat_func: str, ans_type: str, name: str) -> Optional[str]:
+    def symbolic_solve(self, sat_func: str, ans_type: str, name: str, cmds) -> Optional[str]:
         typ = None
         if ans_type == 'int':
             typ = int
@@ -42,7 +42,7 @@ class PuzzleSolver:
             return None
 
         self.count += 1
-        sym_var = drive_sat(sat_func, typ)
+        sym_var = drive_sat(sat_func, typ, cmds)
         tracer = sym_var.tracer
         with capture_output() as captured:
             solution = tracer.solution()
@@ -62,7 +62,7 @@ class PuzzleSolver:
         print("Found solution", result)
         return result, log
 
-    def llm_smtlib_solve(self, sat_func: str, ans_type: str, name: str, log: str) -> Optional[str]:
+    def llm_smtlib_solve(self, sat_func: str, ans_type: str, name: str, log: str, cmds=None) -> Optional[str]:
         print('Asking LLM for SMTLIB')
         prompt = f"""Return a modified SMTLIB z3 program that captures the intent of the `sat` function of puzzle {name}:
 {sat_func}
@@ -75,8 +75,9 @@ Return only the new SMTLIB program without any context.
         blocks = extract_code_blocks(llm_generate(prompt))
         model = None
         result = None
+        flag = None
         for smt in blocks:
-            flag, model = run_smt(smt)
+            flag, model = run_smt(smt, cmds)
             if flag == "sat":
                 break
         if model:
@@ -113,7 +114,7 @@ Return only the Python constant without any context.
         return None
 
 
-    def solve_puzzle(self, puzzle_data: Any, llm) -> Optional[str]:
+    def solve_puzzle(self, puzzle_data: Any, cmds, llm) -> Optional[str]:
         name = puzzle_data.get('name', '')
         sat_func = puzzle_data.get('sat_function', puzzle_data.get('sat', ''))
         if not sat_func:
@@ -125,7 +126,7 @@ Return only the Python constant without any context.
             print("Missing ans_type")
             return None
         try:
-            result, log = func_timeout(3, self.symbolic_solve, args=(sat_func, ans_type, name))
+            result, log = func_timeout(3, self.symbolic_solve, args=(sat_func, ans_type, name, cmds))
             if result is not None:
                 if not check_result(result, sat_func):
                     self.error_verify_count += 1
@@ -136,7 +137,7 @@ Return only the Python constant without any context.
                     print("Yes! Solved for puzzle ", name)
             if llm and result is None:
                 print('\nFallback to LLM!')
-                result = self.llm_solve(sat_func, ans_type, name) or self.llm_smtlib_solve(sat_func, ans_type, name, log)
+                result = self.llm_solve(sat_func, ans_type, name) or self.llm_smtlib_solve(sat_func, ans_type, name, log, cmds)
             return result
         except FunctionTimedOut:
             print("Timed out for puzzle "+name)
@@ -163,7 +164,7 @@ def check_result(result, sat_func):
         return False
     return True
 
-def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, llm = False):
+def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, smtlib_backends = None, llm = False):
     with open(puzzle_file) as f:
         puzzles = json.load(f)
     
@@ -188,7 +189,7 @@ def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, ll
         name = puzzle.get('name', 'Unknown')
         print(f"\nSolving puzzle {i+1}/{len(puzzles)}: {name}")
 
-        result = solver.solve_puzzle(puzzle, llm)
+        result = solver.solve_puzzle(puzzle, smtlib_backends, llm)
         if result is not None:
             success_count += 1
     
@@ -218,7 +219,12 @@ if __name__ == "__main__":
                         choices=['int', 'str'],
                         default=['int', 'str'],
                         help='only run some answer types')
+    parser.add_argument('--smtlib-backends',
+                        nargs='+',
+                        choices=['z3', 'cvc5'],
+                        default=['z3'],
+                        help='the SMTLIB backend')
     parser.add_argument('--llm', action='store_true', help='fallback to LLMs')
     args = parser.parse_args()
     
-    run_benchmarks(args.puzzle_file, args.name_prefix, args.answer_types, args.llm)
+    run_benchmarks(args.puzzle_file, args.name_prefix, args.answer_types, args.smtlib_backends, args.llm)
