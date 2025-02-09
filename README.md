@@ -76,7 +76,7 @@ See a detailed [stdout log](log/results.txt) of the current run.
 `.`<br/>
 `├──` [`README.md`](README.md)<br/>
 `├──` [`benchmarks`](benchmarks)<br/>
-`│   └──` [`PythonProgrammingPuzzles`](benchmarks/PythonProgrammingPuzzles) _benchmark added as `git` submodule_<br/>
+`│   └──` [`PythonProgrammingPuzzles`](https://github.com/microsoft/PythonProgrammingPuzzles) _benchmark added as `git` submodule_<br/>
 `├──` [`holey`](holey)<br/>
 `│   ├──` [`__init__.py`](holey/__init__.py)<br/>
 `│   ├──` [`backend.py`](holey/backend.py) _backend to SMTLIB batch processes_<br/>
