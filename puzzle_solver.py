@@ -157,9 +157,9 @@ Return only the Python constant without any context.
         return None
 
     def pretty_counts(self):
+        count_stats = sorted([(self.success_counts[ans_type], total, ans_type) for ans_type,total in self.counts.items()])
         r = ""
-        for ans_type, total in self.counts.items():
-            success = self.success_counts[ans_type]
+        for success, total, ans_type in count_stats:
             success_percentage = 100.0 * success / total
             r += (f"- {success_percentage:.0f}% ({success} out of {total}) of `{ans_type}` puzzles,")
             r += '\n'
