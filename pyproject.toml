@@ -18,14 +18,15 @@ classifiers = [
 ]
 dependencies = [
     "func-timeout>=4.3.5",
-    "requests>=2.28.0",
-    "sexpdata>=1.0.2",
-    "z3-solver>=4.8.0",
+    "sexpdata>=1.0.2"
 ]
 
 [project.optional-dependencies]
 test = ["pytest>=6.0"]
-llm = ["requests>=2.28.0"]
+ollama = ["ollama"]
+anthropic = ["anthropic"]
+z3 = ["z3-solver>=4.8.0"]
+cvc5 = ["cvc5"]
 
 [project.urls]
 "Homepage" = "https://github.com/namin/holey"

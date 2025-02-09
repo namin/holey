@@ -1,7 +1,6 @@
 from typing import Any, Optional, List, Type
 from dataclasses import dataclass
 from contextlib import contextmanager
-import z3
 from .backends import default_backend, Backend
 
 @dataclass 
