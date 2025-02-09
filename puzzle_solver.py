@@ -209,14 +209,14 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--puzzle-file', default="benchmarks/PythonProgrammingPuzzles/puzzles/puzzles.json",
-                      help='Path to the puzzle JSON file')
-    parser.add_argument('--name-prefix', help='Only run puzzles whose names start with this prefix')
+                      help='path to the puzzle JSON file')
+    parser.add_argument('--name-prefix', help='only run puzzles whose names start with this prefix')
     parser.add_argument('--answer-types',
                         nargs='+',
                         choices=['int', 'str'],
                         default=['int', 'str'],
-                        help='Only run some answer types')
-    parser.add_argument('--llm', action='store_true')
+                        help='only run some answer types')
+    parser.add_argument('--llm', action='store_true', help='fallback to LLMs')
     args = parser.parse_args()
     
     run_benchmarks(args.puzzle_file, args.name_prefix, args.answer_types, args.llm)
