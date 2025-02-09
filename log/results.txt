@@ -1440,35 +1440,35 @@ sat_func def sat(ans: str, n=15):
     return [int(i) for i in ans.split(' ')] == list(range(n + 1))
 modified_func def sat(ans: str, n=wrap_int(15)):
     return [sym_int(i) for i in ans.split(wrap_str(' '))] == list(sym_range(n + 1))
-Exception -- for puzzle SpaceyRange:0 ord() expected string of length 1, but SymbolicStr found
+Exception -- for puzzle SpaceyRange:0 Symbolic lists not yet supported: found (str.to.re x " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 47/723: SpaceyRange:1
 sat_func def sat(ans: str, n=54635):
     return [int(i) for i in ans.split(' ')] == list(range(n + 1))
 modified_func def sat(ans: str, n=wrap_int(54635)):
     return [sym_int(i) for i in ans.split(wrap_str(' '))] == list(sym_range(n + 1))
-Exception -- for puzzle SpaceyRange:1 ord() expected string of length 1, but SymbolicStr found
+Exception -- for puzzle SpaceyRange:1 Symbolic lists not yet supported: found (str.to.re x " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 48/723: SpaceyRange:2
 sat_func def sat(ans: str, n=83):
     return [int(i) for i in ans.split(' ')] == list(range(n + 1))
 modified_func def sat(ans: str, n=wrap_int(83)):
     return [sym_int(i) for i in ans.split(wrap_str(' '))] == list(sym_range(n + 1))
-Exception -- for puzzle SpaceyRange:2 ord() expected string of length 1, but SymbolicStr found
+Exception -- for puzzle SpaceyRange:2 Symbolic lists not yet supported: found (str.to.re x " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 49/723: SpaceyRange:3
 sat_func def sat(ans: str, n=99847):
     return [int(i) for i in ans.split(' ')] == list(range(n + 1))
 modified_func def sat(ans: str, n=wrap_int(99847)):
     return [sym_int(i) for i in ans.split(wrap_str(' '))] == list(sym_range(n + 1))
-Exception -- for puzzle SpaceyRange:3 ord() expected string of length 1, but SymbolicStr found
+Exception -- for puzzle SpaceyRange:3 Symbolic lists not yet supported: found (str.to.re x " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 50/723: SpaceyRange:4
 sat_func def sat(ans: str, n=18215):
     return [int(i) for i in ans.split(' ')] == list(range(n + 1))
 modified_func def sat(ans: str, n=wrap_int(18215)):
     return [sym_int(i) for i in ans.split(wrap_str(' '))] == list(sym_range(n + 1))
-Exception -- for puzzle SpaceyRange:4 ord() expected string of length 1, but SymbolicStr found
+Exception -- for puzzle SpaceyRange:4 Symbolic lists not yet supported: found (str.to.re x " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 51/723: SortNumbers:0
 sat_func def sat(ans: str, s="six one four three two nine eight"):
@@ -1477,7 +1477,7 @@ sat_func def sat(ans: str, s="six one four three two nine eight"):
 modified_func def sat(ans: str, s=wrap_str('six one four three two nine eight')):
     nums = wrap_str('zero one two three four five six seven eight nine').split()
     return [nums.index(x) for x in ans.split(wrap_str(' '))] == sorted([nums.index(x) for x in s.split(wrap_str(' '))])
-Exception -- for puzzle SortNumbers:0 ord() expected string of length 1, but SymbolicStr found
+Exception -- for puzzle SortNumbers:0 Symbolic lists not yet supported: found (str.to.re x " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 52/723: SortNumbers:1
 sat_func def sat(ans: str, s="nine two four nine zero six six eight"):
@@ -1486,7 +1486,7 @@ sat_func def sat(ans: str, s="nine two four nine zero six six eight"):
 modified_func def sat(ans: str, s=wrap_str('nine two four nine zero six six eight')):
     nums = wrap_str('zero one two three four five six seven eight nine').split()
     return [nums.index(x) for x in ans.split(wrap_str(' '))] == sorted([nums.index(x) for x in s.split(wrap_str(' '))])
-Exception -- for puzzle SortNumbers:1 ord() expected string of length 1, but SymbolicStr found
+Exception -- for puzzle SortNumbers:1 Symbolic lists not yet supported: found (str.to.re x " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 53/723: SortNumbers:2
 sat_func def sat(ans: str, s="nine six two"):
@@ -1495,7 +1495,7 @@ sat_func def sat(ans: str, s="nine six two"):
 modified_func def sat(ans: str, s=wrap_str('nine six two')):
     nums = wrap_str('zero one two three four five six seven eight nine').split()
     return [nums.index(x) for x in ans.split(wrap_str(' '))] == sorted([nums.index(x) for x in s.split(wrap_str(' '))])
-Exception -- for puzzle SortNumbers:2 ord() expected string of length 1, but SymbolicStr found
+Exception -- for puzzle SortNumbers:2 Symbolic lists not yet supported: found (str.to.re x " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 54/723: SortNumbers:3
 sat_func def sat(ans: str, s="five nine four eight"):
@@ -1504,7 +1504,7 @@ sat_func def sat(ans: str, s="five nine four eight"):
 modified_func def sat(ans: str, s=wrap_str('five nine four eight')):
     nums = wrap_str('zero one two three four five six seven eight nine').split()
     return [nums.index(x) for x in ans.split(wrap_str(' '))] == sorted([nums.index(x) for x in s.split(wrap_str(' '))])
-Exception -- for puzzle SortNumbers:3 ord() expected string of length 1, but SymbolicStr found
+Exception -- for puzzle SortNumbers:3 Symbolic lists not yet supported: found (str.to.re x " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 55/723: SortNumbers:4
 sat_func def sat(ans: str, s="seven eight seven zero zero five one"):
@@ -1513,7 +1513,7 @@ sat_func def sat(ans: str, s="seven eight seven zero zero five one"):
 modified_func def sat(ans: str, s=wrap_str('seven eight seven zero zero five one')):
     nums = wrap_str('zero one two three four five six seven eight nine').split()
     return [nums.index(x) for x in ans.split(wrap_str(' '))] == sorted([nums.index(x) for x in s.split(wrap_str(' '))])
-Exception -- for puzzle SortNumbers:4 ord() expected string of length 1, but SymbolicStr found
+Exception -- for puzzle SortNumbers:4 Symbolic lists not yet supported: found (str.to.re x " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 56/723: LargestDivisor:0
 sat_func def sat(d: int, n=123456):
@@ -6079,7 +6079,7 @@ modified_func def sat(s: str, orig=wrap_str('Hello world!!!')):
             _assert(a[i] <= a[i + wrap_int(1)], wrap_str('characters must s-words be in increasing order'))
         _assert((sym_len(a) == sym_len(b)).__and__(all((a.count(c) == b.count(c) for c in b))), wrap_str('must have same chars'))
     return sym_len(s) == sym_len(orig)
-Exception -- for puzzle AntiShuffle:0 ord() expected string of length 1, but SymbolicStr found
+Exception -- for puzzle AntiShuffle:0 Symbolic lists not yet supported: found (str.to.re x " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 197/723: AntiShuffle:1
 sat_func def sat(s: str, orig="YOU CAN rearrange my letters, yes you can!"):
@@ -6094,7 +6094,7 @@ modified_func def sat(s: str, orig=wrap_str('YOU CAN rearrange my letters, yes y
             _assert(a[i] <= a[i + wrap_int(1)], wrap_str('characters must s-words be in increasing order'))
         _assert((sym_len(a) == sym_len(b)).__and__(all((a.count(c) == b.count(c) for c in b))), wrap_str('must have same chars'))
     return sym_len(s) == sym_len(orig)
-Exception -- for puzzle AntiShuffle:1 ord() expected string of length 1, but SymbolicStr found
+Exception -- for puzzle AntiShuffle:1 Symbolic lists not yet supported: found (str.to.re x " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 198/723: AntiShuffle:2
 sat_func def sat(s: str, orig="caN you handlE LONGGGGGGGGGGGG strings?"):
@@ -6109,7 +6109,7 @@ modified_func def sat(s: str, orig=wrap_str('caN you handlE LONGGGGGGGGGGGG stri
             _assert(a[i] <= a[i + wrap_int(1)], wrap_str('characters must s-words be in increasing order'))
         _assert((sym_len(a) == sym_len(b)).__and__(all((a.count(c) == b.count(c) for c in b))), wrap_str('must have same chars'))
     return sym_len(s) == sym_len(orig)
-Exception -- for puzzle AntiShuffle:2 ord() expected string of length 1, but SymbolicStr found
+Exception -- for puzzle AntiShuffle:2 Symbolic lists not yet supported: found (str.to.re x " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 199/723: AntiShuffle:3
 sat_func def sat(s: str, orig="how bout    spaces and weird punctuation!?$%@#%"):
@@ -6124,7 +6124,7 @@ modified_func def sat(s: str, orig=wrap_str('how bout    spaces and weird punctu
             _assert(a[i] <= a[i + wrap_int(1)], wrap_str('characters must s-words be in increasing order'))
         _assert((sym_len(a) == sym_len(b)).__and__(all((a.count(c) == b.count(c) for c in b))), wrap_str('must have same chars'))
     return sym_len(s) == sym_len(orig)
-Exception -- for puzzle AntiShuffle:3 ord() expected string of length 1, but SymbolicStr found
+Exception -- for puzzle AntiShuffle:3 Symbolic lists not yet supported: found (str.to.re x " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 200/723: AntiShuffle:4
 sat_func def sat(s: str, orig="ruhixuthuciji kebelobawitextythuch quozo"):
@@ -6139,7 +6139,7 @@ modified_func def sat(s: str, orig=wrap_str('ruhixuthuciji kebelobawitextythuch 
             _assert(a[i] <= a[i + wrap_int(1)], wrap_str('characters must s-words be in increasing order'))
         _assert((sym_len(a) == sym_len(b)).__and__(all((a.count(c) == b.count(c) for c in b))), wrap_str('must have same chars'))
     return sym_len(s) == sym_len(orig)
-Exception -- for puzzle AntiShuffle:4 ord() expected string of length 1, but SymbolicStr found
+Exception -- for puzzle AntiShuffle:4 Symbolic lists not yet supported: found (str.to.re x " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 201/723: SubstitutionCypher:0
 sat_func def sat(encrypted: str, orig="Hello, world!"):
