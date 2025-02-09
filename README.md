@@ -73,7 +73,7 @@ timeouts after staging (while building the SMTLIB program), errors during stagin
 
 See a detailed [stdout log](log/results.txt) of the current run.
 
-# Source map
+## Source map
 
 `.`<br/>
 `├──` [`README.md`](README.md)<br/>
@@ -92,3 +92,7 @@ See a detailed [stdout log](log/results.txt) of the current run.
 `└──` [`tests`](tests)<br/>
 `    └──` [`test_core.py`](tests/test_core.py) _ran with `python -m pytest`, basic and LLM-generated_<br/>
 
+## Contribute!
+
+I need help in completely fleshing out the symbolic executor as well as designing and implementing LLM-based heuristics to complement it.
+See the [contributing guidelines](CONTRIBUTING.md), in particular discussing a workflow to find and fix issues driven by the benchmarks.
