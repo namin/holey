@@ -74,19 +74,18 @@ See a detailed [stdout log](log/results.txt) of the current run.
 # Source map
 
 `.`<br/>
-`├──` [`README.md`](README.md)<br/>
-`├──` [`benchmarks`](benchmarks)<br/>
-`│   └──` [`PythonProgrammingPuzzles`](benchmarks/PythonProgrammingPuzzles) _benchmark added as `git` submodule_<br/>
-`├──` [`holey`](holey)<br/>
-`│   ├──` [`__init__.py`](holey/__init__.py)<br/>
-`│   ├──` [`backend.py`](holey/backend.py) _backend to SMTLIB batch processes_<br/>
-`│   ├──` [`core.py`](holey/core.py) _includes tracer, symbolic classes, ..._<br/>
-`│   ├──` [`llm.py`](holey/llm.py) _support for LLM generation and code extraction_<br/>
-`│   └──` [`preprocessor.py`](holey/preprocessor.py) _includes node transformer and sat driver_<br/>
-`├──` [`log`](log)<br/>
-`│   └──` [`results.txt`](log/results.txt) _example run_<br/>
-`├──` [`puzzle_solver.py`](puzzle_solver.py) _main routine for benchmark solver_<br/>
-`├──` [`pyproject.toml`](pyproject.toml)<br/>
-`└──` [`tests`](tests)<br/>
-`    └──` [`test_core.py`](tests/test_core.py) _ran with `python -m pytest`, basic and LLM-generated_<br/>
-
+`├── [README.md](README.md)`<br/>
+`├── [benchmarks](benchmarks)`<br/>
+`│   └── [PythonProgrammingPuzzles](benchmarks/PythonProgrammingPuzzles) _benchmark added as `git` submodule_<br/>
+`├── [holey`](holey)`<br/>
+`│   ├── [__init__.py](holey/__init__.py)`<br/>
+`│   ├── [backend.py](holey/backend.py`) _backend to SMTLIB batch processes_<br/>
+`│   ├── [core.py](holey/core.py)` _includes tracer, symbolic classes, ..._<br/>
+`│   ├── [llm.py](holey/llm.py)` _support for LLM generation and code extraction_<br/>
+`│   └── [preprocessor.py](holey/preprocessor.py)` _includes node transformer and sat driver_<br/>
+`├── [log](log)`<br/>
+`│   └── [results.txt](log/results.txt)` _example run_<br/>
+`├── [puzzle_solver.py](puzzle_solver.py)` _main routine for benchmark solver_<br/>
+`├── [pyproject.toml](pyproject.toml)`<br/>
+`└── [tests](tests)`<br/>
+`    └── [test_core.py](tests/test_core.py)` _ran with `python -m pytest`, basic and LLM-generated_<br/>
