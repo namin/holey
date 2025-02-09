@@ -479,6 +479,9 @@ class MockBackend(Backend):
     def StrToFloat(self, x) -> MockExpr:
         return self._record("str.to.float", x)
 
+    def StrReplace(self, x, y, z) -> MockExpr:
+        return self._record("str.replace", x, y, z)
+
     def StrIndex(self, x, y) -> MockExpr:
         return self._record("python.str.at", x, y)
 

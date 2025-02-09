@@ -335,7 +335,7 @@ class SymbolicList:
     def __init__(self, value, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
         self.tracer = tracer        
         assert name is None       
-        assert isinstance(value, list)
+        assert isinstance(value, list), "Symbolic lists not yet supported: found "+str(value)+" of type "+str(type(value))
         self.concrete = value
 
     def __getitem__(self, key):
@@ -621,6 +621,13 @@ class SymbolicStr:
         if self.concrete is not None:
             return SymbolicStr(self.concrete.lower(), tracer=self.tracer)
         return SymbolicStr(self.tracer.backend.StrLower(self.z3_expr), tracer=self.tracer)
+
+    def replace(self, a, b):
+        a = self.tracer.ensure_symbolic(a)
+        b = self.tracer.ensure_symbolic(b)
+        if self.concrete is not None and a.concrete is not None and b.concrete is not None:
+            return SymbolicStr(self.concrete.replace(a.concrete, b.concrete), tracer=self.tracer)
+        return SymbolicStr(self.tracer.backend.StrReplace(self.z3_expr, a.z3_expr, b.z3_expr), tracer=self.tracer)
 
 class SymbolicSlice:
     def __init__(self, concrete_seq, start, end, step=None, tracer: Optional[SymbolicTracer] = None):
