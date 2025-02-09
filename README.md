@@ -72,10 +72,10 @@ The symbolic execution alone currently solves:
 │   │   ├── cvc5_backend.py (unusable because cvc5 bindings segfaults)
 │   │   ├── mock_backend.py (! main backend)
 │   │   └── z3_backend.py (unusable because z3 bindings segfaults)
-│   ├── core.py (! includes tracer, symbolic classes, ...)
-│   ├── llm.py (! support for LLM generation and code extraction)
-│   └── preprocessor.py (includes node transformer and sat driver)
-├── puzzle_solver.py (main routine for benchmark solver)
+│   ├── core.py (! includes tracer, symbolic classes, ... !)
+│   ├── llm.py (! support for LLM generation and code extraction !)
+│   └── preprocessor.py (! includes node transformer and sat driver !)
+├── puzzle_solver.py (! main routine for benchmark solver !)
 ├── pyproject.toml
 └── tests
     └── test_core.py (ran with python -m pytest, LLM-generated, not much there)
