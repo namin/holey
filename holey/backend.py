@@ -206,7 +206,7 @@ library = {
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 """
 ,
 'python.str.at':
@@ -287,8 +287,8 @@ library = {
          (let ((first (str.at s 0)))
            (str.++ 
              (ite (and (str.< "a" first) (str.< first "z"))
-                  (let ((offset (- (str.to.int first) (str.to.int "a"))))
-                    (str.from.int (+ (str.to.int "A") offset)))
+                  (let ((offset (- (str.to_int first) (str.to_int "a"))))
+                    (str.from.int (+ (str.to_int "A") offset)))
                   first)
              (str.upper (str.substr s 1 (- len 1))))))))
 """
@@ -302,8 +302,8 @@ library = {
          (let ((first (str.at s 0)))
            (str.++ 
              (ite (and (str.< "A" first) (str.< first "Z"))
-                  (let ((offset (- (str.to.int first) (str.to.int "A"))))
-                    (str.from.int (+ (str.to.int "a") offset)))
+                  (let ((offset (- (str.to_int first) (str.to_int "A"))))
+                    (str.from.int (+ (str.to_int "a") offset)))
                   first)
              (str.lower (str.substr s 1 (- len 1))))))))
 """
@@ -501,7 +501,7 @@ class Backend():
         return self._record("to_int", x)
 
     def IntToStr(self, x) -> MockExpr:
-        return self._record("int.to.str", x)
+        return self._record("str.from_int", x)
 
     def StrToCode(self, x) -> MockExpr:
         return self._record("str.to_code", x)

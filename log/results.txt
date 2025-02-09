@@ -198,7 +198,7 @@ running backend cvc5
 unknown
 (error "line 18 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp3x4sf735.smt2:13.52: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpv_aid3ud.smt2:13.52: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle Study_16:0
 
@@ -210,7 +210,7 @@ modified_func def sat(i: int):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(assert (> (str.len (int.to.str (+ x 1000))) (str.len (int.to.str (+ x 1001)))))
+(assert (> (str.len (str.from_int (+ x 1000))) (str.len (str.from_int (+ x 1001)))))
 (check-sat)
 (get-model)
 
@@ -219,7 +219,7 @@ running backend cvc5
 ### output for z3
 timeout
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp2eyawu42.smt2:3.43: Symbol 'int.to.str' not declared as a variable")
+cvc5 interrupted by timeout.
 
 Could not find any solution for puzzle Study_17:0
 
@@ -651,26 +651,26 @@ Skipping constant true constraint
        (str.count.rec s sub 0)))
 
 (declare-const x Int)
-(assert (>= (str.count (int.to.str (* x x)) "0") 0))
-(assert (= (str.count (int.to.str (* x x)) "0") 1))
-(assert (>= (str.count (int.to.str (* x x)) "1") 0))
-(assert (= (str.count (int.to.str (* x x)) "1") 1))
-(assert (>= (str.count (int.to.str (* x x)) "2") 0))
-(assert (= (str.count (int.to.str (* x x)) "2") 1))
-(assert (>= (str.count (int.to.str (* x x)) "3") 0))
-(assert (= (str.count (int.to.str (* x x)) "3") 1))
-(assert (>= (str.count (int.to.str (* x x)) "4") 0))
-(assert (= (str.count (int.to.str (* x x)) "4") 1))
-(assert (>= (str.count (int.to.str (* x x)) "5") 0))
-(assert (= (str.count (int.to.str (* x x)) "5") 1))
-(assert (>= (str.count (int.to.str (* x x)) "6") 0))
-(assert (= (str.count (int.to.str (* x x)) "6") 1))
-(assert (>= (str.count (int.to.str (* x x)) "7") 0))
-(assert (= (str.count (int.to.str (* x x)) "7") 1))
-(assert (>= (str.count (int.to.str (* x x)) "8") 0))
-(assert (= (str.count (int.to.str (* x x)) "8") 1))
-(assert (>= (str.count (int.to.str (* x x)) "9") 0))
-(assert (= (str.count (int.to.str (* x x)) "9") 1))
+(assert (>= (str.count (str.from_int (* x x)) "0") 0))
+(assert (= (str.count (str.from_int (* x x)) "0") 1))
+(assert (>= (str.count (str.from_int (* x x)) "1") 0))
+(assert (= (str.count (str.from_int (* x x)) "1") 1))
+(assert (>= (str.count (str.from_int (* x x)) "2") 0))
+(assert (= (str.count (str.from_int (* x x)) "2") 1))
+(assert (>= (str.count (str.from_int (* x x)) "3") 0))
+(assert (= (str.count (str.from_int (* x x)) "3") 1))
+(assert (>= (str.count (str.from_int (* x x)) "4") 0))
+(assert (= (str.count (str.from_int (* x x)) "4") 1))
+(assert (>= (str.count (str.from_int (* x x)) "5") 0))
+(assert (= (str.count (str.from_int (* x x)) "5") 1))
+(assert (>= (str.count (str.from_int (* x x)) "6") 0))
+(assert (= (str.count (str.from_int (* x x)) "6") 1))
+(assert (>= (str.count (str.from_int (* x x)) "7") 0))
+(assert (= (str.count (str.from_int (* x x)) "7") 1))
+(assert (>= (str.count (str.from_int (* x x)) "8") 0))
+(assert (= (str.count (str.from_int (* x x)) "8") 1))
+(assert (>= (str.count (str.from_int (* x x)) "9") 0))
+(assert (= (str.count (str.from_int (* x x)) "9") 1))
 (check-sat)
 (get-model)
 
@@ -679,7 +679,7 @@ running backend cvc5
 ### output for z3
 timeout
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp72qo1coc.smt2:15.43: Symbol 'int.to.str' not declared as a variable")
+cvc5 interrupted by timeout.
 
 Could not find any solution for puzzle PandigitalSquare:0
 
@@ -1267,8 +1267,8 @@ modified_func def sat(d: int, n=wrap_int(123456)):
     return (n % d == wrap_int(0)).__and__(d < n).__and__(all((n % e for e in sym_range(d + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (not (= x 0)))
 (assert (>= i_0 (+ x 1)))
 (assert (< i_0 123456))
@@ -1295,8 +1295,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int (- 24692))
 (define-fun x () Int (- 61728))
+(define-fun i_0 () Int (- 24692))
 )
 
 Found solution 1
@@ -1309,8 +1309,8 @@ modified_func def sat(d: int, n=wrap_int(17836)):
     return (n % d == wrap_int(0)).__and__(d < n).__and__(all((n % e for e in sym_range(d + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (not (= x 0)))
 (assert (>= i_0 (+ x 1)))
 (assert (< i_0 17836))
@@ -1337,8 +1337,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int (- 3568))
 (define-fun x () Int (- 8918))
+(define-fun i_0 () Int (- 3568))
 )
 
 Found solution 1
@@ -1351,8 +1351,8 @@ modified_func def sat(d: int, n=wrap_int(71793)):
     return (n % d == wrap_int(0)).__and__(d < n).__and__(all((n % e for e in sym_range(d + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (not (= x 0)))
 (assert (>= i_0 (+ x 1)))
 (assert (< i_0 71793))
@@ -1379,8 +1379,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int (- 11966))
 (define-fun x () Int (- 23931))
+(define-fun i_0 () Int (- 11966))
 )
 
 Found solution 1
@@ -1393,8 +1393,8 @@ modified_func def sat(d: int, n=wrap_int(15466)):
     return (n % d == wrap_int(0)).__and__(d < n).__and__(all((n % e for e in sym_range(d + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (not (= x 0)))
 (assert (>= i_0 (+ x 1)))
 (assert (< i_0 15466))
@@ -1421,8 +1421,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int (- 3094))
 (define-fun x () Int (- 7733))
+(define-fun i_0 () Int (- 3094))
 )
 
 Found solution 1
@@ -1435,8 +1435,8 @@ modified_func def sat(d: int, n=wrap_int(57567)):
     return (n % d == wrap_int(0)).__and__(d < n).__and__(all((n % e for e in sym_range(d + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (not (= x 0)))
 (assert (>= i_0 (+ x 1)))
 (assert (< i_0 57567))
@@ -1463,8 +1463,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int (- 9595))
 (define-fun x () Int (- 19189))
+(define-fun i_0 () Int (- 9595))
 )
 
 Found solution 1
@@ -2103,8 +2103,8 @@ modified_func def sat(n: int, lower=wrap_int(123456)):
     return n > lower
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (or (= (^ (- (* (* 5 x) x) 4) 0.5) (to_int (^ (- (* (* 5 x) x) 4) 0.5))) (= (^ (+ (* (* 5 x) x) 4) 0.5) (to_int (^ (+ (* (* 5 x) x) 4) 0.5)))))
 (assert (>= i_0 2))
 (assert (< i_0 (+ (to_int (^ x 0.5)) 1)))
@@ -2120,7 +2120,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp9tczr61r.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp6b1eqe9s.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:0
 
@@ -2135,8 +2135,8 @@ modified_func def sat(n: int, lower=wrap_int(3)):
     return n > lower
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (or (= (^ (- (* (* 5 x) x) 4) 0.5) (to_int (^ (- (* (* 5 x) x) 4) 0.5))) (= (^ (+ (* (* 5 x) x) 4) 0.5) (to_int (^ (+ (* (* 5 x) x) 4) 0.5)))))
 (assert (>= i_0 2))
 (assert (< i_0 (+ (to_int (^ x 0.5)) 1)))
@@ -2152,7 +2152,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpncesrtye.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpyyfjj3ky.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:1
 
@@ -2167,8 +2167,8 @@ modified_func def sat(n: int, lower=wrap_int(458)):
     return n > lower
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (or (= (^ (- (* (* 5 x) x) 4) 0.5) (to_int (^ (- (* (* 5 x) x) 4) 0.5))) (= (^ (+ (* (* 5 x) x) 4) 0.5) (to_int (^ (+ (* (* 5 x) x) 4) 0.5)))))
 (assert (>= i_0 2))
 (assert (< i_0 (+ (to_int (^ x 0.5)) 1)))
@@ -2184,7 +2184,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpi62_6hj6.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp61l4o14q.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:2
 
@@ -2199,8 +2199,8 @@ modified_func def sat(n: int, lower=wrap_int(384)):
     return n > lower
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (or (= (^ (- (* (* 5 x) x) 4) 0.5) (to_int (^ (- (* (* 5 x) x) 4) 0.5))) (= (^ (+ (* (* 5 x) x) 4) 0.5) (to_int (^ (+ (* (* 5 x) x) 4) 0.5)))))
 (assert (>= i_0 2))
 (assert (< i_0 (+ (to_int (^ x 0.5)) 1)))
@@ -2216,7 +2216,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp4hnv2iiz.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp6mt8nvq6.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:3
 
@@ -2231,8 +2231,8 @@ modified_func def sat(n: int, lower=wrap_int(4)):
     return n > lower
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (or (= (^ (- (* (* 5 x) x) 4) 0.5) (to_int (^ (- (* (* 5 x) x) 4) 0.5))) (= (^ (+ (* (* 5 x) x) 4) 0.5) (to_int (^ (+ (* (* 5 x) x) 4) 0.5)))))
 (assert (>= i_0 2))
 (assert (< i_0 (+ (to_int (^ x 0.5)) 1)))
@@ -2248,7 +2248,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpjqzmg0oc.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpjempqb3j.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:4
 
@@ -2265,9 +2265,9 @@ modified_func def sat(count: int, n=wrap_int(981)):
     return count == wrap_int(0)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 981))
 (assert (>= i_1 0))
@@ -2291,9 +2291,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 0)
-(define-fun i_0 () Int 0)
 (define-fun x () Int 1)
+(define-fun i_0 () Int 0)
+(define-fun i_1 () Int 0)
 )
 
 Found solution 1
@@ -2312,9 +2312,9 @@ modified_func def sat(count: int, n=wrap_int(123)):
     return count == wrap_int(0)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 123))
 (assert (>= i_1 0))
@@ -2338,9 +2338,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 0)
-(define-fun i_0 () Int 0)
 (define-fun x () Int 1)
+(define-fun i_0 () Int 0)
+(define-fun i_1 () Int 0)
 )
 
 Found solution 1
@@ -2359,9 +2359,9 @@ modified_func def sat(count: int, n=wrap_int(239)):
     return count == wrap_int(0)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 239))
 (assert (>= i_1 0))
@@ -2385,9 +2385,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 0)
-(define-fun i_0 () Int 0)
 (define-fun x () Int 1)
+(define-fun i_0 () Int 0)
+(define-fun i_1 () Int 0)
 )
 
 Found solution 1
@@ -2406,9 +2406,9 @@ modified_func def sat(count: int, n=wrap_int(378)):
     return count == wrap_int(0)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 378))
 (assert (>= i_1 0))
@@ -2432,9 +2432,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 0)
-(define-fun i_0 () Int 0)
 (define-fun x () Int 1)
+(define-fun i_0 () Int 0)
+(define-fun i_1 () Int 0)
 )
 
 Found solution 1
@@ -2453,9 +2453,9 @@ modified_func def sat(count: int, n=wrap_int(501)):
     return count == wrap_int(0)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 501))
 (assert (>= i_1 0))
@@ -2479,9 +2479,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 0)
-(define-fun i_0 () Int 0)
 (define-fun x () Int 1)
+(define-fun i_0 () Int 0)
+(define-fun i_1 () Int 0)
 )
 
 Found solution 1
@@ -3514,10 +3514,10 @@ modified_func def sat(p: int, n=wrap_int(101076)):
     return is_prime(p).__and__(n % p == wrap_int(0)).__and__(p > wrap_int(0)).__and__(all(((n % i).__or__(sym_not(is_prime(i))) for i in sym_range(p + 1, n))))
 ### smt2
 (set-logic ALL)
+(declare-const x Int)
+(declare-const i_0 Int)
 (declare-const i_1 Int)
 (declare-const i_2 Int)
-(declare-const i_0 Int)
-(declare-const x Int)
 (assert (>= i_0 2))
 (assert (< i_0 (- x 1)))
 (assert (not (= i_0 0)))
@@ -3553,7 +3553,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp8q6vbg8m.smt2:16.169: Branches of the ITE must have comparable type.
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpmxk6kkbi.smt2:16.169: Branches of the ITE must have comparable type.
 then branch: (mod 101076 i_1)
 its type   : Int
 else branch: (not (not (= (mod i_1 i_2) 0)))
@@ -3577,10 +3577,10 @@ modified_func def sat(p: int, n=wrap_int(15132)):
     return is_prime(p).__and__(n % p == wrap_int(0)).__and__(p > wrap_int(0)).__and__(all(((n % i).__or__(sym_not(is_prime(i))) for i in sym_range(p + 1, n))))
 ### smt2
 (set-logic ALL)
+(declare-const x Int)
+(declare-const i_0 Int)
 (declare-const i_1 Int)
 (declare-const i_2 Int)
-(declare-const i_0 Int)
-(declare-const x Int)
 (assert (>= i_0 2))
 (assert (< i_0 (- x 1)))
 (assert (not (= i_0 0)))
@@ -3616,7 +3616,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpgi7elxpm.smt2:16.166: Branches of the ITE must have comparable type.
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpf_s7j7z2.smt2:16.166: Branches of the ITE must have comparable type.
 then branch: (mod 15132 i_1)
 its type   : Int
 else branch: (not (not (= (mod i_1 i_2) 0)))
@@ -3640,10 +3640,10 @@ modified_func def sat(p: int, n=wrap_int(22184)):
     return is_prime(p).__and__(n % p == wrap_int(0)).__and__(p > wrap_int(0)).__and__(all(((n % i).__or__(sym_not(is_prime(i))) for i in sym_range(p + 1, n))))
 ### smt2
 (set-logic ALL)
+(declare-const x Int)
+(declare-const i_0 Int)
 (declare-const i_1 Int)
 (declare-const i_2 Int)
-(declare-const i_0 Int)
-(declare-const x Int)
 (assert (>= i_0 2))
 (assert (< i_0 (- x 1)))
 (assert (not (= i_0 0)))
@@ -3679,7 +3679,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmplhaick8t.smt2:16.166: Branches of the ITE must have comparable type.
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpmk8p2u2s.smt2:16.166: Branches of the ITE must have comparable type.
 then branch: (mod 22184 i_1)
 its type   : Int
 else branch: (not (not (= (mod i_1 i_2) 0)))
@@ -3703,10 +3703,10 @@ modified_func def sat(p: int, n=wrap_int(70875)):
     return is_prime(p).__and__(n % p == wrap_int(0)).__and__(p > wrap_int(0)).__and__(all(((n % i).__or__(sym_not(is_prime(i))) for i in sym_range(p + 1, n))))
 ### smt2
 (set-logic ALL)
+(declare-const x Int)
+(declare-const i_0 Int)
 (declare-const i_1 Int)
 (declare-const i_2 Int)
-(declare-const i_0 Int)
-(declare-const x Int)
 (assert (>= i_0 2))
 (assert (< i_0 (- x 1)))
 (assert (not (= i_0 0)))
@@ -3742,7 +3742,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmph683_q9o.smt2:16.166: Branches of the ITE must have comparable type.
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpj5ofk80f.smt2:16.166: Branches of the ITE must have comparable type.
 then branch: (mod 70875 i_1)
 its type   : Int
 else branch: (not (not (= (mod i_1 i_2) 0)))
@@ -3766,10 +3766,10 @@ modified_func def sat(p: int, n=wrap_int(63088)):
     return is_prime(p).__and__(n % p == wrap_int(0)).__and__(p > wrap_int(0)).__and__(all(((n % i).__or__(sym_not(is_prime(i))) for i in sym_range(p + 1, n))))
 ### smt2
 (set-logic ALL)
+(declare-const x Int)
+(declare-const i_0 Int)
 (declare-const i_1 Int)
 (declare-const i_2 Int)
-(declare-const i_0 Int)
-(declare-const x Int)
 (assert (>= i_0 2))
 (assert (< i_0 (- x 1)))
 (assert (not (= i_0 0)))
@@ -3805,7 +3805,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp4m_i336n.smt2:16.166: Branches of the ITE must have comparable type.
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp4czzsz6x.smt2:16.166: Branches of the ITE must have comparable type.
 then branch: (mod 63088 i_1)
 its type   : Int
 else branch: (not (not (= (mod i_1 i_2) 0)))
@@ -3845,7 +3845,7 @@ modified_func def sat(shifted: str, n=wrap_int(124582369835), shift=wrap_int(3))
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 
 (define-fun python.str.substr ((s String) (start Int) (end Int)) String
@@ -3867,7 +3867,8 @@ sat
     "0000000124582369835000")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp7ngyggi7.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len @purify_3))))")
 
 Found solution 0000000124582369835000
 Yes! Solved for puzzle  CircularShiftNum:0
@@ -3902,7 +3903,7 @@ modified_func def sat(shifted: str, n=wrap_int(6852918492), shift=wrap_int(12)):
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 
 (define-fun-rec str.reverse ((s String)) String
@@ -3925,7 +3926,8 @@ sat
     "2948192586")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp7cstnmpx.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
 
 Found solution 2948192586
 Yes! Solved for puzzle  CircularShiftNum:1
@@ -3960,7 +3962,7 @@ modified_func def sat(shifted: str, n=wrap_int(32928510691049616), shift=wrap_in
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 
 (define-fun-rec str.reverse ((s String)) String
@@ -3979,7 +3981,8 @@ running backend cvc5
 ### output for z3
 timeout
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpcwatkfvf.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
 
 Could not find any solution for puzzle CircularShiftNum:2
 
@@ -4013,7 +4016,7 @@ modified_func def sat(shifted: str, n=wrap_int(237), shift=wrap_int(26)):
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 
 (define-fun-rec str.reverse ((s String)) String
@@ -4036,7 +4039,8 @@ sat
     "732")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpvmot836d.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
 
 Found solution 732
 Yes! Solved for puzzle  CircularShiftNum:3
@@ -4071,7 +4075,7 @@ modified_func def sat(shifted: str, n=wrap_int(6), shift=wrap_int(26)):
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 
 (define-fun-rec str.reverse ((s String)) String
@@ -4094,7 +4098,8 @@ sat
     "6")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpsfdxnujt.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
 
 Found solution 6
 Yes! Solved for puzzle  CircularShiftNum:4
@@ -4281,7 +4286,7 @@ sat_func def sat(bananas: int, bowl="5024 apples and 12189 oranges", total=12491
 modified_func def sat(bananas: int, bowl=wrap_str('5024 apples and 12189 oranges'), total=wrap_int(12491241)):
     bowl += wrap_str(' and ') + sym_str(bananas) + wrap_str(' bananas')
     return sum([sym_int(s) for s in bowl.split() if s.isdigit()]) == total
-Exception -- for puzzle MissingBananas:0 Symbolic lists not yet supported: found (str.to.re (str.++ "5024 apples and 12189 oranges" (str.++ (str.++ " and " (int.to.str x)) " bananas")) " ") of type <class 'holey.backend.MockExpr'>
+Exception -- for puzzle MissingBananas:0 Symbolic lists not yet supported: found (str.to.re (str.++ "5024 apples and 12189 oranges" (str.++ (str.++ " and " (str.from_int x)) " bananas")) " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 147/723: MissingBananas:1
 sat_func def sat(bananas: int, bowl="7 apples and 9 oranges", total=21):
@@ -4290,7 +4295,7 @@ sat_func def sat(bananas: int, bowl="7 apples and 9 oranges", total=21):
 modified_func def sat(bananas: int, bowl=wrap_str('7 apples and 9 oranges'), total=wrap_int(21)):
     bowl += wrap_str(' and ') + sym_str(bananas) + wrap_str(' bananas')
     return sum([sym_int(s) for s in bowl.split() if s.isdigit()]) == total
-Exception -- for puzzle MissingBananas:1 Symbolic lists not yet supported: found (str.to.re (str.++ "7 apples and 9 oranges" (str.++ (str.++ " and " (int.to.str x)) " bananas")) " ") of type <class 'holey.backend.MockExpr'>
+Exception -- for puzzle MissingBananas:1 Symbolic lists not yet supported: found (str.to.re (str.++ "7 apples and 9 oranges" (str.++ (str.++ " and " (str.from_int x)) " bananas")) " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 148/723: MissingBananas:2
 sat_func def sat(bananas: int, bowl="508738582 apples and 346410095 oranges", total=1452490389):
@@ -4299,7 +4304,7 @@ sat_func def sat(bananas: int, bowl="508738582 apples and 346410095 oranges", to
 modified_func def sat(bananas: int, bowl=wrap_str('508738582 apples and 346410095 oranges'), total=wrap_int(1452490389)):
     bowl += wrap_str(' and ') + sym_str(bananas) + wrap_str(' bananas')
     return sum([sym_int(s) for s in bowl.split() if s.isdigit()]) == total
-Exception -- for puzzle MissingBananas:2 Symbolic lists not yet supported: found (str.to.re (str.++ "508738582 apples and 346410095 oranges" (str.++ (str.++ " and " (int.to.str x)) " bananas")) " ") of type <class 'holey.backend.MockExpr'>
+Exception -- for puzzle MissingBananas:2 Symbolic lists not yet supported: found (str.to.re (str.++ "508738582 apples and 346410095 oranges" (str.++ (str.++ " and " (str.from_int x)) " bananas")) " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 149/723: MissingBananas:3
 sat_func def sat(bananas: int, bowl="28767 apples and 49488 oranges", total=112303):
@@ -4308,7 +4313,7 @@ sat_func def sat(bananas: int, bowl="28767 apples and 49488 oranges", total=1123
 modified_func def sat(bananas: int, bowl=wrap_str('28767 apples and 49488 oranges'), total=wrap_int(112303)):
     bowl += wrap_str(' and ') + sym_str(bananas) + wrap_str(' bananas')
     return sum([sym_int(s) for s in bowl.split() if s.isdigit()]) == total
-Exception -- for puzzle MissingBananas:3 Symbolic lists not yet supported: found (str.to.re (str.++ "28767 apples and 49488 oranges" (str.++ (str.++ " and " (int.to.str x)) " bananas")) " ") of type <class 'holey.backend.MockExpr'>
+Exception -- for puzzle MissingBananas:3 Symbolic lists not yet supported: found (str.to.re (str.++ "28767 apples and 49488 oranges" (str.++ (str.++ " and " (str.from_int x)) " bananas")) " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 150/723: MissingBananas:4
 sat_func def sat(bananas: int, bowl="29991 apples and 99737 oranges", total=155600):
@@ -4317,7 +4322,7 @@ sat_func def sat(bananas: int, bowl="29991 apples and 99737 oranges", total=1556
 modified_func def sat(bananas: int, bowl=wrap_str('29991 apples and 99737 oranges'), total=wrap_int(155600)):
     bowl += wrap_str(' and ') + sym_str(bananas) + wrap_str(' bananas')
     return sum([sym_int(s) for s in bowl.split() if s.isdigit()]) == total
-Exception -- for puzzle MissingBananas:4 Symbolic lists not yet supported: found (str.to.re (str.++ "29991 apples and 99737 oranges" (str.++ (str.++ " and " (int.to.str x)) " bananas")) " ") of type <class 'holey.backend.MockExpr'>
+Exception -- for puzzle MissingBananas:4 Symbolic lists not yet supported: found (str.to.re (str.++ "29991 apples and 99737 oranges" (str.++ (str.++ " and " (str.from_int x)) " bananas")) " ") of type <class 'holey.backend.MockExpr'>
 
 Solving puzzle 151/723: GreatestHIndex:0
 sat_func def sat(h: int, seq=[3, 1, 4, 17, 5, 17, 2, 1, 41, 32, 2, 5, 5, 5, 5]):
@@ -6428,9 +6433,9 @@ modified_func def sat(x: int, a=wrap_int(145), b=wrap_int(24126846790974)):
     return (a <= x).__and__(x <= b).__and__(all((i % wrap_int(2) == wrap_int(1) for i in sym_range(x + 1, b + 1))))
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (=> (= x -1) (>= i_0 145)))
 (assert (=> (= x -1) (< i_0 24126846790975)))
 (assert (not (= 2 0)))
@@ -6457,9 +6462,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 147)
-(define-fun i_0 () Int 145)
 (define-fun x () Int 146)
+(define-fun i_0 () Int 145)
+(define-fun i_1 () Int 147)
 )
 
 Found solution -1
@@ -6476,9 +6481,9 @@ modified_func def sat(x: int, a=wrap_int(17), b=wrap_int(17)):
     return (a <= x).__and__(x <= b).__and__(all((i % wrap_int(2) == wrap_int(1) for i in sym_range(x + 1, b + 1))))
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (=> (= x -1) (>= i_0 17)))
 (assert (=> (= x -1) (< i_0 18)))
 (assert (not (= 2 0)))
@@ -6505,9 +6510,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 1)
-(define-fun i_0 () Int 17)
 (define-fun x () Int (- 1))
+(define-fun i_0 () Int 17)
+(define-fun i_1 () Int 1)
 )
 
 Found solution -1
@@ -6524,9 +6529,9 @@ modified_func def sat(x: int, a=-wrap_int(10), b=-wrap_int(6)):
     return (a <= x).__and__(x <= b).__and__(all((i % wrap_int(2) == wrap_int(1) for i in sym_range(x + 1, b + 1))))
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (=> (= x -1) (>= i_0 -10)))
 (assert (=> (= x -1) (< i_0 -5)))
 (assert (not (= 2 0)))
@@ -6553,9 +6558,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int (- 7))
-(define-fun i_0 () Int 0)
 (define-fun x () Int (- 8))
+(define-fun i_0 () Int 0)
+(define-fun i_1 () Int (- 7))
 )
 
 Found solution -1
@@ -6572,9 +6577,9 @@ modified_func def sat(x: int, a=wrap_int(100), b=wrap_int(84)):
     return (a <= x).__and__(x <= b).__and__(all((i % wrap_int(2) == wrap_int(1) for i in sym_range(x + 1, b + 1))))
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (=> (= x -1) (>= i_0 100)))
 (assert (=> (= x -1) (< i_0 85)))
 (assert (not (= 2 0)))
@@ -6608,9 +6613,9 @@ modified_func def sat(x: int, a=wrap_int(0), b=wrap_int(323523571223)):
     return (a <= x).__and__(x <= b).__and__(all((i % wrap_int(2) == wrap_int(1) for i in sym_range(x + 1, b + 1))))
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (=> (= x -1) (>= i_0 0)))
 (assert (=> (= x -1) (< i_0 323523571224)))
 (assert (not (= 2 0)))
@@ -6637,9 +6642,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 1)
-(define-fun i_0 () Int 0)
 (define-fun x () Int 0)
+(define-fun i_0 () Int 0)
+(define-fun i_1 () Int 1)
 )
 
 Found solution -1
@@ -6819,8 +6824,8 @@ modified_func def sat(ham: str, s=wrap_str('Any vowel is OK')):
          (let ((first (str.at s 0)))
            (str.++ 
              (ite (and (str.< "A" first) (str.< first "Z"))
-                  (let ((offset (- (str.to.int first) (str.to.int "A"))))
-                    (str.from.int (+ (str.to.int "a") offset)))
+                  (let ((offset (- (str.to_int first) (str.to_int "A"))))
+                    (str.from.int (+ (str.to_int "a") offset)))
                   first)
              (str.lower (str.substr s 1 (- len 1))))))))
 
@@ -6836,7 +6841,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp49g69ipr.smt2:15.53: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpdybmjy_x.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:0
 
@@ -6864,8 +6869,8 @@ modified_func def sat(ham: str, s=wrap_str('wOwwwww!')):
          (let ((first (str.at s 0)))
            (str.++ 
              (ite (and (str.< "A" first) (str.< first "Z"))
-                  (let ((offset (- (str.to.int first) (str.to.int "A"))))
-                    (str.from.int (+ (str.to.int "a") offset)))
+                  (let ((offset (- (str.to_int first) (str.to_int "A"))))
+                    (str.from.int (+ (str.to_int "a") offset)))
                   first)
              (str.lower (str.substr s 1 (- len 1))))))))
 
@@ -6881,7 +6886,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp8_ry62j1.smt2:15.53: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpbnua4cxb.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:1
 
@@ -6909,8 +6914,8 @@ modified_func def sat(ham: str, s=wrap_str('do pyp you know ?')):
          (let ((first (str.at s 0)))
            (str.++ 
              (ite (and (str.< "A" first) (str.< first "Z"))
-                  (let ((offset (- (str.to.int first) (str.to.int "A"))))
-                    (str.from.int (+ (str.to.int "a") offset)))
+                  (let ((offset (- (str.to_int first) (str.to_int "A"))))
+                    (str.from.int (+ (str.to_int "a") offset)))
                   first)
              (str.lower (str.substr s 1 (- len 1))))))))
 
@@ -6926,7 +6931,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp1guburid.smt2:15.53: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpdgrapubk.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:2
 
@@ -6954,8 +6959,8 @@ modified_func def sat(ham: str, s=wrap_str('zocofiwihilyfizi ku pivanydebodygawe
          (let ((first (str.at s 0)))
            (str.++ 
              (ite (and (str.< "A" first) (str.< first "Z"))
-                  (let ((offset (- (str.to.int first) (str.to.int "A"))))
-                    (str.from.int (+ (str.to.int "a") offset)))
+                  (let ((offset (- (str.to_int first) (str.to_int "A"))))
+                    (str.from.int (+ (str.to_int "a") offset)))
                   first)
              (str.lower (str.substr s 1 (- len 1))))))))
 
@@ -6971,7 +6976,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpzpnxh30n.smt2:15.53: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpwjtju3vx.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:3
 
@@ -6999,8 +7004,8 @@ modified_func def sat(ham: str, s=wrap_str('citextitozuwatextoq hutextawicogylal
          (let ((first (str.at s 0)))
            (str.++ 
              (ite (and (str.< "A" first) (str.< first "Z"))
-                  (let ((offset (- (str.to.int first) (str.to.int "A"))))
-                    (str.from.int (+ (str.to.int "a") offset)))
+                  (let ((offset (- (str.to_int first) (str.to_int "A"))))
+                    (str.from.int (+ (str.to_int "a") offset)))
                   first)
              (str.lower (str.substr s 1 (- len 1))))))))
 
@@ -7016,7 +7021,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp4euiu6fi.smt2:15.53: Symbol 'str.to.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpwdok_7qj.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:4
 
@@ -7850,7 +7855,7 @@ modified_func def sat(prod: int, n=wrap_int(8502)):
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x Int)
 (assert (not (= 2 0)))
@@ -7888,7 +7893,8 @@ running backend cvc5
 unsat
 (error "line 51 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpebojji55.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
 
 Could not find any solution for puzzle OddProduct:1
 
@@ -7929,7 +7935,7 @@ modified_func def sat(prod: int, n=wrap_int(95973)):
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x Int)
 (assert (not (= 2 0)))
@@ -7976,7 +7982,10 @@ sat
     8505)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp9mtwg6vo.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+unknown
+(
+(define-fun x () Int 8505)
+)
 
 Found solution 8505
 Yes! Solved for puzzle  OddProduct:2
@@ -9162,7 +9171,7 @@ modified_func def sat(s: str, word=wrap_str('antidisestablishmentarianism'), max
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 
 (define-fun python.str.substr ((s String) (start Int) (end Int)) String
@@ -9182,7 +9191,8 @@ running backend cvc5
 unsat
 (error "line 33 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmppqz6c47q.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
 
 Could not find any solution for puzzle Abbreviate:0
 
@@ -9216,7 +9226,7 @@ modified_func def sat(s: str, word=wrap_str('pawuzorythalirinasubyg'), max_len=w
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 
 (define-fun python.str.substr ((s String) (start Int) (end Int)) String
@@ -9236,7 +9246,8 @@ running backend cvc5
 unsat
 (error "line 33 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpx7x85fq5.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
 
 Could not find any solution for puzzle Abbreviate:1
 
@@ -9270,7 +9281,7 @@ modified_func def sat(s: str, word=wrap_str('jomodosigezyfulach'), max_len=wrap_
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 
 (define-fun python.str.substr ((s String) (start Int) (end Int)) String
@@ -9290,7 +9301,8 @@ running backend cvc5
 unsat
 (error "line 33 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp5udp8lee.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
 
 Could not find any solution for puzzle Abbreviate:2
 
@@ -9324,7 +9336,7 @@ modified_func def sat(s: str, word=wrap_str('bybakichop'), max_len=wrap_int(12))
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 
 (define-fun python.str.substr ((s String) (start Int) (end Int)) String
@@ -9347,7 +9359,10 @@ sat
     "bybakichop")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmppwmlggv8.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+unknown
+(
+(define-fun x () String "bybakichop")
+)
 
 Found solution bybakichop
 Yes! Solved for puzzle  Abbreviate:3
@@ -9382,7 +9397,7 @@ modified_func def sat(s: str, word=wrap_str('wywaxizodetextonigijalate'), max_le
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 
 (define-fun python.str.substr ((s String) (start Int) (end Int)) String
@@ -9402,7 +9417,8 @@ running backend cvc5
 unsat
 (error "line 33 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp9ky7_7wr.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
 
 Could not find any solution for puzzle Abbreviate:4
 
@@ -11436,8 +11452,8 @@ modified_func def sat(n: int, a=wrap_int(17), b=wrap_int(100), c=wrap_int(20)):
     return n + a == sum([b * i for i in sym_range(c)])
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 20))
 (assert (= (+ x 17) (+ (* 100 i_0) 0)))
@@ -11457,8 +11473,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int 0)
 (define-fun x () Int (- 17))
+(define-fun i_0 () Int 0)
 )
 
 Found solution -17
@@ -11471,8 +11487,8 @@ modified_func def sat(n: int, a=wrap_int(62), b=wrap_int(92), c=wrap_int(24)):
     return n + a == sum([b * i for i in sym_range(c)])
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 24))
 (assert (= (+ x 62) (+ (* 92 i_0) 0)))
@@ -11492,8 +11508,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int 0)
 (define-fun x () Int (- 62))
+(define-fun i_0 () Int 0)
 )
 
 Found solution -62
@@ -11506,8 +11522,8 @@ modified_func def sat(n: int, a=wrap_int(14), b=wrap_int(50), c=wrap_int(47)):
     return n + a == sum([b * i for i in sym_range(c)])
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 47))
 (assert (= (+ x 14) (+ (* 50 i_0) 0)))
@@ -11527,8 +11543,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int 0)
 (define-fun x () Int (- 14))
+(define-fun i_0 () Int 0)
 )
 
 Found solution -14
@@ -11541,8 +11557,8 @@ modified_func def sat(n: int, a=wrap_int(62), b=wrap_int(63), c=wrap_int(13)):
     return n + a == sum([b * i for i in sym_range(c)])
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 13))
 (assert (= (+ x 62) (+ (* 63 i_0) 0)))
@@ -11562,8 +11578,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int 0)
 (define-fun x () Int (- 62))
+(define-fun i_0 () Int 0)
 )
 
 Found solution -62
@@ -11576,8 +11592,8 @@ modified_func def sat(n: int, a=wrap_int(5), b=wrap_int(31), c=wrap_int(37)):
     return n + a == sum([b * i for i in sym_range(c)])
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 37))
 (assert (= (+ x 5) (+ (* 31 i_0) 0)))
@@ -11597,8 +11613,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int 0)
 (define-fun x () Int (- 5))
+(define-fun i_0 () Int 0)
 )
 
 Found solution 1111
@@ -11650,8 +11666,8 @@ modified_func def sat(n: int, v=wrap_int(609909721), w=wrap_int(872375011)):
 Skipping constant true constraint
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 x))
 (assert (<= 609909721 872375011))
@@ -11671,8 +11687,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int 0)
 (define-fun x () Int 1)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 1
@@ -11719,8 +11735,8 @@ modified_func def sat(res: int, m=wrap_int(1234578987654321), n=wrap_int(4)):
     return res == m
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 4))
 (assert (= x 1234578987654320))
@@ -11740,8 +11756,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int 0)
 (define-fun x () Int 1234578987654320)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 1234578987654320
@@ -11758,8 +11774,8 @@ modified_func def sat(res: int, m=wrap_int(52891398375817839454), n=wrap_int(3))
     return res == m
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 3))
 (assert (= x 52891398375817839453))
@@ -11779,8 +11795,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int 0)
 (define-fun x () Int 52891398375817839453)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 52891398375817839453
@@ -11797,8 +11813,8 @@ modified_func def sat(res: int, m=wrap_int(22262059435814874058), n=wrap_int(6))
     return res == m
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 6))
 (assert (= x 22262059435814874057))
@@ -11818,8 +11834,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int 0)
 (define-fun x () Int 22262059435814874057)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 22262059435814874057
@@ -11836,8 +11852,8 @@ modified_func def sat(res: int, m=wrap_int(23602903522227899062), n=wrap_int(2))
     return res == m
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 2))
 (assert (= x 23602903522227899061))
@@ -11857,8 +11873,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int 0)
 (define-fun x () Int 23602903522227899061)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 23602903522227899061
@@ -11875,8 +11891,8 @@ modified_func def sat(res: int, m=wrap_int(27368816582234104063), n=wrap_int(4))
     return res == m
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 4))
 (assert (= x 27368816582234104062))
@@ -11896,8 +11912,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int 0)
 (define-fun x () Int 27368816582234104062)
+(define-fun i_0 () Int 0)
 )
 
 Found solution 27368816582234104062
@@ -13100,7 +13116,7 @@ modified_func def sat(s: str, n=wrap_int(7012)):
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
 (assert (= (python.int (str.++ "169515547674460088" x) 10) 16951554767446008832))
@@ -13116,7 +13132,8 @@ sat
     "32")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpsu6_stx8.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len @purify_2))))")
 
 Found solution 32
 Exception in checking result: Exceeds the limit (4300 digits) for integer string conversion; use sys.set_int_max_str_digits() to increase the limit
@@ -13148,7 +13165,7 @@ modified_func def sat(s: str, n=wrap_int(0)):
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 
 (define-fun python.str.substr ((s String) (start Int) (end Int)) String
@@ -13157,7 +13174,7 @@ modified_func def sat(s: str, n=wrap_int(0)):
     (str.substr s start (- end start))))
 
 (declare-const x String)
-(assert (= (python.int (str.++ (python.str.substr (int.to.str 0) 0 -2) x) 10) 0))
+(assert (= (python.int (str.++ (python.str.substr (str.from_int 0) 0 -2) x) 10) 0))
 (check-sat)
 (get-model)
 
@@ -13170,7 +13187,8 @@ sat
     "0")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpztwz4wnc.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len @purify_2))))")
 
 Found solution 0
 WARNING: Solution verification failed for puzzle FivePowers:1
@@ -13201,7 +13219,7 @@ modified_func def sat(s: str, n=wrap_int(1)):
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
 (assert (= (python.int (str.++ "" x) 10) 1))
@@ -13217,7 +13235,8 @@ sat
     "1")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpnj1gwt82.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len @purify_2))))")
 
 Found solution 1
 WARNING: Solution verification failed for puzzle FivePowers:2
@@ -13248,7 +13267,7 @@ modified_func def sat(s: str, n=wrap_int(2)):
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
 (assert (= (python.int (str.++ "" x) 10) 32))
@@ -13264,7 +13283,8 @@ sat
     "32")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp5f0pz4t1.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len @purify_2))))")
 
 Found solution 32
 WARNING: Solution verification failed for puzzle FivePowers:3
@@ -13295,7 +13315,7 @@ modified_func def sat(s: str, n=wrap_int(3)):
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to.int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
 (assert (= (python.int (str.++ "2" x) 10) 243))
@@ -13311,7 +13331,8 @@ sat
     "43")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpez11_wvj.smt2:21.33: Symbol 'str.to.int' not declared as a variable")
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len @purify_2))))")
 
 Found solution 43
 WARNING: Solution verification failed for puzzle FivePowers:4
@@ -13624,8 +13645,8 @@ modified_func def sat(start: int, k=wrap_int(3), lower=wrap_int(100000), seq=wra
     return prod >= lower
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 x))
 (assert (< i_0 (+ x 3)))
 (assert (< i_0 11))
@@ -13658,8 +13679,8 @@ modified_func def sat(start: int, k=wrap_int(8), lower=wrap_int(774420991987500)
     return prod >= lower
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 x))
 (assert (< i_0 (+ x 8)))
 (assert (< i_0 8))
@@ -13692,8 +13713,8 @@ modified_func def sat(start: int, k=wrap_int(6), lower=wrap_int(188917681120), s
     return prod >= lower
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 x))
 (assert (< i_0 (+ x 6)))
 (assert (< i_0 103))
@@ -13726,8 +13747,8 @@ modified_func def sat(start: int, k=wrap_int(2), lower=wrap_int(5589), seq=wrap_
     return prod >= lower
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 x))
 (assert (< i_0 (+ x 2)))
 (assert (< i_0 11))
@@ -13760,8 +13781,8 @@ modified_func def sat(start: int, k=wrap_int(10), lower=-wrap_int(83267974331942
     return prod >= lower
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 x))
 (assert (< i_0 (+ x 10)))
 (assert (< i_0 10))
@@ -13783,8 +13804,8 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_0 () Int 9)
 (define-fun x () Int 0)
+(define-fun i_0 () Int 9)
 )
 
 Found solution 0
@@ -16858,9 +16879,9 @@ modified_func def sat(n: int, t=wrap_int(197), upper=wrap_int(20)):
     return (n == wrap_int(1)).__and__(m <= wrap_int(2) ** upper)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 197))
 (assert (=> (<= x 1) false))
@@ -16899,9 +16920,9 @@ modified_func def sat(n: int, t=wrap_int(1000), upper=wrap_int(150)):
     return (n == wrap_int(1)).__and__(m <= wrap_int(2) ** upper)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 1000))
 (assert (=> (<= x 1) false))
@@ -16940,9 +16961,9 @@ modified_func def sat(n: int, t=wrap_int(2000), upper=wrap_int(206)):
     return (n == wrap_int(1)).__and__(m <= wrap_int(2) ** upper)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 2000))
 (assert (=> (<= x 1) false))
@@ -16981,9 +17002,9 @@ modified_func def sat(n: int, t=wrap_int(2283), upper=wrap_int(238)):
     return (n == wrap_int(1)).__and__(m <= wrap_int(2) ** upper)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 2283))
 (assert (=> (<= x 1) false))
@@ -17025,8 +17046,8 @@ modified_func def sat(n: int, year_len=wrap_int(365)):
     return (prob - 0.5) ** wrap_int(2) <= wrap_int(1) / year_len
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 x))
 (assert (<= (^ (- (* (/ (- 365 i_0) 365) 1.0) 0.5) 2) (/ 1 365)))
@@ -17044,7 +17065,7 @@ sat
     185)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpf5nstntl.smt2:6.53: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpwomto3w5.smt2:6.53: expecting same arithmetic types to POW")
 
 Found solution 185
 WARNING: Solution verification failed for puzzle BirthdayParadox:0
@@ -17062,8 +17083,8 @@ modified_func def sat(n: int, year_len=wrap_int(60182)):
     return (prob - 0.5) ** wrap_int(2) <= wrap_int(1) / year_len
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 x))
 (assert (<= (^ (- (* (/ (- 60182 i_0) 60182) 1.0) 0.5) 2) (/ 1 60182)))
@@ -17081,7 +17102,7 @@ sat
     30093)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpfazgdw19.smt2:6.57: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpn7lcuvxk.smt2:6.57: expecting same arithmetic types to POW")
 
 Found solution 30093
 WARNING: Solution verification failed for puzzle BirthdayParadox:1
@@ -17099,8 +17120,8 @@ modified_func def sat(n: int, year_len=wrap_int(2)):
     return (prob - 0.5) ** wrap_int(2) <= wrap_int(1) / year_len
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 x))
 (assert (<= (^ (- (* (/ (- 2 i_0) 2) 1.0) 0.5) 2) (/ 1 2)))
@@ -17118,7 +17139,7 @@ sat
     1)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpf34t8ob1.smt2:6.49: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpvc69rp_n.smt2:6.49: expecting same arithmetic types to POW")
 
 Found solution 1
 Yes! Solved for puzzle  BirthdayParadox:2
@@ -17136,8 +17157,8 @@ modified_func def sat(n: int, year_len=wrap_int(3)):
     return (prob - 0.5) ** wrap_int(2) <= wrap_int(1) / year_len
 ### smt2
 (set-logic ALL)
-(declare-const i_0 Int)
 (declare-const x Int)
+(declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 x))
 (assert (<= (^ (- (* (/ (- 3 i_0) 3) 1.0) 0.5) 2) (/ 1 3)))
@@ -17155,7 +17176,7 @@ sat
     1)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpdkd7p8o3.smt2:6.49: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpzhusn_ji.smt2:6.49: expecting same arithmetic types to POW")
 
 Found solution 1
 Yes! Solved for puzzle  BirthdayParadox:3
@@ -17481,7 +17502,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpzkv7avs0.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpqkyo4l14.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:0
 
@@ -17507,7 +17528,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmplu2nsphs.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpdy7b0gb8.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:1
 
@@ -17533,7 +17554,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpngxpevtf.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpzbw48b8n.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:2
 
@@ -17559,7 +17580,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp5qgnsha7.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp9iej9vv6.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:3
 
@@ -17585,7 +17606,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpoau3lmgm.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp03remixc.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:4
 
@@ -17611,7 +17632,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpjkn3r0d2.smt2:3.25: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp9i2ltro_.smt2:3.25: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:0
 
@@ -17637,7 +17658,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp1ez282lo.smt2:3.22: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpnc7lcnvt.smt2:3.22: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:1
 
@@ -17663,7 +17684,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmph5562jku.smt2:3.31: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp5bhscq_g.smt2:3.31: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:2
 
@@ -17689,7 +17710,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpm6uqysqo.smt2:3.33: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpl63g2u7u.smt2:3.33: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:3
 
@@ -17715,7 +17736,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpdfoghiz_.smt2:3.55: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp5aid7yp2.smt2:3.55: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:4
 
@@ -20583,7 +20604,7 @@ modified_func def sat(n: int):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(assert (str.prefixof "123456789" (int.to.str (* x x))))
+(assert (str.prefixof "123456789" (str.from_int (* x x))))
 (check-sat)
 (get-model)
 
@@ -20592,7 +20613,7 @@ running backend cvc5
 ### output for z3
 timeout
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmptba9m9wy.smt2:3.54: Symbol 'int.to.str' not declared as a variable")
+cvc5 interrupted by timeout.
 
 Could not find any solution for puzzle Tutorial5:0
 
