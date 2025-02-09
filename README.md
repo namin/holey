@@ -59,8 +59,8 @@ python puzzle_solver.py --name-prefix ListIn:1  --llm
 ## Current status
 
 The symbolic execution alone currently solves:
-- 19% (70 out of 363) of `str` puzzles,
 - 53% (192 out of 360) of `int` puzzles,
+- 19% (70 out of 363) of `str` puzzles,
 - 36% (262 out of 723) overall.
 
 with the following errors:
