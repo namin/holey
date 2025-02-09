@@ -405,7 +405,7 @@ class MockBackend(Backend):
         return self._record("str.to.float", x)
 
     def StrIndex(self, x, y) -> MockExpr:
-        return self._record("str.index", x, y)
+        return self._record("python.str.substr", x, y, self.IntVal(1))
 
     def StrLen(self, x) -> MockExpr:
         return self._record("str.len", x)
