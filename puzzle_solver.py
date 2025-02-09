@@ -416,11 +416,11 @@ class PuzzleSolver:
             if result is not None:
                 if not check_result(result, sat_func):
                     self.error_verify_count += 1
-                    print("WARNING: Solution verification failed!")
+                    print("WARNING: Solution verification failed for puzzle "+name)
                     return None
                 else:
                     self.success_count += 1
-                    print("Yes! Solved", name)
+                    print("Yes! Solved for puzzle ", name)
             elif llm:
                 print('\nFallback to LLM!')
                 prompt = f"""Return a modified SMTLIB z3 program that captures the intent of the `sat` function of puzzle {name}:
@@ -440,15 +440,16 @@ Return only the new SMTLIB program without any context.
                 if model:
                     llm_result = model['x']
                     if check_result(llm_result, sat_func):
-                        print("LLM result confirmed!")
+                        print("LLM result confirmed for puzzle " + name)
                         result = llm_result
             return result
         except FunctionTimedOut:
+            print("Timed out for puzzle "+name)
             self.timeout_staging_count += 1
             print("Timed out")
         except Exception as e:
             self.error_staging_count += 1
-            print("Exception: ", e)
+            print("Exception -- for puzzle", name, e)
             traceback.print_exc()
         return None
 
