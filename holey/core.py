@@ -289,6 +289,10 @@ class SymbolicInt:
         other = self.tracer.ensure_symbolic(other)
         return SymbolicInt(self.tracer.backend.If(truthy(self).z3_expr, self.z3_expr, other.z3_expr), tracer=self.tracer)
 
+    def __xor__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        return SymbolicInt(self.tracer.backend.Xor(self.z3_expr, other.z3_expr), tracer=self.tracer)
+
     def __index__(self):
         if self.concrete is not None:
             return self.concrete

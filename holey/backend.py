@@ -188,6 +188,19 @@ class MockExpr:
         return self._name if self._name else str(self)
 
 library = {
+'python.int.xor':
+"""
+(define-fun bool-to-int ((b Bool)) Int
+  (ite b 1 0))
+
+(define-fun int2bits ((x Int)) Bool
+  (= (mod (abs x) 2) 1))
+
+(define-fun python.int.xor ((x Int) (y Int)) Int
+  (let ((bits (bool-to-int (xor (int2bits x) (int2bits y)))))
+    bits))
+"""
+,
 'python.int':
 """
 (define-fun-rec str-to-int ((s String) (base Int)) Int
@@ -442,6 +455,9 @@ class Backend():
         if len(args) == 1:
             return args[0]
         return self._record("or", *args)
+
+    def Xor(self, a, b) -> MockExpr:
+        return self._record("python.int.xor", a, b)
 
     def Implies(self, a, b) -> MockExpr:
         return self._record("=>", a, b)
