@@ -198,7 +198,7 @@ running backend cvc5
 unknown
 (error "line 18 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmphq359gio.smt2:13.52: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpsmhqcn34.smt2:13.52: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle Study_16:0
 
@@ -2120,7 +2120,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpqzuhwqu1.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpct34b6r1.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:0
 
@@ -2152,7 +2152,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpeczqwqkj.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpwo0z94sg.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:1
 
@@ -2184,7 +2184,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpf83gufcq.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp8i7gs3ch.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:2
 
@@ -2216,7 +2216,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpk4rlxl_d.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpa2f52ggr.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:3
 
@@ -2248,7 +2248,7 @@ running backend cvc5
 unknown
 (error "line 11 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpa6_l4ytf.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpvgp_3cis.smt2:4.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:4
 
@@ -2265,9 +2265,9 @@ modified_func def sat(count: int, n=wrap_int(981)):
     return count == wrap_int(0)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 981))
 (assert (>= i_1 0))
@@ -2291,9 +2291,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 0)
 (define-fun x () Int 1)
 (define-fun i_0 () Int 0)
+(define-fun i_1 () Int 0)
 )
 
 Found solution 1
@@ -2312,9 +2312,9 @@ modified_func def sat(count: int, n=wrap_int(123)):
     return count == wrap_int(0)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 123))
 (assert (>= i_1 0))
@@ -2338,9 +2338,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 0)
 (define-fun x () Int 1)
 (define-fun i_0 () Int 0)
+(define-fun i_1 () Int 0)
 )
 
 Found solution 1
@@ -2359,9 +2359,9 @@ modified_func def sat(count: int, n=wrap_int(239)):
     return count == wrap_int(0)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 239))
 (assert (>= i_1 0))
@@ -2385,9 +2385,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 0)
 (define-fun x () Int 1)
 (define-fun i_0 () Int 0)
+(define-fun i_1 () Int 0)
 )
 
 Found solution 1
@@ -2406,9 +2406,9 @@ modified_func def sat(count: int, n=wrap_int(378)):
     return count == wrap_int(0)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 378))
 (assert (>= i_1 0))
@@ -2432,9 +2432,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 0)
 (define-fun x () Int 1)
 (define-fun i_0 () Int 0)
+(define-fun i_1 () Int 0)
 )
 
 Found solution 1
@@ -2453,9 +2453,9 @@ modified_func def sat(count: int, n=wrap_int(501)):
     return count == wrap_int(0)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 501))
 (assert (>= i_1 0))
@@ -2479,9 +2479,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 0)
 (define-fun x () Int 1)
 (define-fun i_0 () Int 0)
+(define-fun i_1 () Int 0)
 )
 
 Found solution 1
@@ -3514,10 +3514,10 @@ modified_func def sat(p: int, n=wrap_int(101076)):
     return is_prime(p).__and__(n % p == wrap_int(0)).__and__(p > wrap_int(0)).__and__(all(((n % i).__or__(sym_not(is_prime(i))) for i in sym_range(p + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
-(declare-const i_2 Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
+(declare-const i_2 Int)
 (assert (>= i_0 2))
 (assert (< i_0 (- x 1)))
 (assert (not (= i_0 0)))
@@ -3553,7 +3553,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpmak6ncq0.smt2:16.169: Branches of the ITE must have comparable type.
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpvjf8myh1.smt2:16.169: Branches of the ITE must have comparable type.
 then branch: (mod 101076 i_1)
 its type   : Int
 else branch: (not (not (= (mod i_1 i_2) 0)))
@@ -3577,10 +3577,10 @@ modified_func def sat(p: int, n=wrap_int(15132)):
     return is_prime(p).__and__(n % p == wrap_int(0)).__and__(p > wrap_int(0)).__and__(all(((n % i).__or__(sym_not(is_prime(i))) for i in sym_range(p + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
-(declare-const i_2 Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
+(declare-const i_2 Int)
 (assert (>= i_0 2))
 (assert (< i_0 (- x 1)))
 (assert (not (= i_0 0)))
@@ -3616,7 +3616,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpsdiw413s.smt2:16.166: Branches of the ITE must have comparable type.
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpf1mtsyoi.smt2:16.166: Branches of the ITE must have comparable type.
 then branch: (mod 15132 i_1)
 its type   : Int
 else branch: (not (not (= (mod i_1 i_2) 0)))
@@ -3640,10 +3640,10 @@ modified_func def sat(p: int, n=wrap_int(22184)):
     return is_prime(p).__and__(n % p == wrap_int(0)).__and__(p > wrap_int(0)).__and__(all(((n % i).__or__(sym_not(is_prime(i))) for i in sym_range(p + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
-(declare-const i_2 Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
+(declare-const i_2 Int)
 (assert (>= i_0 2))
 (assert (< i_0 (- x 1)))
 (assert (not (= i_0 0)))
@@ -3679,7 +3679,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpw0b8j7th.smt2:16.166: Branches of the ITE must have comparable type.
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpjknffiow.smt2:16.166: Branches of the ITE must have comparable type.
 then branch: (mod 22184 i_1)
 its type   : Int
 else branch: (not (not (= (mod i_1 i_2) 0)))
@@ -3703,10 +3703,10 @@ modified_func def sat(p: int, n=wrap_int(70875)):
     return is_prime(p).__and__(n % p == wrap_int(0)).__and__(p > wrap_int(0)).__and__(all(((n % i).__or__(sym_not(is_prime(i))) for i in sym_range(p + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
-(declare-const i_2 Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
+(declare-const i_2 Int)
 (assert (>= i_0 2))
 (assert (< i_0 (- x 1)))
 (assert (not (= i_0 0)))
@@ -3742,7 +3742,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmps2ev5tip.smt2:16.166: Branches of the ITE must have comparable type.
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpre9vw2lp.smt2:16.166: Branches of the ITE must have comparable type.
 then branch: (mod 70875 i_1)
 its type   : Int
 else branch: (not (not (= (mod i_1 i_2) 0)))
@@ -3766,10 +3766,10 @@ modified_func def sat(p: int, n=wrap_int(63088)):
     return is_prime(p).__and__(n % p == wrap_int(0)).__and__(p > wrap_int(0)).__and__(all(((n % i).__or__(sym_not(is_prime(i))) for i in sym_range(p + 1, n))))
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
-(declare-const i_2 Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
+(declare-const i_2 Int)
 (assert (>= i_0 2))
 (assert (< i_0 (- x 1)))
 (assert (not (= i_0 0)))
@@ -3805,7 +3805,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpf_kij5d1.smt2:16.166: Branches of the ITE must have comparable type.
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpad1gvk71.smt2:16.166: Branches of the ITE must have comparable type.
 then branch: (mod 63088 i_1)
 its type   : Int
 else branch: (not (not (= (mod i_1 i_2) 0)))
@@ -6433,9 +6433,9 @@ modified_func def sat(x: int, a=wrap_int(145), b=wrap_int(24126846790974)):
     return (a <= x).__and__(x <= b).__and__(all((i % wrap_int(2) == wrap_int(1) for i in sym_range(x + 1, b + 1))))
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (=> (= x -1) (>= i_0 145)))
 (assert (=> (= x -1) (< i_0 24126846790975)))
 (assert (not (= 2 0)))
@@ -6462,9 +6462,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 147)
 (define-fun x () Int 146)
 (define-fun i_0 () Int 145)
+(define-fun i_1 () Int 147)
 )
 
 Found solution -1
@@ -6481,9 +6481,9 @@ modified_func def sat(x: int, a=wrap_int(17), b=wrap_int(17)):
     return (a <= x).__and__(x <= b).__and__(all((i % wrap_int(2) == wrap_int(1) for i in sym_range(x + 1, b + 1))))
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (=> (= x -1) (>= i_0 17)))
 (assert (=> (= x -1) (< i_0 18)))
 (assert (not (= 2 0)))
@@ -6510,9 +6510,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 1)
 (define-fun x () Int (- 1))
 (define-fun i_0 () Int 17)
+(define-fun i_1 () Int 1)
 )
 
 Found solution -1
@@ -6529,9 +6529,9 @@ modified_func def sat(x: int, a=-wrap_int(10), b=-wrap_int(6)):
     return (a <= x).__and__(x <= b).__and__(all((i % wrap_int(2) == wrap_int(1) for i in sym_range(x + 1, b + 1))))
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (=> (= x -1) (>= i_0 -10)))
 (assert (=> (= x -1) (< i_0 -5)))
 (assert (not (= 2 0)))
@@ -6558,9 +6558,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int (- 7))
 (define-fun x () Int (- 8))
 (define-fun i_0 () Int 0)
+(define-fun i_1 () Int (- 7))
 )
 
 Found solution -1
@@ -6577,9 +6577,9 @@ modified_func def sat(x: int, a=wrap_int(100), b=wrap_int(84)):
     return (a <= x).__and__(x <= b).__and__(all((i % wrap_int(2) == wrap_int(1) for i in sym_range(x + 1, b + 1))))
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (=> (= x -1) (>= i_0 100)))
 (assert (=> (= x -1) (< i_0 85)))
 (assert (not (= 2 0)))
@@ -6613,9 +6613,9 @@ modified_func def sat(x: int, a=wrap_int(0), b=wrap_int(323523571223)):
     return (a <= x).__and__(x <= b).__and__(all((i % wrap_int(2) == wrap_int(1) for i in sym_range(x + 1, b + 1))))
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (=> (= x -1) (>= i_0 0)))
 (assert (=> (= x -1) (< i_0 323523571224)))
 (assert (not (= 2 0)))
@@ -6642,9 +6642,9 @@ sat
 ### output for cvc5
 sat
 (
-(define-fun i_1 () Int 1)
 (define-fun x () Int 0)
 (define-fun i_0 () Int 0)
+(define-fun i_1 () Int 1)
 )
 
 Found solution -1
@@ -6841,7 +6841,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp6oyzlqk0.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpdncqe6rp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:0
 
@@ -6886,7 +6886,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpxk7ofww_.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmptwv0_zli.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:1
 
@@ -6931,7 +6931,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpnrjr74y4.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmprystrbvt.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:2
 
@@ -6976,7 +6976,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpyu7oclon.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp72ryoasi.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:3
 
@@ -7021,7 +7021,7 @@ running backend cvc5
 unsat
 (error "line 23 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpd9xcjgxk.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmphlovp2_c.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
 
 Could not find any solution for puzzle VowelSandwich:4
 
@@ -16879,9 +16879,9 @@ modified_func def sat(n: int, t=wrap_int(197), upper=wrap_int(20)):
     return (n == wrap_int(1)).__and__(m <= wrap_int(2) ** upper)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 197))
 (assert (=> (<= x 1) false))
@@ -16920,9 +16920,9 @@ modified_func def sat(n: int, t=wrap_int(1000), upper=wrap_int(150)):
     return (n == wrap_int(1)).__and__(m <= wrap_int(2) ** upper)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 1000))
 (assert (=> (<= x 1) false))
@@ -16961,9 +16961,9 @@ modified_func def sat(n: int, t=wrap_int(2000), upper=wrap_int(206)):
     return (n == wrap_int(1)).__and__(m <= wrap_int(2) ** upper)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 2000))
 (assert (=> (<= x 1) false))
@@ -17002,9 +17002,9 @@ modified_func def sat(n: int, t=wrap_int(2283), upper=wrap_int(238)):
     return (n == wrap_int(1)).__and__(m <= wrap_int(2) ** upper)
 ### smt2
 (set-logic ALL)
-(declare-const i_1 Int)
 (declare-const x Int)
 (declare-const i_0 Int)
+(declare-const i_1 Int)
 (assert (>= i_0 0))
 (assert (< i_0 2283))
 (assert (=> (<= x 1) false))
@@ -17065,7 +17065,7 @@ sat
     185)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmppxoyesbo.smt2:6.53: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp4ptu_hq1.smt2:6.53: expecting same arithmetic types to POW")
 
 Found solution 185
 WARNING: Solution verification failed for puzzle BirthdayParadox:0
@@ -17102,7 +17102,7 @@ sat
     30093)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp74xb2mmh.smt2:6.57: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpkf9681qa.smt2:6.57: expecting same arithmetic types to POW")
 
 Found solution 30093
 WARNING: Solution verification failed for puzzle BirthdayParadox:1
@@ -17139,7 +17139,7 @@ sat
     1)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpu0d2prvh.smt2:6.49: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp9avp2o8c.smt2:6.49: expecting same arithmetic types to POW")
 
 Found solution 1
 Yes! Solved for puzzle  BirthdayParadox:2
@@ -17176,7 +17176,7 @@ sat
     1)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp59qg447l.smt2:6.49: expecting same arithmetic types to POW")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp1adlts_3.smt2:6.49: expecting same arithmetic types to POW")
 
 Found solution 1
 Yes! Solved for puzzle  BirthdayParadox:3
@@ -17502,7 +17502,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpuzdhiq18.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp475m4y5r.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:0
 
@@ -17528,7 +17528,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpmcj30ptk.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp3v9pekju.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:1
 
@@ -17554,7 +17554,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpa1h3j2dz.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmps0oqzb0z.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:2
 
@@ -17580,7 +17580,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp92l1q0wq.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmprmospvc7.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:3
 
@@ -17606,7 +17606,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpy4mjg931.smt2:3.18: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp72r3_hmk.smt2:3.18: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul:4
 
@@ -17632,7 +17632,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpjjr6dkzm.smt2:3.25: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmp7yqynras.smt2:3.25: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:0
 
@@ -17658,7 +17658,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpbzebr_k2.smt2:3.22: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpd0_6cd4x.smt2:3.22: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:1
 
@@ -17684,7 +17684,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpyu6i6stf.smt2:3.31: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpftdhf31g.smt2:3.31: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:2
 
@@ -17710,7 +17710,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpv8rpjkqg.smt2:3.33: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpsl01glo6.smt2:3.33: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:3
 
@@ -17736,7 +17736,7 @@ sat
     0)
 )
 ### output for cvc5
-(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpir8ftjs3.smt2:3.55: expecting an arithmetic subterm")
+(error "Parse Error: /var/folders/70/m4vcj5vd76bbzsyc_kr0mqr80000gp/T/tmpu3cd64r2.smt2:3.55: expecting an arithmetic subterm")
 
 Could not find any solution for puzzle StrMul2:4
 

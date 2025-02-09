@@ -341,7 +341,7 @@ library = {
 class MockSolver:
     def __init__(self):
         self.constraints = []
-        self.declarations = set()
+        self.declarations = []
         self._model = {}
     
     def add(self, constraint):
@@ -418,7 +418,7 @@ class Backend():
         return self._record("not", x)
 
     def Int(self, name: str) -> MockExpr:
-        self.solver.declarations.add((name, 'Int'))
+        self.solver.declarations.append((name, 'Int'))
         return self._record("Int", name)
 
     def IntVal(self, val: int) -> MockExpr:
@@ -525,7 +525,7 @@ class Backend():
         return self._record("str.prefixof", x, y)
 
     def String(self, name: str) -> MockExpr:
-        self.solver.declarations.add((name, 'String'))
+        self.solver.declarations.append((name, 'String'))
         return self._record("String", name)
 
     def StringVal(self, val: str) -> MockExpr:
