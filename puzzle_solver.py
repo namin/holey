@@ -330,6 +330,13 @@ class PuzzleSolver:
     def __init__(self):
         self.backend = MockBackend()
         self.count = 0
+        self.success_count = 0
+        self.timeout_staging_count = 0
+        self.error_verify_count = 0
+        self.error_staging_count = 0
+        self.error_smt_count = 0
+        self.error_smt_var_count = 0
+        self.error_unsupported_answer_type = 0
 
     def new_tracer(self):
         self.backend.reset()
@@ -343,6 +350,7 @@ class PuzzleSolver:
             typ = str
         if not typ:
             print("Unsupported answer type", ans_type)
+            self.error_unsupported_answer_type += 1
             return None
 
         self.tracer = self.new_tracer()
@@ -380,9 +388,11 @@ class PuzzleSolver:
         print(log)
         if solution is None:
             print("Could not find any solution for puzzle " + name)
+            self.error_smt_count += 1
             return None, log
         solution_var = tracer.solution_var(solution, sym_var)
         if solution_var is None:
+            self.error_smt_var_count += 1
             print('Solution', solution)
             print("Could not find any solution var")
             return None, log
@@ -405,9 +415,11 @@ class PuzzleSolver:
             result, log = func_timeout(3, self.symbolic_solve, args=(sat_func, ans_type, name))
             if result is not None:
                 if not check_result(result, sat_func):
+                    self.error_verify_count += 1
                     print("WARNING: Solution verification failed!")
                     return None
                 else:
+                    self.success_count += 1
                     print("Yes! Solved", name)
             elif llm:
                 print('\nFallback to LLM!')
@@ -432,8 +444,10 @@ Return only the new SMTLIB program without any context.
                         result = llm_result
             return result
         except FunctionTimedOut:
+            self.timeout_staging_count += 1
             print("Timed out")
         except Exception as e:
+            self.error_staging_count += 1
             print("Exception: ", e)
             traceback.print_exc()
         return None
@@ -478,6 +492,14 @@ def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, ll
     print('STATS')
     print("Success count:", success_count)
     print("Total considered:", solver.count)
+    print("\n")
+    print("timeout staging count", solver.timeout_staging_count)
+    print("error staging count", solver.error_staging_count)
+    print("error verify count", solver.error_verify_count)
+    print("error smt count", solver.error_smt_count)
+    print("error smt var count", solver.error_smt_var_count)
+    print("unsupported answer type", solver.error_unsupported_answer_type)
+    
     success_percentage = 100.0 * success_count / solver.count if solver.count > 0 else 0
     print(f"Success percentage: {success_percentage:.0f}%")
 
