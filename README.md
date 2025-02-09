@@ -50,3 +50,33 @@ Set `ANTHROPIC_API_KEY` for Claude or default to local Ollama.
 ```
 python puzzle_solver.py --name-prefix ListIn:0  --llm
 ```
+
+## Current status
+
+The symbolic execution alone currently solves:
+- 53% (192 out of 360) of `int` puzzles,
+- 34% (243 out of 723) of `int` and `str` puzzles.
+
+# Source map
+
+```
+.
+├── README.md
+├── benchmarks
+│   └── PythonProgrammingPuzzles (benchmark added as git submodule)
+├── holey
+│   ├── __init__.py
+│   ├── backends
+│   │   ├── __init__.py
+│   │   ├── base.py (stub)
+│   │   ├── cvc5_backend.py (unusable because cvc5 bindings segfaults)
+│   │   ├── mock_backend.py (! main backend)
+│   │   └── z3_backend.py (unusable because z3 bindings segfaults)
+│   ├── core.py (! includes tracer, symbolic classes, ...)
+│   ├── llm.py (! support for LLM generation and code extraction)
+│   └── preprocessor.py (includes node transformer and sat driver)
+├── puzzle_solver.py (main routine for benchmark solver)
+├── pyproject.toml
+└── tests
+    └── test_core.py (ran with python -m pytest, LLM-generated, not much there)
+```
