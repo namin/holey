@@ -997,7 +997,7 @@ sat_func def sat(str_num: str, nums=['100011101100001', '100101100101110']):
 modified_func def sat(str_num: str, nums=wrap_list([wrap_str('100011101100001'), wrap_str('100101100101110')])):
     a, b = nums
     return sym_int(str_num, wrap_int(2)) == sym_int(a, wrap_int(2)) ^ sym_int(b, wrap_int(2))
-Exception -- for puzzle BinaryStrXOR:0 'SymbolicStr' object has no attribute 'ensure_symbolic'
+Exception -- for puzzle BinaryStrXOR:0 unsupported operand type(s) for ^: 'SymbolicInt' and 'SymbolicInt'
 
 Solving puzzle 37/723: BinaryStrXOR:1
 sat_func def sat(str_num: str, nums=['1101101111', '11001100']):
@@ -1006,7 +1006,7 @@ sat_func def sat(str_num: str, nums=['1101101111', '11001100']):
 modified_func def sat(str_num: str, nums=wrap_list([wrap_str('1101101111'), wrap_str('11001100')])):
     a, b = nums
     return sym_int(str_num, wrap_int(2)) == sym_int(a, wrap_int(2)) ^ sym_int(b, wrap_int(2))
-Exception -- for puzzle BinaryStrXOR:1 'SymbolicStr' object has no attribute 'ensure_symbolic'
+Exception -- for puzzle BinaryStrXOR:1 unsupported operand type(s) for ^: 'SymbolicInt' and 'SymbolicInt'
 
 Solving puzzle 38/723: BinaryStrXOR:2
 sat_func def sat(str_num: str, nums=['11011111', '1101001110']):
@@ -1015,7 +1015,7 @@ sat_func def sat(str_num: str, nums=['11011111', '1101001110']):
 modified_func def sat(str_num: str, nums=wrap_list([wrap_str('11011111'), wrap_str('1101001110')])):
     a, b = nums
     return sym_int(str_num, wrap_int(2)) == sym_int(a, wrap_int(2)) ^ sym_int(b, wrap_int(2))
-Exception -- for puzzle BinaryStrXOR:2 'SymbolicStr' object has no attribute 'ensure_symbolic'
+Exception -- for puzzle BinaryStrXOR:2 unsupported operand type(s) for ^: 'SymbolicInt' and 'SymbolicInt'
 
 Solving puzzle 39/723: BinaryStrXOR:3
 sat_func def sat(str_num: str, nums=['100000001', '1010001001']):
@@ -1024,7 +1024,7 @@ sat_func def sat(str_num: str, nums=['100000001', '1010001001']):
 modified_func def sat(str_num: str, nums=wrap_list([wrap_str('100000001'), wrap_str('1010001001')])):
     a, b = nums
     return sym_int(str_num, wrap_int(2)) == sym_int(a, wrap_int(2)) ^ sym_int(b, wrap_int(2))
-Exception -- for puzzle BinaryStrXOR:3 'SymbolicStr' object has no attribute 'ensure_symbolic'
+Exception -- for puzzle BinaryStrXOR:3 unsupported operand type(s) for ^: 'SymbolicInt' and 'SymbolicInt'
 
 Solving puzzle 40/723: BinaryStrXOR:4
 sat_func def sat(str_num: str, nums=['10010110', '10000']):
@@ -1033,7 +1033,7 @@ sat_func def sat(str_num: str, nums=['10010110', '10000']):
 modified_func def sat(str_num: str, nums=wrap_list([wrap_str('10010110'), wrap_str('10000')])):
     a, b = nums
     return sym_int(str_num, wrap_int(2)) == sym_int(a, wrap_int(2)) ^ sym_int(b, wrap_int(2))
-Exception -- for puzzle BinaryStrXOR:4 'SymbolicStr' object has no attribute 'ensure_symbolic'
+Exception -- for puzzle BinaryStrXOR:4 unsupported operand type(s) for ^: 'SymbolicInt' and 'SymbolicInt'
 
 Solving puzzle 41/723: LongestStr:0
 sat_func def sat(ans: str, words=['these', 'are', 'some', 'pretty', 'long', 'words']):
@@ -2492,35 +2492,224 @@ sat_func def sat(s: str, n=142, base=7):
     return int(s, base) == n
 modified_func def sat(s: str, n=wrap_int(142), base=wrap_int(7)):
     return sym_int(s, base) == n
-Exception -- for puzzle ChangeBase:0 'SymbolicStr' object has no attribute 'ensure_symbolic'
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (= (python.int x 7) 142))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unknown
+(error "line 26 column 10: model is not available")
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 7.0 (to_real (+ (- 1) (str.len x))))")
+
+Could not find any solution for puzzle ChangeBase:0
 
 Solving puzzle 92/723: ChangeBase:1
 sat_func def sat(s: str, n=85328, base=2):
     return int(s, base) == n
 modified_func def sat(s: str, n=wrap_int(85328), base=wrap_int(2)):
     return sym_int(s, base) == n
-Exception -- for puzzle ChangeBase:1 'SymbolicStr' object has no attribute 'ensure_symbolic'
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (= (python.int x 2) 85328))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unknown
+(error "line 26 column 10: model is not available")
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+
+Could not find any solution for puzzle ChangeBase:1
 
 Solving puzzle 93/723: ChangeBase:2
 sat_func def sat(s: str, n=9576751, base=10):
     return int(s, base) == n
 modified_func def sat(s: str, n=wrap_int(9576751), base=wrap_int(10)):
     return sym_int(s, base) == n
-Exception -- for puzzle ChangeBase:2 'SymbolicStr' object has no attribute 'ensure_symbolic'
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (= (python.int x 10) 9576751))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "9576751")
+)
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len @purify_2))))")
+
+Found solution 9576751
+Yes! Solved for puzzle  ChangeBase:2
 
 Solving puzzle 94/723: ChangeBase:3
 sat_func def sat(s: str, n=5160280, base=5):
     return int(s, base) == n
 modified_func def sat(s: str, n=wrap_int(5160280), base=wrap_int(5)):
     return sym_int(s, base) == n
-Exception -- for puzzle ChangeBase:3 'SymbolicStr' object has no attribute 'ensure_symbolic'
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (= (python.int x 5) 5160280))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unknown
+(error "line 26 column 10: model is not available")
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 5.0 (to_real (+ (- 1) (str.len x))))")
+
+Could not find any solution for puzzle ChangeBase:3
 
 Solving puzzle 95/723: ChangeBase:4
 sat_func def sat(s: str, n=4884658, base=6):
     return int(s, base) == n
 modified_func def sat(s: str, n=wrap_int(4884658), base=wrap_int(6)):
     return sym_int(s, base) == n
-Exception -- for puzzle ChangeBase:4 'SymbolicStr' object has no attribute 'ensure_symbolic'
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (= (python.int x 6) 4884658))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unknown
+(error "line 26 column 10: model is not available")
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 6.0 (to_real (+ (- 1) (str.len x))))")
+
+Could not find any solution for puzzle ChangeBase:4
 
 Solving puzzle 96/723: TriangleArea:0
 sat_func def sat(height: int, area=1319098728582, base=45126):
@@ -6665,7 +6854,60 @@ modified_func def sat(s: str, a=-wrap_int(103252), b=wrap_int(10657)):
         return n == -wrap_int(1)
     mu = sum(r) / sym_len(r)
     return abs(mu - n) <= min(abs(mu - n - wrap_int(1)), abs(mu - n + wrap_int(1)))
-Exception -- for puzzle BinaryAverage:0 'SymbolicStr' object has no attribute 'ensure_symbolic'
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
+(assert (>= i_0 -103252))
+(assert (< i_0 10657))
+(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))
+(assert (>= i_1 -103252))
+(assert (< i_1 10657))
+(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun i_0 () Int
+    0)
+  (define-fun x () String
+    "")
+  (define-fun i_1 () Int
+    (- 1))
+)
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+
+Found solution 
+Exception in checking result: invalid literal for int() with base 2: ''
+WARNING: Solution verification failed for puzzle BinaryAverage:0
 
 Solving puzzle 237/723: BinaryAverage:1
 sat_func def sat(s: str, a=70421, b=70421):
@@ -6682,7 +6924,51 @@ modified_func def sat(s: str, a=wrap_int(70421), b=wrap_int(70421)):
         return n == -wrap_int(1)
     mu = sum(r) / sym_len(r)
     return abs(mu - n) <= min(abs(mu - n - wrap_int(1)), abs(mu - n + wrap_int(1)))
-Exception -- for puzzle BinaryAverage:1 'SymbolicStr' object has no attribute 'ensure_symbolic'
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
+(assert (>= i_0 70421))
+(assert (< i_0 70421))
+(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))
+(assert (>= i_1 70421))
+(assert (< i_1 70421))
+(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unsat
+(error "line 33 column 10: model is not available")
+### output for cvc5
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
+
+Could not find any solution for puzzle BinaryAverage:1
 
 Solving puzzle 238/723: BinaryAverage:2
 sat_func def sat(s: str, a=-10299, b=-10300):
@@ -6699,7 +6985,51 @@ modified_func def sat(s: str, a=-wrap_int(10299), b=-wrap_int(10300)):
         return n == -wrap_int(1)
     mu = sum(r) / sym_len(r)
     return abs(mu - n) <= min(abs(mu - n - wrap_int(1)), abs(mu - n + wrap_int(1)))
-Exception -- for puzzle BinaryAverage:2 'SymbolicStr' object has no attribute 'ensure_symbolic'
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
+(assert (>= i_0 -10299))
+(assert (< i_0 -10300))
+(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))
+(assert (>= i_1 -10299))
+(assert (< i_1 -10300))
+(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unsat
+(error "line 33 column 10: model is not available")
+### output for cvc5
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
+
+Could not find any solution for puzzle BinaryAverage:2
 
 Solving puzzle 239/723: BinaryAverage:3
 sat_func def sat(s: str, a=0, b=52):
@@ -6716,7 +7046,60 @@ modified_func def sat(s: str, a=wrap_int(0), b=wrap_int(52)):
         return n == -wrap_int(1)
     mu = sum(r) / sym_len(r)
     return abs(mu - n) <= min(abs(mu - n - wrap_int(1)), abs(mu - n + wrap_int(1)))
-Exception -- for puzzle BinaryAverage:3 'SymbolicStr' object has no attribute 'ensure_symbolic'
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
+(assert (>= i_0 0))
+(assert (< i_0 52))
+(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))
+(assert (>= i_1 0))
+(assert (< i_1 52))
+(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun i_0 () Int
+    0)
+  (define-fun x () String
+    "")
+  (define-fun i_1 () Int
+    0)
+)
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+
+Found solution 
+Exception in checking result: invalid literal for int() with base 2: ''
+WARNING: Solution verification failed for puzzle BinaryAverage:3
 
 Solving puzzle 240/723: BinaryAverage:4
 sat_func def sat(s: str, a=-89, b=0):
@@ -6733,7 +7116,50 @@ modified_func def sat(s: str, a=-wrap_int(89), b=wrap_int(0)):
         return n == -wrap_int(1)
     mu = sum(r) / sym_len(r)
     return abs(mu - n) <= min(abs(mu - n - wrap_int(1)), abs(mu - n + wrap_int(1)))
-Exception -- for puzzle BinaryAverage:4 'SymbolicStr' object has no attribute 'ensure_symbolic'
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(declare-const i_0 Int)
+(declare-const i_1 Int)
+(assert (>= i_0 -89))
+(assert (< i_0 0))
+(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))
+(assert (>= i_1 -89))
+(assert (< i_1 0))
+(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+
+Could not find any solution for puzzle BinaryAverage:4
 
 Solving puzzle 241/723: CharCounts:0
 sat_func def sat(s: str, counts={'a': 4, 'b': 17, 'd': 101, 'e': 0, 'f': 12}):
@@ -20621,14 +21047,14 @@ Could not find any solution for puzzle Tutorial5:0
 
 The symbolic execution alone currently solves:
 - 53% (192 out of 360) of `int` puzzles,
-- 19% (70 out of 363) of `str` puzzles,
-- 36% (262 out of 723) overall.
+- 20% (71 out of 363) of `str` puzzles,
+- 36% (263 out of 723) overall.
 
 with the following errors:
 - 54 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
-- 225 errors at at staging time
-- 66 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- 116 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
+- 215 errors at at staging time
+- 68 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- 123 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
 - 992 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 

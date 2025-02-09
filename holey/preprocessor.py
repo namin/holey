@@ -24,7 +24,7 @@ def sym_bin(x):
 def sym_int(x, base=None):
     if isinstance(x, SymbolicStr):
         if base:
-            base = x.ensure_symbolic(base).z3_expr
+            base = x.tracer.ensure_symbolic(base).z3_expr
         return SymbolicInt(x.tracer.backend.StrToInt(x.z3_expr, base), tracer=x.tracer)
     if isinstance(x, SymbolicFloat):
         assert base is None
