@@ -1,5 +1,16 @@
 import os
+import socket
+
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
+
+def is_docker():
+    path = '/proc/self/cgroup'
+    return os.path.exists('/.dockerenv') or (os.path.exists(path) and any('docker' in line for line in open(path)))
+
+# Set Ollama base URL conditionally
+if is_docker():
+    os.environ['OLLAMA_HOST'] = 'http://host.docker.internal:11434'
+
 
 def dummy_generate(pkg, extra=""):
     def generate(*args):
