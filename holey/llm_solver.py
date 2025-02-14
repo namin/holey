@@ -1,4 +1,6 @@
-from .llm import generate as llm_generate
+from .llm import generate as llm_generate, extract_code_blocks
+from .backend import run_smt
+from typing import List, Any, Dict, Optional, Tuple
 
 class LLMSolver:
     """LLM-assisted solving capabilities that can be hooked into SymbolicTracer"""
@@ -7,6 +9,57 @@ class LLMSolver:
         self.temperature = temperature
         self.context = {}  # Store problem context and history
         self.cache = {}  # Cache LLM responses
+
+    def smtlib_solve(self, sat_func: str, ans_type: str, name: str, log: str, check_result, cmds=None) -> Optional[str]:
+        print('Asking LLM for SMTLIB')
+        prompt = f"""Return a modified SMTLIB z3 program that captures the intent of the `sat` function of puzzle {name}:
+{sat_func}
+
+This is the log, you may copy most of any SMTLIB program below.
+{log}
+
+Return only the new SMTLIB program without any context.
+"""
+        blocks = extract_code_blocks(llm_generate(prompt))
+        model = None
+        result = None
+        flag = None
+        for smt in blocks:
+            flag, model = run_smt(smt, cmds)
+            if flag == "sat":
+                break
+        if model:
+            llm_result = model['x']
+            if check_result(llm_result, sat_func):
+                print("LLM result confirmed for puzzle " + name)
+                result = llm_result
+        return None
+
+    def solve_end2end(self, sat_func: str, ans_type: str, name: str, check_result) -> Optional[str]:
+        print('Asking LLM for whole answer')
+        prompt = f"""Return a constant Python value of type {ans_type} to solve puzzle {name}, where your goal is to synthesize the first argument that makes this `sat` function return `True`:
+{sat_func}
+
+Return only the Python constant without any context.
+"""
+        results = extract_code_blocks(llm_generate(prompt))
+        for result in results:
+            print('LLM result', result)
+            if ans_type == 'int':
+                try:
+                    result = int(result)
+                except ValueError as e:
+                    print('LLM returned bad type for int', e)
+                    break
+            elif ans_type == 'str':
+                if result and result[0] in ["'", '"']:
+                    result = result[1:-1] # TODO
+            if not check_result(result, sat_func):
+                print('LLM result fails to verify for puzzle '+name)
+            else:
+                print('LLM result verifies for puzzle '+name)
+                return result
+        return None
         
     def get_branch_guidance(self, condition, path_conditions):
         """Get LLM guidance on which branch to take"""
