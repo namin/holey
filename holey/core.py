@@ -5,8 +5,9 @@ from .backend import default_backend, Backend
 
 @dataclass 
 class SymbolicTracer:
-    def __init__(self, backend=None):
+    def __init__(self, backend=None, llm_solver=None):
         self.backend = backend or default_backend()
+        self.llm_solver = llm_solver
         self.path_conditions = []
         self.branch_counter = 0
         self.current_branch_exploration = []
@@ -24,25 +25,45 @@ class SymbolicTracer:
                 self.path_conditions = []
 
     def branch(self, condition):
-        """Handle a branching point in execution"""
+        """Handle branching with optional LLM guidance"""
         if len(self.current_branch_exploration) > self.branch_counter:
             branch_val = self.current_branch_exploration[self.branch_counter]
         else:
-            branch_val = True
-            self.remaining_branch_explorations.append(self.current_branch_exploration + [False])
+            # Use LLM guidance if available
+            if self.llm_solver:
+                branch_val = self.llm_solver.get_branch_guidance(
+                    condition, self.path_conditions
+                )
+            else:
+                branch_val = True
+                
+            self.remaining_branch_explorations.append(
+                self.current_branch_exploration + [not branch_val]
+            )
             self.current_branch_exploration += [branch_val]
 
         condition = self.ensure_symbolic(condition)
-        self.path_conditions.append(condition.z3_expr if branch_val else self.backend.Not(condition.z3_expr))
+        self.path_conditions.append(
+            condition.z3_expr if branch_val 
+            else self.backend.Not(condition.z3_expr)
+        )
         return branch_val
 
     def add_constraint(self, constraint):
+        """Add constraint with optional LLM refinement"""
         if isinstance(constraint, (SymbolicInt, SymbolicBool)):
             constraint = truthy(constraint).z3_expr
+            
+        if self.llm_solver:
+            refinements = self.llm_solver.get_constraint_refinements(constraint)
+            for r in refinements:
+                self.backend.solver.add(r)
+                
         if self.path_conditions:
             constraint = self.backend.Implies(
                 self.backend.And(*self.path_conditions),
-                constraint)
+                constraint
+            )
         self.backend.solver.add(constraint)
     
     def check(self):

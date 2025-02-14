@@ -328,10 +328,10 @@ def create_namespace(tracer):
         'sym_ord': sym_ord
     }
 
-def driver(sat_func, typ, cmds=None):
+def driver(sat_func, typ, cmds=None, llm_solver=None):
     reset()
     backend = default_backend(cmds)
-    tracer = SymbolicTracer(backend=backend)
+    tracer = SymbolicTracer(backend=backend, llm_solver=llm_solver)
     namespace = create_namespace(tracer)
     sym_var = make_symbolic(typ, 'x', tracer)
     namespace['x'] = sym_var

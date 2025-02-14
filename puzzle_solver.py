@@ -1,4 +1,4 @@
-from holey import llm_generate, extract_code_blocks, run_smt, drive_sat
+from holey import llm_generate, extract_code_blocks, run_smt, drive_sat, LLMSolver
 import json
 from func_timeout import func_timeout, FunctionTimedOut
 import traceback
@@ -33,7 +33,7 @@ class PuzzleSolver:
         self.error_smt_var_count = 0
         self.error_unsupported_answer_type = 0
 
-    def symbolic_solve(self, sat_func: str, ans_type: str, name: str, cmds) -> Optional[str]:
+    def symbolic_solve(self, sat_func: str, ans_type: str, name: str, cmds, llm_solver) -> Optional[str]:
         typ = None
         if ans_type == 'int':
             typ = int
@@ -46,7 +46,7 @@ class PuzzleSolver:
 
         self.count += 1
         self.counts[ans_type] += 1
-        sym_var = drive_sat(sat_func, typ, cmds)
+        sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver)
         tracer = sym_var.tracer
         with capture_output() as captured:
             solution = tracer.solution()
@@ -118,7 +118,7 @@ Return only the Python constant without any context.
         return None
 
 
-    def solve_puzzle(self, puzzle_data: Any, cmds, llm) -> Optional[str]:
+    def solve_puzzle(self, puzzle_data: Any, cmds, llm_solver) -> Optional[str]:
         name = puzzle_data.get('name', '')
         sat_func = puzzle_data.get('sat_function', puzzle_data.get('sat', ''))
         if not sat_func:
@@ -130,7 +130,7 @@ Return only the Python constant without any context.
             print("Missing ans_type")
             return None
         try:
-            result, log = func_timeout(3, self.symbolic_solve, args=(sat_func, ans_type, name, cmds))
+            result, log = func_timeout(3, self.symbolic_solve, args=(sat_func, ans_type, name, cmds, llm_solver))
             if result is not None:
                 if not check_result(result, sat_func):
                     self.error_verify_count += 1
@@ -140,7 +140,7 @@ Return only the Python constant without any context.
                     self.success_count += 1
                     self.success_counts[ans_type] += 1
                     print("Yes! Solved for puzzle ", name)
-            if llm and result is None:
+            if llm_solver and result is None:
                 print('\nFallback to LLM!')
                 result = self.llm_solve(sat_func, ans_type, name) or self.llm_smtlib_solve(sat_func, ans_type, name, log, cmds)
             return result
@@ -151,7 +151,7 @@ Return only the Python constant without any context.
             self.error_staging_count += 1
             print("Exception -- for puzzle", name, e)
             traceback.print_exc()
-        if llm:
+        if llm_solver:
             print('\nFallback to LLM after error!')
             return self.llm_solve(sat_func, ans_type, name)
         return None
@@ -174,7 +174,7 @@ Return only the Python constant without any context.
         return f"""
 ## Current status
 
-The symbolic execution{'' if self.llm else ' alone'} currently solves:
+The symbolic execution{'' if self.llm_solver else ' alone'} currently solves:
 {self.pretty_counts()}
 with the following errors:
 - {self.timeout_staging_count} timeouts after 3 seconds at staging time (while generating the SMTLIB program)
@@ -198,7 +198,7 @@ def check_result(result, sat_func):
         return False
     return True
 
-def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, smtlib_backends = None, llm = False):
+def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, smtlib_backends = None, llm_solver = None):
     with open(puzzle_file) as f:
         puzzles = json.load(f)
     
@@ -213,7 +213,7 @@ def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, sm
         
     solver = PuzzleSolver()
     solver.total_count = total
-    solver.llm = llm
+    solver.llm_solver = llm_solver
 
     print(f"Running benchmarks on {len(puzzles)} puzzles...")
     if name_prefix:
@@ -225,7 +225,7 @@ def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, sm
         name = puzzle.get('name', 'Unknown')
         print(f"\nSolving puzzle {i+1}/{len(puzzles)}: {name}")
 
-        result = solver.solve_puzzle(puzzle, smtlib_backends, llm)
+        result = solver.solve_puzzle(puzzle, smtlib_backends, llm_solver)
     
     print(solver.pretty_stats())
 
@@ -248,4 +248,7 @@ if __name__ == "__main__":
     parser.add_argument('--llm', action='store_true', help='fallback to LLMs')
     args = parser.parse_args()
     
-    run_benchmarks(args.puzzle_file, args.name_prefix, args.answer_types, args.smtlib_backends, args.llm)
+    llm_solver = None
+    if args.llm:
+        llm_solver = LLMSolver()
+    run_benchmarks(args.puzzle_file, args.name_prefix, args.answer_types, args.smtlib_backends, llm_solver)
