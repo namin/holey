@@ -357,8 +357,12 @@ class MockSolver:
     def __init__(self):
         self.constraints = []
         self.declarations = []
+        self.extra_text = ""
         self._model = {}
-    
+
+    def add_text(self, text):
+        self.extra_text += "\n" + text
+
     def add(self, constraint):
         if str(constraint) == 'True':
             print('Skipping constant true constraint')
@@ -393,6 +397,8 @@ class MockSolver:
             if fun in smt2:
                 smt2_preambule += defn + "\n"
         smt2 = smt2_preambule + smt2
+
+        smt2 += self.extra_text
 
         flag, model = run_smt(smt2, cmd)
         self._model = model

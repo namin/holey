@@ -33,6 +33,15 @@ class PuzzleSolver:
         self.error_smt_var_count = 0
         self.error_unsupported_answer_type = 0
 
+    def symbolic_solve1(self, typ, sat_func: str, ans_type: str, name: str, cmds, llm_solver) -> Optional[str]:
+        sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver)
+        tracer = sym_var.tracer
+        with capture_output() as captured:
+            solution = tracer.solution()
+        log = captured.getvalue()
+        print(log)
+        return tracer, sym_var, solution, log
+
     def symbolic_solve(self, sat_func: str, ans_type: str, name: str, cmds, llm_solver) -> Optional[str]:
         typ = None
         if ans_type == 'int':
@@ -46,12 +55,11 @@ class PuzzleSolver:
 
         self.count += 1
         self.counts[ans_type] += 1
-        sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver)
-        tracer = sym_var.tracer
-        with capture_output() as captured:
-            solution = tracer.solution()
-        log = captured.getvalue()
-        print(log)
+        tracer, sym_var, solution, log = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=None)
+        if llm_solver and solution is None:
+            tracer_llm, sym_var_llm, solution_llm, log_llm = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=llm_solver)
+            if solution is not None:
+                tracer, sym_var, solution, log = tracer_llm, sym_var_llm, solution_llm, log_llm
         if solution is None:
             print("Could not find any solution for puzzle " + name)
             self.error_smt_count += 1
@@ -78,7 +86,7 @@ class PuzzleSolver:
             print("Missing ans_type")
             return None
         try:
-            result, log = func_timeout(3, self.symbolic_solve, args=(sat_func, ans_type, name, cmds, llm_solver))
+            result, log = func_timeout(20 if llm_solver else 3, self.symbolic_solve, args=(sat_func, ans_type, name, cmds, llm_solver))
             if result is not None:
                 if not check_result(result, sat_func):
                     self.error_verify_count += 1

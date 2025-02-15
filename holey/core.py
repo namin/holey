@@ -55,9 +55,7 @@ class SymbolicTracer:
             constraint = truthy(constraint).z3_expr
             
         if self.llm_solver:
-            refinements = self.llm_solver.get_constraint_refinements(constraint)
-            for r in refinements:
-                self.backend.solver.add(r)
+            self.llm_solver.add_constraint_refinements(constraint, self.backend)
                 
         if self.path_conditions:
             constraint = self.backend.Implies(

@@ -86,7 +86,7 @@ Return only True or False without explanation."""
         except Exception as e:
             return True  # Default to original behavior
             
-    def get_constraint_refinements(self, constraints, attempt=0):
+    def add_constraint_refinements(self, constraints, backend, attempt=0):
         """Get LLM suggestions for refining constraints"""
         prompt = f"""These SMT constraints are challenging to solve:
 {constraints}
@@ -106,9 +106,9 @@ Return only SMT-LIB constraints without explanation."""
                 llm_generate(prompt, 
                            temperature=self.temperature)
             )
-            return [parse_smtlib(s) for s in suggestions]
         except:
-            return []
+            suggestions = []
+        backend.solver.add_text("\n".join(suggestions))
             
     def get_pattern_guidance(self, examples, problem_type=None):
         """Get LLM insights from solved examples"""
