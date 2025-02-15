@@ -22,9 +22,20 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest>=6.0"]
+test = [
+    "pytest>=6.0",
+    "numpy>=1.21.0",
+    "matplotlib>=3.4.0",
+]
 ollama = ["ollama"]
 anthropic = ["anthropic"]
+all = [
+    "pytest>=6.0",
+    "numpy>=1.21.0",
+    "matplotlib>=3.4.0",
+    "ollama",
+    "anthropic"
+]
 
 [project.urls]
 "Homepage" = "https://github.com/namin/holey"
