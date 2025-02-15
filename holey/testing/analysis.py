@@ -13,23 +13,41 @@ import json
 class ResultAnalyzer:
     def __init__(self, results: Dict[str, Any]):
         self.results = results
-        self.strategy_data = defaultdict(list)
+        self.strategy_data = defaultdict(lambda: {
+            'success_rates': [],
+            'times': [],
+            'errors': defaultdict(int)
+        })
         self._process_results()
 
     def _process_results(self):
         """Process raw results into analyzable data"""
-        for strategy, attempts in self.results['by_strategy'].items():
-            self.strategy_data[strategy] = {
-                'success_rates': [],
-                'times': [],
-                'errors': defaultdict(int)
-            }
-            
-            for attempt in attempts:
-                self.strategy_data[strategy]['success_rates'].append(int(attempt['success']))
-                self.strategy_data[strategy]['times'].append(attempt['time_taken'])
-                if not attempt['success'] and attempt.get('error'):
-                    self.strategy_data[strategy]['errors'][attempt['error']] += 1
+        if 'by_strategy' in self.results:
+            # Process results in the new format
+            for strategy, stats in self.results['by_strategy'].items():
+                self.strategy_data[strategy]['success_rates'].append(
+                    float(stats.get('success_rate', 0))
+                )
+                self.strategy_data[strategy]['times'].append(
+                    float(stats.get('avg_time', 0))
+                )
+                
+                if 'errors' in stats:
+                    for error, count in stats['errors'].items():
+                        self.strategy_data[strategy]['errors'][error] += count
+        else:
+            # Process results in the old format
+            for strategy, attempts in self.results.items():
+                for attempt in attempts:
+                    if isinstance(attempt, dict):
+                        self.strategy_data[strategy]['success_rates'].append(
+                            int(attempt.get('success', False))
+                        )
+                        self.strategy_data[strategy]['times'].append(
+                            float(attempt.get('time_taken', 0))
+                        )
+                        if not attempt.get('success') and 'error' in attempt:
+                            self.strategy_data[strategy]['errors'][attempt['error']] += 1
 
     def analyze_strategy_performance(self) -> Dict[str, Any]:
         """Analyze detailed strategy performance"""
@@ -40,8 +58,8 @@ class ResultAnalyzer:
             avg_time = np.mean(data['times'])
             
             # Calculate stability metrics
-            time_std = np.std(data['times'])
-            success_consistency = np.std(data['success_rates'])
+            time_std = np.std(data['times']) if data['times'] else 0
+            success_consistency = np.std(data['success_rates']) if data['success_rates'] else 0
             
             analysis[strategy] = {
                 'success_rate': success_rate,
@@ -56,18 +74,6 @@ class ResultAnalyzer:
             }
             
         return analysis
-
-    def analyze_correlations(self) -> Dict[str, float]:
-        """Analyze correlations between metrics"""
-        correlations = {}
-        
-        for strategy, data in self.strategy_data.items():
-            # Time vs success correlation
-            if len(data['success_rates']) > 1 and len(data['times']) > 1:
-                corr = np.corrcoef(data['success_rates'], data['times'])[0, 1]
-                correlations[f'{strategy}_time_vs_success'] = corr
-                
-        return correlations
 
     def generate_plots(self, output_dir: str = 'analysis'):
         """Generate analysis plots"""
@@ -106,16 +112,18 @@ class ResultAnalyzer:
         labels = []
         
         for i, (strategy, data) in enumerate(self.strategy_data.items()):
-            positions.append(i)
-            times.append(data['times'])
-            labels.append(strategy)
+            if data['times']:  # Only plot if we have timing data
+                positions.append(i)
+                times.append(data['times'])
+                labels.append(strategy)
             
-        plt.boxplot(times, positions=positions, labels=labels)
-        plt.title('Solving Time Distribution by Strategy')
-        plt.ylabel('Time (seconds)')
-        plt.yscale('log')
-        
-        plt.savefig(output_path)
+        if times:  # Only create plot if we have data
+            plt.boxplot(times, positions=positions, labels=labels)
+            plt.title('Solving Time Distribution by Strategy')
+            plt.ylabel('Time (seconds)')
+            plt.yscale('log')
+            
+            plt.savefig(output_path)
         plt.close()
 
     def _plot_error_distribution(self, output_path: Path):
@@ -128,29 +136,33 @@ class ResultAnalyzer:
             error_types.update(data['errors'].keys())
         error_types = list(error_types)
         
-        data = []
-        for strategy in strategies:
-            strategy_errors = self.strategy_data[strategy]['errors']
-            data.append([strategy_errors[error] for error in error_types])
+        if error_types:  # Only create plot if we have errors to show
+            data = []
+            for strategy in strategies:
+                strategy_errors = self.strategy_data[strategy]['errors']
+                data.append([strategy_errors.get(error, 0) for error in error_types])
+                
+            data = np.array(data)
             
-        data = np.array(data)
-        
-        bottom = np.zeros(len(strategies))
-        for i, error in enumerate(error_types):
-            plt.bar(strategies, data[:, i], bottom=bottom, label=error)
-            bottom += data[:, i]
+            bottom = np.zeros(len(strategies))
+            for i, error in enumerate(error_types):
+                plt.bar(strategies, data[:, i], bottom=bottom, label=error)
+                bottom += data[:, i]
+                
+            plt.title('Error Distribution by Strategy')
+            plt.ylabel('Number of Errors')
+            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+            plt.tight_layout()
             
-        plt.title('Error Distribution by Strategy')
-        plt.ylabel('Number of Errors')
-        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-        plt.tight_layout()
-        
-        plt.savefig(output_path)
+            plt.savefig(output_path)
         plt.close()
 
     def _plot_strategy_comparison(self, output_path: Path):
         """Plot multi-metric strategy comparison"""
         strategies = list(self.strategy_data.keys())
+        if not strategies:  # Don't create plot if no data
+            return
+            
         metrics = ['Success Rate', 'Avg Time', 'Time Stability', 'Success Consistency']
         
         performance = self.analyze_strategy_performance()
@@ -162,15 +174,19 @@ class ResultAnalyzer:
             row = [
                 perf['success_rate'],
                 1.0 / (1.0 + perf['avg_time']),  # Inverse time (higher is better)
-                perf['time_stability'],
-                perf['success_consistency']
+                perf.get('time_stability', 0),
+                perf.get('success_consistency', 0)
             ]
             data.append(row)
             
         data = np.array(data)
         
+        # Avoid division by zero in normalization
+        data_range = data.max(axis=0) - data.min(axis=0)
+        data_range[data_range == 0] = 1  # Avoid division by zero
+        
         # Normalize each metric to [0,1]
-        data_normalized = (data - data.min(axis=0)) / (data.max(axis=0) - data.min(axis=0))
+        data_normalized = (data - data.min(axis=0)) / data_range
         
         # Plot radar chart
         angles = np.linspace(0, 2*np.pi, len(metrics), endpoint=False)
@@ -194,31 +210,29 @@ class ResultAnalyzer:
         """Generate insights from the analysis"""
         insights = []
         performance = self.analyze_strategy_performance()
-        correlations = self.analyze_correlations()
+        
+        if not performance:  # No insights if no data
+            return ["No performance data available for analysis"]
         
         # Strategy insights
         best_strategy = max(performance.items(), key=lambda x: x[1]['success_rate'])[0]
         fastest_strategy = min(performance.items(), key=lambda x: x[1]['avg_time'])[0]
-        most_stable = max(performance.items(), key=lambda x: x[1]['time_stability'])[0]
+        most_stable = max(performance.items(), key=lambda x: x[1].get('time_stability', 0))[0]
         
         insights.append(f"Best performing strategy: {best_strategy} "
                        f"({performance[best_strategy]['success_rate']:.2%} success rate)")
         insights.append(f"Fastest strategy: {fastest_strategy} "
                        f"({performance[fastest_strategy]['avg_time']:.2f}s average)")
         insights.append(f"Most stable strategy: {most_stable} "
-                       f"(stability score: {performance[most_stable]['time_stability']:.2f})")
+                       f"(stability score: {performance[most_stable].get('time_stability', 0):.2f})")
         
-        # Correlation insights
-        for metric, corr in correlations.items():
-            if abs(corr) > 0.7:
-                insights.append(f"Strong correlation ({corr:.2f}) found in {metric}")
-                
         # Error patterns
         for strategy, data in performance.items():
-            if data['common_errors']:
-                top_error, count = list(data['common_errors'].items())[0]
-                insights.append(f"{strategy}: Most common error '{top_error}' "
-                              f"occurred {count} times")
+            if data.get('common_errors'):
+                errors = data['common_errors']
+                top_error = list(errors.items())[0]
+                insights.append(f"{strategy}: Most common error '{top_error[0]}' "
+                              f"occurred {top_error[1]} times")
                 
         return insights
 
@@ -235,11 +249,6 @@ class ResultAnalyzer:
         with open(output_dir / 'performance.json', 'w') as f:
             json.dump(performance, f, indent=2)
             
-        # Save correlations
-        correlations = self.analyze_correlations()
-        with open(output_dir / 'correlations.json', 'w') as f:
-            json.dump(correlations, f, indent=2)
-            
         # Save insights
         insights = self.generate_insights()
         with open(output_dir / 'insights.md', 'w') as f:
@@ -252,14 +261,16 @@ class ResultAnalyzer:
         report = ["# Test Results Analysis Report\n"]
         
         # Overall statistics
-        report.append("## Overall Statistics\n")
-        total_tests = sum(len(data['success_rates']) 
-                         for data in self.strategy_data.values())
-        total_success = sum(sum(data['success_rates']) 
-                          for data in self.strategy_data.values())
+        total_attempts = sum(len(data['success_rates']) 
+                           for data in self.strategy_data.values())
+        total_successes = sum(sum(1 for s in data['success_rates'] if s > 0.5)
+                            for data in self.strategy_data.values())
         
-        report.append(f"Total tests run: {total_tests}")
-        report.append(f"Overall success rate: {total_success/total_tests:.2%}\n")
+        report.append("## Overall Statistics\n")
+        if total_attempts > 0:
+            report.append(f"- Total attempts: {total_attempts}")
+            report.append(f"- Total successes: {total_successes}")
+            report.append(f"- Overall success rate: {total_successes/total_attempts:.2%}\n")
         
         # Strategy performance
         report.append("## Strategy Performance\n")
@@ -270,22 +281,17 @@ class ResultAnalyzer:
             report.append(f"- Average time: {stats['avg_time']:.2f}s")
             report.append(f"- Time stability: {stats['time_stability']:.2f}")
             report.append(f"- Success consistency: {stats['success_consistency']:.2f}")
-            report.append("\nCommon errors:")
-            for error, count in stats['common_errors'].items():
-                report.append(f"- {error}: {count} occurrences")
-            report.append("")
             
-        # Correlations
-        report.append("## Metric Correlations\n")
-        correlations = self.analyze_correlations()
-        for metric, corr in correlations.items():
-            report.append(f"- {metric}: {corr:.2f}")
-        report.append("")
+            if stats['common_errors']:
+                report.append("\nCommon errors:")
+                for error, count in stats['common_errors'].items():
+                    report.append(f"- {error}: {count} occurrences")
+            report.append("")
         
         # Insights
         report.append("## Key Insights\n")
         insights = self.generate_insights()
         for insight in insights:
             report.append(f"- {insight}")
-            
+        
         return "\n".join(report)

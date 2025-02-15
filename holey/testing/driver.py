@@ -85,16 +85,20 @@ class TestDriver:
                 'timestamp': datetime.now().isoformat(),
                 'tag': tag,
                 'num_cases': len(test_cases),
-                'results': results,
+                'by_strategy': results,  # Store full results
                 'analysis_dir': str(analysis_dir),
                 'status': 'completed'
             }
             
-            # Track improvements/regressions
+            # Track improvements/regressions if we have previous runs
             if self.history['runs']:
                 last_run = self.history['runs'][-1]
-                improvements = self._analyze_improvements(last_run['results'], results)
-                run_record['improvements'] = improvements
+                if 'by_strategy' in last_run:
+                    improvements = self._analyze_improvements(
+                        last_run['by_strategy'], 
+                        results
+                    )
+                    run_record['improvements'] = improvements
             
             self.history['runs'].append(run_record)
             self.save_history()
@@ -129,115 +133,55 @@ class TestDriver:
             'overall': 'neutral'
         }
         
-        # Compare success rates
-        for strategy in old_results['by_strategy']:
-            if strategy in new_results['by_strategy']:
-                old_rate = old_results['by_strategy'][strategy]['success_rate']
-                new_rate = new_results['by_strategy'][strategy]['success_rate']
-                
-                change = new_rate - old_rate
-                improvements['success_rate'][strategy] = {
-                    'change': change,
-                    'status': 'improved' if change > 0 else 'regressed' if change < 0 else 'unchanged'
-                }
-                
-        # Compare execution times
-        for strategy in old_results['by_strategy']:
-            if strategy in new_results['by_strategy']:
-                old_time = old_results['by_strategy'][strategy]['avg_time']
-                new_time = new_results['by_strategy'][strategy]['avg_time']
-                
-                change = old_time - new_time  # Positive means faster
-                improvements['speed'][strategy] = {
-                    'change': change,
-                    'status': 'improved' if change > 0 else 'regressed' if change < 0 else 'unchanged'
-                }
-                
-        # Determine overall status
-        improved_count = sum(1 for metric in improvements.values() 
-                           if isinstance(metric, dict) and 
-                           any(v['status'] == 'improved' for v in metric.values()))
-        regressed_count = sum(1 for metric in improvements.values()
-                            if isinstance(metric, dict) and 
-                            any(v['status'] == 'regressed' for v in metric.values()))
-                            
-        if improved_count > regressed_count:
-            improvements['overall'] = 'improved'
-        elif regressed_count > improved_count:
-            improvements['overall'] = 'regressed'
-        
-        return improvements
+        try:
+            # Compare success rates for each strategy
+            for strategy in old_results:
+                if strategy in new_results:
+                    # Get success rates
+                    old_successes = sum(1 for a in old_results[strategy] if a.get('success', False))
+                    old_total = len(old_results[strategy])
+                    old_rate = old_successes / old_total if old_total > 0 else 0
 
-    def analyze_history(self) -> Dict[str, Any]:
-        """Analyze test history for trends"""
-        analysis = {
-            'total_runs': len(self.history['runs']),
-            'success_rate': {},
-            'trends': {},
-            'recommendations': []
-        }
-        
-        # Calculate success rates over time
-        for strategy in ['symbolic', 'llm', 'hybrid']:
-            rates = []
-            for run in self.history['runs']:
-                if run['status'] == 'completed':
-                    strategy_results = run['results']['by_strategy'].get(strategy, {})
-                    rate = strategy_results.get('success_rate', 0)
-                    rates.append(rate)
+                    new_successes = sum(1 for a in new_results[strategy] if a.get('success', False))
+                    new_total = len(new_results[strategy])
+                    new_rate = new_successes / new_total if new_total > 0 else 0
+                    
+                    change = new_rate - old_rate
+                    improvements['success_rate'][strategy] = {
+                        'change': change,
+                        'status': 'improved' if change > 0 else 'regressed' if change < 0 else 'unchanged'
+                    }
+                    
+                    # Compare speeds
+                    old_time = sum(a.get('time_taken', 0) for a in old_results[strategy]) / old_total
+                    new_time = sum(a.get('time_taken', 0) for a in new_results[strategy]) / new_total
+                    
+                    time_change = old_time - new_time  # Positive means faster
+                    improvements['speed'][strategy] = {
+                        'change': time_change,
+                        'status': 'improved' if time_change > 0 else 'regressed' if time_change < 0 else 'unchanged'
+                    }
             
-            if rates:
-                analysis['success_rate'][strategy] = {
-                    'current': rates[-1],
-                    'trend': 'improving' if rates[-1] > rates[0] else 'declining',
-                    'stability': self._calculate_stability(rates)
-                }
+            # Determine overall status
+            improved_count = sum(1 for metric in improvements.values() 
+                               if isinstance(metric, dict) and 
+                               any(v['status'] == 'improved' for v in metric.values()))
+            regressed_count = sum(1 for metric in improvements.values()
+                                if isinstance(metric, dict) and 
+                                any(v['status'] == 'regressed' for v in metric.values()))
+                                
+            if improved_count > regressed_count:
+                improvements['overall'] = 'improved'
+            elif regressed_count > improved_count:
+                improvements['overall'] = 'regressed'
                 
-        # Generate recommendations
-        self._generate_historical_recommendations(analysis)
-        
-        return analysis
-
-    def _calculate_stability(self, values: List[float]) -> str:
-        """Calculate stability metric from a series of values"""
-        if len(values) < 2:
-            return 'unknown'
+            return improvements
             
-        variations = [abs(b - a) for a, b in zip(values[:-1], values[1:])]
-        avg_variation = sum(variations) / len(variations)
-        
-        if avg_variation < 0.05:
-            return 'very_stable'
-        elif avg_variation < 0.1:
-            return 'stable'
-        elif avg_variation < 0.2:
-            return 'unstable'
-        else:
-            return 'very_unstable'
-
-    def _generate_historical_recommendations(self, analysis: Dict[str, Any]):
-        """Generate recommendations based on historical analysis"""
-        recommendations = []
-        
-        # Check for unstable strategies
-        for strategy, stats in analysis['success_rate'].items():
-            if stats['stability'] in ['unstable', 'very_unstable']:
-                recommendations.append(
-                    f"Strategy '{strategy}' shows high variability. Consider:"
-                    f"\n- Adding more test cases to better understand failure patterns"
-                    f"\n- Implementing progressive complexity handling"
-                    f"\n- Adding better error recovery mechanisms"
-                )
-                
-        # Check for declining trends
-        declining = [s for s, stats in analysis['success_rate'].items() 
-                    if stats['trend'] == 'declining']
-        if declining:
-            recommendations.append(
-                f"Declining performance in strategies: {', '.join(declining)}. Consider:"
-                f"\n- Reviewing recent changes that might have affected performance"
-                f"\n- Adding regression tests for previously successful cases"
-                f"\n- Implementing strategy refinement based on failure patterns"
-            )
-            
-        analysis['recommendations'] = recommendations
+        except Exception as e:
+            self.logger.error(f"Error analyzing improvements: {e}")
+            return {
+                'success_rate': {},
+                'speed': {},
+                'overall': 'error',
+                'error': str(e)
+            }
