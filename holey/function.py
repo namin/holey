@@ -9,6 +9,7 @@ Allows defining a function with holes that get synthesized based on:
 
 from typing import Any, Dict, List, Optional, Callable, get_type_hints
 import inspect
+import ast
 from dataclasses import dataclass
 from .synthesis import SymbolicHole
 from .core import SymbolicTracer, make_symbolic
@@ -43,13 +44,19 @@ class FunctionWithHoles:
         self._find_holes()
         
     def _find_holes(self):
-        """Find all holes in the function"""
-        # Get function source
-        source = inspect.getsource(self.func)
+        """Find all holes in the function via bytecode analysis"""
+        # Find all HOLE names in bytecode
+        names = list(self.func.__code__.co_names)
         
-        # TODO: Actually parse and find HOLE markers
-        # For now just handle one hole and assume its type
-        self.holes["h1"] = SymbolicHole("h1", int, self.tracer)
+        # Look for HOLE in the names
+        hole_indices = [i for i, name in enumerate(names) if name == 'HOLE']
+        print('Found holes at indices:', hole_indices)
+        
+        # Create holes
+        for i, idx in enumerate(hole_indices):
+            hole_id = f"h{i+1}"
+            # For now assume holes are ints
+            self.holes[hole_id] = SymbolicHole(hole_id, int, self.tracer)
         
     def add_test(self, inputs: Dict[str, Any], output: Any):
         """Add a test case for the function
