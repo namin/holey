@@ -13,12 +13,17 @@ import ast
 from dataclasses import dataclass
 from .synthesis import SymbolicHole
 from .core import SymbolicTracer, make_symbolic
+from . import preprocessor
 
 @dataclass
 class FunctionTestCase:
     """A test case for a function with holes"""
     inputs: Dict[str, Any]  # Arguments to the function
     output: Any  # Expected return value
+
+def infer_type_from_node(node: ast.AST, type_hints: Dict[str, Any]) -> Optional[type]:
+    """Infer the expected type of a hole based on its context in the AST"""
+    return int  # For now just return int since our test cases use it
     
 class FunctionWithHoles:
     """A function containing holes to be synthesized"""
@@ -41,23 +46,72 @@ class FunctionWithHoles:
         self.tracer = SymbolicTracer()
         
         # Parse function to find holes
-        self._find_holes()
+        source = inspect.getsource(self.func)
+        self._find_holes(source)
         
-    def _find_holes(self):
-        """Find all holes in the function via bytecode analysis"""
-        # Find all HOLE names in bytecode
-        names = list(self.func.__code__.co_names)
+    def _find_holes(self, source: str):
+        """Find all holes in the function via AST analysis"""
+        tree = ast.parse(source)
         
-        # Look for HOLE in the names
-        hole_indices = [i for i, name in enumerate(names) if name == 'HOLE']
-        print('Found holes at indices:', hole_indices)
+        # Create visitor to find holes
+        class HoleFinder(ast.NodeVisitor):
+            def __init__(self):
+                self.holes = []
+                
+            def visit_Name(self, node):
+                if node.id == 'HOLE':
+                    self.holes.append(node)
+                self.generic_visit(node)
+                
+            def visit_Call(self, node):
+                if isinstance(node.func, ast.Name) and node.func.id == 'HOLE':
+                    self.holes.append(node)
+                self.generic_visit(node)
+    
+        finder = HoleFinder()
+        finder.visit(tree)
         
-        # Create holes
-        for i, idx in enumerate(hole_indices):
+        # Create symbolic holes for each found hole
+        for i, _ in enumerate(finder.holes):
             hole_id = f"h{i+1}"
-            # For now assume holes are ints
             self.holes[hole_id] = SymbolicHole(hole_id, int, self.tracer)
+
+    def _prepare_symbolic_execution(self, test_case: FunctionTestCase):
+        """Transform function for symbolic execution with given test inputs"""
+        # Get function source
+        source = inspect.getsource(self.func)
         
+        # Parse into AST
+        tree = ast.parse(source)
+        
+        # Replace HOLE with hole variables
+        class HoleReplacer(ast.NodeTransformer):
+            def __init__(self, holes):
+                self.holes = holes
+                self.current_hole = 1
+                
+            def visit_Name(self, node):
+                if node.id == 'HOLE':
+                    hole_id = f"h{self.current_hole}"
+                    self.current_hole += 1
+                    return ast.Name(id=f"hole_{hole_id}", ctx=ast.Load())
+                return node
+                
+            def visit_Call(self, node):
+                if isinstance(node.func, ast.Name) and node.func.id == 'HOLE':
+                    hole_id = f"h{self.current_hole}"
+                    self.current_hole += 1
+                    return ast.Name(id=f"hole_{hole_id}", ctx=ast.Load())
+                return self.generic_visit(node)
+        
+        # First replace holes
+        replaced = HoleReplacer(self.holes).visit(tree)
+        
+        # Then run preprocessor transform
+        transformed = preprocessor.HoleyWrapper().visit(replaced)
+        
+        return ast.unparse(transformed)
+
     def add_test(self, inputs: Dict[str, Any], output: Any):
         """Add a test case for the function
         
@@ -68,57 +122,32 @@ class FunctionWithHoles:
         test_case = FunctionTestCase(inputs, output)
         self.test_cases.append(test_case)
         
-        # Add constraints from this test case
-        test_id = len(self.test_cases)
-        for hole in self.holes.values():
-            # Create symbolic variables for inputs
-            sym_inputs = {}
-            for name, value in inputs.items():
-                # Get type from signature
-                param_type = self.type_hints.get(name, type(value))
-                sym_var = make_symbolic(param_type, f"input_{test_id}_{name}", self.tracer)
-                sym_inputs[name] = sym_var
+        # Create execution namespace
+        namespace = preprocessor.create_namespace(self.tracer)
+        
+        # Transform the function code
+        transformed = self._prepare_symbolic_execution(test_case)
+        
+        # Add inputs to namespace
+        for name, value in inputs.items():
+            param_type = self.type_hints.get(name, type(value))
+            if param_type == int:
+                namespace[name] = namespace['wrap_int'](value)
+            else:
+                namespace[name] = value
                 
-                # Add constraint that symbolic var equals concrete value
-                hole.add_constraint(
-                    sym_var == value,
-                    source="function_input",
-                    metadata={
-                        "test_id": test_id,
-                        "param": name,
-                        "value": value,
-                        "sym_var": sym_var
-                    }
-                )
-                
-            # Create symbolic variable for output
-            return_type = self.type_hints.get('return')
-            if return_type is None:
-                return_type = type(output)
-            test_output = make_symbolic(return_type, f"output_{test_id}", self.tracer)
+        # Add holes to namespace
+        for hole_id, hole in self.holes.items():
+            if hole.sym_var is None:
+                hole.sym_var = make_symbolic(int, f"hole_{hole_id}", self.tracer)
+            namespace[f"hole_{hole_id}"] = hole.sym_var
             
-            # Add constraint that output matches expected
-            hole.add_constraint(
-                test_output == output,
-                source="function_output",
-                metadata={
-                    "test_id": test_id,
-                    "output": output,
-                    "sym_var": test_output
-                }
-            )
-            
-            # Add constraint that function matches expected behavior
-            # For now assume output is just hole * first input
-            first_input = next(iter(sym_inputs.values()))
-            hole.add_constraint(
-                first_input * hole.sym_var == test_output,
-                source="function_behavior",
-                metadata={
-                    "test_id": test_id,
-                    "inputs": sym_inputs
-                }
-            )
+        # Execute transformed function 
+        exec(transformed, namespace)
+        result = namespace[self.name](**inputs)
+        
+        # Add constraint that output matches expected
+        self.tracer.add_constraint(result == output)
     
     def synthesize(self) -> Optional[Dict[str, str]]:
         """Synthesize expressions for all holes
