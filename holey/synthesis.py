@@ -69,39 +69,72 @@ class SymbolicHole:
         self.tracer.add_constraint(condition.z3_expr)
 
     def add_test_case(self, inputs: Dict[str, Any], expected_output: Any) -> None:
-        """Add a test case that the synthesized expression must satisfy
+        """Add a test case for the hole's behavior
+        
+        For a hole that should behave like a function, test cases specify
+        input-output pairs that constrain the function's behavior.
         
         Args:
             inputs: Dict mapping input variable names to values
             expected_output: Expected result for these inputs
         """
-        # Create symbolic variables for inputs
+        # Create a fresh version of input variables for this test case
         input_vars = {}
+        test_id = len(self.constraints)
         for name, value in inputs.items():
             var_type = type(value)
-            sym_var = make_symbolic(var_type, f"test_{name}", self.tracer)
+            sym_var = make_symbolic(var_type, f"test_{test_id}_{name}", self.tracer)
             input_vars[name] = sym_var
-            
-            # Track available variables
             self.available_vars.add(name)
             
-            # Add constraint that symbolic var equals concrete value
+            # Record input constraint
             self.add_constraint(
                 sym_var == value,
                 source="test_input",
-                metadata={"var": name, "value": value}
+                metadata={
+                    "test_id": test_id,
+                    "var": name,
+                    "value": value,
+                    "sym_var": sym_var
+                }
             )
-            
-        # Add constraint that hole equals expected output
-        output_type = type(expected_output)
-        if output_type != self.type_hint:
-            raise TypeError(f"Expected output type {output_type} doesn't match hole type {self.type_hint}")
-            
+        
+        # Create a fresh version of the hole for this test case
+        test_hole = make_symbolic(self.type_hint, f"hole_{test_id}", self.tracer)
+        
+        # Add dependency between test input variables and test hole
         self.add_constraint(
-            self.sym_var == expected_output,
-            source="test_output",
-            metadata={"expected": expected_output}
+            test_hole == expected_output,
+            source="test_case",
+            metadata={
+                "test_id": test_id,
+                "inputs": input_vars,
+                "expected": expected_output,
+                "test_hole": test_hole
+            }
         )
+        
+        # Add functional constraint - hole must give same output when given same inputs
+        for prev_constraint in self.constraints:
+            if prev_constraint.source == "test_case":
+                prev_inputs = prev_constraint.metadata["inputs"]
+                prev_test_hole = prev_constraint.metadata["test_hole"]
+                
+                # If all inputs match, outputs must match
+                input_match = None
+                for name, var in input_vars.items():
+                    input_eq = (var == prev_inputs[name])
+                    if input_match is None:
+                        input_match = input_eq
+                    else:
+                        input_match = input_match & input_eq
+                
+                if input_match is not None:
+                    self.add_constraint(
+                        input_match.implies(test_hole == prev_test_hole),
+                        source="functional",
+                        metadata={"test_id": test_id}
+                    )
 
     def add_type_constraint(self, type_pred: Any) -> None:
         """Add type-based constraint on the hole
@@ -135,9 +168,15 @@ class SymbolicHole:
         return None
 
     def _smt_synthesis(self) -> Optional[str]:
-        """Try to synthesize using SMT solver"""
+        """Try to synthesize using SMT solver
+        
+        Handles two cases:
+        1. Basic holes - direct synthesis from constraints
+        2. Function holes - synthesize from input/output examples
+        """
         # Check if constraints are satisfiable
-        if not self.tracer.backend.is_sat(self.tracer.check()):
+        result = self.tracer.check()
+        if not self.tracer.backend.is_sat(result):
             return None
             
         # Get model
@@ -145,13 +184,128 @@ class SymbolicHole:
         if not model:
             return None
             
-        # Extract value for hole
+        # Try function synthesis if we have test cases
+        test_cases = [(c.metadata["inputs"], c.metadata["expected"]) 
+                      for c in self.constraints 
+                      if c.source == "test_case"]
+                      
+        if test_cases:
+            return self._synthesize_function(test_cases, model)
+            
+        # For basic holes, just get the value
         value = model[self.sym_var.name]
         if value is None:
             return None
             
-        # Convert to Python expression
-        return self._convert_to_expression(value)
+        # Convert Z3 model values to Python values
+        try:
+            if self.type_hint == int:
+                return str(getattr(value, 'as_long', lambda: value)())
+            elif self.type_hint == str:
+                if isinstance(value, str):
+                    return f'"{value}"'
+                return f'"{value.as_string()}"'
+            elif self.type_hint == bool:
+                return str(bool(value)).lower()
+        except Exception as e:
+            print(f"Error converting value {value}: {e}")
+            return None
+        return None
+
+    def _synthesize_function(self, test_cases, model) -> Optional[str]:
+        """Synthesize a function expression from test cases"""
+        if not test_cases:
+            return None
+            
+        first_case = test_cases[0]
+        if not first_case[0]:  # No inputs
+            return None
+            
+        # Handle string holes specially to avoid integer conversion
+        if self.type_hint == str:
+            input_names = list(first_case[0].keys())
+            if len(input_names) == 2:
+                # Try simple concatenation of two strings
+                name1, name2 = input_names
+                # Check all test cases for concatenation pattern
+                is_concat = True
+                for inputs, expected in test_cases:
+                    val1 = model[inputs[name1].name]
+                    val2 = model[inputs[name2].name]
+                    
+                    # Convert string values
+                    if hasattr(val1, 'as_string'):
+                        val1 = val1.as_string()
+                    elif isinstance(val1, str):
+                        val1 = val1
+                        
+                    if hasattr(val2, 'as_string'):
+                        val2 = val2.as_string()
+                    elif isinstance(val2, str):
+                        val2 = val2
+                        
+                    # Get expected value
+                    if hasattr(expected, 'name'):
+                        expected_val = model[expected.name]
+                        if hasattr(expected_val, 'as_string'):
+                            expected_val = expected_val.as_string()
+                        elif isinstance(expected_val, str):
+                            expected_val = expected_val
+                    else:
+                        expected_val = expected
+                        
+                    if val1 + val2 != expected_val:
+                        is_concat = False
+                        break
+                        
+                if is_concat:
+                    return f"{name1} + {name2}"
+            return None
+            
+        # For numeric holes, handle arithmetic relationships
+        input_name = next(iter(first_case[0].keys()))
+        pairs = []
+        
+        for inputs, expected in test_cases:
+            # Get input value
+            input_val = model[inputs[input_name].name]
+            if hasattr(input_val, 'as_long'):
+                input_val = input_val.as_long()
+            elif isinstance(input_val, (int, float)):
+                input_val = int(input_val)
+            # Get output value
+            if isinstance(expected, (int, float)):
+                output_val = int(expected)
+            elif hasattr(expected, 'name'):
+                output_val = model[expected.name]
+                if hasattr(output_val, 'as_long'):
+                    output_val = output_val.as_long()
+                elif isinstance(output_val, (int, float)):
+                    output_val = int(output_val)
+                else:
+                    return None
+            else:
+                output_val = expected
+            pairs.append((input_val, output_val))
+            
+        # Try basic arithmetic relationships
+        if not pairs:
+            return None
+            
+        first_in, first_out = pairs[0]
+        
+        # Try multiplication
+        if first_in != 0 and first_out % first_in == 0:
+            factor = first_out // first_in
+            expr = f"{input_name} * {factor}"
+            if all(in_val * factor == out_val for in_val, out_val in pairs):
+                return expr
+                
+        # Try absolute value
+        if self.type_hint == int and all(abs(in_val) == out_val for in_val, out_val in pairs):
+            return f"abs({input_name})"
+            
+        return None
 
     def _llm_synthesis(self) -> Optional[str]:
         """Try to synthesize using LLM guidance"""
@@ -165,25 +319,6 @@ class SymbolicHole:
             return expr
         except:
             return None
-
-    def _generate_synthesis_prompt(self) -> str:
-        """Generate prompt for LLM synthesis"""
-        prompt = [
-            f"Synthesize a Python expression of type {self.type_hint.__name__}",
-            "that satisfies these constraints:\n"
-        ]
-        
-        # Add constraints
-        for c in self.constraints:
-            prompt.append(f"- {c.condition} (from {c.source})")
-            
-        # Add available variables
-        if self.available_vars:
-            prompt.append("\nAvailable variables:")
-            for var in sorted(self.available_vars):
-                prompt.append(f"- {var}")
-                
-        return "\n".join(prompt)
 
     def _verify_expression(self, expr: str) -> bool:
         """Verify if an expression satisfies all constraints"""

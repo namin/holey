@@ -123,6 +123,13 @@ class SymbolicBool:
         if self.concrete is not None:
             return SymbolicBool(not self.concrete, tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.Not(self.z3_expr), tracer=self.tracer)
+        
+    def implies(self, other):
+        """p implies q is equivalent to (not p) or q"""
+        other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicBool(not self.concrete or other.concrete, tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.Implies(self.z3_expr, other.z3_expr), tracer=self.tracer)
     
 class SymbolicInt:
     """Wrapper class for symbolic integer expressions"""
