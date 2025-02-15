@@ -10,6 +10,29 @@ class LLMSolver:
         self.context = {}  # Store problem context and history
         self.cache = {}  # Cache LLM responses
 
+    def _parse_llm_response(self, response: str, ans_type: str) -> Optional[Any]:
+        """Parse LLM response by evaluating as Python"""
+        # Clean the response
+        response = response.strip()
+        if '```' in response:
+            # Extract from code block if present
+            response = response.split('```')[1]
+            if 'python' in response:
+                response = response.split('\n', 1)[1]
+            response = response.strip('`').strip()
+
+        try:
+            # Let Python do the work
+            result = eval(response)
+            # Verify type matches
+            if ans_type == 'str' and isinstance(result, str):
+                return result
+            elif ans_type == 'int' and isinstance(result, int):
+                return result
+        except:
+            pass
+        return None
+
     def smtlib_solve(self, sat_func: str, ans_type: str, name: str, log: str, check_result, cmds=None) -> Optional[str]:
         print('Asking LLM for SMTLIB')
         prompt = f"""Return a modified SMTLIB z3 program that captures the intent of the `sat` function of puzzle {name}:
@@ -45,20 +68,17 @@ Return only the Python constant without any context.
         results = extract_code_blocks(llm_generate(prompt))
         for result in results:
             print('LLM result', result)
-            if ans_type == 'int':
-                try:
-                    result = int(result)
-                except ValueError as e:
-                    print('LLM returned bad type for int', e)
-                    break
-            elif ans_type == 'str':
-                if result and result[0] in ["'", '"']:
-                    result = result[1:-1] # TODO
-            if not check_result(result, sat_func):
+            
+            parsed = self._parse_llm_response(result, ans_type)
+            if parsed is None:
+                print('LLM returned unparseable response', result)
+                continue
+                
+            if not check_result(parsed, sat_func):
                 print('LLM result fails to verify for puzzle '+name)
             else:
                 print('LLM result verifies for puzzle '+name)
-                return result
+                return parsed
         return None
         
     def get_branch_guidance(self, condition, path_conditions):
