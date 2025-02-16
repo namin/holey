@@ -227,10 +227,10 @@ def vary(sat_func):
     if len(unique_constants) == 1:
         print('One large constant for extrapolation')
         constant = unique_constants.pop()
-        # Replace the constant with '3' wherever it appears
-        varied_sat_func = re.sub(rf'\b{constant}\b', '3', sat_func)
+        smaller = '3'
+        varied_sat_func = re.sub(rf'\b{constant}\b', smaller, sat_func)
         if sat_func != varied_sat_func:
-            return varied_sat_func, f'replaced {constant} with 3'
+            return varied_sat_func, f'replaced {constant} with {smaller}'
     else:
         print('Too many constants for extrapolation')
 
