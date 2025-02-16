@@ -11,6 +11,22 @@ class LLMSolver:
         self.cache = {}  # Cache LLM responses
 
     def extrapolate(self, puzzle_small, puzzle_large, reason, result_small, check_result, cmds=None):
+        print('Extrapolating...')
+        sat_func_small = puzzle_small['sat_function']
+        sat_func_large = puzzle_large.get('sat_function', puzzle_large.get('sat', ''))
+        prompt = f"""Given the smaller satisfiability predicate:
+```python
+{sat_func_small}
+```
+a result is `{result_small}`, then what is a result for the bigger satisfiability predicate:
+```python
+{sat_func_large}
+```
+?
+Answer with just a Python expression that evaluates to the bigger result.
+"""
+        response = llm_generate(prompt)
+        print(response)
         return None
 
     def smtlib_solve(self, sat_func: str, ans_type: str, name: str, log: str, check_result, cmds=None) -> Optional[str]:
