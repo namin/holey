@@ -1,5 +1,6 @@
 from holey import drive_sat, LLMSolver
 import copy
+import re
 import json
 from func_timeout import func_timeout, FunctionTimedOut
 import traceback
@@ -204,9 +205,23 @@ def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, sm
     print(solver.pretty_stats())
 
 def vary(sat_func):
-    varied_sat_func = sat_func.replace('1000', '3')
-    if sat_func != varied_sat_func:
-        return varied_sat_func, 'replaced 1000 with 3'
+    # Find all large constants
+    constants = re.findall(r'\d\d\d+', sat_func)
+
+    # Identify unique constants
+    unique_constants = set(constants)
+
+    # Only proceed if there is exactly one unique constant
+    if len(unique_constants) == 1:
+        print('One large constant for extrapolation')
+        constant = unique_constants.pop()
+        # Replace the constant with '3' wherever it appears
+        varied_sat_func = re.sub(rf'\b{constant}\b', '3', sat_func)
+        if sat_func != varied_sat_func:
+            return varied_sat_func, f'replaced {constant} with 3'
+    else:
+        print('Too many constants for extrapolation')
+
     return None, None
 
 if __name__ == "__main__":
