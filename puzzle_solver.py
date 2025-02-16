@@ -34,6 +34,9 @@ class PuzzleSolver:
         self.error_smt_count = 0
         self.error_smt_var_count = 0
         self.error_unsupported_answer_type = 0
+        self.extrapolate_small_count = 0
+        self.extrapolate_small_success_count = 0
+        self.extrapolate_large_success_count = 0
 
     def symbolic_solve1(self, typ, sat_func: str, ans_type: str, name: str, cmds, llm_solver) -> Optional[str]:
         sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver)
@@ -105,17 +108,21 @@ class PuzzleSolver:
             if not reason and llm_solver and result is None:
                 varied_puzzle_sat_func, reason = vary(sat_func)
                 if varied_puzzle_sat_func is not None:
+                    self.extrapolate_small_count += 1
                     print('Solving simpler variation', reason)
                     varied_puzzle = copy.deepcopy(puzzle_data)
                     varied_puzzle['sat_function'] = varied_puzzle_sat_func
                     varied_result = self.solve_puzzle(varied_puzzle, cmds, llm_solver, reason=reason)
-                    result = llm_solver.extrapolate(varied_puzzle_sat_func, sat_func, reason, varied_result, ans_type, name, check_result)
-                    if result is not None:
-                        self.success_count += 1
-                        self.success_counts[ans_type] += 1
-                        print("Yes! Solved via extrapolation for puzzle ", name)
-                        return result
-            if llm_solver and result is None:
+                    if varied_result is not None:
+                        self.extrapolate_small_success_count += 1
+                        result = llm_solver.extrapolate(varied_puzzle_sat_func, sat_func, reason, varied_result, ans_type, name, check_result)
+                        if result is not None:
+                            self.extrapolate_large_success_count += 1
+                            self.success_count += 1
+                            self.success_counts[ans_type] += 1
+                            print("Yes! Solved via extrapolation for puzzle ", name)
+                            return result
+            if False and llm_solver and result is None:
                 print('\nFallback to LLM!')
                 result = self.llm_solver.solve_end2end(sat_func, ans_type, name, check_result) or self.llm_solver.smtlib_solve(sat_func, ans_type, name, log, check_result, cmds)
             return result
@@ -126,7 +133,7 @@ class PuzzleSolver:
             self.error_staging_count += 1
             print("Exception -- for puzzle", name, e)
             traceback.print_exc()
-        if llm_solver:
+        if False and llm_solver:
             print('\nFallback to LLM after error!')
             return self.llm_solver.solve_end2end(sat_func, ans_type, name, check_result)
         return None
@@ -158,6 +165,11 @@ with the following errors:
 - {self.error_smt_count + self.error_smt_var_count} SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
 - {self.total_count-self.count} (out of {self.total_count}) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
+
+### Extrapolation
+- {self.extrapolate_small_count} smaller problems tried
+- {self.extrapolate_small_success_count} successes on smaller problem
+- {self.extrapolate_large_success_count} successful extrapolations
 """
 
 def check_result(result, sat_func):
