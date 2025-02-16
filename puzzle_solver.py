@@ -1,4 +1,5 @@
 from holey import drive_sat, LLMSolver
+import copy
 import json
 from func_timeout import func_timeout, FunctionTimedOut
 import traceback
@@ -42,7 +43,7 @@ class PuzzleSolver:
         print(log)
         return tracer, sym_var, solution, log
 
-    def symbolic_solve(self, sat_func: str, ans_type: str, name: str, cmds, llm_solver) -> Optional[str]:
+    def symbolic_solve(self, sat_func: str, ans_type: str, name: str, cmds, llm_solver, counting=True) -> Optional[str]:
         typ = None
         if ans_type == 'int':
             typ = int
@@ -53,20 +54,23 @@ class PuzzleSolver:
             self.error_unsupported_answer_type += 1
             return None
 
-        self.count += 1
-        self.counts[ans_type] += 1
+        if counting:
+            self.count += 1
+            self.counts[ans_type] += 1
         tracer, sym_var, solution, log = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=None)
-        if llm_solver and solution is None:
+        if False and llm_solver and solution is None:
             tracer_llm, sym_var_llm, solution_llm, log_llm = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=llm_solver)
             if solution is not None:
                 tracer, sym_var, solution, log = tracer_llm, sym_var_llm, solution_llm, log_llm
         if solution is None:
             print("Could not find any solution for puzzle " + name)
-            self.error_smt_count += 1
+            if counting:
+                self.error_smt_count += 1
             return None, log
         solution_var = tracer.solution_var(solution, sym_var)
         if solution_var is None:
-            self.error_smt_var_count += 1
+            if counting:
+                self.error_smt_var_count += 1
             print('Solution', solution)
             print("Could not find any solution var")
             return None, log
@@ -74,7 +78,7 @@ class PuzzleSolver:
         print("Found solution", result)
         return result, log
 
-    def solve_puzzle(self, puzzle_data: Any, cmds, llm_solver) -> Optional[str]:
+    def solve_puzzle(self, puzzle_data: Any, cmds, llm_solver, reason=None) -> Optional[str]:
         name = puzzle_data.get('name', '')
         sat_func = puzzle_data.get('sat_function', puzzle_data.get('sat', ''))
         if not sat_func:
@@ -86,16 +90,25 @@ class PuzzleSolver:
             print("Missing ans_type")
             return None
         try:
-            result, log = func_timeout(20 if llm_solver else 3, self.symbolic_solve, args=(sat_func, ans_type, name, cmds, llm_solver))
+            result, log = func_timeout(20 if llm_solver else 3, self.symbolic_solve, args=(sat_func, ans_type, name, cmds, llm_solver, not reason))
             if result is not None:
                 if not check_result(result, sat_func):
                     self.error_verify_count += 1
                     print("WARNING: Solution verification failed for puzzle "+name)
                     result = None
                 else:
-                    self.success_count += 1
-                    self.success_counts[ans_type] += 1
-                    print("Yes! Solved for puzzle ", name)
+                    if not reason:
+                        self.success_count += 1
+                        self.success_counts[ans_type] += 1
+                        print("Yes! Solved for puzzle ", name)
+            if not reason and llm_solver and result is None:
+                varied_puzzle_sat_func, reason = vary(sat_func)
+                if varied_puzzle_sat_func is not None:
+                    print('Solving simpler variation', reason)
+                    varied_puzzle = copy.deepcopy(puzzle_data)
+                    varied_puzzle['sat_function'] = varied_puzzle_sat_func
+                    varied_result = self.solve_puzzle(varied_puzzle, cmds, llm_solver, reason=reason)
+                    result = llm_solver.extrapolate(varied_puzzle, puzzle_data, reason, varied_result, check_result, cmds)
             if llm_solver and result is None:
                 print('\nFallback to LLM!')
                 result = self.llm_solver.solve_end2end(sat_func, ans_type, name, check_result) or self.llm_solver.smtlib_solve(sat_func, ans_type, name, log, check_result, cmds)
@@ -182,8 +195,14 @@ def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, sm
         print(f"\nSolving puzzle {i+1}/{len(puzzles)}: {name}")
 
         result = solver.solve_puzzle(puzzle, smtlib_backends, llm_solver)
-    
+
     print(solver.pretty_stats())
+
+def vary(sat_func):
+    varied_sat_func = sat_func.replace('1000', '3')
+    if sat_func != varied_sat_func:
+        return varied_sat_func, 'replaced 1000 with 3'
+    return None, None
 
 if __name__ == "__main__":
     import argparse

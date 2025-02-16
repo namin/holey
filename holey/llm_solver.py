@@ -10,6 +10,9 @@ class LLMSolver:
         self.context = {}  # Store problem context and history
         self.cache = {}  # Cache LLM responses
 
+    def extrapolate(self, puzzle_small, puzzle_large, reason, result_small, check_result, cmds=None):
+        return None
+
     def smtlib_solve(self, sat_func: str, ans_type: str, name: str, log: str, check_result, cmds=None) -> Optional[str]:
         print('Asking LLM for SMTLIB')
         prompt = f"""Return a modified SMTLIB z3 program that captures the intent of the `sat` function of puzzle {name}:
