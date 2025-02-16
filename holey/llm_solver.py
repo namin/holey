@@ -10,10 +10,8 @@ class LLMSolver:
         self.context = {}  # Store problem context and history
         self.cache = {}  # Cache LLM responses
 
-    def extrapolate(self, puzzle_small, puzzle_large, reason, result_small, check_result, cmds=None):
+    def extrapolate(self, sat_func_small, sat_func_large, reason, result_small, ans_type: str, name: str, check_result) -> Optional[str]:
         print('Extrapolating...')
-        sat_func_small = puzzle_small['sat_function']
-        sat_func_large = puzzle_large.get('sat_function', puzzle_large.get('sat', ''))
         prompt = f"""Given the smaller satisfiability predicate:
 ```python
 {sat_func_small}
@@ -23,11 +21,9 @@ a result is `{result_small}`, then what is a result for the bigger satisfiabilit
 {sat_func_large}
 ```
 ?
-Answer with just a Python expression that evaluates to the bigger result.
+Answer with just an executable Python expression that evaluates to the bigger result.
 """
-        response = llm_generate(prompt)
-        print(response)
-        return None
+        return self.result_from_prompt(prompt, sat_func_large, ans_type, name, check_result)
 
     def smtlib_solve(self, sat_func: str, ans_type: str, name: str, log: str, check_result, cmds=None) -> Optional[str]:
         print('Asking LLM for SMTLIB')
@@ -56,14 +52,18 @@ Return only the new SMTLIB program without any context.
 
     def solve_end2end(self, sat_func: str, ans_type: str, name: str, check_result) -> Optional[str]:
         print('Asking LLM for whole answer')
-        prompt = f"""Return a constant Python value of type {ans_type} to solve puzzle {name}, where your goal is to synthesize the first argument that makes this `sat` function return `True`:
+        prompt = f"""Return a Python expression of type {ans_type} to solve puzzle {name}, where your goal is to synthesize the first argument that makes this `sat` function return `True`:
 {sat_func}
 
-Return only the Python constant without any context.
+Return only the executable Python expression without any context.
 """
+        return self.result_from_prompt(prompt, sat_func, ans_type, name, check_result)
+
+    def result_from_prompt(self, prompt, sat_func: str, ans_type: str, name: str, check_result) -> Optional[str]:
         results = extract_code_blocks(llm_generate(prompt))
-        for result in results:
-            print('LLM result', result)
+        for result_expr in results:
+            print('LLM result exp', result_expr)
+            result = eval(result_expr)
             if ans_type == 'int':
                 try:
                     result = int(result)
@@ -79,7 +79,7 @@ Return only the Python constant without any context.
                 print('LLM result verifies for puzzle '+name)
                 return result
         return None
-        
+
     def get_branch_guidance(self, condition, path_conditions):
         """Get LLM guidance on which branch to take"""
         cache_key = (str(condition), str(path_conditions))

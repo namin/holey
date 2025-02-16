@@ -108,7 +108,12 @@ class PuzzleSolver:
                     varied_puzzle = copy.deepcopy(puzzle_data)
                     varied_puzzle['sat_function'] = varied_puzzle_sat_func
                     varied_result = self.solve_puzzle(varied_puzzle, cmds, llm_solver, reason=reason)
-                    result = llm_solver.extrapolate(varied_puzzle, puzzle_data, reason, varied_result, check_result, cmds)
+                    result = llm_solver.extrapolate(varied_puzzle_sat_func, sat_func, reason, varied_result, ans_type, name, check_result)
+                    if result is not None:
+                        self.success_count += 1
+                        self.success_counts[ans_type] += 1
+                        print("Yes! Solved via extrapolation for puzzle ", name)
+                        return result
             if llm_solver and result is None:
                 print('\nFallback to LLM!')
                 result = self.llm_solver.solve_end2end(sat_func, ans_type, name, check_result) or self.llm_solver.smtlib_solve(sat_func, ans_type, name, log, check_result, cmds)
