@@ -24,7 +24,8 @@ if not ANTHROPIC_API_KEY:
     except ModuleNotFoundError:
         generate = dummy_generate('ollama', extra=", or package 'anthropic' while setting ANTHROPIC_API_KEY")
     if generate is None:
-        def generate(prompt, max_tokens=1000, temperature=1.0, model='qwen2.5-coder'):
+        model = os.environ.get('OLLAMA_MODEL', 'qwen2.5-coder')
+        def generate(prompt, max_tokens=1000, temperature=1.0, model=model):
             print(f"Sending request to Ollama (model={model}, max_tokens={max_tokens}, temp={temperature})")
             print(f"Prompt:\n{prompt}")
 
@@ -82,6 +83,11 @@ def extract_code_blocks(response: str) -> str:
         lines = response.split("```")[1:]
         lines = [lines[i] for i in range(0, len(lines)) if i % 2 == 0]
         lines = ["\n".join(line.split('\n')[1:]) if '\n' in line else line for line in lines]
+        blocks = lines
+    elif "`" in response:
+        lines = response.split("`")[1:]
+        lines = [lines[i] for i in range(0, len(lines)) if i % 2 == 0]
+        lines = ["\n".join(line) if '\n' in line else line for line in lines]
         blocks = lines
     else:
         code = response.strip()
