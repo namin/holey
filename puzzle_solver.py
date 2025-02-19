@@ -1,4 +1,6 @@
 from holey import drive_sat, LLMSolver
+import copy
+import re
 import json
 from func_timeout import func_timeout, FunctionTimedOut
 import traceback
@@ -32,6 +34,9 @@ class PuzzleSolver:
         self.error_smt_count = 0
         self.error_smt_var_count = 0
         self.error_unsupported_answer_type = 0
+        self.extrapolate_small_count = 0
+        self.extrapolate_small_success_count = 0
+        self.extrapolate_large_success_count = 0
 
     def symbolic_solve1(self, typ, sat_func: str, ans_type: str, name: str, cmds, llm_solver) -> Optional[str]:
         sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver)
@@ -42,7 +47,7 @@ class PuzzleSolver:
         print(log)
         return tracer, sym_var, solution, log
 
-    def symbolic_solve(self, sat_func: str, ans_type: str, name: str, cmds, llm_solver) -> Optional[str]:
+    def symbolic_solve(self, sat_func: str, ans_type: str, name: str, cmds, llm_solver, counting=True) -> Optional[str]:
         typ = None
         if ans_type == 'int':
             typ = int
@@ -53,20 +58,23 @@ class PuzzleSolver:
             self.error_unsupported_answer_type += 1
             return None
 
-        self.count += 1
-        self.counts[ans_type] += 1
+        if counting:
+            self.count += 1
+            self.counts[ans_type] += 1
         tracer, sym_var, solution, log = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=None)
-        if llm_solver and solution is None:
+        if False and llm_solver and solution is None:
             tracer_llm, sym_var_llm, solution_llm, log_llm = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=llm_solver)
             if solution is not None:
                 tracer, sym_var, solution, log = tracer_llm, sym_var_llm, solution_llm, log_llm
         if solution is None:
             print("Could not find any solution for puzzle " + name)
-            self.error_smt_count += 1
+            if counting:
+                self.error_smt_count += 1
             return None, log
         solution_var = tracer.solution_var(solution, sym_var)
         if solution_var is None:
-            self.error_smt_var_count += 1
+            if counting:
+                self.error_smt_var_count += 1
             print('Solution', solution)
             print("Could not find any solution var")
             return None, log
@@ -74,7 +82,7 @@ class PuzzleSolver:
         print("Found solution", result)
         return result, log
 
-    def solve_puzzle(self, puzzle_data: Any, cmds, llm_solver) -> Optional[str]:
+    def solve_puzzle(self, puzzle_data: Any, cmds, llm_solver, reason=None) -> Optional[str]:
         name = puzzle_data.get('name', '')
         sat_func = puzzle_data.get('sat_function', puzzle_data.get('sat', ''))
         if not sat_func:
@@ -86,17 +94,35 @@ class PuzzleSolver:
             print("Missing ans_type")
             return None
         try:
-            result, log = func_timeout(20 if llm_solver else 3, self.symbolic_solve, args=(sat_func, ans_type, name, cmds, llm_solver))
+            result, log = func_timeout(20 if llm_solver else 3, self.symbolic_solve, args=(sat_func, ans_type, name, cmds, llm_solver, not reason))
             if result is not None:
                 if not check_result(result, sat_func):
                     self.error_verify_count += 1
                     print("WARNING: Solution verification failed for puzzle "+name)
                     result = None
                 else:
-                    self.success_count += 1
-                    self.success_counts[ans_type] += 1
-                    print("Yes! Solved for puzzle ", name)
-            if llm_solver and result is None:
+                    if not reason:
+                        self.success_count += 1
+                        self.success_counts[ans_type] += 1
+                        print("Yes! Solved for puzzle ", name)
+            if not reason and llm_solver and result is None:
+                varied_puzzle_sat_func, reason = vary(sat_func)
+                if varied_puzzle_sat_func is not None:
+                    self.extrapolate_small_count += 1
+                    print('Solving simpler variation', reason)
+                    varied_puzzle = copy.deepcopy(puzzle_data)
+                    varied_puzzle['sat_function'] = varied_puzzle_sat_func
+                    varied_result = self.solve_puzzle(varied_puzzle, cmds, llm_solver, reason=reason)
+                    if varied_result is not None:
+                        self.extrapolate_small_success_count += 1
+                        result = llm_solver.extrapolate(varied_puzzle_sat_func, sat_func, reason, varied_result, ans_type, name, check_result)
+                        if result is not None:
+                            self.extrapolate_large_success_count += 1
+                            self.success_count += 1
+                            self.success_counts[ans_type] += 1
+                            print("Yes! Solved via extrapolation for puzzle ", name)
+                            return result
+            if False and llm_solver and result is None:
                 print('\nFallback to LLM!')
                 result = self.llm_solver.solve_end2end(sat_func, ans_type, name, check_result) or self.llm_solver.smtlib_solve(sat_func, ans_type, name, log, check_result, cmds)
             return result
@@ -107,7 +133,7 @@ class PuzzleSolver:
             self.error_staging_count += 1
             print("Exception -- for puzzle", name, e)
             traceback.print_exc()
-        if llm_solver:
+        if False and llm_solver:
             print('\nFallback to LLM after error!')
             return self.llm_solver.solve_end2end(sat_func, ans_type, name, check_result)
         return None
@@ -139,6 +165,11 @@ with the following errors:
 - {self.error_smt_count + self.error_smt_var_count} SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
 - {self.total_count-self.count} (out of {self.total_count}) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
+
+### Extrapolation
+- {self.extrapolate_small_count} smaller problems tried
+- {self.extrapolate_small_success_count} successes on smaller problem
+- {self.extrapolate_large_success_count} successful extrapolations
 """
 
 def check_result(result, sat_func):
@@ -182,8 +213,28 @@ def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, sm
         print(f"\nSolving puzzle {i+1}/{len(puzzles)}: {name}")
 
         result = solver.solve_puzzle(puzzle, smtlib_backends, llm_solver)
-    
+
     print(solver.pretty_stats())
+
+def vary(sat_func):
+    # Find all large constants
+    constants = re.findall(r'\d\d\d+', sat_func)
+
+    # Identify unique constants
+    unique_constants = set(constants)
+
+    # Only proceed if there is exactly one unique constant
+    if len(unique_constants) == 1:
+        print('One large constant for extrapolation')
+        constant = unique_constants.pop()
+        smaller = '3'
+        varied_sat_func = re.sub(rf'\b{constant}\b', smaller, sat_func)
+        if sat_func != varied_sat_func:
+            return varied_sat_func, f'replaced {constant} with {smaller}'
+    else:
+        print('Too many constants for extrapolation')
+
+    return None, None
 
 if __name__ == "__main__":
     import argparse
