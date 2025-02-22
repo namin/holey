@@ -8979,7 +8979,7 @@ modified_func def sat(ham: str, s=wrap_str('Any vowel is OK')):
            (str.++ 
              (ite (and (str.< "A" first) (str.< first "Z"))
                   (let ((offset (- (str.to_int first) (str.to_int "A"))))
-                    (str.from.int (+ (str.to_int "a") offset)))
+                    (str.from_int (+ (str.to_int "a") offset)))
                   first)
              (str.lower (str.substr s 1 (- len 1))))))))
 
@@ -8991,13 +8991,17 @@ modified_func def sat(ham: str, s=wrap_str('Any vowel is OK')):
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 16 column 61: unknown constant str.from.int (Int) ")
-unsat
-(error "line 23 column 10: model is not available")
+sat
+(
+  (define-fun x () String
+    "")
+)
 ### output for cvc5
-(error "Parse Error: tmp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+cvc5 interrupted by timeout.
 
-Could not find any solution for puzzle VowelSandwich:0
+Found solution 
+Exception in checking result: string index out of range
+WARNING: Solution verification failed for puzzle VowelSandwich:0
 Too many constants for extrapolation
 
 Solving puzzle 247/723: VowelSandwich:1
@@ -9025,7 +9029,7 @@ modified_func def sat(ham: str, s=wrap_str('wOwwwww!')):
            (str.++ 
              (ite (and (str.< "A" first) (str.< first "Z"))
                   (let ((offset (- (str.to_int first) (str.to_int "A"))))
-                    (str.from.int (+ (str.to_int "a") offset)))
+                    (str.from_int (+ (str.to_int "a") offset)))
                   first)
              (str.lower (str.substr s 1 (- len 1))))))))
 
@@ -9037,13 +9041,17 @@ modified_func def sat(ham: str, s=wrap_str('wOwwwww!')):
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 16 column 61: unknown constant str.from.int (Int) ")
-unsat
-(error "line 23 column 10: model is not available")
+sat
+(
+  (define-fun x () String
+    "")
+)
 ### output for cvc5
-(error "Parse Error: tmp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+cvc5 interrupted by timeout.
 
-Could not find any solution for puzzle VowelSandwich:1
+Found solution 
+Exception in checking result: string index out of range
+WARNING: Solution verification failed for puzzle VowelSandwich:1
 Too many constants for extrapolation
 
 Solving puzzle 248/723: VowelSandwich:2
@@ -9071,7 +9079,7 @@ modified_func def sat(ham: str, s=wrap_str('do pyp you know ?')):
            (str.++ 
              (ite (and (str.< "A" first) (str.< first "Z"))
                   (let ((offset (- (str.to_int first) (str.to_int "A"))))
-                    (str.from.int (+ (str.to_int "a") offset)))
+                    (str.from_int (+ (str.to_int "a") offset)))
                   first)
              (str.lower (str.substr s 1 (- len 1))))))))
 
@@ -9083,13 +9091,17 @@ modified_func def sat(ham: str, s=wrap_str('do pyp you know ?')):
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 16 column 61: unknown constant str.from.int (Int) ")
-unsat
-(error "line 23 column 10: model is not available")
+sat
+(
+  (define-fun x () String
+    "")
+)
 ### output for cvc5
-(error "Parse Error: tmp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+cvc5 interrupted by timeout.
 
-Could not find any solution for puzzle VowelSandwich:2
+Found solution 
+Exception in checking result: string index out of range
+WARNING: Solution verification failed for puzzle VowelSandwich:2
 Too many constants for extrapolation
 
 Solving puzzle 249/723: VowelSandwich:3
@@ -9117,7 +9129,7 @@ modified_func def sat(ham: str, s=wrap_str('zocofiwihilyfizi ku pivanydebodygawe
            (str.++ 
              (ite (and (str.< "A" first) (str.< first "Z"))
                   (let ((offset (- (str.to_int first) (str.to_int "A"))))
-                    (str.from.int (+ (str.to_int "a") offset)))
+                    (str.from_int (+ (str.to_int "a") offset)))
                   first)
              (str.lower (str.substr s 1 (- len 1))))))))
 
@@ -9129,13 +9141,17 @@ modified_func def sat(ham: str, s=wrap_str('zocofiwihilyfizi ku pivanydebodygawe
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 16 column 61: unknown constant str.from.int (Int) ")
-unsat
-(error "line 23 column 10: model is not available")
+sat
+(
+  (define-fun x () String
+    "")
+)
 ### output for cvc5
-(error "Parse Error: tmp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+cvc5 interrupted by timeout.
 
-Could not find any solution for puzzle VowelSandwich:3
+Found solution 
+Exception in checking result: string index out of range
+WARNING: Solution verification failed for puzzle VowelSandwich:3
 Too many constants for extrapolation
 
 Solving puzzle 250/723: VowelSandwich:4
@@ -9163,7 +9179,7 @@ modified_func def sat(ham: str, s=wrap_str('citextitozuwatextoq hutextawicogylal
            (str.++ 
              (ite (and (str.< "A" first) (str.< first "Z"))
                   (let ((offset (- (str.to_int first) (str.to_int "A"))))
-                    (str.from.int (+ (str.to_int "a") offset)))
+                    (str.from_int (+ (str.to_int "a") offset)))
                   first)
              (str.lower (str.substr s 1 (- len 1))))))))
 
@@ -9175,13 +9191,17 @@ modified_func def sat(ham: str, s=wrap_str('citextitozuwatextoq hutextawicogylal
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 16 column 61: unknown constant str.from.int (Int) ")
-unsat
-(error "line 23 column 10: model is not available")
+sat
+(
+  (define-fun x () String
+    "")
+)
 ### output for cvc5
-(error "Parse Error: tmp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+cvc5 interrupted by timeout.
 
-Could not find any solution for puzzle VowelSandwich:4
+Found solution 
+Exception in checking result: string index out of range
+WARNING: Solution verification failed for puzzle VowelSandwich:4
 Too many constants for extrapolation
 
 Solving puzzle 251/723: ParenthesesPermutation:0
@@ -13457,7 +13477,7 @@ modified_func def sat(s: str, word=wrap_str('konjac')):
            (str.++ 
              (ite (and (str.< "a" first) (str.< first "z"))
                   (let ((offset (- (str.to_int first) (str.to_int "a"))))
-                    (str.from.int (+ (str.to_int "A") offset)))
+                    (str.from_int (+ (str.to_int "A") offset)))
                   first)
              (str.upper (str.substr s 1 (- len 1))))))))
 
@@ -13470,7 +13490,6 @@ modified_func def sat(s: str, word=wrap_str('konjac')):
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 16 column 61: unknown constant str.from.int (Int) ")
 (error "line 21 column 20: unknown constant i_0")
 (error "line 22 column 20: unknown constant i_1")
 sat
@@ -13479,7 +13498,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+(error "Parse Error: tmp.smt2:21.21: Symbol 'i_0' not declared as a variable")
 
 Could not find any solution for puzzle CapitalizeFirstLetter:0
 Too many constants for extrapolation
@@ -13518,7 +13537,7 @@ modified_func def sat(s: str, word=wrap_str('nojapoxe')):
            (str.++ 
              (ite (and (str.< "a" first) (str.< first "z"))
                   (let ((offset (- (str.to_int first) (str.to_int "a"))))
-                    (str.from.int (+ (str.to_int "A") offset)))
+                    (str.from_int (+ (str.to_int "A") offset)))
                   first)
              (str.upper (str.substr s 1 (- len 1))))))))
 
@@ -13531,7 +13550,6 @@ modified_func def sat(s: str, word=wrap_str('nojapoxe')):
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 16 column 61: unknown constant str.from.int (Int) ")
 (error "line 21 column 20: unknown constant i_0")
 (error "line 22 column 20: unknown constant i_1")
 sat
@@ -13540,7 +13558,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+(error "Parse Error: tmp.smt2:21.21: Symbol 'i_0' not declared as a variable")
 
 Could not find any solution for puzzle CapitalizeFirstLetter:1
 Too many constants for extrapolation
@@ -13579,7 +13597,7 @@ modified_func def sat(s: str, word=wrap_str('silon')):
            (str.++ 
              (ite (and (str.< "a" first) (str.< first "z"))
                   (let ((offset (- (str.to_int first) (str.to_int "a"))))
-                    (str.from.int (+ (str.to_int "A") offset)))
+                    (str.from_int (+ (str.to_int "A") offset)))
                   first)
              (str.upper (str.substr s 1 (- len 1))))))))
 
@@ -13592,7 +13610,6 @@ modified_func def sat(s: str, word=wrap_str('silon')):
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 16 column 61: unknown constant str.from.int (Int) ")
 (error "line 21 column 20: unknown constant i_0")
 (error "line 22 column 20: unknown constant i_1")
 sat
@@ -13601,7 +13618,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+(error "Parse Error: tmp.smt2:21.21: Symbol 'i_0' not declared as a variable")
 
 Could not find any solution for puzzle CapitalizeFirstLetter:2
 Too many constants for extrapolation
@@ -13640,7 +13657,7 @@ modified_func def sat(s: str, word=wrap_str('fekovo')):
            (str.++ 
              (ite (and (str.< "a" first) (str.< first "z"))
                   (let ((offset (- (str.to_int first) (str.to_int "a"))))
-                    (str.from.int (+ (str.to_int "A") offset)))
+                    (str.from_int (+ (str.to_int "A") offset)))
                   first)
              (str.upper (str.substr s 1 (- len 1))))))))
 
@@ -13653,7 +13670,6 @@ modified_func def sat(s: str, word=wrap_str('fekovo')):
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 16 column 61: unknown constant str.from.int (Int) ")
 (error "line 21 column 20: unknown constant i_0")
 (error "line 22 column 20: unknown constant i_1")
 sat
@@ -13662,7 +13678,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+(error "Parse Error: tmp.smt2:21.21: Symbol 'i_0' not declared as a variable")
 
 Could not find any solution for puzzle CapitalizeFirstLetter:3
 Too many constants for extrapolation
@@ -13701,7 +13717,7 @@ modified_func def sat(s: str, word=wrap_str('mo')):
            (str.++ 
              (ite (and (str.< "a" first) (str.< first "z"))
                   (let ((offset (- (str.to_int first) (str.to_int "a"))))
-                    (str.from.int (+ (str.to_int "A") offset)))
+                    (str.from_int (+ (str.to_int "A") offset)))
                   first)
              (str.upper (str.substr s 1 (- len 1))))))))
 
@@ -13714,7 +13730,6 @@ modified_func def sat(s: str, word=wrap_str('mo')):
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 16 column 61: unknown constant str.from.int (Int) ")
 (error "line 21 column 20: unknown constant i_0")
 (error "line 22 column 20: unknown constant i_1")
 sat
@@ -13723,7 +13738,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:16.62: Symbol 'str.from.int' not declared as a variable")
+(error "Parse Error: tmp.smt2:21.21: Symbol 'i_0' not declared as a variable")
 
 Could not find any solution for puzzle CapitalizeFirstLetter:4
 Too many constants for extrapolation
@@ -24794,8 +24809,8 @@ The symbolic execution alone currently solves:
 with the following errors:
 - 53 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
 - 190 errors at at staging time
-- 88 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- 125 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
+- 93 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- 120 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
 - 992 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 

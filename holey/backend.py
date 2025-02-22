@@ -341,7 +341,7 @@ library = {
            (str.++ 
              (ite (and (str.< "a" first) (str.< first "z"))
                   (let ((offset (- (str.to_int first) (str.to_int "a"))))
-                    (str.from.int (+ (str.to_int "A") offset)))
+                    (str.from_int (+ (str.to_int "A") offset)))
                   first)
              (str.upper (str.substr s 1 (- len 1))))))))
 """
@@ -356,7 +356,7 @@ library = {
            (str.++ 
              (ite (and (str.< "A" first) (str.< first "Z"))
                   (let ((offset (- (str.to_int first) (str.to_int "A"))))
-                    (str.from.int (+ (str.to_int "a") offset)))
+                    (str.from_int (+ (str.to_int "a") offset)))
                   first)
              (str.lower (str.substr s 1 (- len 1))))))))
 """
