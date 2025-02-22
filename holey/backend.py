@@ -478,8 +478,6 @@ class Backend():
         return self._record("distinct", *args)
 
     def Mod(self, a, b) -> MockExpr:
-        """Create modulo expression with non-zero divisor constraint"""
-        self.add(self.Not(self.Eq(b, self.IntVal(0))))  # Add constraint: b != 0
         return self._record("mod", a, b)
 
     def Pow(self, a, b) -> MockExpr:
