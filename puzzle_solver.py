@@ -153,6 +153,13 @@ class PuzzleSolver:
         return r
 
     def pretty_stats(self):
+        extrapolation = f"""
+### Extrapolation
+- {self.extrapolate_small_count} smaller problems tried
+- {self.extrapolate_small_success_count} successes on smaller problem
+- {self.extrapolate_large_success_count} successful extrapolations
+""" if self.extrapolate_small_count > 0 else ""
+
         return f"""
 ## Current status
 
@@ -165,12 +172,7 @@ with the following errors:
 - {self.error_smt_count + self.error_smt_var_count} SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
 - {self.total_count-self.count} (out of {self.total_count}) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
-
-### Extrapolation
-- {self.extrapolate_small_count} smaller problems tried
-- {self.extrapolate_small_success_count} successes on smaller problem
-- {self.extrapolate_large_success_count} successful extrapolations
-"""
+"""+extrapolation
 
 def check_result(result, sat_func):
     namespace = {}
