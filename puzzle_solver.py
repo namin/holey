@@ -227,16 +227,27 @@ def vary(sat_func):
     constants = re.findall(r'\d\d\d+', sat_func)
 
     # Identify unique constants
-    unique_constants = set(constants)
+    unique_constants = sorted(list(set(constants)))
 
-    # Only proceed if there is exactly one unique constant
-    if len(unique_constants) == 1:
+    n = len(unique_constants)
+
+    if n == 1:
         print('One large constant for extrapolation')
-        constant = unique_constants.pop()
+        constant = unique_constants[0]
         smaller = '3'
         varied_sat_func = re.sub(rf'\b{constant}\b', smaller, sat_func)
         if sat_func != varied_sat_func:
             return varied_sat_func, f'replaced {constant} with {smaller}'
+    elif n==2:
+        print('Two large constants for extrapolation')
+        constant1 = unique_constants[0]
+        smaller1 = '3'
+        varied_sat_func = re.sub(rf'\b{constant1}\b', smaller1, sat_func)
+        constant2 = unique_constants[1]
+        smaller2 = '5'
+        varied_sat_func = re.sub(rf'\b{constant2}\b', smaller2, varied_sat_func)
+        if sat_func != varied_sat_func:
+            return varied_sat_func, f'replaced {constant1} with {smaller1} and {constant2} with {smaller2}'
     else:
         print('Too many constants for extrapolation')
 

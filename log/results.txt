@@ -331,7 +331,27 @@ timeout
 cvc5 interrupted by timeout.
 
 Could not find any solution for puzzle Study_17:0
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 1000 with 3 and 1001 with 5
+sat_func def sat(i: int):
+    return len(str(i + 3)) > len(str(i + 5))
+modified_func def sat(i: int):
+    return sym_len(sym_str(i + wrap_int(3))) > sym_len(sym_str(i + wrap_int(5)))
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (> (str.len (str.from_int (+ x 3))) (str.len (str.from_int (+ x 5)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+cvc5 interrupted by timeout.
+
+Could not find any solution for puzzle Study_17:0
 
 Solving puzzle 8/723: Study_22:0
 sat_func def sat(s: str):
@@ -1176,7 +1196,66 @@ unknown
   (^ 2.0 (to_real (+ (- 1) (str.len x))))")
 
 Could not find any solution for puzzle BinaryStrXOR:0
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 100011101100001 with 3 and 100101100101110 with 5
+sat_func def sat(str_num: str, nums=['3', '5']):
+    a, b = nums
+    return int(str_num, 2) == int(a, 2) ^ int(b, 2)
+modified_func def sat(str_num: str, nums=wrap_list([wrap_str('3'), wrap_str('5')])):
+    a, b = nums
+    return sym_int(str_num, wrap_int(2)) == sym_int(a, wrap_int(2)) ^ sym_int(b, wrap_int(2))
+### smt2
+(set-logic ALL)
+
+(define-fun bool-to-int ((b Bool)) Int
+  (ite b 1 0))
+
+(define-fun int2bits ((x Int)) Bool
+  (= (mod (abs x) 2) 1))
+
+(define-fun python.int.xor ((x Int) (y Int)) Int
+  (let ((bits (bool-to-int (xor (int2bits x) (int2bits y)))))
+    bits))
+
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (> (str.len x) 0))
+(assert (> (str.len "3") 0))
+(assert (> (str.len "5") 0))
+(assert (= (python.int x 2) (python.int.xor (python.int "3" 2) (python.int "5" 2))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unknown
+(error "line 40 column 10: model is not available")
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+
+Could not find any solution for puzzle BinaryStrXOR:0
 
 Solving puzzle 37/723: BinaryStrXOR:1
 sat_func def sat(str_num: str, nums=['1101101111', '11001100']):
@@ -1237,7 +1316,66 @@ unknown
   (^ 2.0 (to_real (+ (- 1) (str.len x))))")
 
 Could not find any solution for puzzle BinaryStrXOR:1
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 11001100 with 3 and 1101101111 with 5
+sat_func def sat(str_num: str, nums=['5', '3']):
+    a, b = nums
+    return int(str_num, 2) == int(a, 2) ^ int(b, 2)
+modified_func def sat(str_num: str, nums=wrap_list([wrap_str('5'), wrap_str('3')])):
+    a, b = nums
+    return sym_int(str_num, wrap_int(2)) == sym_int(a, wrap_int(2)) ^ sym_int(b, wrap_int(2))
+### smt2
+(set-logic ALL)
+
+(define-fun bool-to-int ((b Bool)) Int
+  (ite b 1 0))
+
+(define-fun int2bits ((x Int)) Bool
+  (= (mod (abs x) 2) 1))
+
+(define-fun python.int.xor ((x Int) (y Int)) Int
+  (let ((bits (bool-to-int (xor (int2bits x) (int2bits y)))))
+    bits))
+
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (> (str.len x) 0))
+(assert (> (str.len "5") 0))
+(assert (> (str.len "3") 0))
+(assert (= (python.int x 2) (python.int.xor (python.int "5" 2) (python.int "3" 2))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unknown
+(error "line 40 column 10: model is not available")
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+
+Could not find any solution for puzzle BinaryStrXOR:1
 
 Solving puzzle 38/723: BinaryStrXOR:2
 sat_func def sat(str_num: str, nums=['11011111', '1101001110']):
@@ -1298,7 +1436,66 @@ unknown
   (^ 2.0 (to_real (+ (- 1) (str.len x))))")
 
 Could not find any solution for puzzle BinaryStrXOR:2
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 1101001110 with 3 and 11011111 with 5
+sat_func def sat(str_num: str, nums=['5', '3']):
+    a, b = nums
+    return int(str_num, 2) == int(a, 2) ^ int(b, 2)
+modified_func def sat(str_num: str, nums=wrap_list([wrap_str('5'), wrap_str('3')])):
+    a, b = nums
+    return sym_int(str_num, wrap_int(2)) == sym_int(a, wrap_int(2)) ^ sym_int(b, wrap_int(2))
+### smt2
+(set-logic ALL)
+
+(define-fun bool-to-int ((b Bool)) Int
+  (ite b 1 0))
+
+(define-fun int2bits ((x Int)) Bool
+  (= (mod (abs x) 2) 1))
+
+(define-fun python.int.xor ((x Int) (y Int)) Int
+  (let ((bits (bool-to-int (xor (int2bits x) (int2bits y)))))
+    bits))
+
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (> (str.len x) 0))
+(assert (> (str.len "5") 0))
+(assert (> (str.len "3") 0))
+(assert (= (python.int x 2) (python.int.xor (python.int "5" 2) (python.int "3" 2))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unknown
+(error "line 40 column 10: model is not available")
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+
+Could not find any solution for puzzle BinaryStrXOR:2
 
 Solving puzzle 39/723: BinaryStrXOR:3
 sat_func def sat(str_num: str, nums=['100000001', '1010001001']):
@@ -1359,7 +1556,66 @@ unknown
   (^ 2.0 (to_real (+ (- 1) (str.len x))))")
 
 Could not find any solution for puzzle BinaryStrXOR:3
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 100000001 with 3 and 1010001001 with 5
+sat_func def sat(str_num: str, nums=['3', '5']):
+    a, b = nums
+    return int(str_num, 2) == int(a, 2) ^ int(b, 2)
+modified_func def sat(str_num: str, nums=wrap_list([wrap_str('3'), wrap_str('5')])):
+    a, b = nums
+    return sym_int(str_num, wrap_int(2)) == sym_int(a, wrap_int(2)) ^ sym_int(b, wrap_int(2))
+### smt2
+(set-logic ALL)
+
+(define-fun bool-to-int ((b Bool)) Int
+  (ite b 1 0))
+
+(define-fun int2bits ((x Int)) Bool
+  (= (mod (abs x) 2) 1))
+
+(define-fun python.int.xor ((x Int) (y Int)) Int
+  (let ((bits (bool-to-int (xor (int2bits x) (int2bits y)))))
+    bits))
+
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (> (str.len x) 0))
+(assert (> (str.len "3") 0))
+(assert (> (str.len "5") 0))
+(assert (= (python.int x 2) (python.int.xor (python.int "3" 2) (python.int "5" 2))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unknown
+(error "line 40 column 10: model is not available")
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+
+Could not find any solution for puzzle BinaryStrXOR:3
 
 Solving puzzle 40/723: BinaryStrXOR:4
 sat_func def sat(str_num: str, nums=['10010110', '10000']):
@@ -1420,7 +1676,66 @@ unknown
   (^ 2.0 (to_real (+ (- 1) (str.len x))))")
 
 Could not find any solution for puzzle BinaryStrXOR:4
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 10000 with 3 and 10010110 with 5
+sat_func def sat(str_num: str, nums=['5', '3']):
+    a, b = nums
+    return int(str_num, 2) == int(a, 2) ^ int(b, 2)
+modified_func def sat(str_num: str, nums=wrap_list([wrap_str('5'), wrap_str('3')])):
+    a, b = nums
+    return sym_int(str_num, wrap_int(2)) == sym_int(a, wrap_int(2)) ^ sym_int(b, wrap_int(2))
+### smt2
+(set-logic ALL)
+
+(define-fun bool-to-int ((b Bool)) Int
+  (ite b 1 0))
+
+(define-fun int2bits ((x Int)) Bool
+  (= (mod (abs x) 2) 1))
+
+(define-fun python.int.xor ((x Int) (y Int)) Int
+  (let ((bits (bool-to-int (xor (int2bits x) (int2bits y)))))
+    bits))
+
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (> (str.len x) 0))
+(assert (> (str.len "5") 0))
+(assert (> (str.len "3") 0))
+(assert (= (python.int x 2) (python.int.xor (python.int "5" 2) (python.int "3" 2))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unknown
+(error "line 40 column 10: model is not available")
+### output for cvc5
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+
+Could not find any solution for puzzle BinaryStrXOR:4
 
 Solving puzzle 41/723: LongestStr:0
 sat_func def sat(ans: str, words=['these', 'are', 'some', 'pretty', 'long', 'words']):
@@ -8071,7 +8386,67 @@ sat
 (error "Parse Error: tmp.smt2:25.37: Symbol 'i_0' not declared as a variable")
 
 Could not find any solution for puzzle BinaryAverage:0
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 103252 with 3 and 10657 with 5
+sat_func def sat(s: str, a=-3, b=5):
+    n = int(s, 2)
+    r = range(a, b)
+    if len(r) == 0:
+        return n == -1
+    mu = sum(r) / len(r)
+    return abs(mu - n) <= min(abs(mu - n - 1), abs(mu - n + 1))
+modified_func def sat(s: str, a=-wrap_int(3), b=wrap_int(5)):
+    n = sym_int(s, wrap_int(2))
+    r = sym_range(a, b)
+    if sym_len(r) == wrap_int(0):
+        return n == -wrap_int(1)
+    mu = sum(r) / sym_len(r)
+    return abs(mu - n) <= min(abs(mu - n - wrap_int(1)), abs(mu - n + wrap_int(1)))
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (> (str.len x) 0))
+(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (forall ((i_0 Int)) (=> (and (>= i_0 -3) (< i_0 5)) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 -3) (< i_0 5)) (> (str.len x) 0))))
+(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (forall ((i_1 Int)) (=> (and (>= i_1 -3) (< i_1 5)) (forall ((i_0 Int)) (=> (and (>= i_0 -3) (< i_0 5)) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 25 column 36: unknown constant i_0")
+(error "line 27 column 41: unknown constant i_1")
+sat
+(
+  (define-fun x () String
+    "A")
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:25.37: Symbol 'i_0' not declared as a variable")
+
+Could not find any solution for puzzle BinaryAverage:0
 
 Solving puzzle 237/723: BinaryAverage:1
 sat_func def sat(s: str, a=70421, b=70421):
@@ -8255,7 +8630,67 @@ sat
 (error "Parse Error: tmp.smt2:25.37: Symbol 'i_0' not declared as a variable")
 
 Could not find any solution for puzzle BinaryAverage:2
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 10299 with 3 and 10300 with 5
+sat_func def sat(s: str, a=-3, b=-5):
+    n = int(s, 2)
+    r = range(a, b)
+    if len(r) == 0:
+        return n == -1
+    mu = sum(r) / len(r)
+    return abs(mu - n) <= min(abs(mu - n - 1), abs(mu - n + 1))
+modified_func def sat(s: str, a=-wrap_int(3), b=-wrap_int(5)):
+    n = sym_int(s, wrap_int(2))
+    r = sym_range(a, b)
+    if sym_len(r) == wrap_int(0):
+        return n == -wrap_int(1)
+    mu = sum(r) / sym_len(r)
+    return abs(mu - n) <= min(abs(mu - n - wrap_int(1)), abs(mu - n + wrap_int(1)))
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str-to-int ((s String) (base Int)) Int
+  (let ((len (str.len s)))
+    (to_int 
+      (ite (<= len 0) 
+           0.0
+           (+ (* (to_real (- (str.to_code (str.substr s (- len 1) 1)) 48))
+                 (^ (to_real base) (to_real (- len 1))))
+              (to_real (str-to-int (str.substr s 0 (- len 1)) base)))))))
+
+(define-fun-rec bin-to-int ((s String)) Int
+  (let ((len (str.len s)))
+    (ite (<= len 0) 
+         0
+         (+ (* (ite (= (str.substr s (- len 1) 1) "1") 1 0)
+               (to_int (^ 2.0 (to_real (- len 1)))))
+            (bin-to-int (str.substr s 0 (- len 1)))))))
+
+(define-fun python.int ((s String) (base Int)) Int
+  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+
+(declare-const x String)
+(assert (> (str.len x) 0))
+(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (forall ((i_0 Int)) (=> (and (>= i_0 -3) (< i_0 -5)) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 -3) (< i_0 -5)) (> (str.len x) 0))))
+(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (forall ((i_1 Int)) (=> (and (>= i_1 -3) (< i_1 -5)) (forall ((i_0 Int)) (=> (and (>= i_0 -3) (< i_0 -5)) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 25 column 36: unknown constant i_0")
+(error "line 27 column 41: unknown constant i_1")
+sat
+(
+  (define-fun x () String
+    "A")
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:25.37: Symbol 'i_0' not declared as a variable")
+
+Could not find any solution for puzzle BinaryAverage:2
 
 Solving puzzle 239/723: BinaryAverage:3
 sat_func def sat(s: str, a=0, b=52):
@@ -13364,7 +13799,44 @@ sat
 
 Found solution 0
 WARNING: Solution verification failed for puzzle TripleDouble:1
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 75129500 with 3 and 979292947 with 5
+sat_func def sat(n: int, v=3, w=5):
+    for i in range(n):
+        assert v <= w
+        v *= 3
+        w *= 2
+    return v > w
+modified_func def sat(n: int, v=wrap_int(3), w=wrap_int(5)):
+    for i in sym_range(n):
+        _assert(v <= w)
+        v *= wrap_int(3)
+        w *= wrap_int(2)
+    return v > w
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) (<= 3 5))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) false)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () Int
+    0)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 0)
+)
+
+Found solution 0
+WARNING: Solution verification failed for puzzle TripleDouble:1
 
 Solving puzzle 387/723: TripleDouble:2
 sat_func def sat(n: int, v=609909721, w=872375011):
@@ -13403,7 +13875,44 @@ sat
 
 Found solution 0
 WARNING: Solution verification failed for puzzle TripleDouble:2
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 609909721 with 3 and 872375011 with 5
+sat_func def sat(n: int, v=3, w=5):
+    for i in range(n):
+        assert v <= w
+        v *= 3
+        w *= 2
+    return v > w
+modified_func def sat(n: int, v=wrap_int(3), w=wrap_int(5)):
+    for i in sym_range(n):
+        _assert(v <= w)
+        v *= wrap_int(3)
+        w *= wrap_int(2)
+    return v > w
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) (<= 3 5))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) false)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () Int
+    0)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 0)
+)
+
+Found solution 0
+WARNING: Solution verification failed for puzzle TripleDouble:2
 
 Solving puzzle 388/723: TripleDouble:3
 sat_func def sat(n: int, v=313946483, w=806690290):
@@ -13442,7 +13951,44 @@ sat
 
 Found solution 0
 WARNING: Solution verification failed for puzzle TripleDouble:3
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 313946483 with 3 and 806690290 with 5
+sat_func def sat(n: int, v=3, w=5):
+    for i in range(n):
+        assert v <= w
+        v *= 3
+        w *= 2
+    return v > w
+modified_func def sat(n: int, v=wrap_int(3), w=wrap_int(5)):
+    for i in sym_range(n):
+        _assert(v <= w)
+        v *= wrap_int(3)
+        w *= wrap_int(2)
+    return v > w
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) (<= 3 5))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) false)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () Int
+    0)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 0)
+)
+
+Found solution 0
+WARNING: Solution verification failed for puzzle TripleDouble:3
 
 Solving puzzle 389/723: TripleDouble:4
 sat_func def sat(n: int, v=54888266, w=670740803):
@@ -13481,7 +14027,44 @@ sat
 
 Found solution 0
 WARNING: Solution verification failed for puzzle TripleDouble:4
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 54888266 with 3 and 670740803 with 5
+sat_func def sat(n: int, v=3, w=5):
+    for i in range(n):
+        assert v <= w
+        v *= 3
+        w *= 2
+    return v > w
+modified_func def sat(n: int, v=wrap_int(3), w=wrap_int(5)):
+    for i in sym_range(n):
+        _assert(v <= w)
+        v *= wrap_int(3)
+        w *= wrap_int(2)
+    return v > w
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) (<= 3 5))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) false)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () Int
+    0)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 0)
+)
+
+Found solution 0
+WARNING: Solution verification failed for puzzle TripleDouble:4
 
 Solving puzzle 390/723: RepeatDec:0
 sat_func def sat(res: int, m=1234578987654321, n=4):
@@ -13873,7 +14456,65 @@ sat
 Found solution 19
 Exception in checking result: 
 WARNING: Solution verification failed for puzzle MaxDelta:0
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 123 with 3 and 9254359 with 5
+sat_func def sat(n: int, pairs=[[3, 0], [17, 1], [5, 19], [3, 5], [0, 3]]):
+    assert sum(p - m for p, m in pairs) == 0, "oo"
+    tot = 0
+    success = False
+    for p, m in pairs:
+        tot -= m
+        tot += p
+        assert tot <= n
+        if tot == n:
+            success = True
+    return success
+modified_func def sat(n: int, pairs=wrap_list([wrap_list([wrap_int(3), wrap_int(0)]), wrap_list([wrap_int(17), wrap_int(1)]), wrap_list([wrap_int(5), wrap_int(19)]), wrap_list([wrap_int(3), wrap_int(5)]), wrap_list([wrap_int(0), wrap_int(3)])])):
+    _assert(sum((p - m for p, m in pairs)) == wrap_int(0), wrap_str('oo'))
+    tot = wrap_int(0)
+    success = False
+    for p, m in pairs:
+        tot -= m
+        tot += p
+        _assert(tot <= n)
+        if tot == n:
+            success = True
+    return success
+Skipping constant true constraint
+Skipping constant true constraint
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (<= 3 x))
+(assert (=> (= 3 x) (<= 19 x)))
+(assert (=> (and (= 3 x) (= 19 x)) (<= 5 x)))
+(assert (=> (and (= 3 x) (= 19 x) (= 5 x)) (<= 3 x)))
+(assert (=> (and (= 3 x) (= 19 x) (= 5 x) (= 3 x)) (<= 0 x)))
+(assert (=> (and (= 3 x) (= 19 x) (= 5 x) (= 3 x) (= 0 x)) true))
+(assert (<= 3 x))
+(assert (=> (not (= 3 x)) (<= 19 x)))
+(assert (=> (and (not (= 3 x)) (not (= 19 x))) (<= 5 x)))
+(assert (=> (and (not (= 3 x)) (not (= 19 x)) (not (= 5 x))) (<= 3 x)))
+(assert (=> (and (not (= 3 x)) (not (= 19 x)) (not (= 5 x)) (not (= 3 x))) (<= 0 x)))
+(assert (=> (and (not (= 3 x)) (not (= 19 x)) (not (= 5 x)) (not (= 3 x)) (not (= 0 x))) false))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () Int
+    19)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 19)
+)
+
+Found solution 19
 
 Solving puzzle 396/723: MaxDelta:1
 sat_func def sat(n: int, pairs=[[735272, 0], [959403, 509925], [627622, 420078], [26718, 90062], [175999, 98715], [428400, 1098754], [958640, 543606], [983032, 181754], [143406, 1301552], [183299, 437141], [133206, 199853], [679951, 366700], [383704, 737787], [476200, 226078], [923093, 81263], [574756, 679331], [766050, 5511], [214260, 445680], [434074, 747765], [769774, 209386], [512796, 2095723], [0, 612991]]):
@@ -14596,7 +15237,44 @@ timeout
 cvc5 interrupted by timeout.
 
 Could not find any solution for puzzle Dada:1
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 1873 with 3 and 5798 with 5
+sat_func def sat(s: str, a=5, d=3):
+    return s.count("a") == a and s.count("d") == d and len(s) == a + d
+modified_func def sat(s: str, a=wrap_int(5), d=wrap_int(3)):
+    return (s.count('a') == a).__and__(s.count('d') == d).__and__(sym_len(s) == a + d)
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
+  (let ((idx (str.indexof s sub start)))
+    (ite (or (= idx (- 1)) (> start (str.len s)))
+         0
+         (+ 1 (str.count.rec s sub (+ idx (str.len sub)))))))
+
+(define-fun str.count ((s String) (sub String)) Int
+  (ite (= (str.len sub) 0)
+       (+ 1 (str.len s))
+       (str.count.rec s sub 0)))
+
+(declare-const x String)
+(assert (>= (str.count x "a") 0))
+(assert (>= (str.count x "d") 0))
+(assert (and (and (= (str.count x "a") 5) (= (str.count x "d") 3)) (= (str.len x) 8)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+unknown
+(
+(define-fun x () String "adddaaaa")
+)
+
+Could not find any solution for puzzle Dada:1
 
 Solving puzzle 422/723: Dada:2
 sat_func def sat(s: str, a=2645, d=1270):
@@ -14632,7 +15310,44 @@ timeout
 cvc5 interrupted by timeout.
 
 Could not find any solution for puzzle Dada:2
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 1270 with 3 and 2645 with 5
+sat_func def sat(s: str, a=5, d=3):
+    return s.count("a") == a and s.count("d") == d and len(s) == a + d
+modified_func def sat(s: str, a=wrap_int(5), d=wrap_int(3)):
+    return (s.count('a') == a).__and__(s.count('d') == d).__and__(sym_len(s) == a + d)
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
+  (let ((idx (str.indexof s sub start)))
+    (ite (or (= idx (- 1)) (> start (str.len s)))
+         0
+         (+ 1 (str.count.rec s sub (+ idx (str.len sub)))))))
+
+(define-fun str.count ((s String) (sub String)) Int
+  (ite (= (str.len sub) 0)
+       (+ 1 (str.len s))
+       (str.count.rec s sub 0)))
+
+(declare-const x String)
+(assert (>= (str.count x "a") 0))
+(assert (>= (str.count x "d") 0))
+(assert (and (and (= (str.count x "a") 5) (= (str.count x "d") 3)) (= (str.len x) 8)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+unknown
+(
+(define-fun x () String "adddaaaa")
+)
+
+Could not find any solution for puzzle Dada:2
 
 Solving puzzle 423/723: Dada:3
 sat_func def sat(s: str, a=2996, d=6808):
@@ -14668,7 +15383,44 @@ timeout
 cvc5 interrupted by timeout.
 
 Could not find any solution for puzzle Dada:3
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 2996 with 3 and 6808 with 5
+sat_func def sat(s: str, a=3, d=5):
+    return s.count("a") == a and s.count("d") == d and len(s) == a + d
+modified_func def sat(s: str, a=wrap_int(3), d=wrap_int(5)):
+    return (s.count('a') == a).__and__(s.count('d') == d).__and__(sym_len(s) == a + d)
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
+  (let ((idx (str.indexof s sub start)))
+    (ite (or (= idx (- 1)) (> start (str.len s)))
+         0
+         (+ 1 (str.count.rec s sub (+ idx (str.len sub)))))))
+
+(define-fun str.count ((s String) (sub String)) Int
+  (ite (= (str.len sub) 0)
+       (+ 1 (str.len s))
+       (str.count.rec s sub 0)))
+
+(declare-const x String)
+(assert (>= (str.count x "a") 0))
+(assert (>= (str.count x "d") 0))
+(assert (and (and (= (str.count x "a") 3) (= (str.count x "d") 5)) (= (str.len x) 8)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+unknown
+(
+(define-fun x () String "adddaadd")
+)
+
+Could not find any solution for puzzle Dada:3
 
 Solving puzzle 424/723: Dada:4
 sat_func def sat(s: str, a=4763, d=8408):
@@ -14704,7 +15456,44 @@ timeout
 cvc5 interrupted by timeout.
 
 Could not find any solution for puzzle Dada:4
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 4763 with 3 and 8408 with 5
+sat_func def sat(s: str, a=3, d=5):
+    return s.count("a") == a and s.count("d") == d and len(s) == a + d
+modified_func def sat(s: str, a=wrap_int(3), d=wrap_int(5)):
+    return (s.count('a') == a).__and__(s.count('d') == d).__and__(sym_len(s) == a + d)
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
+  (let ((idx (str.indexof s sub start)))
+    (ite (or (= idx (- 1)) (> start (str.len s)))
+         0
+         (+ 1 (str.count.rec s sub (+ idx (str.len sub)))))))
+
+(define-fun str.count ((s String) (sub String)) Int
+  (ite (= (str.len sub) 0)
+       (+ 1 (str.len s))
+       (str.count.rec s sub 0)))
+
+(declare-const x String)
+(assert (>= (str.count x "a") 0))
+(assert (>= (str.count x "d") 0))
+(assert (and (and (= (str.count x "a") 3) (= (str.count x "d") 5)) (= (str.len x) 8)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+unknown
+(
+(define-fun x () String "adddaadd")
+)
+
+Could not find any solution for puzzle Dada:4
 
 Solving puzzle 425/723: EasySum:0
 sat_func def sat(tot: int, nums=[2, 8, 25, 18, 99, 11, 17, 16], thresh=17):
@@ -15602,7 +16391,34 @@ sat
 
 Found solution 0
 WARNING: Solution verification failed for puzzle MaxConsecutiveSum:0
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 100 with 3 and 150 with 5
+sat_func def sat(start: int, k=3, lower=5, seq=[3, 1, 2, 65, 18, 91, -30, 3, 0, 19, 52]):
+    return 0 <= start <= len(seq) - k and sum(seq[start:start + k]) >= lower
+modified_func def sat(start: int, k=wrap_int(3), lower=wrap_int(5), seq=wrap_list([wrap_int(3), wrap_int(1), wrap_int(2), wrap_int(65), wrap_int(18), wrap_int(91), -wrap_int(30), wrap_int(3), wrap_int(0), wrap_int(19), wrap_int(52)])):
+    return (wrap_int(0) <= start).__and__(start <= sym_len(seq) - k).__and__(sum(seq[start:start + k]) >= lower)
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (and (and (<= 0 x) (<= x (- 11 3))) true))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () Int
+    0)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 0)
+)
+
+Found solution 0
 
 Solving puzzle 451/723: MaxConsecutiveSum:1
 sat_func def sat(start: int, k=9, lower=-183, seq=[44, -94, 25, -63, -39, -71, -34, 84, -35]):
@@ -15740,7 +16556,42 @@ unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
 
 Could not find any solution for puzzle MaxConsecutiveProduct:0
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 100 with 3 and 100000 with 5
+sat_func def sat(start: int, k=3, lower=5, seq=[91, 1, 2, 64, 18, 91, -30, 3, 3, 65, 18]):
+    prod = 1
+    for i in range(start, start + k):
+        prod *= seq[i]
+    return prod >= lower
+modified_func def sat(start: int, k=wrap_int(3), lower=wrap_int(5), seq=wrap_list([wrap_int(91), wrap_int(1), wrap_int(2), wrap_int(64), wrap_int(18), wrap_int(91), -wrap_int(30), wrap_int(3), wrap_int(3), wrap_int(65), wrap_int(18)])):
+    prod = wrap_int(1)
+    for i in sym_range(start, start + k):
+        prod *= seq[i]
+    return prod >= lower
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 3))) (< i_0 11))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 3))) (> i_0 -11))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 3))) (>= (* 1 (ite (or (= i_0 10) (= i_0 -1)) 18 (ite (or (= i_0 9) (= i_0 -2)) 65 (ite (or (= i_0 8) (= i_0 -3)) 3 (ite (or (= i_0 7) (= i_0 -4)) 3 (ite (or (= i_0 6) (= i_0 -5)) -30 (ite (or (= i_0 5) (= i_0 -6)) 91 (ite (or (= i_0 4) (= i_0 -7)) 18 (ite (or (= i_0 3) (= i_0 -8)) 64 (ite (or (= i_0 2) (= i_0 -9)) 2 (ite (or (= i_0 1) (= i_0 -10)) 1 91))))))))))) 5))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () Int
+    3)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 3)
+)
+
+Found solution 3
 
 Solving puzzle 456/723: MaxConsecutiveProduct:1
 sat_func def sat(start: int, k=8, lower=774420991987500, seq=[-50, -99, -99, -65, -69, -87, 90, 45]):
@@ -19106,7 +19957,40 @@ unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
 
 Could not find any solution for puzzle CollatzDelay:1
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 1000 with 3 and 150 with 5
+sat_func def sat(n: int, t=3, upper=5):
+    m = n
+    for i in range(t):
+        if n <= 1:
+            return False
+        n = 3 * n + 1 if n % 2 else n // 2
+    return n == 1 and m <= 2 ** upper
+modified_func def sat(n: int, t=wrap_int(3), upper=wrap_int(5)):
+    m = n
+    for i in sym_range(t):
+        if n <= wrap_int(1):
+            return False
+        n = wrap_int(3) * n + wrap_int(1) if n % wrap_int(2) else n // wrap_int(2)
+    return (n == wrap_int(1)).__and__(m <= wrap_int(2) ** upper)
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (=> (<= x 1) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 3)) false))))
+(assert (=> (not (<= x 1)) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 3)) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 3)) (and (= (+ (* 3 x) 1) 1) (<= x 25))))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unsat
+(error "line 6 column 10: model is not available")
+### output for cvc5
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
+
+Could not find any solution for puzzle CollatzDelay:1
 
 Solving puzzle 574/723: CollatzDelay:2
 sat_func def sat(n: int, t=2000, upper=206):
@@ -19141,7 +20025,40 @@ unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
 
 Could not find any solution for puzzle CollatzDelay:2
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 2000 with 3 and 206 with 5
+sat_func def sat(n: int, t=3, upper=5):
+    m = n
+    for i in range(t):
+        if n <= 1:
+            return False
+        n = 3 * n + 1 if n % 2 else n // 2
+    return n == 1 and m <= 2 ** upper
+modified_func def sat(n: int, t=wrap_int(3), upper=wrap_int(5)):
+    m = n
+    for i in sym_range(t):
+        if n <= wrap_int(1):
+            return False
+        n = wrap_int(3) * n + wrap_int(1) if n % wrap_int(2) else n // wrap_int(2)
+    return (n == wrap_int(1)).__and__(m <= wrap_int(2) ** upper)
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (=> (<= x 1) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 3)) false))))
+(assert (=> (not (<= x 1)) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 3)) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 3)) (and (= (+ (* 3 x) 1) 1) (<= x 25))))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unsat
+(error "line 6 column 10: model is not available")
+### output for cvc5
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
+
+Could not find any solution for puzzle CollatzDelay:2
 
 Solving puzzle 575/723: CollatzDelay:3
 sat_func def sat(n: int, t=2283, upper=238):
@@ -19176,7 +20093,40 @@ unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
 
 Could not find any solution for puzzle CollatzDelay:3
-Too many constants for extrapolation
+Two large constants for extrapolation
+Solving simpler variation replaced 2283 with 3 and 238 with 5
+sat_func def sat(n: int, t=3, upper=5):
+    m = n
+    for i in range(t):
+        if n <= 1:
+            return False
+        n = 3 * n + 1 if n % 2 else n // 2
+    return n == 1 and m <= 2 ** upper
+modified_func def sat(n: int, t=wrap_int(3), upper=wrap_int(5)):
+    m = n
+    for i in sym_range(t):
+        if n <= wrap_int(1):
+            return False
+        n = wrap_int(3) * n + wrap_int(1) if n % wrap_int(2) else n // wrap_int(2)
+    return (n == wrap_int(1)).__and__(m <= wrap_int(2) ** upper)
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (=> (<= x 1) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 3)) false))))
+(assert (=> (not (<= x 1)) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 3)) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 3)) (and (= (+ (* 3 x) 1) 1) (<= x 25))))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unsat
+(error "line 6 column 10: model is not available")
+### output for cvc5
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
+
+Could not find any solution for puzzle CollatzDelay:3
 
 Solving puzzle 576/723: Lehmer:0
 sat_func def sat(n: int):
@@ -23185,12 +24135,12 @@ The symbolic execution alone currently solves:
 with the following errors:
 - 53 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
 - 200 errors at at staging time
-- 84 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- 88 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
 - 140 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
 - 992 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 
 ### Extrapolation
-- 67 smaller problems tried
-- 10 successes on smaller problem
+- 89 smaller problems tried
+- 13 successes on smaller problem
 
