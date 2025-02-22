@@ -26,6 +26,8 @@ def valid_int_inputs(x, b, tracer):
                    
 def sym_int(x, base=None):
     if isinstance(x, SymbolicStr):
+        if x.concrete is not None and not base:
+            return SymbolicInt(int(x.concrete), tracer=x.tracer)
         if base:
             base = x.tracer.ensure_symbolic(base).z3_expr
         args = (x.z3_expr, base)
