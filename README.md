@@ -73,6 +73,11 @@ timeouts after staging (while building the SMTLIB program), errors during stagin
 
 See a detailed [stdout log](log/results.txt) of the current run.
 
+### Extrapolation
+- 67 smaller problems tried
+- 17 successes on smaller problem
+- 5 successful extrapolations (using Claude)
+
 ## Source map
 
 `.`<br/>
