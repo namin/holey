@@ -20462,7 +20462,10 @@ sat
     "xyfurexatextoxivuquu")
 )
 ### output for cvc5
-cvc5 interrupted by timeout.
+sat
+(
+(define-fun x () String "xyfurexatextoxivuquu")
+)
 
 Found solution xyfurexatextoxivuquu
 Yes! Solved for puzzle  StrIn:2

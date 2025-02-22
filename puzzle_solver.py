@@ -94,7 +94,7 @@ class PuzzleSolver:
             print("Missing ans_type")
             return None
         try:
-            result, log = func_timeout(20 if llm_solver else 3, self.symbolic_solve, args=(sat_func, ans_type, name, cmds, llm_solver, not reason))
+            result, log = func_timeout(20 if llm_solver else 6, self.symbolic_solve, args=(sat_func, ans_type, name, cmds, llm_solver, not reason))
             if result is not None:
                 if not check_result(result, sat_func):
                     self.error_verify_count += 1
