@@ -209,6 +209,23 @@ class MockExpr:
         return self._name if self._name else str(self)
 
 library = {
+'str_multiply':
+"""
+(define-fun-rec str.rev ((s String)) String
+  (ite (= s "")
+       ""
+       (str.++ (str.substr s (- (str.len s) 1) 1)
+               (str.rev (str.substr s 0 (- (str.len s) 1))))))
+(define-fun-rec str_multiply_helper ((s String) (n Int) (acc String)) String
+  (ite (<= n 0)
+    acc
+    (str_multiply_helper s (- n 1) (str.++ acc s))))
+(define-fun str_multiply ((s String) (n Int)) String
+  (ite (< n 0)
+    (str.rev (str_multiply_helper s (- 0 n) ""))
+    (str_multiply_helper s n "")))
+"""
+,
 'python.int.xor':
 """
 (define-fun bool-to-int ((b Bool)) Int
@@ -590,6 +607,9 @@ class Backend():
 
     def StrConcat(self, *args) -> MockExpr:
         return self._record("str.++", *args)
+
+    def StrMul(self, s, n) -> MockExpr:
+        return self._record("str_multiply", s, n)
 
     def StrSplit(self, s, sep) -> MockExpr:
         """Split string by separator"""

@@ -102,6 +102,8 @@ class SymbolicTracer:
             return SymbolicFloat(other, tracer=self)
         if isinstance(other, str):
             return SymbolicStr(other, tracer=self)
+        if isinstance(other, SymbolicSlice):
+            return other.get_slice()
         return other
 
 class SymbolicBool:
@@ -183,6 +185,8 @@ class SymbolicInt:
             return SymbolicFloat(self.tracer.backend.Mul(self.z3_expr, other.z3_expr), tracer=self.tracer)
         if self.concrete is not None and other.concrete is not None:
             return SymbolicInt(self.concrete * other.concrete, tracer=self.tracer)
+        if isinstance(other, SymbolicStr):
+            return SymbolicStr(self.tracer.backend.StrMul(other.z3_expr, self.z3_expr), tracer=self.tracer)
         return SymbolicInt(self.tracer.backend.Mul(self.z3_expr, other.z3_expr), tracer=self.tracer)
         
     def __eq__(self, other):
@@ -743,6 +747,12 @@ class SymbolicSlice:
         
         # Default to full sequence if we can't determine bounds
         return iter(self.concrete)
+
+    def __eq__(self, other):
+        return self.get_slice().__eq__(other)
+
+    def upper(self):
+        return self.get_slice().upper()
 
     def count(self, sub):
         """Count occurrences in sliced sequence"""
