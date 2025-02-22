@@ -761,7 +761,7 @@ class SymbolicSlice:
             start_expr = start.z3_expr if isinstance(start, SymbolicInt) else self.tracer.backend.IntVal(start)
             length_expr = (end.z3_expr if isinstance(end, SymbolicInt) else self.tracer.backend.IntVal(end)) - start_expr
             return SymbolicStr(
-                self.tracer.backend.StrSubstr(self.tracer.backend.StringVal(self.concrete), start_expr, length_expr),
+                self.tracer.backend.StrSubstr(self.tracer.backend.StringVal(self.concrete), start_expr, length_expr, variant="str.substr"),
                 tracer=self.tracer
             )
         else:

@@ -1,4 +1,4 @@
-from .core import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicList, SymbolicRange, SymbolicRangeIterator, SymbolicStr, truthy
+from .core import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicList, SymbolicRange, SymbolicRangeIterator, SymbolicStr, SymbolicSlice, truthy
 from .backend import default_backend
 import ast
 from typing import List, Any, Dict, Optional, Tuple
@@ -14,6 +14,9 @@ def reset():
 def sym_ord(x):
     if isinstance(x, SymbolicStr):
         return SymbolicInt(x.tracer.backend.StrToCode(x.z3_expr), tracer=x.tracer)
+    if isinstance(x, SymbolicSlice):
+        return sym_ord(x.get_slice())
+
     return ord(x)
 
 def sym_bin(x):

@@ -562,8 +562,8 @@ class Backend():
     def StrContains(self, x, y) -> MockExpr:
         return self._record("str.contains", x, y)
 
-    def StrSubstr(self, s, start, length) -> MockExpr:
-        return self._record("python.str.substr", s, start, length)
+    def StrSubstr(self, s, a, b, variant="python.str.subst") -> MockExpr:
+        return self._record(variant, s, a, b)
 
     def StrConcat(self, *args) -> MockExpr:
         return self._record("str.++", *args)

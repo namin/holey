@@ -402,12 +402,6 @@ modified_func def sat(n: int, lace=wrap_str('bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrb
 ### smt2
 (set-logic ALL)
 
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
-
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -421,10 +415,10 @@ modified_func def sat(n: int, lace=wrap_str('bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrb
 
 (declare-const x Int)
 (assert (>= (str.count "bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrbrrrbrrbrrbrbbrrrrrbrbbbrrrbbbrbbrbbbrbrbb" "r") 0))
-(assert (>= (str.count (python.str.substr "bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrbrrrbrrbrrbrbbrrrrrbrbbbrrrbbbrbbrbbbrbrbb" x (- (+ x (div 76 2)) x)) "r") 0))
+(assert (>= (str.count (str.substr "bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrbrrrbrrbrrbrbbrrrrrbrbbbrrrbbbrbbrbbbrbrbb" x (- (+ x (div 76 2)) x)) "r") 0))
 (assert (>= (str.count "bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrbrrrbrrbrrbrbbrrrrrbrbbbrrrbbbrbbrbbbrbrbb" "b") 0))
-(assert (>= (str.count (python.str.substr "bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrbrrrbrrbrrbrbbrrrrrbrbbbrrrbbbrbbrbbbrbrbb" x (- (+ x (div 76 2)) x)) "b") 0))
-(assert (and (and (>= x 0) (= (str.count "bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrbrrrbrrbrrbrbbrrrrrbrbbbrrrbbbrbbrbbbrbrbb" "r") (* 2 (str.count (python.str.substr "bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrbrrrbrrbrrbrbbrrrrrbrbbbrrrbbbrbbrbbbrbrbb" x (- (+ x (div 76 2)) x)) "r")))) (= (str.count "bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrbrrrbrrbrrbrbbrrrrrbrbbbrrrbbbrbbrbbbrbrbb" "b") (* 2 (str.count (python.str.substr "bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrbrrrbrrbrrbrbbrrrrrbrbbbrrrbbbrbbrbbbrbrbb" x (- (+ x (div 76 2)) x)) "b")))))
+(assert (>= (str.count (str.substr "bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrbrrrbrrbrrbrbbrrrrrbrbbbrrrbbbrbbrbbbrbrbb" x (- (+ x (div 76 2)) x)) "b") 0))
+(assert (and (and (>= x 0) (= (str.count "bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrbrrrbrrbrrbrbbrrrrrbrbbbrrrbbbrbbrbbbrbrbb" "r") (* 2 (str.count (str.substr "bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrbrrrbrrbrrbrbbrrrrrbrbbbrrrbbbrbbrbbbrbrbb" x (- (+ x (div 76 2)) x)) "r")))) (= (str.count "bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrbrrrbrrbrrbrbbrrrrrbrbbbrrrbbbrbbrbbbrbrbb" "b") (* 2 (str.count (str.substr "bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrbrrrbrrbrrbrbbrrrrrbrbbbrrrbbbrbbrbbbrbrbb" x (- (+ x (div 76 2)) x)) "b")))))
 (check-sat)
 (get-model)
 
@@ -447,12 +441,6 @@ modified_func def sat(n: int, lace=wrap_str('rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrr
 ### smt2
 (set-logic ALL)
 
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
-
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -466,10 +454,10 @@ modified_func def sat(n: int, lace=wrap_str('rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrr
 
 (declare-const x Int)
 (assert (>= (str.count "rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrrrrrrrrbrrrbbrbrrbbbrbbrrrbbrbbrrbrrbrbbrbbbbbbrbbbrbrbrrbrbbrbrrbbrrbrrbrrbrrbrbrbrrrbbrbrbbrrbbbbrrrrrbbrbrbrrbr" "r") 0))
-(assert (>= (str.count (python.str.substr "rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrrrrrrrrbrrrbbrbrrbbbrbbrrrbbrbbrrbrrbrbbrbbbbbbrbbbrbrbrrbrbbrbrrbbrrbrrbrrbrrbrbrbrrrbbrbrbbrrbbbbrrrrrbbrbrbrrbr" x (- (+ x (div 148 2)) x)) "r") 0))
+(assert (>= (str.count (str.substr "rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrrrrrrrrbrrrbbrbrrbbbrbbrrrbbrbbrrbrrbrbbrbbbbbbrbbbrbrbrrbrbbrbrrbbrrbrrbrrbrrbrbrbrrrbbrbrbbrrbbbbrrrrrbbrbrbrrbr" x (- (+ x (div 148 2)) x)) "r") 0))
 (assert (>= (str.count "rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrrrrrrrrbrrrbbrbrrbbbrbbrrrbbrbbrrbrrbrbbrbbbbbbrbbbrbrbrrbrbbrbrrbbrrbrrbrrbrrbrbrbrrrbbrbrbbrrbbbbrrrrrbbrbrbrrbr" "b") 0))
-(assert (>= (str.count (python.str.substr "rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrrrrrrrrbrrrbbrbrrbbbrbbrrrbbrbbrrbrrbrbbrbbbbbbrbbbrbrbrrbrbbrbrrbbrrbrrbrrbrrbrbrbrrrbbrbrbbrrbbbbrrrrrbbrbrbrrbr" x (- (+ x (div 148 2)) x)) "b") 0))
-(assert (and (and (>= x 0) (= (str.count "rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrrrrrrrrbrrrbbrbrrbbbrbbrrrbbrbbrrbrrbrbbrbbbbbbrbbbrbrbrrbrbbrbrrbbrrbrrbrrbrrbrbrbrrrbbrbrbbrrbbbbrrrrrbbrbrbrrbr" "r") (* 2 (str.count (python.str.substr "rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrrrrrrrrbrrrbbrbrrbbbrbbrrrbbrbbrrbrrbrbbrbbbbbbrbbbrbrbrrbrbbrbrrbbrrbrrbrrbrrbrbrbrrrbbrbrbbrrbbbbrrrrrbbrbrbrrbr" x (- (+ x (div 148 2)) x)) "r")))) (= (str.count "rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrrrrrrrrbrrrbbrbrrbbbrbbrrrbbrbbrrbrrbrbbrbbbbbbrbbbrbrbrrbrbbrbrrbbrrbrrbrrbrrbrbrbrrrbbrbrbbrrbbbbrrrrrbbrbrbrrbr" "b") (* 2 (str.count (python.str.substr "rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrrrrrrrrbrrrbbrbrrbbbrbbrrrbbrbbrrbrrbrbbrbbbbbbrbbbrbrbrrbrbbrbrrbbrrbrrbrrbrrbrbrbrrrbbrbrbbrrbbbbrrrrrbbrbrbrrbr" x (- (+ x (div 148 2)) x)) "b")))))
+(assert (>= (str.count (str.substr "rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrrrrrrrrbrrrbbrbrrbbbrbbrrrbbrbbrrbrrbrbbrbbbbbbrbbbrbrbrrbrbbrbrrbbrrbrrbrrbrrbrbrbrrrbbrbrbbrrbbbbrrrrrbbrbrbrrbr" x (- (+ x (div 148 2)) x)) "b") 0))
+(assert (and (and (>= x 0) (= (str.count "rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrrrrrrrrbrrrbbrbrrbbbrbbrrrbbrbbrrbrrbrbbrbbbbbbrbbbrbrbrrbrbbrbrrbbrrbrrbrrbrrbrbrbrrrbbrbrbbrrbbbbrrrrrbbrbrbrrbr" "r") (* 2 (str.count (str.substr "rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrrrrrrrrbrrrbbrbrrbbbrbbrrrbbrbbrrbrrbrbbrbbbbbbrbbbrbrbrrbrbbrbrrbbrrbrrbrrbrrbrbrbrrrbbrbrbbrrbbbbrrrrrbbrbrbrrbr" x (- (+ x (div 148 2)) x)) "r")))) (= (str.count "rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrrrrrrrrbrrrbbrbrrbbbrbbrrrbbrbbrrbrrbrbbrbbbbbbrbbbrbrbrrbrbbrbrrbbrrbrrbrrbrrbrbrbrrrbbrbrbbrrbbbbrrrrrbbrbrbrrbr" "b") (* 2 (str.count (str.substr "rbbrrbbrbrbbbrrrbbrbrbrrbbrbbbbbbrrrrrrrrbrrrbbrbrrbbbrbbrrrbbrbbrrbrrbrbbrbbbbbbrbbbrbrbrrbrbbrbrrbbrrbrrbrrbrrbrbrbrrrbbrbrbbrrbbbbrrrrrbbrbrbrrbr" x (- (+ x (div 148 2)) x)) "b")))))
 (check-sat)
 (get-model)
 
@@ -492,12 +480,6 @@ modified_func def sat(n: int, lace=wrap_str('brrrbrrbrbbbbbrrbbrr')):
 ### smt2
 (set-logic ALL)
 
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
-
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -511,10 +493,10 @@ modified_func def sat(n: int, lace=wrap_str('brrrbrrbrbbbbbrrbbrr')):
 
 (declare-const x Int)
 (assert (>= (str.count "brrrbrrbrbbbbbrrbbrr" "r") 0))
-(assert (>= (str.count (python.str.substr "brrrbrrbrbbbbbrrbbrr" x (- (+ x (div 20 2)) x)) "r") 0))
+(assert (>= (str.count (str.substr "brrrbrrbrbbbbbrrbbrr" x (- (+ x (div 20 2)) x)) "r") 0))
 (assert (>= (str.count "brrrbrrbrbbbbbrrbbrr" "b") 0))
-(assert (>= (str.count (python.str.substr "brrrbrrbrbbbbbrrbbrr" x (- (+ x (div 20 2)) x)) "b") 0))
-(assert (and (and (>= x 0) (= (str.count "brrrbrrbrbbbbbrrbbrr" "r") (* 2 (str.count (python.str.substr "brrrbrrbrbbbbbrrbbrr" x (- (+ x (div 20 2)) x)) "r")))) (= (str.count "brrrbrrbrbbbbbrrbbrr" "b") (* 2 (str.count (python.str.substr "brrrbrrbrbbbbbrrbbrr" x (- (+ x (div 20 2)) x)) "b")))))
+(assert (>= (str.count (str.substr "brrrbrrbrbbbbbrrbbrr" x (- (+ x (div 20 2)) x)) "b") 0))
+(assert (and (and (>= x 0) (= (str.count "brrrbrrbrbbbbbrrbbrr" "r") (* 2 (str.count (str.substr "brrrbrrbrbbbbbrrbbrr" x (- (+ x (div 20 2)) x)) "r")))) (= (str.count "brrrbrrbrbbbbbrrbbrr" "b") (* 2 (str.count (str.substr "brrrbrrbrbbbbbrrbbrr" x (- (+ x (div 20 2)) x)) "b")))))
 (check-sat)
 (get-model)
 
@@ -537,12 +519,6 @@ modified_func def sat(n: int, lace=wrap_str('bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrb
 ### smt2
 (set-logic ALL)
 
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
-
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -556,10 +532,10 @@ modified_func def sat(n: int, lace=wrap_str('bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrb
 
 (declare-const x Int)
 (assert (>= (str.count "bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrbbbrrbrrrbbbbbbbrbrbrbbbbbbbrrbbrbbrbrrbrbrrbbbrrrrrbrrbbrrrbbrbrrrbbbbrbbbrrrrbrbrrbbrbrbrbbrrbrrrbrbrrbbbbbbrbrrrrbbrbbbrbrrbrbbrbrrbbbbrrrrrbrrrbbrrrrrrbrrrbrbbbrbbbrrrbbr" "r") 0))
-(assert (>= (str.count (python.str.substr "bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrbbbrrbrrrbbbbbbbrbrbrbbbbbbbrrbbrbbrbrrbrbrrbbbrrrrrbrrbbrrrbbrbrrrbbbbrbbbrrrrbrbrrbbrbrbrbbrrbrrrbrbrrbbbbbbrbrrrrbbrbbbrbrrbrbbrbrrbbbbrrrrrbrrrbbrrrrrrbrrrbrbbbrbbbrrrbbr" x (- (+ x (div 208 2)) x)) "r") 0))
+(assert (>= (str.count (str.substr "bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrbbbrrbrrrbbbbbbbrbrbrbbbbbbbrrbbrbbrbrrbrbrrbbbrrrrrbrrbbrrrbbrbrrrbbbbrbbbrrrrbrbrrbbrbrbrbbrrbrrrbrbrrbbbbbbrbrrrrbbrbbbrbrrbrbbrbrrbbbbrrrrrbrrrbbrrrrrrbrrrbrbbbrbbbrrrbbr" x (- (+ x (div 208 2)) x)) "r") 0))
 (assert (>= (str.count "bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrbbbrrbrrrbbbbbbbrbrbrbbbbbbbrrbbrbbrbrrbrbrrbbbrrrrrbrrbbrrrbbrbrrrbbbbrbbbrrrrbrbrrbbrbrbrbbrrbrrrbrbrrbbbbbbrbrrrrbbrbbbrbrrbrbbrbrrbbbbrrrrrbrrrbbrrrrrrbrrrbrbbbrbbbrrrbbr" "b") 0))
-(assert (>= (str.count (python.str.substr "bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrbbbrrbrrrbbbbbbbrbrbrbbbbbbbrrbbrbbrbrrbrbrrbbbrrrrrbrrbbrrrbbrbrrrbbbbrbbbrrrrbrbrrbbrbrbrbbrrbrrrbrbrrbbbbbbrbrrrrbbrbbbrbrrbrbbrbrrbbbbrrrrrbrrrbbrrrrrrbrrrbrbbbrbbbrrrbbr" x (- (+ x (div 208 2)) x)) "b") 0))
-(assert (and (and (>= x 0) (= (str.count "bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrbbbrrbrrrbbbbbbbrbrbrbbbbbbbrrbbrbbrbrrbrbrrbbbrrrrrbrrbbrrrbbrbrrrbbbbrbbbrrrrbrbrrbbrbrbrbbrrbrrrbrbrrbbbbbbrbrrrrbbrbbbrbrrbrbbrbrrbbbbrrrrrbrrrbbrrrrrrbrrrbrbbbrbbbrrrbbr" "r") (* 2 (str.count (python.str.substr "bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrbbbrrbrrrbbbbbbbrbrbrbbbbbbbrrbbrbbrbrrbrbrrbbbrrrrrbrrbbrrrbbrbrrrbbbbrbbbrrrrbrbrrbbrbrbrbbrrbrrrbrbrrbbbbbbrbrrrrbbrbbbrbrrbrbbrbrrbbbbrrrrrbrrrbbrrrrrrbrrrbrbbbrbbbrrrbbr" x (- (+ x (div 208 2)) x)) "r")))) (= (str.count "bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrbbbrrbrrrbbbbbbbrbrbrbbbbbbbrrbbrbbrbrrbrbrrbbbrrrrrbrrbbrrrbbrbrrrbbbbrbbbrrrrbrbrrbbrbrbrbbrrbrrrbrbrrbbbbbbrbrrrrbbrbbbrbrrbrbbrbrrbbbbrrrrrbrrrbbrrrrrrbrrrbrbbbrbbbrrrbbr" "b") (* 2 (str.count (python.str.substr "bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrbbbrrbrrrbbbbbbbrbrbrbbbbbbbrrbbrbbrbrrbrbrrbbbrrrrrbrrbbrrrbbrbrrrbbbbrbbbrrrrbrbrrbbrbrbrbbrrbrrrbrbrrbbbbbbrbrrrrbbrbbbrbrrbrbbrbrrbbbbrrrrrbrrrbbrrrrrrbrrrbrbbbrbbbrrrbbr" x (- (+ x (div 208 2)) x)) "b")))))
+(assert (>= (str.count (str.substr "bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrbbbrrbrrrbbbbbbbrbrbrbbbbbbbrrbbrbbrbrrbrbrrbbbrrrrrbrrbbrrrbbrbrrrbbbbrbbbrrrrbrbrrbbrbrbrbbrrbrrrbrbrrbbbbbbrbrrrrbbrbbbrbrrbrbbrbrrbbbbrrrrrbrrrbbrrrrrrbrrrbrbbbrbbbrrrbbr" x (- (+ x (div 208 2)) x)) "b") 0))
+(assert (and (and (>= x 0) (= (str.count "bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrbbbrrbrrrbbbbbbbrbrbrbbbbbbbrrbbrbbrbrrbrbrrbbbrrrrrbrrbbrrrbbrbrrrbbbbrbbbrrrrbrbrrbbrbrbrbbrrbrrrbrbrrbbbbbbrbrrrrbbrbbbrbrrbrbbrbrrbbbbrrrrrbrrrbbrrrrrrbrrrbrbbbrbbbrrrbbr" "r") (* 2 (str.count (str.substr "bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrbbbrrbrrrbbbbbbbrbrbrbbbbbbbrrbbrbbrbrrbrbrrbbbrrrrrbrrbbrrrbbrbrrrbbbbrbbbrrrrbrbrrbbrbrbrbbrrbrrrbrbrrbbbbbbrbrrrrbbrbbbrbrrbrbbrbrrbbbbrrrrrbrrrbbrrrrrrbrrrbrbbbrbbbrrrbbr" x (- (+ x (div 208 2)) x)) "r")))) (= (str.count "bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrbbbrrbrrrbbbbbbbrbrbrbbbbbbbrrbbrbbrbrrbrbrrbbbrrrrrbrrbbrrrbbrbrrrbbbbrbbbrrrrbrbrrbbrbrbrbbrrbrrrbrbrrbbbbbbrbrrrrbbrbbbrbrrbrbbrbrrbbbbrrrrrbrrrbbrrrrrrbrrrbrbbbrbbbrrrbbr" "b") (* 2 (str.count (str.substr "bbbbrrbbbbrrbbrrrbbrrbbrrrrrrrbrbrbbbrrbrrrbbbbbbbrbrbrbbbbbbbrrbbrbbrbrrbrbrrbbbrrrrrbrrbbrrrbbrbrrrbbbbrbbbrrrrbrbrrbbrbrbrbbrrbrrrbrbrrbbbbbbrbrrrrbbrbbbrbrrbrbbrbrrbbbbrrrrrbrrrbbrrrrrrbrrrbrbbbrbbbrrrbbr" x (- (+ x (div 208 2)) x)) "b")))))
 (check-sat)
 (get-model)
 
@@ -582,12 +558,6 @@ modified_func def sat(n: int, lace=wrap_str('brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrb
 ### smt2
 (set-logic ALL)
 
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
-
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -601,10 +571,10 @@ modified_func def sat(n: int, lace=wrap_str('brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrb
 
 (declare-const x Int)
 (assert (>= (str.count "brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrbrrrrbbrrrbrrbbbbrbbbrrbbrrrbbrbrbbbbbrrbrrbbr" "r") 0))
-(assert (>= (str.count (python.str.substr "brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrbrrrrbbrrrbrrbbbbrbbbrrbbrrrbbrbrbbbbbrrbrrbbr" x (- (+ x (div 80 2)) x)) "r") 0))
+(assert (>= (str.count (str.substr "brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrbrrrrbbrrrbrrbbbbrbbbrrbbrrrbbrbrbbbbbrrbrrbbr" x (- (+ x (div 80 2)) x)) "r") 0))
 (assert (>= (str.count "brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrbrrrrbbrrrbrrbbbbrbbbrrbbrrrbbrbrbbbbbrrbrrbbr" "b") 0))
-(assert (>= (str.count (python.str.substr "brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrbrrrrbbrrrbrrbbbbrbbbrrbbrrrbbrbrbbbbbrrbrrbbr" x (- (+ x (div 80 2)) x)) "b") 0))
-(assert (and (and (>= x 0) (= (str.count "brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrbrrrrbbrrrbrrbbbbrbbbrrbbrrrbbrbrbbbbbrrbrrbbr" "r") (* 2 (str.count (python.str.substr "brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrbrrrrbbrrrbrrbbbbrbbbrrbbrrrbbrbrbbbbbrrbrrbbr" x (- (+ x (div 80 2)) x)) "r")))) (= (str.count "brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrbrrrrbbrrrbrrbbbbrbbbrrbbrrrbbrbrbbbbbrrbrrbbr" "b") (* 2 (str.count (python.str.substr "brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrbrrrrbbrrrbrrbbbbrbbbrrbbrrrbbrbrbbbbbrrbrrbbr" x (- (+ x (div 80 2)) x)) "b")))))
+(assert (>= (str.count (str.substr "brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrbrrrrbbrrrbrrbbbbrbbbrrbbrrrbbrbrbbbbbrrbrrbbr" x (- (+ x (div 80 2)) x)) "b") 0))
+(assert (and (and (>= x 0) (= (str.count "brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrbrrrrbbrrrbrrbbbbrbbbrrbbrrrbbrbrbbbbbrrbrrbbr" "r") (* 2 (str.count (str.substr "brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrbrrrrbbrrrbrrbbbbrbbbrrbbrrrbbrbrbbbbbrrbrrbbr" x (- (+ x (div 80 2)) x)) "r")))) (= (str.count "brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrbrrrrbbrrrbrrbbbbrbbbrrbbrrrbbrbrbbbbbrrbrrbbr" "b") (* 2 (str.count (str.substr "brrbbbrbbrrbrrbbrrbrrrbbrbbrrrbrbrbrrrrbbrrrbrrbbbbrbbbrrbbrrrbbrbrbbbbbrrbrrbbr" x (- (+ x (div 80 2)) x)) "b")))))
 (check-sat)
 (get-model)
 
@@ -3258,7 +3228,41 @@ modified_func def sat(orig: str, result=wrap_str('Hello, world!'), shift=wrap_in
     n = sym_len(result)
     _assert(sym_len(orig) == n)
     return all((sym_ord(orig[i]) + shift == sym_ord(result[i]) for i in sym_range(n)))
-Exception -- for puzzle ShiftChars:0 ord() expected string of length 1, but SymbolicSlice found
+### smt2
+(set-logic ALL)
+
+(define-fun python.str.at ((s String) (start Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start)))
+    (str.substr s start 1)))
+
+(declare-const x String)
+(declare-const i_0 Int)
+(assert (= (str.len x) 13))
+(assert (>= i_0 0))
+(assert (< i_0 13))
+(assert (= (+ (str.to_code (python.str.at x i_0)) 7) (str.to_code (str.substr "Hello, world!" i_0 (- (+ i_0 1) i_0)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun i_0 () Int
+    1)
+  (define-fun x () String
+    "I^JKLMABCDEFG")
+)
+### output for cvc5
+sat
+(
+(define-fun x () String "AAAAAAAAAAAA\u{1a}")
+(define-fun i_0 () Int 12)
+)
+
+Found solution I^JKLMABCDEFG
+WARNING: Solution verification failed for puzzle ShiftChars:0
 
 Solving puzzle 107/723: ShiftChars:1
 sat_func def sat(orig: str, result="rupomykecykynuric", shift=-9):
@@ -3269,7 +3273,41 @@ modified_func def sat(orig: str, result=wrap_str('rupomykecykynuric'), shift=-wr
     n = sym_len(result)
     _assert(sym_len(orig) == n)
     return all((sym_ord(orig[i]) + shift == sym_ord(result[i]) for i in sym_range(n)))
-Exception -- for puzzle ShiftChars:1 ord() expected string of length 1, but SymbolicSlice found
+### smt2
+(set-logic ALL)
+
+(define-fun python.str.at ((s String) (start Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start)))
+    (str.substr s start 1)))
+
+(declare-const x String)
+(declare-const i_0 Int)
+(assert (= (str.len x) 17))
+(assert (>= i_0 0))
+(assert (< i_0 17))
+(assert (= (+ (str.to_code (python.str.at x i_0)) -9) (str.to_code (str.substr "rupomykecykynuric" i_0 (- (+ i_0 1) i_0)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun i_0 () Int
+    12)
+  (define-fun x () String
+    "GHIJKLMABCDEwFNPO")
+)
+### output for cvc5
+sat
+(
+(define-fun x () String "AAAAAAAAAAAAAAAAl")
+(define-fun i_0 () Int 16)
+)
+
+Found solution GHIJKLMABCDEwFNPO
+WARNING: Solution verification failed for puzzle ShiftChars:1
 
 Solving puzzle 108/723: ShiftChars:2
 sat_func def sat(orig: str, result="vicyza", shift=7):
@@ -3280,7 +3318,41 @@ modified_func def sat(orig: str, result=wrap_str('vicyza'), shift=wrap_int(7)):
     n = sym_len(result)
     _assert(sym_len(orig) == n)
     return all((sym_ord(orig[i]) + shift == sym_ord(result[i]) for i in sym_range(n)))
-Exception -- for puzzle ShiftChars:2 ord() expected string of length 1, but SymbolicSlice found
+### smt2
+(set-logic ALL)
+
+(define-fun python.str.at ((s String) (start Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start)))
+    (str.substr s start 1)))
+
+(declare-const x String)
+(declare-const i_0 Int)
+(assert (= (str.len x) 6))
+(assert (>= i_0 0))
+(assert (< i_0 6))
+(assert (= (+ (str.to_code (python.str.at x i_0)) 7) (str.to_code (str.substr "vicyza" i_0 (- (+ i_0 1) i_0)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun i_0 () Int
+    3)
+  (define-fun x () String
+    "CDErAB")
+)
+### output for cvc5
+sat
+(
+(define-fun x () String "AAAAAZ")
+(define-fun i_0 () Int 5)
+)
+
+Found solution CDErAB
+WARNING: Solution verification failed for puzzle ShiftChars:2
 
 Solving puzzle 109/723: ShiftChars:3
 sat_func def sat(orig: str, result="nihyzatijyjoke", shift=8):
@@ -3291,7 +3363,41 @@ modified_func def sat(orig: str, result=wrap_str('nihyzatijyjoke'), shift=wrap_i
     n = sym_len(result)
     _assert(sym_len(orig) == n)
     return all((sym_ord(orig[i]) + shift == sym_ord(result[i]) for i in sym_range(n)))
-Exception -- for puzzle ShiftChars:3 ord() expected string of length 1, but SymbolicSlice found
+### smt2
+(set-logic ALL)
+
+(define-fun python.str.at ((s String) (start Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start)))
+    (str.substr s start 1)))
+
+(declare-const x String)
+(declare-const i_0 Int)
+(assert (= (str.len x) 14))
+(assert (>= i_0 0))
+(assert (< i_0 14))
+(assert (= (+ (str.to_code (python.str.at x i_0)) 8) (str.to_code (str.substr "nihyzatijyjoke" i_0 (- (+ i_0 1) i_0)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun i_0 () Int
+    0)
+  (define-fun x () String
+    "fKALBMCDEFGHIJ")
+)
+### output for cvc5
+sat
+(
+(define-fun x () String "AAAAAAAAAAAAA]")
+(define-fun i_0 () Int 13)
+)
+
+Found solution fKALBMCDEFGHIJ
+WARNING: Solution verification failed for puzzle ShiftChars:3
 
 Solving puzzle 110/723: ShiftChars:4
 sat_func def sat(orig: str, result="tuthijotext", shift=6):
@@ -3302,7 +3408,41 @@ modified_func def sat(orig: str, result=wrap_str('tuthijotext'), shift=wrap_int(
     n = sym_len(result)
     _assert(sym_len(orig) == n)
     return all((sym_ord(orig[i]) + shift == sym_ord(result[i]) for i in sym_range(n)))
-Exception -- for puzzle ShiftChars:4 ord() expected string of length 1, but SymbolicSlice found
+### smt2
+(set-logic ALL)
+
+(define-fun python.str.at ((s String) (start Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start)))
+    (str.substr s start 1)))
+
+(declare-const x String)
+(declare-const i_0 Int)
+(assert (= (str.len x) 11))
+(assert (>= i_0 0))
+(assert (< i_0 11))
+(assert (= (+ (str.to_code (python.str.at x i_0)) 6) (str.to_code (str.substr "tuthijotext" i_0 (- (+ i_0 1) i_0)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun i_0 () Int
+    3)
+  (define-fun x () String
+    "GHIbJABCDEF")
+)
+### output for cvc5
+sat
+(
+(define-fun x () String "AAAAAAAAAAn")
+(define-fun i_0 () Int 10)
+)
+
+Found solution GHIbJABCDEF
+WARNING: Solution verification failed for puzzle ShiftChars:4
 
 Solving puzzle 111/723: RemoveVowels:0
 sat_func def sat(txt: str, text="Hello, world!"):
@@ -4254,32 +4394,26 @@ modified_func def sat(shifted: str, n=wrap_int(124582369835), shift=wrap_int(3))
 (define-fun python.int ((s String) (base Int)) Int
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
-
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
 (declare-const x String)
-(assert (> (str.len (str.++ (python.str.substr x -3 (str.len x)) (python.str.substr x 0 -3))) 0))
-(assert (= 124582369835 (python.int (str.++ (python.str.substr x -3 (str.len x)) (python.str.substr x 0 -3)) 10)))
+(assert (> (str.len (str.++ (python.str.subst x -3 (str.len x)) (python.str.subst x 0 -3))) 0))
+(assert (= 124582369835 (python.int (str.++ (python.str.subst x -3 (str.len x)) (python.str.subst x 0 -3)) 10)))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
+(error "line 24 column 62: unknown constant python.str.subst (String Int Int) ")
+(error "line 25 column 78: unknown constant python.str.subst (String Int Int) ")
 sat
 (
   (define-fun x () String
-    "0124582369835000")
+    "")
 )
 ### output for cvc5
-(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
-  (^ 2.0 (to_real (+ (- 1) (str.len (str.substr x 0 (+ (- 3) (str.len x)))))))")
+(error "Parse Error: tmp.smt2:24.63: Symbol 'python.str.subst' not declared as a variable")
 
-Found solution 0124582369835000
-Yes! Solved for puzzle  CircularShiftNum:0
+Could not find any solution for puzzle CircularShiftNum:0
 
 Solving puzzle 137/723: CircularShiftNum:1
 sat_func def sat(shifted: str, n=6852918492, shift=12):
@@ -9755,27 +9889,25 @@ modified_func def sat(s: str, word=wrap_str('antidisestablishmentarianism'), max
 (define-fun python.int ((s String) (base Int)) Int
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
-
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
 (declare-const x String)
 (assert (=> (<= 28 10) (= "antidisestablishmentarianism" x)))
-(assert (=> (not (<= 28 10)) (> (str.len (python.str.substr x 1 -1)) 0)))
-(assert (=> (not (<= 28 10)) (and (and (= (python.int (python.str.substr x 1 -1) 10) 26) false) false)))
+(assert (=> (not (<= 28 10)) (> (str.len (python.str.subst x 1 -1)) 0)))
+(assert (=> (not (<= 28 10)) (and (and (= (python.int (python.str.subst x 1 -1) 10) 26) false) false)))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-unsat
-(error "line 34 column 10: model is not available")
+(error "line 25 column 65: unknown constant python.str.subst (String Int Int) ")
+(error "line 26 column 78: unknown constant python.str.subst (String Int Int) ")
+sat
+(
+  (define-fun x () String
+    "")
+)
 ### output for cvc5
-unsat
-(error "cannot get model unless after a SAT or UNKNOWN response.")
+(error "Parse Error: tmp.smt2:25.66: Symbol 'python.str.subst' not declared as a variable")
 
 Could not find any solution for puzzle Abbreviate:0
 
@@ -9811,27 +9943,25 @@ modified_func def sat(s: str, word=wrap_str('pawuzorythalirinasubyg'), max_len=w
 (define-fun python.int ((s String) (base Int)) Int
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
-
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
 (declare-const x String)
 (assert (=> (<= 22 12) (= "pawuzorythalirinasubyg" x)))
-(assert (=> (not (<= 22 12)) (> (str.len (python.str.substr x 1 -1)) 0)))
-(assert (=> (not (<= 22 12)) (and (and (= (python.int (python.str.substr x 1 -1) 10) 20) false) false)))
+(assert (=> (not (<= 22 12)) (> (str.len (python.str.subst x 1 -1)) 0)))
+(assert (=> (not (<= 22 12)) (and (and (= (python.int (python.str.subst x 1 -1) 10) 20) false) false)))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-unsat
-(error "line 34 column 10: model is not available")
+(error "line 25 column 65: unknown constant python.str.subst (String Int Int) ")
+(error "line 26 column 78: unknown constant python.str.subst (String Int Int) ")
+sat
+(
+  (define-fun x () String
+    "")
+)
 ### output for cvc5
-unsat
-(error "cannot get model unless after a SAT or UNKNOWN response.")
+(error "Parse Error: tmp.smt2:25.66: Symbol 'python.str.subst' not declared as a variable")
 
 Could not find any solution for puzzle Abbreviate:1
 
@@ -9867,27 +9997,25 @@ modified_func def sat(s: str, word=wrap_str('jomodosigezyfulach'), max_len=wrap_
 (define-fun python.int ((s String) (base Int)) Int
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
-
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
 (declare-const x String)
 (assert (=> (<= 18 5) (= "jomodosigezyfulach" x)))
-(assert (=> (not (<= 18 5)) (> (str.len (python.str.substr x 1 -1)) 0)))
-(assert (=> (not (<= 18 5)) (and (and (= (python.int (python.str.substr x 1 -1) 10) 16) false) false)))
+(assert (=> (not (<= 18 5)) (> (str.len (python.str.subst x 1 -1)) 0)))
+(assert (=> (not (<= 18 5)) (and (and (= (python.int (python.str.subst x 1 -1) 10) 16) false) false)))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-unsat
-(error "line 34 column 10: model is not available")
+(error "line 25 column 64: unknown constant python.str.subst (String Int Int) ")
+(error "line 26 column 77: unknown constant python.str.subst (String Int Int) ")
+sat
+(
+  (define-fun x () String
+    "")
+)
 ### output for cvc5
-unsat
-(error "cannot get model unless after a SAT or UNKNOWN response.")
+(error "Parse Error: tmp.smt2:25.65: Symbol 'python.str.subst' not declared as a variable")
 
 Could not find any solution for puzzle Abbreviate:2
 
@@ -9923,35 +10051,27 @@ modified_func def sat(s: str, word=wrap_str('bybakichop'), max_len=wrap_int(12))
 (define-fun python.int ((s String) (base Int)) Int
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
-
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
 (declare-const x String)
 (assert (=> (<= 10 12) (= "bybakichop" x)))
-(assert (=> (not (<= 10 12)) (> (str.len (python.str.substr x 1 -1)) 0)))
-(assert (=> (not (<= 10 12)) (and (and (= (python.int (python.str.substr x 1 -1) 10) 8) false) false)))
+(assert (=> (not (<= 10 12)) (> (str.len (python.str.subst x 1 -1)) 0)))
+(assert (=> (not (<= 10 12)) (and (and (= (python.int (python.str.subst x 1 -1) 10) 8) false) false)))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
+(error "line 25 column 65: unknown constant python.str.subst (String Int Int) ")
+(error "line 26 column 78: unknown constant python.str.subst (String Int Int) ")
 sat
 (
   (define-fun x () String
     "bybakichop")
 )
 ### output for cvc5
-unknown
-(
-(define-fun x () String "bybakichop")
-)
+(error "Parse Error: tmp.smt2:25.66: Symbol 'python.str.subst' not declared as a variable")
 
-Found solution bybakichop
-Yes! Solved for puzzle  Abbreviate:3
+Could not find any solution for puzzle Abbreviate:3
 
 Solving puzzle 335/723: Abbreviate:4
 sat_func def sat(s: str, word="wywaxizodetextonigijalate", max_len=5):
@@ -9985,27 +10105,25 @@ modified_func def sat(s: str, word=wrap_str('wywaxizodetextonigijalate'), max_le
 (define-fun python.int ((s String) (base Int)) Int
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
-
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
 (declare-const x String)
 (assert (=> (<= 25 5) (= "wywaxizodetextonigijalate" x)))
-(assert (=> (not (<= 25 5)) (> (str.len (python.str.substr x 1 -1)) 0)))
-(assert (=> (not (<= 25 5)) (and (and (= (python.int (python.str.substr x 1 -1) 10) 23) false) false)))
+(assert (=> (not (<= 25 5)) (> (str.len (python.str.subst x 1 -1)) 0)))
+(assert (=> (not (<= 25 5)) (and (and (= (python.int (python.str.subst x 1 -1) 10) 23) false) false)))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-unsat
-(error "line 34 column 10: model is not available")
+(error "line 25 column 64: unknown constant python.str.subst (String Int Int) ")
+(error "line 26 column 77: unknown constant python.str.subst (String Int Int) ")
+sat
+(
+  (define-fun x () String
+    "")
+)
 ### output for cvc5
-unsat
-(error "cannot get model unless after a SAT or UNKNOWN response.")
+(error "Parse Error: tmp.smt2:25.65: Symbol 'python.str.subst' not declared as a variable")
 
 Could not find any solution for puzzle Abbreviate:4
 
@@ -15310,12 +15428,6 @@ modified_func def sat(s: str, s1=wrap_str('a'), s2=wrap_str('b'), count1=wrap_in
 ### smt2
 (set-logic ALL)
 
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
-
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -15330,16 +15442,21 @@ modified_func def sat(s: str, s1=wrap_str('a'), s2=wrap_str('b'), count1=wrap_in
 (declare-const x String)
 (assert (>= (str.count x "a") 0))
 (assert (>= (str.count x "b") 0))
-(assert (and (and (= (str.count x "a") 50) (= (str.count x "b") 30)) (= (python.str.substr x 0 10) (python.str.substr x -10 (str.len x)))))
+(assert (and (and (= (str.count x "a") 50) (= (str.count x "b") 30)) (= (python.str.subst x 0 10) (python.str.subst x -10 (str.len x)))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-timeout
+(error "line 17 column 96: unknown constant python.str.subst (String Int Int) ")
+sat
+(
+  (define-fun x () String
+    "")
+)
 ### output for cvc5
-cvc5 interrupted by timeout.
+(error "Parse Error: tmp.smt2:17.97: Symbol 'python.str.subst' not declared as a variable")
 
 Could not find any solution for puzzle BasicStrCounts:0
 
@@ -15350,12 +15467,6 @@ modified_func def sat(s: str, s1=wrap_str('t'), s2=wrap_str('qu'), count1=wrap_i
     return (s.count(s1) == count1).__and__(s.count(s2) == count2).__and__(s[:10] == s[-10:])
 ### smt2
 (set-logic ALL)
-
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
 
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
@@ -15371,16 +15482,21 @@ modified_func def sat(s: str, s1=wrap_str('t'), s2=wrap_str('qu'), count1=wrap_i
 (declare-const x String)
 (assert (>= (str.count x "t") 0))
 (assert (>= (str.count x "qu") 0))
-(assert (and (and (= (str.count x "t") 86) (= (str.count x "qu") 83)) (= (python.str.substr x 0 10) (python.str.substr x -10 (str.len x)))))
+(assert (and (and (= (str.count x "t") 86) (= (str.count x "qu") 83)) (= (python.str.subst x 0 10) (python.str.subst x -10 (str.len x)))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-timeout
+(error "line 17 column 97: unknown constant python.str.subst (String Int Int) ")
+sat
+(
+  (define-fun x () String
+    "")
+)
 ### output for cvc5
-cvc5 interrupted by timeout.
+(error "Parse Error: tmp.smt2:17.98: Symbol 'python.str.subst' not declared as a variable")
 
 Could not find any solution for puzzle BasicStrCounts:1
 
@@ -15391,12 +15507,6 @@ modified_func def sat(s: str, s1=wrap_str('kuc'), s2=wrap_str('qu'), count1=wrap
     return (s.count(s1) == count1).__and__(s.count(s2) == count2).__and__(s[:10] == s[-10:])
 ### smt2
 (set-logic ALL)
-
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
 
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
@@ -15412,16 +15522,21 @@ modified_func def sat(s: str, s1=wrap_str('kuc'), s2=wrap_str('qu'), count1=wrap
 (declare-const x String)
 (assert (>= (str.count x "kuc") 0))
 (assert (>= (str.count x "qu") 0))
-(assert (and (and (= (str.count x "kuc") 63) (= (str.count x "qu") 58)) (= (python.str.substr x 0 10) (python.str.substr x -10 (str.len x)))))
+(assert (and (and (= (str.count x "kuc") 63) (= (str.count x "qu") 58)) (= (python.str.subst x 0 10) (python.str.subst x -10 (str.len x)))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-timeout
+(error "line 17 column 99: unknown constant python.str.subst (String Int Int) ")
+sat
+(
+  (define-fun x () String
+    "")
+)
 ### output for cvc5
-cvc5 interrupted by timeout.
+(error "Parse Error: tmp.smt2:17.100: Symbol 'python.str.subst' not declared as a variable")
 
 Could not find any solution for puzzle BasicStrCounts:2
 
@@ -15432,12 +15547,6 @@ modified_func def sat(s: str, s1=wrap_str('te'), s2=wrap_str('tex'), count1=wrap
     return (s.count(s1) == count1).__and__(s.count(s2) == count2).__and__(s[:10] == s[-10:])
 ### smt2
 (set-logic ALL)
-
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
 
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
@@ -15453,16 +15562,21 @@ modified_func def sat(s: str, s1=wrap_str('te'), s2=wrap_str('tex'), count1=wrap
 (declare-const x String)
 (assert (>= (str.count x "te") 0))
 (assert (>= (str.count x "tex") 0))
-(assert (and (and (= (str.count x "te") 97) (= (str.count x "tex") 53)) (= (python.str.substr x 0 10) (python.str.substr x -10 (str.len x)))))
+(assert (and (and (= (str.count x "te") 97) (= (str.count x "tex") 53)) (= (python.str.subst x 0 10) (python.str.subst x -10 (str.len x)))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-timeout
+(error "line 17 column 99: unknown constant python.str.subst (String Int Int) ")
+sat
+(
+  (define-fun x () String
+    "")
+)
 ### output for cvc5
-cvc5 interrupted by timeout.
+(error "Parse Error: tmp.smt2:17.100: Symbol 'python.str.subst' not declared as a variable")
 
 Could not find any solution for puzzle BasicStrCounts:3
 
@@ -15473,12 +15587,6 @@ modified_func def sat(s: str, s1=wrap_str('hot'), s2=wrap_str('n'), count1=wrap_
     return (s.count(s1) == count1).__and__(s.count(s2) == count2).__and__(s[:10] == s[-10:])
 ### smt2
 (set-logic ALL)
-
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
 
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
@@ -15494,16 +15602,21 @@ modified_func def sat(s: str, s1=wrap_str('hot'), s2=wrap_str('n'), count1=wrap_
 (declare-const x String)
 (assert (>= (str.count x "hot") 0))
 (assert (>= (str.count x "n") 0))
-(assert (and (and (= (str.count x "hot") 48) (= (str.count x "n") 92)) (= (python.str.substr x 0 10) (python.str.substr x -10 (str.len x)))))
+(assert (and (and (= (str.count x "hot") 48) (= (str.count x "n") 92)) (= (python.str.subst x 0 10) (python.str.subst x -10 (str.len x)))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-timeout
+(error "line 17 column 98: unknown constant python.str.subst (String Int Int) ")
+sat
+(
+  (define-fun x () String
+    "")
+)
 ### output for cvc5
-cvc5 interrupted by timeout.
+(error "Parse Error: tmp.smt2:17.99: Symbol 'python.str.subst' not declared as a variable")
 
 Could not find any solution for puzzle BasicStrCounts:4
 
@@ -16043,12 +16156,6 @@ modified_func def sat(t: str, s=wrap_str('))(Add)some))parens()to()(balance(()((
 ### smt2
 (set-logic ALL)
 
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
-
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -16064,33 +16171,31 @@ modified_func def sat(t: str, s=wrap_str('))(Add)some))parens()to()(balance(()((
 (declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 (+ (str.len x) 1)))
-(assert (>= (str.count (python.str.substr x 0 i_0) "(") 0))
-(assert (>= (str.count (python.str.substr x 0 i_0) ")") 0))
-(assert (>= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0))
-(assert (and (= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0) (str.contains x "))(Add)some))parens()to()(balance(()(()(me!)((((")))
+(assert (>= (str.count (python.str.subst x 0 i_0) "(") 0))
+(assert (>= (str.count (python.str.subst x 0 i_0) ")") 0))
+(assert (>= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0))
+(assert (and (= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0) (str.contains x "))(Add)some))parens()to()(balance(()(()(me!)((((")))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
+(error "line 18 column 48: unknown constant python.str.subst (String Int Int) ")
+(error "line 19 column 48: unknown constant python.str.subst (String Int Int) ")
+(error "line 20 column 51: unknown constant python.str.subst (String Int Int) ")
+(error "line 21 column 55: unknown constant python.str.subst (String Int Int) ")
 sat
 (
   (define-fun i_0 () Int
     0)
   (define-fun x () String
-    "))(Add)some))parens()to()(balance(()(()(me!)((((")
+    "")
 )
 ### output for cvc5
-unknown
-(
-(define-fun x () String "))(Add)some))parens()to()(balance(()(()(me!)((((")
-(define-fun i_0 () Int 0)
-)
+(error "Parse Error: tmp.smt2:18.49: Symbol 'python.str.subst' not declared as a variable")
 
-Found solution ))(Add)some))parens()to()(balance(()(()(me!)((((
-Exception in checking result: 
-WARNING: Solution verification failed for puzzle CompleteParens:0
+Could not find any solution for puzzle CompleteParens:0
 
 Solving puzzle 526/723: CompleteParens:1
 sat_func def sat(t: str, s="(po)(())kf((((cy()))((tex()())("):
@@ -16106,12 +16211,6 @@ modified_func def sat(t: str, s=wrap_str('(po)(())kf((((cy()))((tex()())(')):
 ### smt2
 (set-logic ALL)
 
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
-
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -16127,32 +16226,31 @@ modified_func def sat(t: str, s=wrap_str('(po)(())kf((((cy()))((tex()())(')):
 (declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 (+ (str.len x) 1)))
-(assert (>= (str.count (python.str.substr x 0 i_0) "(") 0))
-(assert (>= (str.count (python.str.substr x 0 i_0) ")") 0))
-(assert (>= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0))
-(assert (and (= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0) (str.contains x "(po)(())kf((((cy()))((tex()())(")))
+(assert (>= (str.count (python.str.subst x 0 i_0) "(") 0))
+(assert (>= (str.count (python.str.subst x 0 i_0) ")") 0))
+(assert (>= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0))
+(assert (and (= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0) (str.contains x "(po)(())kf((((cy()))((tex()())(")))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
+(error "line 18 column 48: unknown constant python.str.subst (String Int Int) ")
+(error "line 19 column 48: unknown constant python.str.subst (String Int Int) ")
+(error "line 20 column 51: unknown constant python.str.subst (String Int Int) ")
+(error "line 21 column 55: unknown constant python.str.subst (String Int Int) ")
 sat
 (
   (define-fun i_0 () Int
     0)
   (define-fun x () String
-    "(po)(())kf((((cy()))((tex()())(")
+    "")
 )
 ### output for cvc5
-unknown
-(
-(define-fun x () String "(po)(())kf((((cy()))((tex()())(")
-(define-fun i_0 () Int 0)
-)
+(error "Parse Error: tmp.smt2:18.49: Symbol 'python.str.subst' not declared as a variable")
 
-Found solution (po)(())kf((((cy()))((tex()())(
-WARNING: Solution verification failed for puzzle CompleteParens:1
+Could not find any solution for puzzle CompleteParens:1
 
 Solving puzzle 527/723: CompleteParens:2
 sat_func def sat(t: str, s="yf)()(()))hik()t((("):
@@ -16168,12 +16266,6 @@ modified_func def sat(t: str, s=wrap_str('yf)()(()))hik()t(((')):
 ### smt2
 (set-logic ALL)
 
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
-
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -16189,33 +16281,31 @@ modified_func def sat(t: str, s=wrap_str('yf)()(()))hik()t(((')):
 (declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 (+ (str.len x) 1)))
-(assert (>= (str.count (python.str.substr x 0 i_0) "(") 0))
-(assert (>= (str.count (python.str.substr x 0 i_0) ")") 0))
-(assert (>= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0))
-(assert (and (= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0) (str.contains x "yf)()(()))hik()t(((")))
+(assert (>= (str.count (python.str.subst x 0 i_0) "(") 0))
+(assert (>= (str.count (python.str.subst x 0 i_0) ")") 0))
+(assert (>= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0))
+(assert (and (= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0) (str.contains x "yf)()(()))hik()t(((")))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
+(error "line 18 column 48: unknown constant python.str.subst (String Int Int) ")
+(error "line 19 column 48: unknown constant python.str.subst (String Int Int) ")
+(error "line 20 column 51: unknown constant python.str.subst (String Int Int) ")
+(error "line 21 column 55: unknown constant python.str.subst (String Int Int) ")
 sat
 (
   (define-fun i_0 () Int
     0)
   (define-fun x () String
-    "yf)()(()))hik()t(((")
+    "")
 )
 ### output for cvc5
-unknown
-(
-(define-fun x () String "yf)()(()))hik()t(((")
-(define-fun i_0 () Int 0)
-)
+(error "Parse Error: tmp.smt2:18.49: Symbol 'python.str.subst' not declared as a variable")
 
-Found solution yf)()(()))hik()t(((
-Exception in checking result: 
-WARNING: Solution verification failed for puzzle CompleteParens:2
+Could not find any solution for puzzle CompleteParens:2
 
 Solving puzzle 528/723: CompleteParens:3
 sat_func def sat(t: str, s=")((le(()()chu)())nol))((sic(((da)()ty((()te))xy(())))))k"):
@@ -16231,12 +16321,6 @@ modified_func def sat(t: str, s=wrap_str(')((le(()()chu)())nol))((sic(((da)()ty(
 ### smt2
 (set-logic ALL)
 
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
-
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -16252,33 +16336,31 @@ modified_func def sat(t: str, s=wrap_str(')((le(()()chu)())nol))((sic(((da)()ty(
 (declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 (+ (str.len x) 1)))
-(assert (>= (str.count (python.str.substr x 0 i_0) "(") 0))
-(assert (>= (str.count (python.str.substr x 0 i_0) ")") 0))
-(assert (>= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0))
-(assert (and (= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0) (str.contains x ")((le(()()chu)())nol))((sic(((da)()ty((()te))xy(())))))k")))
+(assert (>= (str.count (python.str.subst x 0 i_0) "(") 0))
+(assert (>= (str.count (python.str.subst x 0 i_0) ")") 0))
+(assert (>= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0))
+(assert (and (= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0) (str.contains x ")((le(()()chu)())nol))((sic(((da)()ty((()te))xy(())))))k")))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
+(error "line 18 column 48: unknown constant python.str.subst (String Int Int) ")
+(error "line 19 column 48: unknown constant python.str.subst (String Int Int) ")
+(error "line 20 column 51: unknown constant python.str.subst (String Int Int) ")
+(error "line 21 column 55: unknown constant python.str.subst (String Int Int) ")
 sat
 (
   (define-fun i_0 () Int
     0)
   (define-fun x () String
-    ")((le(()()chu)())nol))((sic(((da)()ty((()te))xy(())))))k")
+    "")
 )
 ### output for cvc5
-unknown
-(
-(define-fun x () String ")((le(()()chu)())nol))((sic(((da)()ty((()te))xy(())))))k")
-(define-fun i_0 () Int 0)
-)
+(error "Parse Error: tmp.smt2:18.49: Symbol 'python.str.subst' not declared as a variable")
 
-Found solution )((le(()()chu)())nol))((sic(((da)()ty((()te))xy(())))))k
-Exception in checking result: 
-WARNING: Solution verification failed for puzzle CompleteParens:3
+Could not find any solution for puzzle CompleteParens:3
 
 Solving puzzle 529/723: CompleteParens:4
 sat_func def sat(t: str, s="))())l"):
@@ -16294,12 +16376,6 @@ modified_func def sat(t: str, s=wrap_str('))())l')):
 ### smt2
 (set-logic ALL)
 
-(define-fun python.str.substr ((s String) (start Int) (end Int)) String
-  (let ((start (ite (< start 0) (+ (str.len s) start) start))
-        (end (ite (< end 0) (+ (str.len s) end) end)))
-    (str.substr s start (- end start))))
-
-
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -16315,33 +16391,31 @@ modified_func def sat(t: str, s=wrap_str('))())l')):
 (declare-const i_0 Int)
 (assert (>= i_0 0))
 (assert (< i_0 (+ (str.len x) 1)))
-(assert (>= (str.count (python.str.substr x 0 i_0) "(") 0))
-(assert (>= (str.count (python.str.substr x 0 i_0) ")") 0))
-(assert (>= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0))
-(assert (and (= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0) (str.contains x "))())l")))
+(assert (>= (str.count (python.str.subst x 0 i_0) "(") 0))
+(assert (>= (str.count (python.str.subst x 0 i_0) ")") 0))
+(assert (>= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0))
+(assert (and (= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0) (str.contains x "))())l")))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
+(error "line 18 column 48: unknown constant python.str.subst (String Int Int) ")
+(error "line 19 column 48: unknown constant python.str.subst (String Int Int) ")
+(error "line 20 column 51: unknown constant python.str.subst (String Int Int) ")
+(error "line 21 column 55: unknown constant python.str.subst (String Int Int) ")
 sat
 (
   (define-fun i_0 () Int
     0)
   (define-fun x () String
-    "))())l")
+    "")
 )
 ### output for cvc5
-unknown
-(
-(define-fun x () String "))())l")
-(define-fun i_0 () Int 0)
-)
+(error "Parse Error: tmp.smt2:18.49: Symbol 'python.str.subst' not declared as a variable")
 
-Found solution ))())l
-Exception in checking result: 
-WARNING: Solution verification failed for puzzle CompleteParens:4
+Could not find any solution for puzzle CompleteParens:4
 
 Solving puzzle 530/723: MatchingMarkers:0
 sat_func def sat(cut_position: int, ring="yRrsmOkLCHSDJywpVDEDsjgCwSUmtvHMefxxPFdmBIpM", lower=5):
@@ -18783,10 +18857,7 @@ sat
     "xyfurexatextoxivuquu")
 )
 ### output for cvc5
-sat
-(
-(define-fun x () String "xyfurexatextoxivuquu")
-)
+cvc5 interrupted by timeout.
 
 Found solution xyfurexatextoxivuquu
 Yes! Solved for puzzle  StrIn:2
@@ -21156,14 +21227,14 @@ Could not find any solution for puzzle Tutorial5:0
 
 The symbolic execution alone currently solves:
 - 54% (194 out of 360) of `int` puzzles,
-- 20% (71 out of 363) of `str` puzzles,
-- 37% (265 out of 723) overall.
+- 19% (69 out of 363) of `str` puzzles,
+- 36% (263 out of 723) overall.
 
 with the following errors:
 - 53 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
-- 209 errors at at staging time
+- 204 errors at at staging time
 - 70 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- 126 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
+- 133 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
 - 992 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 
