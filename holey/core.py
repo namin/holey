@@ -9,6 +9,7 @@ class SymbolicTracer:
         self.backend = backend or default_backend()
         self.llm_solver = llm_solver
         self.path_conditions = []
+        self.forall_conditions = []
         self.branch_counter = 0
         self.current_branch_exploration = []
         self.remaining_branch_explorations = []
@@ -56,7 +57,18 @@ class SymbolicTracer:
             
         if self.llm_solver:
             self.llm_solver.add_constraint_refinements(constraint, self.backend)
-                
+
+        if self.forall_conditions:
+            for var_expr, bounds_expr in self.forall_conditions:
+                var_decl = self.backend.Int(var_expr.decl().name())
+                constraint = self.backend.ForAll(
+                    [var_decl],
+                    self.backend.Implies(
+                        bounds_expr,
+                        constraint
+                    )
+                )
+
         if self.path_conditions:
             constraint = self.backend.Implies(
                 self.backend.And(*self.path_conditions),
@@ -784,6 +796,8 @@ class SymbolicRangeIterator:
         if self.used:
             raise StopIteration
         self.used = True
+        bounds = self.get_bounds()
+        self.tracer.forall_conditions.append((self.var.z3_expr, bounds.z3_expr))
         return self.var
     
     def get_bounds(self):

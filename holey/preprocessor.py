@@ -91,15 +91,20 @@ def sym_range(*args):
     
     tracer = first_tracer(args)
     [start, stop, step] = [tracer.ensure_symbolic(arg) for arg in [start, stop, step]]
-    i = make_symbolic(int, f"i_{next(counter)}", tracer=tracer)
-    # Add range constraints
-    i.tracer.add_constraint(i >= start)
-    i.tracer.add_constraint(i < stop)
+    name = f"i_{next(counter)}"
+    tracer.backend.quantified_vars.add(name)
+    i = make_symbolic(int, name, tracer=tracer)
+    
+    # Create bounds condition
+    bounds = (i >= start).__and__(i < stop)
     if step != 1:
         k = make_symbolic(int, f"k_{next(counter)}", tracer=tracer)
-        i.tracer.add_constraint(k >= 0)
-        i.tracer.add_constraint(i == start + k * step)
-        i.tracer.add_constraint(k < (stop - start) // step)
+        bounds = bounds.__and__(k >= 0).__and__(
+            i == start + k * step).__and__(
+            k < (stop - start) // step)
+    
+    # Add to forall conditions instead of direct constraints
+    tracer.forall_conditions.append((i.z3_expr, bounds.z3_expr))
     return [i]
 
 def sym_not(x):

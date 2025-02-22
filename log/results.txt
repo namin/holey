@@ -1486,10 +1486,7 @@ modified_func def sat(d: int, n=wrap_int(123456)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 (+ x 1)))
-(assert (< i_0 123456))
-(assert (and (and (= (mod 123456 x) 0) (< x 123456)) (not (= (mod 123456 i_0) 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 (+ x 1)) (< i_0 123456)) (and (and (= (mod 123456 x) 0) (< x 123456)) (not (= (mod 123456 i_0) 0))))))
 (check-sat)
 (get-model)
 
@@ -1498,24 +1495,16 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
   (define-fun x () Int
-    (- 123456))
-  (define-fun div0 ((x!0 Int) (x!1 Int)) Int
-    (ite (and (= x!0 123456) (= x!1 0)) 0
-      (- 1)))
-  (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
-    (- 1))
+    123456)
 )
 ### output for cvc5
 sat
 (
-(define-fun x () Int (- 61728))
-(define-fun i_0 () Int 0)
+(define-fun x () Int 123455)
 )
 
-Found solution -123456
+Found solution 123456
 WARNING: Solution verification failed for puzzle LargestDivisor:0
 
 Solving puzzle 57/723: LargestDivisor:1
@@ -1526,10 +1515,7 @@ modified_func def sat(d: int, n=wrap_int(17836)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 (+ x 1)))
-(assert (< i_0 17836))
-(assert (and (and (= (mod 17836 x) 0) (< x 17836)) (not (= (mod 17836 i_0) 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 (+ x 1)) (< i_0 17836)) (and (and (= (mod 17836 x) 0) (< x 17836)) (not (= (mod 17836 i_0) 0))))))
 (check-sat)
 (get-model)
 
@@ -1538,24 +1524,16 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
   (define-fun x () Int
-    (- 17836))
-  (define-fun div0 ((x!0 Int) (x!1 Int)) Int
-    (ite (and (= x!0 17836) (= x!1 0)) 0
-      (- 1)))
-  (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
-    (- 1))
+    17836)
 )
 ### output for cvc5
 sat
 (
-(define-fun x () Int (- 8918))
-(define-fun i_0 () Int 0)
+(define-fun x () Int 17835)
 )
 
-Found solution -17836
+Found solution 17836
 WARNING: Solution verification failed for puzzle LargestDivisor:1
 
 Solving puzzle 58/723: LargestDivisor:2
@@ -1566,10 +1544,7 @@ modified_func def sat(d: int, n=wrap_int(71793)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 (+ x 1)))
-(assert (< i_0 71793))
-(assert (and (and (= (mod 71793 x) 0) (< x 71793)) (not (= (mod 71793 i_0) 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 (+ x 1)) (< i_0 71793)) (and (and (= (mod 71793 x) 0) (< x 71793)) (not (= (mod 71793 i_0) 0))))))
 (check-sat)
 (get-model)
 
@@ -1578,24 +1553,16 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
   (define-fun x () Int
-    (- 71793))
-  (define-fun div0 ((x!0 Int) (x!1 Int)) Int
-    (ite (and (= x!0 71793) (= x!1 0)) 0
-      (- 1)))
-  (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
-    (- 1))
+    71793)
 )
 ### output for cvc5
 sat
 (
-(define-fun x () Int (- 23931))
-(define-fun i_0 () Int 0)
+(define-fun x () Int 71792)
 )
 
-Found solution -71793
+Found solution 71793
 WARNING: Solution verification failed for puzzle LargestDivisor:2
 
 Solving puzzle 59/723: LargestDivisor:3
@@ -1606,10 +1573,7 @@ modified_func def sat(d: int, n=wrap_int(15466)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 (+ x 1)))
-(assert (< i_0 15466))
-(assert (and (and (= (mod 15466 x) 0) (< x 15466)) (not (= (mod 15466 i_0) 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 (+ x 1)) (< i_0 15466)) (and (and (= (mod 15466 x) 0) (< x 15466)) (not (= (mod 15466 i_0) 0))))))
 (check-sat)
 (get-model)
 
@@ -1618,24 +1582,16 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
   (define-fun x () Int
-    (- 15466))
-  (define-fun div0 ((x!0 Int) (x!1 Int)) Int
-    (ite (and (= x!0 15466) (= x!1 0)) 0
-      (- 1)))
-  (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
-    (- 1))
+    15466)
 )
 ### output for cvc5
 sat
 (
-(define-fun x () Int (- 7733))
-(define-fun i_0 () Int 0)
+(define-fun x () Int 15465)
 )
 
-Found solution -15466
+Found solution 15466
 WARNING: Solution verification failed for puzzle LargestDivisor:3
 
 Solving puzzle 60/723: LargestDivisor:4
@@ -1646,10 +1602,7 @@ modified_func def sat(d: int, n=wrap_int(57567)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 (+ x 1)))
-(assert (< i_0 57567))
-(assert (and (and (= (mod 57567 x) 0) (< x 57567)) (not (= (mod 57567 i_0) 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 (+ x 1)) (< i_0 57567)) (and (and (= (mod 57567 x) 0) (< x 57567)) (not (= (mod 57567 i_0) 0))))))
 (check-sat)
 (get-model)
 
@@ -1658,24 +1611,16 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
   (define-fun x () Int
-    (- 57567))
-  (define-fun div0 ((x!0 Int) (x!1 Int)) Int
-    (ite (and (= x!0 57567) (= x!1 0)) 0
-      (- 1)))
-  (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
-    (- 1))
+    57567)
 )
 ### output for cvc5
 sat
 (
-(define-fun x () Int (- 19189))
-(define-fun i_0 () Int 0)
+(define-fun x () Int 57566)
 )
 
-Found solution -57567
+Found solution 57567
 WARNING: Solution verification failed for puzzle LargestDivisor:4
 
 Solving puzzle 61/723: FlipCase:0
@@ -2312,12 +2257,9 @@ modified_func def sat(n: int, lower=wrap_int(123456)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
 (assert (or (= (^ (- (* (* 5 x) x) 4) 0.5) (to_int (^ (- (* (* 5 x) x) 4) 0.5))) (= (^ (+ (* (* 5 x) x) 4) 0.5) (to_int (^ (+ (* (* 5 x) x) 4) 0.5)))))
-(assert (>= i_0 2))
-(assert (< i_0 (+ (to_int (^ x 0.5)) 1)))
-(assert (not (= (mod x i_0) 0)))
-(assert (> x 123456))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 2) (< i_0 (+ (to_int (^ x 0.5)) 1))) (not (= (mod x i_0) 0)))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 2) (< i_0 (+ (to_int (^ x 0.5)) 1))) (> x 123456))))
 (check-sat)
 (get-model)
 
@@ -2325,9 +2267,9 @@ running backend z3
 running backend cvc5
 ### output for z3
 unknown
-(error "line 10 column 10: model is not available")
+(error "line 7 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: tmp.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:3.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:0
 
@@ -2343,12 +2285,9 @@ modified_func def sat(n: int, lower=wrap_int(3)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
 (assert (or (= (^ (- (* (* 5 x) x) 4) 0.5) (to_int (^ (- (* (* 5 x) x) 4) 0.5))) (= (^ (+ (* (* 5 x) x) 4) 0.5) (to_int (^ (+ (* (* 5 x) x) 4) 0.5)))))
-(assert (>= i_0 2))
-(assert (< i_0 (+ (to_int (^ x 0.5)) 1)))
-(assert (not (= (mod x i_0) 0)))
-(assert (> x 3))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 2) (< i_0 (+ (to_int (^ x 0.5)) 1))) (not (= (mod x i_0) 0)))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 2) (< i_0 (+ (to_int (^ x 0.5)) 1))) (> x 3))))
 (check-sat)
 (get-model)
 
@@ -2356,9 +2295,9 @@ running backend z3
 running backend cvc5
 ### output for z3
 unknown
-(error "line 10 column 10: model is not available")
+(error "line 7 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: tmp.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:3.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:1
 
@@ -2374,12 +2313,9 @@ modified_func def sat(n: int, lower=wrap_int(458)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
 (assert (or (= (^ (- (* (* 5 x) x) 4) 0.5) (to_int (^ (- (* (* 5 x) x) 4) 0.5))) (= (^ (+ (* (* 5 x) x) 4) 0.5) (to_int (^ (+ (* (* 5 x) x) 4) 0.5)))))
-(assert (>= i_0 2))
-(assert (< i_0 (+ (to_int (^ x 0.5)) 1)))
-(assert (not (= (mod x i_0) 0)))
-(assert (> x 458))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 2) (< i_0 (+ (to_int (^ x 0.5)) 1))) (not (= (mod x i_0) 0)))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 2) (< i_0 (+ (to_int (^ x 0.5)) 1))) (> x 458))))
 (check-sat)
 (get-model)
 
@@ -2387,9 +2323,9 @@ running backend z3
 running backend cvc5
 ### output for z3
 unknown
-(error "line 10 column 10: model is not available")
+(error "line 7 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: tmp.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:3.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:2
 
@@ -2405,12 +2341,9 @@ modified_func def sat(n: int, lower=wrap_int(384)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
 (assert (or (= (^ (- (* (* 5 x) x) 4) 0.5) (to_int (^ (- (* (* 5 x) x) 4) 0.5))) (= (^ (+ (* (* 5 x) x) 4) 0.5) (to_int (^ (+ (* (* 5 x) x) 4) 0.5)))))
-(assert (>= i_0 2))
-(assert (< i_0 (+ (to_int (^ x 0.5)) 1)))
-(assert (not (= (mod x i_0) 0)))
-(assert (> x 384))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 2) (< i_0 (+ (to_int (^ x 0.5)) 1))) (not (= (mod x i_0) 0)))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 2) (< i_0 (+ (to_int (^ x 0.5)) 1))) (> x 384))))
 (check-sat)
 (get-model)
 
@@ -2418,9 +2351,9 @@ running backend z3
 running backend cvc5
 ### output for z3
 unknown
-(error "line 10 column 10: model is not available")
+(error "line 7 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: tmp.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:3.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:3
 
@@ -2436,12 +2369,9 @@ modified_func def sat(n: int, lower=wrap_int(4)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
 (assert (or (= (^ (- (* (* 5 x) x) 4) 0.5) (to_int (^ (- (* (* 5 x) x) 4) 0.5))) (= (^ (+ (* (* 5 x) x) 4) 0.5) (to_int (^ (+ (* (* 5 x) x) 4) 0.5)))))
-(assert (>= i_0 2))
-(assert (< i_0 (+ (to_int (^ x 0.5)) 1)))
-(assert (not (= (mod x i_0) 0)))
-(assert (> x 4))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 2) (< i_0 (+ (to_int (^ x 0.5)) 1))) (not (= (mod x i_0) 0)))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 2) (< i_0 (+ (to_int (^ x 0.5)) 1))) (> x 4))))
 (check-sat)
 (get-model)
 
@@ -2449,9 +2379,9 @@ running backend z3
 running backend cvc5
 ### output for z3
 unknown
-(error "line 10 column 10: model is not available")
+(error "line 7 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: tmp.smt2:4.42: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:3.42: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeFib:4
 
@@ -2469,13 +2399,7 @@ modified_func def sat(count: int, n=wrap_int(981)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(assert (>= i_0 0))
-(assert (< i_0 981))
-(assert (>= i_1 0))
-(assert (< i_1 981))
-(assert (= (- x 1) 0))
+(assert (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 981)) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 981)) (= (- x 1) 0))))))
 (check-sat)
 (get-model)
 
@@ -2484,10 +2408,6 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
-  (define-fun i_1 () Int
-    0)
   (define-fun x () Int
     1)
 )
@@ -2495,8 +2415,6 @@ sat
 sat
 (
 (define-fun x () Int 1)
-(define-fun i_0 () Int 0)
-(define-fun i_1 () Int 0)
 )
 
 Found solution 1
@@ -2516,13 +2434,7 @@ modified_func def sat(count: int, n=wrap_int(123)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(assert (>= i_0 0))
-(assert (< i_0 123))
-(assert (>= i_1 0))
-(assert (< i_1 123))
-(assert (= (- x 1) 0))
+(assert (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 123)) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 123)) (= (- x 1) 0))))))
 (check-sat)
 (get-model)
 
@@ -2531,10 +2443,6 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
-  (define-fun i_1 () Int
-    0)
   (define-fun x () Int
     1)
 )
@@ -2542,8 +2450,6 @@ sat
 sat
 (
 (define-fun x () Int 1)
-(define-fun i_0 () Int 0)
-(define-fun i_1 () Int 0)
 )
 
 Found solution 1
@@ -2563,13 +2469,7 @@ modified_func def sat(count: int, n=wrap_int(239)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(assert (>= i_0 0))
-(assert (< i_0 239))
-(assert (>= i_1 0))
-(assert (< i_1 239))
-(assert (= (- x 1) 0))
+(assert (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 239)) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 239)) (= (- x 1) 0))))))
 (check-sat)
 (get-model)
 
@@ -2578,10 +2478,6 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
-  (define-fun i_1 () Int
-    0)
   (define-fun x () Int
     1)
 )
@@ -2589,8 +2485,6 @@ sat
 sat
 (
 (define-fun x () Int 1)
-(define-fun i_0 () Int 0)
-(define-fun i_1 () Int 0)
 )
 
 Found solution 1
@@ -2610,13 +2504,7 @@ modified_func def sat(count: int, n=wrap_int(378)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(assert (>= i_0 0))
-(assert (< i_0 378))
-(assert (>= i_1 0))
-(assert (< i_1 378))
-(assert (= (- x 1) 0))
+(assert (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 378)) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 378)) (= (- x 1) 0))))))
 (check-sat)
 (get-model)
 
@@ -2625,10 +2513,6 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
-  (define-fun i_1 () Int
-    0)
   (define-fun x () Int
     1)
 )
@@ -2636,8 +2520,6 @@ sat
 sat
 (
 (define-fun x () Int 1)
-(define-fun i_0 () Int 0)
-(define-fun i_1 () Int 0)
 )
 
 Found solution 1
@@ -2657,13 +2539,7 @@ modified_func def sat(count: int, n=wrap_int(501)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(assert (>= i_0 0))
-(assert (< i_0 501))
-(assert (>= i_1 0))
-(assert (< i_1 501))
-(assert (= (- x 1) 0))
+(assert (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 501)) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 501)) (= (- x 1) 0))))))
 (check-sat)
 (get-model)
 
@@ -2672,10 +2548,6 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
-  (define-fun i_1 () Int
-    0)
   (define-fun x () Int
     1)
 )
@@ -2683,8 +2555,6 @@ sat
 sat
 (
 (define-fun x () Int 1)
-(define-fun i_0 () Int 0)
-(define-fun i_1 () Int 0)
 )
 
 Found solution 1
@@ -3236,11 +3106,8 @@ modified_func def sat(orig: str, result=wrap_str('Hello, world!'), shift=wrap_in
     (str.substr s start 1)))
 
 (declare-const x String)
-(declare-const i_0 Int)
 (assert (= (str.len x) 13))
-(assert (>= i_0 0))
-(assert (< i_0 13))
-(assert (= (+ (str.to_code (python.str.at x i_0)) 7) (str.to_code (str.substr "Hello, world!" i_0 (- (+ i_0 1) i_0)))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 13)) (= (+ (str.to_code (python.str.at x i_0)) 7) (str.to_code (str.substr "Hello, world!" i_0 (- (+ i_0 1) i_0)))))))
 (check-sat)
 (get-model)
 
@@ -3249,20 +3116,17 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    1)
   (define-fun x () String
-    "I^JKLMABCDEFG")
+    "A^eeh%\u{19}phke]\u{1a}")
 )
 ### output for cvc5
-sat
+unknown
 (
-(define-fun x () String "AAAAAAAAAAAA\u{1a}")
-(define-fun i_0 () Int 12)
+(define-fun x () String "AAAAAAAAAAAAA")
 )
 
-Found solution I^JKLMABCDEFG
-WARNING: Solution verification failed for puzzle ShiftChars:0
+Found solution A^eeh%phke]
+Yes! Solved for puzzle  ShiftChars:0
 
 Solving puzzle 107/723: ShiftChars:1
 sat_func def sat(orig: str, result="rupomykecykynuric", shift=-9):
@@ -3281,11 +3145,8 @@ modified_func def sat(orig: str, result=wrap_str('rupomykecykynuric'), shift=-wr
     (str.substr s start 1)))
 
 (declare-const x String)
-(declare-const i_0 Int)
 (assert (= (str.len x) 17))
-(assert (>= i_0 0))
-(assert (< i_0 17))
-(assert (= (+ (str.to_code (python.str.at x i_0)) -9) (str.to_code (str.substr "rupomykecykynuric" i_0 (- (+ i_0 1) i_0)))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 17)) (= (+ (str.to_code (python.str.at x i_0)) -9) (str.to_code (str.substr "rupomykecykynuric" i_0 (- (+ i_0 1) i_0)))))))
 (check-sat)
 (get-model)
 
@@ -3294,20 +3155,17 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    12)
   (define-fun x () String
-    "GHIJKLMABCDEwFNPO")
+    "{~yxv\u{82}tnl\u{82}t\u{82}w~{rl")
 )
 ### output for cvc5
-sat
+unknown
 (
-(define-fun x () String "AAAAAAAAAAAAAAAAl")
-(define-fun i_0 () Int 16)
+(define-fun x () String "AAAAAAAAAAAAAAAAA")
 )
 
-Found solution GHIJKLMABCDEwFNPO
-WARNING: Solution verification failed for puzzle ShiftChars:1
+Found solution {~yxvtnltw~{rl
+Yes! Solved for puzzle  ShiftChars:1
 
 Solving puzzle 108/723: ShiftChars:2
 sat_func def sat(orig: str, result="vicyza", shift=7):
@@ -3326,11 +3184,8 @@ modified_func def sat(orig: str, result=wrap_str('vicyza'), shift=wrap_int(7)):
     (str.substr s start 1)))
 
 (declare-const x String)
-(declare-const i_0 Int)
 (assert (= (str.len x) 6))
-(assert (>= i_0 0))
-(assert (< i_0 6))
-(assert (= (+ (str.to_code (python.str.at x i_0)) 7) (str.to_code (str.substr "vicyza" i_0 (- (+ i_0 1) i_0)))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 6)) (= (+ (str.to_code (python.str.at x i_0)) 7) (str.to_code (str.substr "vicyza" i_0 (- (+ i_0 1) i_0)))))))
 (check-sat)
 (get-model)
 
@@ -3339,19 +3194,17 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    3)
   (define-fun x () String
-    "CDErAB")
+    "ob\rsZ")
 )
 ### output for cvc5
-sat
+unknown
 (
-(define-fun x () String "AAAAAZ")
-(define-fun i_0 () Int 5)
+(define-fun x () String "AAAAAA")
 )
 
-Found solution CDErAB
+Found solution obsZ
+Exception in checking result: 
 WARNING: Solution verification failed for puzzle ShiftChars:2
 
 Solving puzzle 109/723: ShiftChars:3
@@ -3371,11 +3224,8 @@ modified_func def sat(orig: str, result=wrap_str('nihyzatijyjoke'), shift=wrap_i
     (str.substr s start 1)))
 
 (declare-const x String)
-(declare-const i_0 Int)
 (assert (= (str.len x) 14))
-(assert (>= i_0 0))
-(assert (< i_0 14))
-(assert (= (+ (str.to_code (python.str.at x i_0)) 8) (str.to_code (str.substr "nihyzatijyjoke" i_0 (- (+ i_0 1) i_0)))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 14)) (= (+ (str.to_code (python.str.at x i_0)) 8) (str.to_code (str.substr "nihyzatijyjoke" i_0 (- (+ i_0 1) i_0)))))))
 (check-sat)
 (get-model)
 
@@ -3384,20 +3234,17 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
   (define-fun x () String
-    "fKALBMCDEFGHIJ")
+    "fa`qrYlabqbgc]")
 )
 ### output for cvc5
-sat
+unknown
 (
-(define-fun x () String "AAAAAAAAAAAAA]")
-(define-fun i_0 () Int 13)
+(define-fun x () String "AAAAAAAAAAAAAA")
 )
 
-Found solution fKALBMCDEFGHIJ
-WARNING: Solution verification failed for puzzle ShiftChars:3
+Found solution fa`qrYlabqbgc]
+Yes! Solved for puzzle  ShiftChars:3
 
 Solving puzzle 110/723: ShiftChars:4
 sat_func def sat(orig: str, result="tuthijotext", shift=6):
@@ -3416,11 +3263,8 @@ modified_func def sat(orig: str, result=wrap_str('tuthijotext'), shift=wrap_int(
     (str.substr s start 1)))
 
 (declare-const x String)
-(declare-const i_0 Int)
 (assert (= (str.len x) 11))
-(assert (>= i_0 0))
-(assert (< i_0 11))
-(assert (= (+ (str.to_code (python.str.at x i_0)) 6) (str.to_code (str.substr "tuthijotext" i_0 (- (+ i_0 1) i_0)))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 11)) (= (+ (str.to_code (python.str.at x i_0)) 6) (str.to_code (str.substr "tuthijotext" i_0 (- (+ i_0 1) i_0)))))))
 (check-sat)
 (get-model)
 
@@ -3429,20 +3273,17 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    3)
   (define-fun x () String
-    "GHIbJABCDEF")
+    "nonbcdin_rn")
 )
 ### output for cvc5
-sat
+unknown
 (
-(define-fun x () String "AAAAAAAAAAn")
-(define-fun i_0 () Int 10)
+(define-fun x () String "AAAAAAAAAAA")
 )
 
-Found solution GHIbJABCDEF
-WARNING: Solution verification failed for puzzle ShiftChars:4
+Found solution nonbcdin_rn
+Yes! Solved for puzzle  ShiftChars:4
 
 Solving puzzle 111/723: RemoveVowels:0
 sat_func def sat(txt: str, text="Hello, world!"):
@@ -4082,49 +3923,23 @@ modified_func def sat(p: int, n=wrap_int(101076)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(declare-const i_2 Int)
-(assert (>= i_0 2))
-(assert (< i_0 (- x 1)))
-(assert (>= i_1 (+ x 1)))
-(assert (< i_1 101076))
-(assert (>= i_2 2))
-(assert (< i_2 (- i_1 1)))
-(assert (and (and (and (not (= (mod x i_0) 0)) (= (mod 101076 x) 0)) (> x 0)) (not (= (ite (not (= (mod 101076 i_1) 0)) (mod 101076 i_1) (not (not (= (mod i_1 i_2) 0)))) 0))))
+(assert (forall ((i_2 Int)) (=> (and (>= i_2 2) (< i_2 (- i_1 1))) (forall ((i_1 Int)) (=> (and (>= i_1 (+ x 1)) (< i_1 101076)) (forall ((i_0 Int)) (=> (and (>= i_0 2) (< i_0 (- x 1))) (and (and (and (not (= (mod x i_0) 0)) (= (mod 101076 x) 0)) (> x 0)) (not (= (ite (not (= (mod 101076 i_1) 0)) (mod 101076 i_1) (not (not (= (mod i_1 i_2) 0)))) 0))))))))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
+(error "line 3 column 58: unknown constant i_1")
 sat
 (
-  (define-fun i_0 () Int
-    3)
   (define-fun x () Int
-    33692)
-  (define-fun i_2 () Int
-    2)
-  (define-fun i_1 () Int
-    33693)
-  (define-fun div0 ((x!0 Int) (x!1 Int)) Int
-    (ite (and (= x!0 101076) (= x!1 33692)) 3
-    (ite (and (= x!0 101076) (= x!1 33693)) 2
-      11230)))
-  (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
     0)
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:12.169: Branches of the ITE must have comparable type.
-then branch: (mod 101076 i_1)
-its type   : Int
-else branch: (not (not (= (mod i_1 i_2) 0)))
-its type   : Bool
-")
+(error "Parse Error: tmp.smt2:3.59: Symbol 'i_1' not declared as a variable")
 
-Found solution 33692
-WARNING: Solution verification failed for puzzle LargestPrimeFactor:0
+Could not find any solution for puzzle LargestPrimeFactor:0
 
 Solving puzzle 132/723: LargestPrimeFactor:1
 sat_func def sat(p: int, n=15132):
@@ -4141,49 +3956,23 @@ modified_func def sat(p: int, n=wrap_int(15132)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(declare-const i_2 Int)
-(assert (>= i_0 2))
-(assert (< i_0 (- x 1)))
-(assert (>= i_1 (+ x 1)))
-(assert (< i_1 15132))
-(assert (>= i_2 2))
-(assert (< i_2 (- i_1 1)))
-(assert (and (and (and (not (= (mod x i_0) 0)) (= (mod 15132 x) 0)) (> x 0)) (not (= (ite (not (= (mod 15132 i_1) 0)) (mod 15132 i_1) (not (not (= (mod i_1 i_2) 0)))) 0))))
+(assert (forall ((i_2 Int)) (=> (and (>= i_2 2) (< i_2 (- i_1 1))) (forall ((i_1 Int)) (=> (and (>= i_1 (+ x 1)) (< i_1 15132)) (forall ((i_0 Int)) (=> (and (>= i_0 2) (< i_0 (- x 1))) (and (and (and (not (= (mod x i_0) 0)) (= (mod 15132 x) 0)) (> x 0)) (not (= (ite (not (= (mod 15132 i_1) 0)) (mod 15132 i_1) (not (not (= (mod i_1 i_2) 0)))) 0))))))))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
+(error "line 3 column 58: unknown constant i_1")
 sat
 (
-  (define-fun i_0 () Int
-    2)
   (define-fun x () Int
-    13)
-  (define-fun i_2 () Int
-    3)
-  (define-fun i_1 () Int
-    15)
-  (define-fun div0 ((x!0 Int) (x!1 Int)) Int
-    (ite (and (= x!0 15132) (= x!1 13)) 1164
-    (ite (and (= x!0 15132) (= x!1 15)) 1008
-      6)))
-  (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
     0)
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:12.166: Branches of the ITE must have comparable type.
-then branch: (mod 15132 i_1)
-its type   : Int
-else branch: (not (not (= (mod i_1 i_2) 0)))
-its type   : Bool
-")
+(error "Parse Error: tmp.smt2:3.59: Symbol 'i_1' not declared as a variable")
 
-Found solution 13
-WARNING: Solution verification failed for puzzle LargestPrimeFactor:1
+Could not find any solution for puzzle LargestPrimeFactor:1
 
 Solving puzzle 133/723: LargestPrimeFactor:2
 sat_func def sat(p: int, n=22184):
@@ -4200,49 +3989,23 @@ modified_func def sat(p: int, n=wrap_int(22184)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(declare-const i_2 Int)
-(assert (>= i_0 2))
-(assert (< i_0 (- x 1)))
-(assert (>= i_1 (+ x 1)))
-(assert (< i_1 22184))
-(assert (>= i_2 2))
-(assert (< i_2 (- i_1 1)))
-(assert (and (and (and (not (= (mod x i_0) 0)) (= (mod 22184 x) 0)) (> x 0)) (not (= (ite (not (= (mod 22184 i_1) 0)) (mod 22184 i_1) (not (not (= (mod i_1 i_2) 0)))) 0))))
+(assert (forall ((i_2 Int)) (=> (and (>= i_2 2) (< i_2 (- i_1 1))) (forall ((i_1 Int)) (=> (and (>= i_1 (+ x 1)) (< i_1 22184)) (forall ((i_0 Int)) (=> (and (>= i_0 2) (< i_0 (- x 1))) (and (and (and (not (= (mod x i_0) 0)) (= (mod 22184 x) 0)) (> x 0)) (not (= (ite (not (= (mod 22184 i_1) 0)) (mod 22184 i_1) (not (not (= (mod i_1 i_2) 0)))) 0))))))))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
+(error "line 3 column 58: unknown constant i_1")
 sat
 (
-  (define-fun i_0 () Int
-    2)
   (define-fun x () Int
-    47)
-  (define-fun i_2 () Int
-    3)
-  (define-fun i_1 () Int
-    7396)
-  (define-fun div0 ((x!0 Int) (x!1 Int)) Int
-    (ite (and (= x!0 22184) (= x!1 47)) 472
-    (ite (and (= x!0 22184) (= x!1 7396)) 2
-      23)))
-  (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
     0)
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:12.166: Branches of the ITE must have comparable type.
-then branch: (mod 22184 i_1)
-its type   : Int
-else branch: (not (not (= (mod i_1 i_2) 0)))
-its type   : Bool
-")
+(error "Parse Error: tmp.smt2:3.59: Symbol 'i_1' not declared as a variable")
 
-Found solution 47
-WARNING: Solution verification failed for puzzle LargestPrimeFactor:2
+Could not find any solution for puzzle LargestPrimeFactor:2
 
 Solving puzzle 134/723: LargestPrimeFactor:3
 sat_func def sat(p: int, n=70875):
@@ -4259,49 +4022,23 @@ modified_func def sat(p: int, n=wrap_int(70875)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(declare-const i_2 Int)
-(assert (>= i_0 2))
-(assert (< i_0 (- x 1)))
-(assert (>= i_1 (+ x 1)))
-(assert (< i_1 70875))
-(assert (>= i_2 2))
-(assert (< i_2 (- i_1 1)))
-(assert (and (and (and (not (= (mod x i_0) 0)) (= (mod 70875 x) 0)) (> x 0)) (not (= (ite (not (= (mod 70875 i_1) 0)) (mod 70875 i_1) (not (not (= (mod i_1 i_2) 0)))) 0))))
+(assert (forall ((i_2 Int)) (=> (and (>= i_2 2) (< i_2 (- i_1 1))) (forall ((i_1 Int)) (=> (and (>= i_1 (+ x 1)) (< i_1 70875)) (forall ((i_0 Int)) (=> (and (>= i_0 2) (< i_0 (- x 1))) (and (and (and (not (= (mod x i_0) 0)) (= (mod 70875 x) 0)) (> x 0)) (not (= (ite (not (= (mod 70875 i_1) 0)) (mod 70875 i_1) (not (not (= (mod i_1 i_2) 0)))) 0))))))))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
+(error "line 3 column 58: unknown constant i_1")
 sat
 (
-  (define-fun i_0 () Int
-    2)
   (define-fun x () Int
-    5)
-  (define-fun i_2 () Int
-    3)
-  (define-fun i_1 () Int
-    8)
-  (define-fun div0 ((x!0 Int) (x!1 Int)) Int
-    (ite (and (= x!0 70875) (= x!1 5)) 14175
-    (ite (and (= x!0 70875) (= x!1 8)) 8859
-      2)))
-  (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
     0)
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:12.166: Branches of the ITE must have comparable type.
-then branch: (mod 70875 i_1)
-its type   : Int
-else branch: (not (not (= (mod i_1 i_2) 0)))
-its type   : Bool
-")
+(error "Parse Error: tmp.smt2:3.59: Symbol 'i_1' not declared as a variable")
 
-Found solution 5
-WARNING: Solution verification failed for puzzle LargestPrimeFactor:3
+Could not find any solution for puzzle LargestPrimeFactor:3
 
 Solving puzzle 135/723: LargestPrimeFactor:4
 sat_func def sat(p: int, n=63088):
@@ -4318,49 +4055,23 @@ modified_func def sat(p: int, n=wrap_int(63088)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(declare-const i_2 Int)
-(assert (>= i_0 2))
-(assert (< i_0 (- x 1)))
-(assert (>= i_1 (+ x 1)))
-(assert (< i_1 63088))
-(assert (>= i_2 2))
-(assert (< i_2 (- i_1 1)))
-(assert (and (and (and (not (= (mod x i_0) 0)) (= (mod 63088 x) 0)) (> x 0)) (not (= (ite (not (= (mod 63088 i_1) 0)) (mod 63088 i_1) (not (not (= (mod i_1 i_2) 0)))) 0))))
+(assert (forall ((i_2 Int)) (=> (and (>= i_2 2) (< i_2 (- i_1 1))) (forall ((i_1 Int)) (=> (and (>= i_1 (+ x 1)) (< i_1 63088)) (forall ((i_0 Int)) (=> (and (>= i_0 2) (< i_0 (- x 1))) (and (and (and (not (= (mod x i_0) 0)) (= (mod 63088 x) 0)) (> x 0)) (not (= (ite (not (= (mod 63088 i_1) 0)) (mod 63088 i_1) (not (not (= (mod i_1 i_2) 0)))) 0))))))))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
+(error "line 3 column 58: unknown constant i_1")
 sat
 (
-  (define-fun i_0 () Int
-    3)
   (define-fun x () Int
-    8)
-  (define-fun i_2 () Int
-    2)
-  (define-fun i_1 () Int
-    63087)
-  (define-fun div0 ((x!0 Int) (x!1 Int)) Int
-    (ite (and (= x!0 63088) (= x!1 8)) 7886
-    (ite (and (= x!0 63088) (= x!1 63087)) 1
-      2)))
-  (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
     0)
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:12.166: Branches of the ITE must have comparable type.
-then branch: (mod 63088 i_1)
-its type   : Int
-else branch: (not (not (= (mod i_1 i_2) 0)))
-its type   : Bool
-")
+(error "Parse Error: tmp.smt2:3.59: Symbol 'i_1' not declared as a variable")
 
-Found solution 8
-WARNING: Solution verification failed for puzzle LargestPrimeFactor:4
+Could not find any solution for puzzle LargestPrimeFactor:4
 
 Solving puzzle 136/723: CircularShiftNum:0
 sat_func def sat(shifted: str, n=124582369835, shift=3):
@@ -4394,26 +4105,32 @@ modified_func def sat(shifted: str, n=wrap_int(124582369835), shift=wrap_int(3))
 (define-fun python.int ((s String) (base Int)) Int
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
+
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
 (declare-const x String)
-(assert (> (str.len (str.++ (python.str.subst x -3 (str.len x)) (python.str.subst x 0 -3))) 0))
-(assert (= 124582369835 (python.int (str.++ (python.str.subst x -3 (str.len x)) (python.str.subst x 0 -3)) 10)))
+(assert (> (str.len (str.++ (python.str.substr x -3 (str.len x)) (python.str.substr x 0 -3))) 0))
+(assert (= 124582369835 (python.int (str.++ (python.str.substr x -3 (str.len x)) (python.str.substr x 0 -3)) 10)))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 24 column 62: unknown constant python.str.subst (String Int Int) ")
-(error "line 25 column 78: unknown constant python.str.subst (String Int Int) ")
 sat
 (
   (define-fun x () String
-    "")
+    "0124582369835000")
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:24.63: Symbol 'python.str.subst' not declared as a variable")
+(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
+  (^ 2.0 (to_real (+ (- 1) (str.len (str.substr x 0 (+ (- 3) (str.len x)))))))")
 
-Could not find any solution for puzzle CircularShiftNum:0
+Found solution 0124582369835000
+Yes! Solved for puzzle  CircularShiftNum:0
 
 Solving puzzle 137/723: CircularShiftNum:1
 sat_func def sat(shifted: str, n=6852918492, shift=12):
@@ -6959,14 +6676,8 @@ modified_func def sat(x: int, a=wrap_int(145), b=wrap_int(24126846790974)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(assert (=> (= x -1) (>= i_0 145)))
-(assert (=> (= x -1) (< i_0 24126846790975)))
-(assert (=> (= x -1) (= (mod i_0 2) 1)))
-(assert (=> (not (= x -1)) (>= i_1 (+ x 1))))
-(assert (=> (not (= x -1)) (< i_1 24126846790975)))
-(assert (=> (not (= x -1)) (and (and (<= 145 x) (<= x 24126846790974)) (= (mod i_1 2) 1))))
+(assert (=> (= x -1) (forall ((i_0 Int)) (=> (and (>= i_0 145) (< i_0 24126846790975)) (= (mod i_0 2) 1)))))
+(assert (=> (not (= x -1)) (forall ((i_1 Int)) (=> (and (>= i_1 (+ x 1)) (< i_1 24126846790975)) (forall ((i_0 Int)) (=> (and (>= i_0 145) (< i_0 24126846790975)) (and (and (<= 145 x) (<= x 24126846790974)) (= (mod i_1 2) 1))))))))
 (check-sat)
 (get-model)
 
@@ -6975,23 +6686,17 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    145)
   (define-fun x () Int
-    (- 1))
-  (define-fun i_1 () Int
-    (- 2))
+    24126846790974)
 )
 ### output for cvc5
 sat
 (
-(define-fun x () Int 146)
-(define-fun i_0 () Int 145)
-(define-fun i_1 () Int 147)
+(define-fun x () Int 24126846790974)
 )
 
-Found solution -1
-WARNING: Solution verification failed for puzzle BiggestEven:0
+Found solution 24126846790974
+Yes! Solved for puzzle  BiggestEven:0
 
 Solving puzzle 232/723: BiggestEven:1
 sat_func def sat(x: int, a=17, b=17):
@@ -7005,14 +6710,8 @@ modified_func def sat(x: int, a=wrap_int(17), b=wrap_int(17)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(assert (=> (= x -1) (>= i_0 17)))
-(assert (=> (= x -1) (< i_0 18)))
-(assert (=> (= x -1) (= (mod i_0 2) 1)))
-(assert (=> (not (= x -1)) (>= i_1 (+ x 1))))
-(assert (=> (not (= x -1)) (< i_1 18)))
-(assert (=> (not (= x -1)) (and (and (<= 17 x) (<= x 17)) (= (mod i_1 2) 1))))
+(assert (=> (= x -1) (forall ((i_0 Int)) (=> (and (>= i_0 17) (< i_0 18)) (= (mod i_0 2) 1)))))
+(assert (=> (not (= x -1)) (forall ((i_1 Int)) (=> (and (>= i_1 (+ x 1)) (< i_1 18)) (forall ((i_0 Int)) (=> (and (>= i_0 17) (< i_0 18)) (and (and (<= 17 x) (<= x 17)) (= (mod i_1 2) 1))))))))
 (check-sat)
 (get-model)
 
@@ -7021,22 +6720,16 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    17)
   (define-fun x () Int
-    (- 1))
-  (define-fun i_1 () Int
-    (- 2))
+    17)
 )
 ### output for cvc5
 sat
 (
 (define-fun x () Int (- 1))
-(define-fun i_0 () Int 17)
-(define-fun i_1 () Int 1)
 )
 
-Found solution -1
+Found solution 17
 Yes! Solved for puzzle  BiggestEven:1
 
 Solving puzzle 233/723: BiggestEven:2
@@ -7051,14 +6744,8 @@ modified_func def sat(x: int, a=-wrap_int(10), b=-wrap_int(6)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(assert (=> (= x -1) (>= i_0 -10)))
-(assert (=> (= x -1) (< i_0 -5)))
-(assert (=> (= x -1) (= (mod i_0 2) 1)))
-(assert (=> (not (= x -1)) (>= i_1 (+ x 1))))
-(assert (=> (not (= x -1)) (< i_1 -5)))
-(assert (=> (not (= x -1)) (and (and (<= -10 x) (<= x -6)) (= (mod i_1 2) 1))))
+(assert (=> (= x -1) (forall ((i_0 Int)) (=> (and (>= i_0 -10) (< i_0 -5)) (= (mod i_0 2) 1)))))
+(assert (=> (not (= x -1)) (forall ((i_1 Int)) (=> (and (>= i_1 (+ x 1)) (< i_1 -5)) (forall ((i_0 Int)) (=> (and (>= i_0 -10) (< i_0 -5)) (and (and (<= -10 x) (<= x -6)) (= (mod i_1 2) 1))))))))
 (check-sat)
 (get-model)
 
@@ -7067,22 +6754,16 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    (- 7))
   (define-fun x () Int
-    (- 1))
-  (define-fun i_1 () Int
-    (- 6))
+    0)
 )
 ### output for cvc5
 sat
 (
-(define-fun x () Int (- 8))
-(define-fun i_0 () Int 0)
-(define-fun i_1 () Int (- 7))
+(define-fun x () Int (- 6))
 )
 
-Found solution -1
+Found solution 0
 WARNING: Solution verification failed for puzzle BiggestEven:2
 
 Solving puzzle 234/723: BiggestEven:3
@@ -7097,27 +6778,27 @@ modified_func def sat(x: int, a=wrap_int(100), b=wrap_int(84)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(assert (=> (= x -1) (>= i_0 100)))
-(assert (=> (= x -1) (< i_0 85)))
-(assert (=> (= x -1) (= (mod i_0 2) 1)))
-(assert (=> (not (= x -1)) (>= i_1 (+ x 1))))
-(assert (=> (not (= x -1)) (< i_1 85)))
-(assert (=> (not (= x -1)) (and (and (<= 100 x) (<= x 84)) (= (mod i_1 2) 1))))
+(assert (=> (= x -1) (forall ((i_0 Int)) (=> (and (>= i_0 100) (< i_0 85)) (= (mod i_0 2) 1)))))
+(assert (=> (not (= x -1)) (forall ((i_1 Int)) (=> (and (>= i_1 (+ x 1)) (< i_1 85)) (forall ((i_0 Int)) (=> (and (>= i_0 100) (< i_0 85)) (and (and (<= 100 x) (<= x 84)) (= (mod i_1 2) 1))))))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-unsat
-(error "line 12 column 10: model is not available")
+sat
+(
+  (define-fun x () Int
+    85)
+)
 ### output for cvc5
-unsat
-(error "cannot get model unless after a SAT or UNKNOWN response.")
+sat
+(
+(define-fun x () Int (- 2))
+)
 
-Could not find any solution for puzzle BiggestEven:3
+Found solution 85
+WARNING: Solution verification failed for puzzle BiggestEven:3
 
 Solving puzzle 235/723: BiggestEven:4
 sat_func def sat(x: int, a=0, b=323523571223):
@@ -7131,14 +6812,8 @@ modified_func def sat(x: int, a=wrap_int(0), b=wrap_int(323523571223)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(assert (=> (= x -1) (>= i_0 0)))
-(assert (=> (= x -1) (< i_0 323523571224)))
-(assert (=> (= x -1) (= (mod i_0 2) 1)))
-(assert (=> (not (= x -1)) (>= i_1 (+ x 1))))
-(assert (=> (not (= x -1)) (< i_1 323523571224)))
-(assert (=> (not (= x -1)) (and (and (<= 0 x) (<= x 323523571223)) (= (mod i_1 2) 1))))
+(assert (=> (= x -1) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 323523571224)) (= (mod i_0 2) 1)))))
+(assert (=> (not (= x -1)) (forall ((i_1 Int)) (=> (and (>= i_1 (+ x 1)) (< i_1 323523571224)) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 323523571224)) (and (and (<= 0 x) (<= x 323523571223)) (= (mod i_1 2) 1))))))))
 (check-sat)
 (get-model)
 
@@ -7147,22 +6822,16 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    1)
   (define-fun x () Int
-    (- 1))
-  (define-fun i_1 () Int
-    (- 2))
+    323523571224)
 )
 ### output for cvc5
 sat
 (
-(define-fun x () Int 0)
-(define-fun i_0 () Int 0)
-(define-fun i_1 () Int 1)
+(define-fun x () Int 323523571224)
 )
 
-Found solution -1
+Found solution 323523571224
 WARNING: Solution verification failed for puzzle BiggestEven:4
 
 Solving puzzle 236/723: BinaryAverage:0
@@ -7204,27 +6873,25 @@ modified_func def sat(s: str, a=-wrap_int(103252), b=wrap_int(10657)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
 (assert (> (str.len x) 0))
-(assert (>= i_0 -103252))
-(assert (< i_0 10657))
-(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))
-(assert (> (str.len x) 0))
-(assert (>= i_1 -103252))
-(assert (< i_1 10657))
-(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))
+(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (forall ((i_0 Int)) (=> (and (>= i_0 -103252) (< i_0 10657)) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 -103252) (< i_0 10657)) (> (str.len x) 0))))
+(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (forall ((i_1 Int)) (=> (and (>= i_1 -103252) (< i_1 10657)) (forall ((i_0 Int)) (=> (and (>= i_0 -103252) (< i_0 10657)) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-unknown
-(error "line 35 column 10: model is not available")
+(error "line 25 column 36: unknown constant i_0")
+(error "line 27 column 41: unknown constant i_1")
+sat
+(
+  (define-fun x () String
+    "A")
+)
 ### output for cvc5
-(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
-  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+(error "Parse Error: tmp.smt2:25.37: Symbol 'i_0' not declared as a variable")
 
 Could not find any solution for puzzle BinaryAverage:0
 
@@ -7267,27 +6934,25 @@ modified_func def sat(s: str, a=wrap_int(70421), b=wrap_int(70421)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
 (assert (> (str.len x) 0))
-(assert (>= i_0 70421))
-(assert (< i_0 70421))
-(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))
-(assert (> (str.len x) 0))
-(assert (>= i_1 70421))
-(assert (< i_1 70421))
-(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))
+(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (forall ((i_0 Int)) (=> (and (>= i_0 70421) (< i_0 70421)) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 70421) (< i_0 70421)) (> (str.len x) 0))))
+(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (forall ((i_1 Int)) (=> (and (>= i_1 70421) (< i_1 70421)) (forall ((i_0 Int)) (=> (and (>= i_0 70421) (< i_0 70421)) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-unsat
-(error "line 35 column 10: model is not available")
+(error "line 25 column 36: unknown constant i_0")
+(error "line 27 column 41: unknown constant i_1")
+sat
+(
+  (define-fun x () String
+    "A")
+)
 ### output for cvc5
-unsat
-(error "cannot get model unless after a SAT or UNKNOWN response.")
+(error "Parse Error: tmp.smt2:25.37: Symbol 'i_0' not declared as a variable")
 
 Could not find any solution for puzzle BinaryAverage:1
 
@@ -7330,27 +6995,25 @@ modified_func def sat(s: str, a=-wrap_int(10299), b=-wrap_int(10300)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
 (assert (> (str.len x) 0))
-(assert (>= i_0 -10299))
-(assert (< i_0 -10300))
-(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))
-(assert (> (str.len x) 0))
-(assert (>= i_1 -10299))
-(assert (< i_1 -10300))
-(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))
+(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (forall ((i_0 Int)) (=> (and (>= i_0 -10299) (< i_0 -10300)) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 -10299) (< i_0 -10300)) (> (str.len x) 0))))
+(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (forall ((i_1 Int)) (=> (and (>= i_1 -10299) (< i_1 -10300)) (forall ((i_0 Int)) (=> (and (>= i_0 -10299) (< i_0 -10300)) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-unsat
-(error "line 35 column 10: model is not available")
+(error "line 25 column 36: unknown constant i_0")
+(error "line 27 column 41: unknown constant i_1")
+sat
+(
+  (define-fun x () String
+    "A")
+)
 ### output for cvc5
-unsat
-(error "cannot get model unless after a SAT or UNKNOWN response.")
+(error "Parse Error: tmp.smt2:25.37: Symbol 'i_0' not declared as a variable")
 
 Could not find any solution for puzzle BinaryAverage:2
 
@@ -7393,27 +7056,25 @@ modified_func def sat(s: str, a=wrap_int(0), b=wrap_int(52)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
 (assert (> (str.len x) 0))
-(assert (>= i_0 0))
-(assert (< i_0 52))
-(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))
-(assert (> (str.len x) 0))
-(assert (>= i_1 0))
-(assert (< i_1 52))
-(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))
+(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 52)) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 52)) (> (str.len x) 0))))
+(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 52)) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 52)) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-unknown
-(error "line 35 column 10: model is not available")
+(error "line 25 column 36: unknown constant i_0")
+(error "line 27 column 41: unknown constant i_1")
+sat
+(
+  (define-fun x () String
+    "A")
+)
 ### output for cvc5
-(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
-  (^ 2.0 (to_real (+ (- 1) (str.len @purify_8))))")
+(error "Parse Error: tmp.smt2:25.37: Symbol 'i_0' not declared as a variable")
 
 Could not find any solution for puzzle BinaryAverage:3
 
@@ -7456,26 +7117,25 @@ modified_func def sat(s: str, a=-wrap_int(89), b=wrap_int(0)):
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
 (declare-const x String)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
 (assert (> (str.len x) 0))
-(assert (>= i_0 -89))
-(assert (< i_0 0))
-(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))
-(assert (> (str.len x) 0))
-(assert (>= i_1 -89))
-(assert (< i_1 0))
-(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))
+(assert (=> (< (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_0 0) 1) (python.int x 2)) 1)))) (forall ((i_0 Int)) (=> (and (>= i_0 -89) (< i_0 0)) (<= (ite (>= (- (/ (+ i_0 0) 1) (python.int x 2)) 0) (- (/ (+ i_0 0) 1) (python.int x 2)) (- (- (/ (+ i_0 0) 1) (python.int x 2)))) (ite (>= (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_0 0) 1) (python.int x 2)) 1))))))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 -89) (< i_0 0)) (> (str.len x) 0))))
+(assert (=> (not (< (ite (>= (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (+ (- (/ (+ i_1 0) 1) (python.int x 2)) 1))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))) (forall ((i_1 Int)) (=> (and (>= i_1 -89) (< i_1 0)) (forall ((i_0 Int)) (=> (and (>= i_0 -89) (< i_0 0)) (<= (ite (>= (- (/ (+ i_1 0) 1) (python.int x 2)) 0) (- (/ (+ i_1 0) 1) (python.int x 2)) (- (- (/ (+ i_1 0) 1) (python.int x 2)))) (ite (>= (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) 0) (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1) (- (- (- (/ (+ i_1 0) 1) (python.int x 2)) 1))))))))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-timeout
+(error "line 25 column 36: unknown constant i_0")
+(error "line 27 column 41: unknown constant i_1")
+sat
+(
+  (define-fun x () String
+    "A")
+)
 ### output for cvc5
-(error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
-  (^ 2.0 (to_real (+ (- 1) (str.len x))))")
+(error "Parse Error: tmp.smt2:25.37: Symbol 'i_0' not declared as a variable")
 
 Could not find any solution for puzzle BinaryAverage:4
 
@@ -9889,25 +9549,27 @@ modified_func def sat(s: str, word=wrap_str('antidisestablishmentarianism'), max
 (define-fun python.int ((s String) (base Int)) Int
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
+
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
 (declare-const x String)
 (assert (=> (<= 28 10) (= "antidisestablishmentarianism" x)))
-(assert (=> (not (<= 28 10)) (> (str.len (python.str.subst x 1 -1)) 0)))
-(assert (=> (not (<= 28 10)) (and (and (= (python.int (python.str.subst x 1 -1) 10) 26) false) false)))
+(assert (=> (not (<= 28 10)) (> (str.len (python.str.substr x 1 -1)) 0)))
+(assert (=> (not (<= 28 10)) (and (and (= (python.int (python.str.substr x 1 -1) 10) 26) false) false)))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 25 column 65: unknown constant python.str.subst (String Int Int) ")
-(error "line 26 column 78: unknown constant python.str.subst (String Int Int) ")
-sat
-(
-  (define-fun x () String
-    "")
-)
+unsat
+(error "line 34 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: tmp.smt2:25.66: Symbol 'python.str.subst' not declared as a variable")
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
 
 Could not find any solution for puzzle Abbreviate:0
 
@@ -9943,25 +9605,27 @@ modified_func def sat(s: str, word=wrap_str('pawuzorythalirinasubyg'), max_len=w
 (define-fun python.int ((s String) (base Int)) Int
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
+
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
 (declare-const x String)
 (assert (=> (<= 22 12) (= "pawuzorythalirinasubyg" x)))
-(assert (=> (not (<= 22 12)) (> (str.len (python.str.subst x 1 -1)) 0)))
-(assert (=> (not (<= 22 12)) (and (and (= (python.int (python.str.subst x 1 -1) 10) 20) false) false)))
+(assert (=> (not (<= 22 12)) (> (str.len (python.str.substr x 1 -1)) 0)))
+(assert (=> (not (<= 22 12)) (and (and (= (python.int (python.str.substr x 1 -1) 10) 20) false) false)))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 25 column 65: unknown constant python.str.subst (String Int Int) ")
-(error "line 26 column 78: unknown constant python.str.subst (String Int Int) ")
-sat
-(
-  (define-fun x () String
-    "")
-)
+unsat
+(error "line 34 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: tmp.smt2:25.66: Symbol 'python.str.subst' not declared as a variable")
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
 
 Could not find any solution for puzzle Abbreviate:1
 
@@ -9997,25 +9661,27 @@ modified_func def sat(s: str, word=wrap_str('jomodosigezyfulach'), max_len=wrap_
 (define-fun python.int ((s String) (base Int)) Int
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
+
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
 (declare-const x String)
 (assert (=> (<= 18 5) (= "jomodosigezyfulach" x)))
-(assert (=> (not (<= 18 5)) (> (str.len (python.str.subst x 1 -1)) 0)))
-(assert (=> (not (<= 18 5)) (and (and (= (python.int (python.str.subst x 1 -1) 10) 16) false) false)))
+(assert (=> (not (<= 18 5)) (> (str.len (python.str.substr x 1 -1)) 0)))
+(assert (=> (not (<= 18 5)) (and (and (= (python.int (python.str.substr x 1 -1) 10) 16) false) false)))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 25 column 64: unknown constant python.str.subst (String Int Int) ")
-(error "line 26 column 77: unknown constant python.str.subst (String Int Int) ")
-sat
-(
-  (define-fun x () String
-    "")
-)
+unsat
+(error "line 34 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: tmp.smt2:25.65: Symbol 'python.str.subst' not declared as a variable")
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
 
 Could not find any solution for puzzle Abbreviate:2
 
@@ -10051,27 +9717,35 @@ modified_func def sat(s: str, word=wrap_str('bybakichop'), max_len=wrap_int(12))
 (define-fun python.int ((s String) (base Int)) Int
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
+
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
 (declare-const x String)
 (assert (=> (<= 10 12) (= "bybakichop" x)))
-(assert (=> (not (<= 10 12)) (> (str.len (python.str.subst x 1 -1)) 0)))
-(assert (=> (not (<= 10 12)) (and (and (= (python.int (python.str.subst x 1 -1) 10) 8) false) false)))
+(assert (=> (not (<= 10 12)) (> (str.len (python.str.substr x 1 -1)) 0)))
+(assert (=> (not (<= 10 12)) (and (and (= (python.int (python.str.substr x 1 -1) 10) 8) false) false)))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 25 column 65: unknown constant python.str.subst (String Int Int) ")
-(error "line 26 column 78: unknown constant python.str.subst (String Int Int) ")
 sat
 (
   (define-fun x () String
     "bybakichop")
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:25.66: Symbol 'python.str.subst' not declared as a variable")
+unknown
+(
+(define-fun x () String "bybakichop")
+)
 
-Could not find any solution for puzzle Abbreviate:3
+Found solution bybakichop
+Yes! Solved for puzzle  Abbreviate:3
 
 Solving puzzle 335/723: Abbreviate:4
 sat_func def sat(s: str, word="wywaxizodetextonigijalate", max_len=5):
@@ -10105,25 +9779,27 @@ modified_func def sat(s: str, word=wrap_str('wywaxizodetextonigijalate'), max_le
 (define-fun python.int ((s String) (base Int)) Int
   (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 
+
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
 (declare-const x String)
 (assert (=> (<= 25 5) (= "wywaxizodetextonigijalate" x)))
-(assert (=> (not (<= 25 5)) (> (str.len (python.str.subst x 1 -1)) 0)))
-(assert (=> (not (<= 25 5)) (and (and (= (python.int (python.str.subst x 1 -1) 10) 23) false) false)))
+(assert (=> (not (<= 25 5)) (> (str.len (python.str.substr x 1 -1)) 0)))
+(assert (=> (not (<= 25 5)) (and (and (= (python.int (python.str.substr x 1 -1) 10) 23) false) false)))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 25 column 64: unknown constant python.str.subst (String Int Int) ")
-(error "line 26 column 77: unknown constant python.str.subst (String Int Int) ")
-sat
-(
-  (define-fun x () String
-    "")
-)
+unsat
+(error "line 34 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: tmp.smt2:25.65: Symbol 'python.str.subst' not declared as a variable")
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
 
 Could not find any solution for puzzle Abbreviate:4
 
@@ -12158,32 +11834,20 @@ modified_func def sat(n: int, a=wrap_int(17), b=wrap_int(100), c=wrap_int(20)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 20))
-(assert (= (+ x 17) (+ (* 100 i_0) 0)))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 20)) (= (+ x 17) (+ (* 100 i_0) 0)))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun i_0 () Int
-    0)
-  (define-fun x () Int
-    (- 17))
-)
+unsat
+(error "line 5 column 10: model is not available")
 ### output for cvc5
-sat
-(
-(define-fun x () Int (- 17))
-(define-fun i_0 () Int 0)
-)
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
 
-Found solution -17
-WARNING: Solution verification failed for puzzle TotalDifference:0
+Could not find any solution for puzzle TotalDifference:0
 
 Solving puzzle 381/723: TotalDifference:1
 sat_func def sat(n: int, a=62, b=92, c=24):
@@ -12193,32 +11857,20 @@ modified_func def sat(n: int, a=wrap_int(62), b=wrap_int(92), c=wrap_int(24)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 24))
-(assert (= (+ x 62) (+ (* 92 i_0) 0)))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 24)) (= (+ x 62) (+ (* 92 i_0) 0)))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun i_0 () Int
-    0)
-  (define-fun x () Int
-    (- 62))
-)
+unsat
+(error "line 5 column 10: model is not available")
 ### output for cvc5
-sat
-(
-(define-fun x () Int (- 62))
-(define-fun i_0 () Int 0)
-)
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
 
-Found solution -62
-WARNING: Solution verification failed for puzzle TotalDifference:1
+Could not find any solution for puzzle TotalDifference:1
 
 Solving puzzle 382/723: TotalDifference:2
 sat_func def sat(n: int, a=14, b=50, c=47):
@@ -12228,32 +11880,20 @@ modified_func def sat(n: int, a=wrap_int(14), b=wrap_int(50), c=wrap_int(47)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 47))
-(assert (= (+ x 14) (+ (* 50 i_0) 0)))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 47)) (= (+ x 14) (+ (* 50 i_0) 0)))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun i_0 () Int
-    0)
-  (define-fun x () Int
-    (- 14))
-)
+unsat
+(error "line 5 column 10: model is not available")
 ### output for cvc5
-sat
-(
-(define-fun x () Int (- 14))
-(define-fun i_0 () Int 0)
-)
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
 
-Found solution -14
-WARNING: Solution verification failed for puzzle TotalDifference:2
+Could not find any solution for puzzle TotalDifference:2
 
 Solving puzzle 383/723: TotalDifference:3
 sat_func def sat(n: int, a=62, b=63, c=13):
@@ -12263,32 +11903,20 @@ modified_func def sat(n: int, a=wrap_int(62), b=wrap_int(63), c=wrap_int(13)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 13))
-(assert (= (+ x 62) (+ (* 63 i_0) 0)))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 13)) (= (+ x 62) (+ (* 63 i_0) 0)))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun i_0 () Int
-    0)
-  (define-fun x () Int
-    (- 62))
-)
+unsat
+(error "line 5 column 10: model is not available")
 ### output for cvc5
-sat
-(
-(define-fun x () Int (- 62))
-(define-fun i_0 () Int 0)
-)
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
 
-Found solution -62
-WARNING: Solution verification failed for puzzle TotalDifference:3
+Could not find any solution for puzzle TotalDifference:3
 
 Solving puzzle 384/723: TotalDifference:4
 sat_func def sat(n: int, a=5, b=31, c=37):
@@ -12298,32 +11926,20 @@ modified_func def sat(n: int, a=wrap_int(5), b=wrap_int(31), c=wrap_int(37)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 37))
-(assert (= (+ x 5) (+ (* 31 i_0) 0)))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 37)) (= (+ x 5) (+ (* 31 i_0) 0)))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun i_0 () Int
-    36)
-  (define-fun x () Int
-    1111)
-)
+unsat
+(error "line 5 column 10: model is not available")
 ### output for cvc5
-sat
-(
-(define-fun x () Int (- 5))
-(define-fun i_0 () Int 0)
-)
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
 
-Found solution 1111
-WARNING: Solution verification failed for puzzle TotalDifference:4
+Could not find any solution for puzzle TotalDifference:4
 
 Solving puzzle 385/723: TripleDouble:0
 sat_func def sat(n: int, v=17, w=100):
@@ -12338,7 +11954,30 @@ modified_func def sat(n: int, v=wrap_int(17), w=wrap_int(100)):
         v *= wrap_int(3)
         w *= wrap_int(2)
     return v > w
-Exception -- for puzzle TripleDouble:0 found bad constraint False of type <class 'bool'>
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) (<= 17 100))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) false)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () Int
+    0)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 0)
+)
+
+Found solution 0
+WARNING: Solution verification failed for puzzle TripleDouble:0
 
 Solving puzzle 386/723: TripleDouble:1
 sat_func def sat(n: int, v=75129500, w=979292947):
@@ -12353,7 +11992,30 @@ modified_func def sat(n: int, v=wrap_int(75129500), w=wrap_int(979292947)):
         v *= wrap_int(3)
         w *= wrap_int(2)
     return v > w
-Exception -- for puzzle TripleDouble:1 found bad constraint False of type <class 'bool'>
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) (<= 75129500 979292947))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) false)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () Int
+    0)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 0)
+)
+
+Found solution 0
+WARNING: Solution verification failed for puzzle TripleDouble:1
 
 Solving puzzle 387/723: TripleDouble:2
 sat_func def sat(n: int, v=609909721, w=872375011):
@@ -12368,14 +12030,11 @@ modified_func def sat(n: int, v=wrap_int(609909721), w=wrap_int(872375011)):
         v *= wrap_int(3)
         w *= wrap_int(2)
     return v > w
-Skipping constant true constraint
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 x))
-(assert (<= 609909721 872375011))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) (<= 609909721 872375011))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) true)))
 (check-sat)
 (get-model)
 
@@ -12385,19 +12044,16 @@ running backend cvc5
 sat
 (
   (define-fun x () Int
-    1)
-  (define-fun i_0 () Int
     0)
 )
 ### output for cvc5
 sat
 (
-(define-fun x () Int 1)
-(define-fun i_0 () Int 0)
+(define-fun x () Int 0)
 )
 
-Found solution 1
-Yes! Solved for puzzle  TripleDouble:2
+Found solution 0
+WARNING: Solution verification failed for puzzle TripleDouble:2
 
 Solving puzzle 388/723: TripleDouble:3
 sat_func def sat(n: int, v=313946483, w=806690290):
@@ -12412,7 +12068,30 @@ modified_func def sat(n: int, v=wrap_int(313946483), w=wrap_int(806690290)):
         v *= wrap_int(3)
         w *= wrap_int(2)
     return v > w
-Exception -- for puzzle TripleDouble:3 found bad constraint False of type <class 'bool'>
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) (<= 313946483 806690290))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) false)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () Int
+    0)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 0)
+)
+
+Found solution 0
+WARNING: Solution verification failed for puzzle TripleDouble:3
 
 Solving puzzle 389/723: TripleDouble:4
 sat_func def sat(n: int, v=54888266, w=670740803):
@@ -12427,7 +12106,30 @@ modified_func def sat(n: int, v=wrap_int(54888266), w=wrap_int(670740803)):
         v *= wrap_int(3)
         w *= wrap_int(2)
     return v > w
-Exception -- for puzzle TripleDouble:4 found bad constraint False of type <class 'bool'>
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) (<= 54888266 670740803))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) false)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () Int
+    0)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 0)
+)
+
+Found solution 0
+WARNING: Solution verification failed for puzzle TripleDouble:4
 
 Solving puzzle 390/723: RepeatDec:0
 sat_func def sat(res: int, m=1234578987654321, n=4):
@@ -12441,10 +12143,7 @@ modified_func def sat(res: int, m=wrap_int(1234578987654321), n=wrap_int(4)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 4))
-(assert (= x 1234578987654320))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 4)) (= x 1234578987654320))))
 (check-sat)
 (get-model)
 
@@ -12453,8 +12152,6 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
   (define-fun x () Int
     1234578987654320)
 )
@@ -12462,7 +12159,6 @@ sat
 sat
 (
 (define-fun x () Int 1234578987654320)
-(define-fun i_0 () Int 0)
 )
 
 Found solution 1234578987654320
@@ -12480,10 +12176,7 @@ modified_func def sat(res: int, m=wrap_int(52891398375817839454), n=wrap_int(3))
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 3))
-(assert (= x 52891398375817839453))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 3)) (= x 52891398375817839453))))
 (check-sat)
 (get-model)
 
@@ -12492,8 +12185,6 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
   (define-fun x () Int
     52891398375817839453)
 )
@@ -12501,7 +12192,6 @@ sat
 sat
 (
 (define-fun x () Int 52891398375817839453)
-(define-fun i_0 () Int 0)
 )
 
 Found solution 52891398375817839453
@@ -12519,10 +12209,7 @@ modified_func def sat(res: int, m=wrap_int(22262059435814874058), n=wrap_int(6))
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 6))
-(assert (= x 22262059435814874057))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 6)) (= x 22262059435814874057))))
 (check-sat)
 (get-model)
 
@@ -12531,8 +12218,6 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
   (define-fun x () Int
     22262059435814874057)
 )
@@ -12540,7 +12225,6 @@ sat
 sat
 (
 (define-fun x () Int 22262059435814874057)
-(define-fun i_0 () Int 0)
 )
 
 Found solution 22262059435814874057
@@ -12558,10 +12242,7 @@ modified_func def sat(res: int, m=wrap_int(23602903522227899062), n=wrap_int(2))
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 2))
-(assert (= x 23602903522227899061))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 2)) (= x 23602903522227899061))))
 (check-sat)
 (get-model)
 
@@ -12570,8 +12251,6 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
   (define-fun x () Int
     23602903522227899061)
 )
@@ -12579,7 +12258,6 @@ sat
 sat
 (
 (define-fun x () Int 23602903522227899061)
-(define-fun i_0 () Int 0)
 )
 
 Found solution 23602903522227899061
@@ -12597,10 +12275,7 @@ modified_func def sat(res: int, m=wrap_int(27368816582234104063), n=wrap_int(4))
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 4))
-(assert (= x 27368816582234104062))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 4)) (= x 27368816582234104062))))
 (check-sat)
 (get-model)
 
@@ -12609,8 +12284,6 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
   (define-fun x () Int
     27368816582234104062)
 )
@@ -12618,7 +12291,6 @@ sat
 sat
 (
 (define-fun x () Int 27368816582234104062)
-(define-fun i_0 () Int 0)
 )
 
 Found solution 27368816582234104062
@@ -14350,12 +14022,9 @@ modified_func def sat(start: int, k=wrap_int(3), lower=wrap_int(100000), seq=wra
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 x))
-(assert (< i_0 (+ x 3)))
-(assert (< i_0 11))
-(assert (> i_0 -11))
-(assert (>= (* 1 (ite (or (= i_0 10) (= i_0 -1)) 18 (ite (or (= i_0 9) (= i_0 -2)) 65 (ite (or (= i_0 8) (= i_0 -3)) 3 (ite (or (= i_0 7) (= i_0 -4)) 100 (ite (or (= i_0 6) (= i_0 -5)) -30 (ite (or (= i_0 5) (= i_0 -6)) 91 (ite (or (= i_0 4) (= i_0 -7)) 18 (ite (or (= i_0 3) (= i_0 -8)) 64 (ite (or (= i_0 2) (= i_0 -9)) 2 (ite (or (= i_0 1) (= i_0 -10)) 1 91))))))))))) 100000))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 3))) (< i_0 11))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 3))) (> i_0 -11))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 3))) (>= (* 1 (ite (or (= i_0 10) (= i_0 -1)) 18 (ite (or (= i_0 9) (= i_0 -2)) 65 (ite (or (= i_0 8) (= i_0 -3)) 3 (ite (or (= i_0 7) (= i_0 -4)) 100 (ite (or (= i_0 6) (= i_0 -5)) -30 (ite (or (= i_0 5) (= i_0 -6)) 91 (ite (or (= i_0 4) (= i_0 -7)) 18 (ite (or (= i_0 3) (= i_0 -8)) 64 (ite (or (= i_0 2) (= i_0 -9)) 2 (ite (or (= i_0 1) (= i_0 -10)) 1 91))))))))))) 100000))))
 (check-sat)
 (get-model)
 
@@ -14363,7 +14032,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 10 column 10: model is not available")
+(error "line 7 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -14384,12 +14053,9 @@ modified_func def sat(start: int, k=wrap_int(8), lower=wrap_int(774420991987500)
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 x))
-(assert (< i_0 (+ x 8)))
-(assert (< i_0 8))
-(assert (> i_0 -8))
-(assert (>= (* 1 (ite (or (= i_0 7) (= i_0 -1)) 45 (ite (or (= i_0 6) (= i_0 -2)) 90 (ite (or (= i_0 5) (= i_0 -3)) -87 (ite (or (= i_0 4) (= i_0 -4)) -69 (ite (or (= i_0 3) (= i_0 -5)) -65 (ite (or (= i_0 2) (= i_0 -6)) -99 (ite (or (= i_0 1) (= i_0 -7)) -99 -50)))))))) 774420991987500))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 8))) (< i_0 8))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 8))) (> i_0 -8))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 8))) (>= (* 1 (ite (or (= i_0 7) (= i_0 -1)) 45 (ite (or (= i_0 6) (= i_0 -2)) 90 (ite (or (= i_0 5) (= i_0 -3)) -87 (ite (or (= i_0 4) (= i_0 -4)) -69 (ite (or (= i_0 3) (= i_0 -5)) -65 (ite (or (= i_0 2) (= i_0 -6)) -99 (ite (or (= i_0 1) (= i_0 -7)) -99 -50)))))))) 774420991987500))))
 (check-sat)
 (get-model)
 
@@ -14397,7 +14063,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 10 column 10: model is not available")
+(error "line 7 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -14418,12 +14084,9 @@ modified_func def sat(start: int, k=wrap_int(6), lower=wrap_int(188917681120), s
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 x))
-(assert (< i_0 (+ x 6)))
-(assert (< i_0 103))
-(assert (> i_0 -103))
-(assert (>= (* 1 (ite (or (= i_0 102) (= i_0 -1)) 70 (ite (or (= i_0 101) (= i_0 -2)) 97 (ite (or (= i_0 100) (= i_0 -3)) 82 (ite (or (= i_0 99) (= i_0 -4)) -83 (ite (or (= i_0 98) (= i_0 -5)) -56 (ite (or (= i_0 97) (= i_0 -6)) 58 (ite (or (= i_0 96) (= i_0 -7)) 32 (ite (or (= i_0 95) (= i_0 -8)) 43 (ite (or (= i_0 94) (= i_0 -9)) -99 (ite (or (= i_0 93) (= i_0 -10)) -39 (ite (or (= i_0 92) (= i_0 -11)) 81 (ite (or (= i_0 91) (= i_0 -12)) 9 (ite (or (= i_0 90) (= i_0 -13)) 73 (ite (or (= i_0 89) (= i_0 -14)) 78 (ite (or (= i_0 88) (= i_0 -15)) 58 (ite (or (= i_0 87) (= i_0 -16)) -30 (ite (or (= i_0 86) (= i_0 -17)) -89 (ite (or (= i_0 85) (= i_0 -18)) -56 (ite (or (= i_0 84) (= i_0 -19)) -65 (ite (or (= i_0 83) (= i_0 -20)) -21 (ite (or (= i_0 82) (= i_0 -21)) 24 (ite (or (= i_0 81) (= i_0 -22)) -28 (ite (or (= i_0 80) (= i_0 -23)) 59 (ite (or (= i_0 79) (= i_0 -24)) 45 (ite (or (= i_0 78) (= i_0 -25)) -89 (ite (or (= i_0 77) (= i_0 -26)) 81 (ite (or (= i_0 76) (= i_0 -27)) -67 (ite (or (= i_0 75) (= i_0 -28)) -69 (ite (or (= i_0 74) (= i_0 -29)) 1 (ite (or (= i_0 73) (= i_0 -30)) 99 (ite (or (= i_0 72) (= i_0 -31)) -77 (ite (or (= i_0 71) (= i_0 -32)) -53 (ite (or (= i_0 70) (= i_0 -33)) 27 (ite (or (= i_0 69) (= i_0 -34)) 6 (ite (or (= i_0 68) (= i_0 -35)) -60 (ite (or (= i_0 67) (= i_0 -36)) 28 (ite (or (= i_0 66) (= i_0 -37)) 50 (ite (or (= i_0 65) (= i_0 -38)) -22 (ite (or (= i_0 64) (= i_0 -39)) -53 (ite (or (= i_0 63) (= i_0 -40)) 99 (ite (or (= i_0 62) (= i_0 -41)) 74 (ite (or (= i_0 61) (= i_0 -42)) 60 (ite (or (= i_0 60) (= i_0 -43)) -89 (ite (or (= i_0 59) (= i_0 -44)) 55 (ite (or (= i_0 58) (= i_0 -45)) 92 (ite (or (= i_0 57) (= i_0 -46)) 61 (ite (or (= i_0 56) (= i_0 -47)) 0 (ite (or (= i_0 55) (= i_0 -48)) -1 (ite (or (= i_0 54) (= i_0 -49)) -69 (ite (or (= i_0 53) (= i_0 -50)) 0 (ite (or (= i_0 52) (= i_0 -51)) -81 (ite (or (= i_0 51) (= i_0 -52)) 78 (ite (or (= i_0 50) (= i_0 -53)) 69 (ite (or (= i_0 49) (= i_0 -54)) -40 (ite (or (= i_0 48) (= i_0 -55)) 83 (ite (or (= i_0 47) (= i_0 -56)) -35 (ite (or (= i_0 46) (= i_0 -57)) 70 (ite (or (= i_0 45) (= i_0 -58)) -65 (ite (or (= i_0 44) (= i_0 -59)) -65 (ite (or (= i_0 43) (= i_0 -60)) 83 (ite (or (= i_0 42) (= i_0 -61)) -28 (ite (or (= i_0 41) (= i_0 -62)) 76 (ite (or (= i_0 40) (= i_0 -63)) 71 (ite (or (= i_0 39) (= i_0 -64)) -82 (ite (or (= i_0 38) (= i_0 -65)) 32 (ite (or (= i_0 37) (= i_0 -66)) 52 (ite (or (= i_0 36) (= i_0 -67)) 71 (ite (or (= i_0 35) (= i_0 -68)) -22 (ite (or (= i_0 34) (= i_0 -69)) -78 (ite (or (= i_0 33) (= i_0 -70)) -46 (ite (or (= i_0 32) (= i_0 -71)) -57 (ite (or (= i_0 31) (= i_0 -72)) -63 (ite (or (= i_0 30) (= i_0 -73)) -74 (ite (or (= i_0 29) (= i_0 -74)) -7 (ite (or (= i_0 28) (= i_0 -75)) 54 (ite (or (= i_0 27) (= i_0 -76)) 87 (ite (or (= i_0 26) (= i_0 -77)) 71 (ite (or (= i_0 25) (= i_0 -78)) 91 (ite (or (= i_0 24) (= i_0 -79)) -73 (ite (or (= i_0 23) (= i_0 -80)) 68 (ite (or (= i_0 22) (= i_0 -81)) 14 (ite (or (= i_0 21) (= i_0 -82)) 38 (ite (or (= i_0 20) (= i_0 -83)) 63 (ite (or (= i_0 19) (= i_0 -84)) 79 (ite (or (= i_0 18) (= i_0 -85)) 37 (ite (or (= i_0 17) (= i_0 -86)) 31 (ite (or (= i_0 16) (= i_0 -87)) -31 (ite (or (= i_0 15) (= i_0 -88)) -18 (ite (or (= i_0 14) (= i_0 -89)) -91 (ite (or (= i_0 13) (= i_0 -90)) 78 (ite (or (= i_0 12) (= i_0 -91)) -86 (ite (or (= i_0 11) (= i_0 -92)) -83 (ite (or (= i_0 10) (= i_0 -93)) -16 (ite (or (= i_0 9) (= i_0 -94)) -97 (ite (or (= i_0 8) (= i_0 -95)) -59 (ite (or (= i_0 7) (= i_0 -96)) 40 (ite (or (= i_0 6) (= i_0 -97)) 31 (ite (or (= i_0 5) (= i_0 -98)) 8 (ite (or (= i_0 4) (= i_0 -99)) 73 (ite (or (= i_0 3) (= i_0 -100)) 92 (ite (or (= i_0 2) (= i_0 -101)) 30 (ite (or (= i_0 1) (= i_0 -102)) -32 73))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) 188917681120))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 6))) (< i_0 103))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 6))) (> i_0 -103))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 6))) (>= (* 1 (ite (or (= i_0 102) (= i_0 -1)) 70 (ite (or (= i_0 101) (= i_0 -2)) 97 (ite (or (= i_0 100) (= i_0 -3)) 82 (ite (or (= i_0 99) (= i_0 -4)) -83 (ite (or (= i_0 98) (= i_0 -5)) -56 (ite (or (= i_0 97) (= i_0 -6)) 58 (ite (or (= i_0 96) (= i_0 -7)) 32 (ite (or (= i_0 95) (= i_0 -8)) 43 (ite (or (= i_0 94) (= i_0 -9)) -99 (ite (or (= i_0 93) (= i_0 -10)) -39 (ite (or (= i_0 92) (= i_0 -11)) 81 (ite (or (= i_0 91) (= i_0 -12)) 9 (ite (or (= i_0 90) (= i_0 -13)) 73 (ite (or (= i_0 89) (= i_0 -14)) 78 (ite (or (= i_0 88) (= i_0 -15)) 58 (ite (or (= i_0 87) (= i_0 -16)) -30 (ite (or (= i_0 86) (= i_0 -17)) -89 (ite (or (= i_0 85) (= i_0 -18)) -56 (ite (or (= i_0 84) (= i_0 -19)) -65 (ite (or (= i_0 83) (= i_0 -20)) -21 (ite (or (= i_0 82) (= i_0 -21)) 24 (ite (or (= i_0 81) (= i_0 -22)) -28 (ite (or (= i_0 80) (= i_0 -23)) 59 (ite (or (= i_0 79) (= i_0 -24)) 45 (ite (or (= i_0 78) (= i_0 -25)) -89 (ite (or (= i_0 77) (= i_0 -26)) 81 (ite (or (= i_0 76) (= i_0 -27)) -67 (ite (or (= i_0 75) (= i_0 -28)) -69 (ite (or (= i_0 74) (= i_0 -29)) 1 (ite (or (= i_0 73) (= i_0 -30)) 99 (ite (or (= i_0 72) (= i_0 -31)) -77 (ite (or (= i_0 71) (= i_0 -32)) -53 (ite (or (= i_0 70) (= i_0 -33)) 27 (ite (or (= i_0 69) (= i_0 -34)) 6 (ite (or (= i_0 68) (= i_0 -35)) -60 (ite (or (= i_0 67) (= i_0 -36)) 28 (ite (or (= i_0 66) (= i_0 -37)) 50 (ite (or (= i_0 65) (= i_0 -38)) -22 (ite (or (= i_0 64) (= i_0 -39)) -53 (ite (or (= i_0 63) (= i_0 -40)) 99 (ite (or (= i_0 62) (= i_0 -41)) 74 (ite (or (= i_0 61) (= i_0 -42)) 60 (ite (or (= i_0 60) (= i_0 -43)) -89 (ite (or (= i_0 59) (= i_0 -44)) 55 (ite (or (= i_0 58) (= i_0 -45)) 92 (ite (or (= i_0 57) (= i_0 -46)) 61 (ite (or (= i_0 56) (= i_0 -47)) 0 (ite (or (= i_0 55) (= i_0 -48)) -1 (ite (or (= i_0 54) (= i_0 -49)) -69 (ite (or (= i_0 53) (= i_0 -50)) 0 (ite (or (= i_0 52) (= i_0 -51)) -81 (ite (or (= i_0 51) (= i_0 -52)) 78 (ite (or (= i_0 50) (= i_0 -53)) 69 (ite (or (= i_0 49) (= i_0 -54)) -40 (ite (or (= i_0 48) (= i_0 -55)) 83 (ite (or (= i_0 47) (= i_0 -56)) -35 (ite (or (= i_0 46) (= i_0 -57)) 70 (ite (or (= i_0 45) (= i_0 -58)) -65 (ite (or (= i_0 44) (= i_0 -59)) -65 (ite (or (= i_0 43) (= i_0 -60)) 83 (ite (or (= i_0 42) (= i_0 -61)) -28 (ite (or (= i_0 41) (= i_0 -62)) 76 (ite (or (= i_0 40) (= i_0 -63)) 71 (ite (or (= i_0 39) (= i_0 -64)) -82 (ite (or (= i_0 38) (= i_0 -65)) 32 (ite (or (= i_0 37) (= i_0 -66)) 52 (ite (or (= i_0 36) (= i_0 -67)) 71 (ite (or (= i_0 35) (= i_0 -68)) -22 (ite (or (= i_0 34) (= i_0 -69)) -78 (ite (or (= i_0 33) (= i_0 -70)) -46 (ite (or (= i_0 32) (= i_0 -71)) -57 (ite (or (= i_0 31) (= i_0 -72)) -63 (ite (or (= i_0 30) (= i_0 -73)) -74 (ite (or (= i_0 29) (= i_0 -74)) -7 (ite (or (= i_0 28) (= i_0 -75)) 54 (ite (or (= i_0 27) (= i_0 -76)) 87 (ite (or (= i_0 26) (= i_0 -77)) 71 (ite (or (= i_0 25) (= i_0 -78)) 91 (ite (or (= i_0 24) (= i_0 -79)) -73 (ite (or (= i_0 23) (= i_0 -80)) 68 (ite (or (= i_0 22) (= i_0 -81)) 14 (ite (or (= i_0 21) (= i_0 -82)) 38 (ite (or (= i_0 20) (= i_0 -83)) 63 (ite (or (= i_0 19) (= i_0 -84)) 79 (ite (or (= i_0 18) (= i_0 -85)) 37 (ite (or (= i_0 17) (= i_0 -86)) 31 (ite (or (= i_0 16) (= i_0 -87)) -31 (ite (or (= i_0 15) (= i_0 -88)) -18 (ite (or (= i_0 14) (= i_0 -89)) -91 (ite (or (= i_0 13) (= i_0 -90)) 78 (ite (or (= i_0 12) (= i_0 -91)) -86 (ite (or (= i_0 11) (= i_0 -92)) -83 (ite (or (= i_0 10) (= i_0 -93)) -16 (ite (or (= i_0 9) (= i_0 -94)) -97 (ite (or (= i_0 8) (= i_0 -95)) -59 (ite (or (= i_0 7) (= i_0 -96)) 40 (ite (or (= i_0 6) (= i_0 -97)) 31 (ite (or (= i_0 5) (= i_0 -98)) 8 (ite (or (= i_0 4) (= i_0 -99)) 73 (ite (or (= i_0 3) (= i_0 -100)) 92 (ite (or (= i_0 2) (= i_0 -101)) 30 (ite (or (= i_0 1) (= i_0 -102)) -32 73))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))) 188917681120))))
 (check-sat)
 (get-model)
 
@@ -14431,7 +14094,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 10 column 10: model is not available")
+(error "line 7 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -14452,12 +14115,9 @@ modified_func def sat(start: int, k=wrap_int(2), lower=wrap_int(5589), seq=wrap_
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 x))
-(assert (< i_0 (+ x 2)))
-(assert (< i_0 11))
-(assert (> i_0 -11))
-(assert (>= (* 1 (ite (or (= i_0 10) (= i_0 -1)) -18 (ite (or (= i_0 9) (= i_0 -2)) 27 (ite (or (= i_0 8) (= i_0 -3)) 99 (ite (or (= i_0 7) (= i_0 -4)) -69 (ite (or (= i_0 6) (= i_0 -5)) -81 (ite (or (= i_0 5) (= i_0 -6)) 14 (ite (or (= i_0 4) (= i_0 -7)) 40 (ite (or (= i_0 3) (= i_0 -8)) 74 (ite (or (= i_0 2) (= i_0 -9)) 75 (ite (or (= i_0 1) (= i_0 -10)) -66 8))))))))))) 5589))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 2))) (< i_0 11))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 2))) (> i_0 -11))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 2))) (>= (* 1 (ite (or (= i_0 10) (= i_0 -1)) -18 (ite (or (= i_0 9) (= i_0 -2)) 27 (ite (or (= i_0 8) (= i_0 -3)) 99 (ite (or (= i_0 7) (= i_0 -4)) -69 (ite (or (= i_0 6) (= i_0 -5)) -81 (ite (or (= i_0 5) (= i_0 -6)) 14 (ite (or (= i_0 4) (= i_0 -7)) 40 (ite (or (= i_0 3) (= i_0 -8)) 74 (ite (or (= i_0 2) (= i_0 -9)) 75 (ite (or (= i_0 1) (= i_0 -10)) -66 8))))))))))) 5589))))
 (check-sat)
 (get-model)
 
@@ -14465,7 +14125,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 10 column 10: model is not available")
+(error "line 7 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -14486,12 +14146,9 @@ modified_func def sat(start: int, k=wrap_int(10), lower=-wrap_int(83267974331942
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 x))
-(assert (< i_0 (+ x 10)))
-(assert (< i_0 10))
-(assert (> i_0 -10))
-(assert (>= (* 1 (ite (or (= i_0 9) (= i_0 -1)) -47 (ite (or (= i_0 8) (= i_0 -2)) -52 (ite (or (= i_0 7) (= i_0 -3)) 13 (ite (or (= i_0 6) (= i_0 -4)) 37 (ite (or (= i_0 5) (= i_0 -5)) 13 (ite (or (= i_0 4) (= i_0 -6)) 54 (ite (or (= i_0 3) (= i_0 -7)) 26 (ite (or (= i_0 2) (= i_0 -8)) 80 (ite (or (= i_0 1) (= i_0 -9)) -99 49)))))))))) -8326797433194240))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 10))) (< i_0 10))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 10))) (> i_0 -10))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 10))) (>= (* 1 (ite (or (= i_0 9) (= i_0 -1)) -47 (ite (or (= i_0 8) (= i_0 -2)) -52 (ite (or (= i_0 7) (= i_0 -3)) 13 (ite (or (= i_0 6) (= i_0 -4)) 37 (ite (or (= i_0 5) (= i_0 -5)) 13 (ite (or (= i_0 4) (= i_0 -6)) 54 (ite (or (= i_0 3) (= i_0 -7)) 26 (ite (or (= i_0 2) (= i_0 -8)) 80 (ite (or (= i_0 1) (= i_0 -9)) -99 49)))))))))) -8326797433194240))))
 (check-sat)
 (get-model)
 
@@ -14500,8 +14157,6 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
   (define-fun x () Int
     0)
 )
@@ -14509,7 +14164,6 @@ sat
 sat
 (
 (define-fun x () Int 0)
-(define-fun i_0 () Int 9)
 )
 
 Found solution 0
@@ -15288,12 +14942,9 @@ modified_func def sat(x: str, s=wrap_list([wrap_str('a'), wrap_str('b'), wrap_st
 ### smt2
 (set-logic ALL)
 (declare-const x String)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 4))
-(assert (< i_0 6))
-(assert (> i_0 -6))
-(assert (and (= (str.len x) 4) false))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 4)) (< i_0 6))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 4)) (> i_0 -6))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 4)) (and (= (str.len x) 4) false))))
 (check-sat)
 (get-model)
 
@@ -15301,7 +14952,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 10 column 10: model is not available")
+(error "line 7 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -15316,12 +14967,9 @@ modified_func def sat(x: str, s=wrap_list([wrap_str('I'), wrap_str('&'), wrap_st
 ### smt2
 (set-logic ALL)
 (declare-const x String)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 16))
-(assert (< i_0 31))
-(assert (> i_0 -31))
-(assert (and (= (str.len x) 16) false))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 16)) (< i_0 31))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 16)) (> i_0 -31))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 16)) (and (= (str.len x) 16) false))))
 (check-sat)
 (get-model)
 
@@ -15329,7 +14977,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 10 column 10: model is not available")
+(error "line 7 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -15344,12 +14992,9 @@ modified_func def sat(x: str, s=wrap_list([wrap_str('L'), wrap_str('C'), wrap_st
 ### smt2
 (set-logic ALL)
 (declare-const x String)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 13))
-(assert (< i_0 17))
-(assert (> i_0 -17))
-(assert (and (= (str.len x) 13) false))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 13)) (< i_0 17))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 13)) (> i_0 -17))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 13)) (and (= (str.len x) 13) false))))
 (check-sat)
 (get-model)
 
@@ -15357,7 +15002,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 10 column 10: model is not available")
+(error "line 7 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -15372,12 +15017,9 @@ modified_func def sat(x: str, s=wrap_list([wrap_str('-'), wrap_str('&'), wrap_st
 ### smt2
 (set-logic ALL)
 (declare-const x String)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 8))
-(assert (< i_0 25))
-(assert (> i_0 -25))
-(assert (and (= (str.len x) 8) false))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 8)) (< i_0 25))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 8)) (> i_0 -25))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 8)) (and (= (str.len x) 8) false))))
 (check-sat)
 (get-model)
 
@@ -15385,7 +15027,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 10 column 10: model is not available")
+(error "line 7 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -15400,12 +15042,9 @@ modified_func def sat(x: str, s=wrap_list([wrap_str('0'), wrap_str('@'), wrap_st
 ### smt2
 (set-logic ALL)
 (declare-const x String)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 16))
-(assert (< i_0 18))
-(assert (> i_0 -18))
-(assert (and (= (str.len x) 16) false))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 16)) (< i_0 18))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 16)) (> i_0 -18))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 16)) (and (= (str.len x) 16) false))))
 (check-sat)
 (get-model)
 
@@ -15413,7 +15052,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 10 column 10: model is not available")
+(error "line 7 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -15427,6 +15066,12 @@ modified_func def sat(s: str, s1=wrap_str('a'), s2=wrap_str('b'), count1=wrap_in
     return (s.count(s1) == count1).__and__(s.count(s2) == count2).__and__(s[:10] == s[-10:])
 ### smt2
 (set-logic ALL)
+
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
 
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
@@ -15442,21 +15087,16 @@ modified_func def sat(s: str, s1=wrap_str('a'), s2=wrap_str('b'), count1=wrap_in
 (declare-const x String)
 (assert (>= (str.count x "a") 0))
 (assert (>= (str.count x "b") 0))
-(assert (and (and (= (str.count x "a") 50) (= (str.count x "b") 30)) (= (python.str.subst x 0 10) (python.str.subst x -10 (str.len x)))))
+(assert (and (and (= (str.count x "a") 50) (= (str.count x "b") 30)) (= (python.str.substr x 0 10) (python.str.substr x -10 (str.len x)))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 17 column 96: unknown constant python.str.subst (String Int Int) ")
-sat
-(
-  (define-fun x () String
-    "")
-)
+timeout
 ### output for cvc5
-(error "Parse Error: tmp.smt2:17.97: Symbol 'python.str.subst' not declared as a variable")
+cvc5 interrupted by timeout.
 
 Could not find any solution for puzzle BasicStrCounts:0
 
@@ -15467,6 +15107,12 @@ modified_func def sat(s: str, s1=wrap_str('t'), s2=wrap_str('qu'), count1=wrap_i
     return (s.count(s1) == count1).__and__(s.count(s2) == count2).__and__(s[:10] == s[-10:])
 ### smt2
 (set-logic ALL)
+
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
 
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
@@ -15482,21 +15128,16 @@ modified_func def sat(s: str, s1=wrap_str('t'), s2=wrap_str('qu'), count1=wrap_i
 (declare-const x String)
 (assert (>= (str.count x "t") 0))
 (assert (>= (str.count x "qu") 0))
-(assert (and (and (= (str.count x "t") 86) (= (str.count x "qu") 83)) (= (python.str.subst x 0 10) (python.str.subst x -10 (str.len x)))))
+(assert (and (and (= (str.count x "t") 86) (= (str.count x "qu") 83)) (= (python.str.substr x 0 10) (python.str.substr x -10 (str.len x)))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 17 column 97: unknown constant python.str.subst (String Int Int) ")
-sat
-(
-  (define-fun x () String
-    "")
-)
+timeout
 ### output for cvc5
-(error "Parse Error: tmp.smt2:17.98: Symbol 'python.str.subst' not declared as a variable")
+cvc5 interrupted by timeout.
 
 Could not find any solution for puzzle BasicStrCounts:1
 
@@ -15507,6 +15148,12 @@ modified_func def sat(s: str, s1=wrap_str('kuc'), s2=wrap_str('qu'), count1=wrap
     return (s.count(s1) == count1).__and__(s.count(s2) == count2).__and__(s[:10] == s[-10:])
 ### smt2
 (set-logic ALL)
+
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
 
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
@@ -15522,21 +15169,16 @@ modified_func def sat(s: str, s1=wrap_str('kuc'), s2=wrap_str('qu'), count1=wrap
 (declare-const x String)
 (assert (>= (str.count x "kuc") 0))
 (assert (>= (str.count x "qu") 0))
-(assert (and (and (= (str.count x "kuc") 63) (= (str.count x "qu") 58)) (= (python.str.subst x 0 10) (python.str.subst x -10 (str.len x)))))
+(assert (and (and (= (str.count x "kuc") 63) (= (str.count x "qu") 58)) (= (python.str.substr x 0 10) (python.str.substr x -10 (str.len x)))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 17 column 99: unknown constant python.str.subst (String Int Int) ")
-sat
-(
-  (define-fun x () String
-    "")
-)
+timeout
 ### output for cvc5
-(error "Parse Error: tmp.smt2:17.100: Symbol 'python.str.subst' not declared as a variable")
+cvc5 interrupted by timeout.
 
 Could not find any solution for puzzle BasicStrCounts:2
 
@@ -15547,6 +15189,12 @@ modified_func def sat(s: str, s1=wrap_str('te'), s2=wrap_str('tex'), count1=wrap
     return (s.count(s1) == count1).__and__(s.count(s2) == count2).__and__(s[:10] == s[-10:])
 ### smt2
 (set-logic ALL)
+
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
 
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
@@ -15562,21 +15210,16 @@ modified_func def sat(s: str, s1=wrap_str('te'), s2=wrap_str('tex'), count1=wrap
 (declare-const x String)
 (assert (>= (str.count x "te") 0))
 (assert (>= (str.count x "tex") 0))
-(assert (and (and (= (str.count x "te") 97) (= (str.count x "tex") 53)) (= (python.str.subst x 0 10) (python.str.subst x -10 (str.len x)))))
+(assert (and (and (= (str.count x "te") 97) (= (str.count x "tex") 53)) (= (python.str.substr x 0 10) (python.str.substr x -10 (str.len x)))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 17 column 99: unknown constant python.str.subst (String Int Int) ")
-sat
-(
-  (define-fun x () String
-    "")
-)
+timeout
 ### output for cvc5
-(error "Parse Error: tmp.smt2:17.100: Symbol 'python.str.subst' not declared as a variable")
+cvc5 interrupted by timeout.
 
 Could not find any solution for puzzle BasicStrCounts:3
 
@@ -15587,6 +15230,12 @@ modified_func def sat(s: str, s1=wrap_str('hot'), s2=wrap_str('n'), count1=wrap_
     return (s.count(s1) == count1).__and__(s.count(s2) == count2).__and__(s[:10] == s[-10:])
 ### smt2
 (set-logic ALL)
+
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
 
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
@@ -15602,21 +15251,16 @@ modified_func def sat(s: str, s1=wrap_str('hot'), s2=wrap_str('n'), count1=wrap_
 (declare-const x String)
 (assert (>= (str.count x "hot") 0))
 (assert (>= (str.count x "n") 0))
-(assert (and (and (= (str.count x "hot") 48) (= (str.count x "n") 92)) (= (python.str.subst x 0 10) (python.str.subst x -10 (str.len x)))))
+(assert (and (and (= (str.count x "hot") 48) (= (str.count x "n") 92)) (= (python.str.substr x 0 10) (python.str.substr x -10 (str.len x)))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 17 column 98: unknown constant python.str.subst (String Int Int) ")
-sat
-(
-  (define-fun x () String
-    "")
-)
+timeout
 ### output for cvc5
-(error "Parse Error: tmp.smt2:17.99: Symbol 'python.str.subst' not declared as a variable")
+cvc5 interrupted by timeout.
 
 Could not find any solution for puzzle BasicStrCounts:4
 
@@ -16156,6 +15800,12 @@ modified_func def sat(t: str, s=wrap_str('))(Add)some))parens()to()(balance(()((
 ### smt2
 (set-logic ALL)
 
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
+
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -16168,32 +15818,22 @@ modified_func def sat(t: str, s=wrap_str('))(Add)some))parens()to()(balance(()((
        (str.count.rec s sub 0)))
 
 (declare-const x String)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 (+ (str.len x) 1)))
-(assert (>= (str.count (python.str.subst x 0 i_0) "(") 0))
-(assert (>= (str.count (python.str.subst x 0 i_0) ")") 0))
-(assert (>= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0))
-(assert (and (= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0) (str.contains x "))(Add)some))parens()to()(balance(()(()(me!)((((")))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (>= (str.count (python.str.substr x 0 i_0) "(") 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (>= (str.count (python.str.substr x 0 i_0) ")") 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (>= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (and (= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0) (str.contains x "))(Add)some))parens()to()(balance(()(()(me!)((((")))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 18 column 48: unknown constant python.str.subst (String Int Int) ")
-(error "line 19 column 48: unknown constant python.str.subst (String Int Int) ")
-(error "line 20 column 51: unknown constant python.str.subst (String Int Int) ")
-(error "line 21 column 55: unknown constant python.str.subst (String Int Int) ")
-sat
-(
-  (define-fun i_0 () Int
-    0)
-  (define-fun x () String
-    "")
-)
+timeout
 ### output for cvc5
-(error "Parse Error: tmp.smt2:18.49: Symbol 'python.str.subst' not declared as a variable")
+unknown
+(
+(define-fun x () String "")
+)
 
 Could not find any solution for puzzle CompleteParens:0
 
@@ -16211,6 +15851,12 @@ modified_func def sat(t: str, s=wrap_str('(po)(())kf((((cy()))((tex()())(')):
 ### smt2
 (set-logic ALL)
 
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
+
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -16223,32 +15869,22 @@ modified_func def sat(t: str, s=wrap_str('(po)(())kf((((cy()))((tex()())(')):
        (str.count.rec s sub 0)))
 
 (declare-const x String)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 (+ (str.len x) 1)))
-(assert (>= (str.count (python.str.subst x 0 i_0) "(") 0))
-(assert (>= (str.count (python.str.subst x 0 i_0) ")") 0))
-(assert (>= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0))
-(assert (and (= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0) (str.contains x "(po)(())kf((((cy()))((tex()())(")))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (>= (str.count (python.str.substr x 0 i_0) "(") 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (>= (str.count (python.str.substr x 0 i_0) ")") 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (>= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (and (= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0) (str.contains x "(po)(())kf((((cy()))((tex()())(")))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 18 column 48: unknown constant python.str.subst (String Int Int) ")
-(error "line 19 column 48: unknown constant python.str.subst (String Int Int) ")
-(error "line 20 column 51: unknown constant python.str.subst (String Int Int) ")
-(error "line 21 column 55: unknown constant python.str.subst (String Int Int) ")
-sat
-(
-  (define-fun i_0 () Int
-    0)
-  (define-fun x () String
-    "")
-)
+timeout
 ### output for cvc5
-(error "Parse Error: tmp.smt2:18.49: Symbol 'python.str.subst' not declared as a variable")
+unknown
+(
+(define-fun x () String "")
+)
 
 Could not find any solution for puzzle CompleteParens:1
 
@@ -16266,6 +15902,12 @@ modified_func def sat(t: str, s=wrap_str('yf)()(()))hik()t(((')):
 ### smt2
 (set-logic ALL)
 
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
+
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -16278,32 +15920,22 @@ modified_func def sat(t: str, s=wrap_str('yf)()(()))hik()t(((')):
        (str.count.rec s sub 0)))
 
 (declare-const x String)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 (+ (str.len x) 1)))
-(assert (>= (str.count (python.str.subst x 0 i_0) "(") 0))
-(assert (>= (str.count (python.str.subst x 0 i_0) ")") 0))
-(assert (>= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0))
-(assert (and (= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0) (str.contains x "yf)()(()))hik()t(((")))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (>= (str.count (python.str.substr x 0 i_0) "(") 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (>= (str.count (python.str.substr x 0 i_0) ")") 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (>= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (and (= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0) (str.contains x "yf)()(()))hik()t(((")))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 18 column 48: unknown constant python.str.subst (String Int Int) ")
-(error "line 19 column 48: unknown constant python.str.subst (String Int Int) ")
-(error "line 20 column 51: unknown constant python.str.subst (String Int Int) ")
-(error "line 21 column 55: unknown constant python.str.subst (String Int Int) ")
-sat
-(
-  (define-fun i_0 () Int
-    0)
-  (define-fun x () String
-    "")
-)
+timeout
 ### output for cvc5
-(error "Parse Error: tmp.smt2:18.49: Symbol 'python.str.subst' not declared as a variable")
+unknown
+(
+(define-fun x () String "")
+)
 
 Could not find any solution for puzzle CompleteParens:2
 
@@ -16321,6 +15953,12 @@ modified_func def sat(t: str, s=wrap_str(')((le(()()chu)())nol))((sic(((da)()ty(
 ### smt2
 (set-logic ALL)
 
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
+
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -16333,32 +15971,22 @@ modified_func def sat(t: str, s=wrap_str(')((le(()()chu)())nol))((sic(((da)()ty(
        (str.count.rec s sub 0)))
 
 (declare-const x String)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 (+ (str.len x) 1)))
-(assert (>= (str.count (python.str.subst x 0 i_0) "(") 0))
-(assert (>= (str.count (python.str.subst x 0 i_0) ")") 0))
-(assert (>= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0))
-(assert (and (= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0) (str.contains x ")((le(()()chu)())nol))((sic(((da)()ty((()te))xy(())))))k")))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (>= (str.count (python.str.substr x 0 i_0) "(") 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (>= (str.count (python.str.substr x 0 i_0) ")") 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (>= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (and (= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0) (str.contains x ")((le(()()chu)())nol))((sic(((da)()ty((()te))xy(())))))k")))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 18 column 48: unknown constant python.str.subst (String Int Int) ")
-(error "line 19 column 48: unknown constant python.str.subst (String Int Int) ")
-(error "line 20 column 51: unknown constant python.str.subst (String Int Int) ")
-(error "line 21 column 55: unknown constant python.str.subst (String Int Int) ")
-sat
-(
-  (define-fun i_0 () Int
-    0)
-  (define-fun x () String
-    "")
-)
+timeout
 ### output for cvc5
-(error "Parse Error: tmp.smt2:18.49: Symbol 'python.str.subst' not declared as a variable")
+unknown
+(
+(define-fun x () String "")
+)
 
 Could not find any solution for puzzle CompleteParens:3
 
@@ -16376,6 +16004,12 @@ modified_func def sat(t: str, s=wrap_str('))())l')):
 ### smt2
 (set-logic ALL)
 
+(define-fun python.str.substr ((s String) (start Int) (end Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start))
+        (end (ite (< end 0) (+ (str.len s) end) end)))
+    (str.substr s start (- end start))))
+
+
 (define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
   (let ((idx (str.indexof s sub start)))
     (ite (or (= idx (- 1)) (> start (str.len s)))
@@ -16388,32 +16022,22 @@ modified_func def sat(t: str, s=wrap_str('))())l')):
        (str.count.rec s sub 0)))
 
 (declare-const x String)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 (+ (str.len x) 1)))
-(assert (>= (str.count (python.str.subst x 0 i_0) "(") 0))
-(assert (>= (str.count (python.str.subst x 0 i_0) ")") 0))
-(assert (>= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0))
-(assert (and (= (- (str.count (python.str.subst x 0 i_0) "(") (str.count (python.str.subst x 0 i_0) ")")) 0) (str.contains x "))())l")))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (>= (str.count (python.str.substr x 0 i_0) "(") 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (>= (str.count (python.str.substr x 0 i_0) ")") 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (>= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 (+ (str.len x) 1))) (and (= (- (str.count (python.str.substr x 0 i_0) "(") (str.count (python.str.substr x 0 i_0) ")")) 0) (str.contains x "))())l")))))
 (check-sat)
 (get-model)
 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 18 column 48: unknown constant python.str.subst (String Int Int) ")
-(error "line 19 column 48: unknown constant python.str.subst (String Int Int) ")
-(error "line 20 column 51: unknown constant python.str.subst (String Int Int) ")
-(error "line 21 column 55: unknown constant python.str.subst (String Int Int) ")
-sat
-(
-  (define-fun i_0 () Int
-    0)
-  (define-fun x () String
-    "")
-)
+timeout
 ### output for cvc5
-(error "Parse Error: tmp.smt2:18.49: Symbol 'python.str.subst' not declared as a variable")
+unknown
+(
+(define-fun x () String "")
+)
 
 Could not find any solution for puzzle CompleteParens:4
 
@@ -17493,14 +17117,8 @@ modified_func def sat(n: int, t=wrap_int(197), upper=wrap_int(20)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(assert (>= i_0 0))
-(assert (< i_0 197))
-(assert (=> (<= x 1) false))
-(assert (>= i_1 0))
-(assert (< i_1 197))
-(assert (=> (not (<= x 1)) (and (= (+ (* 3 x) 1) 1) (<= x 400))))
+(assert (=> (<= x 1) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 197)) false))))
+(assert (=> (not (<= x 1)) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 197)) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 197)) (and (= (+ (* 3 x) 1) 1) (<= x 400))))))))
 (check-sat)
 (get-model)
 
@@ -17508,7 +17126,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 12 column 10: model is not available")
+(error "line 6 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -17533,14 +17151,8 @@ modified_func def sat(n: int, t=wrap_int(1000), upper=wrap_int(150)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(assert (>= i_0 0))
-(assert (< i_0 1000))
-(assert (=> (<= x 1) false))
-(assert (>= i_1 0))
-(assert (< i_1 1000))
-(assert (=> (not (<= x 1)) (and (= (+ (* 3 x) 1) 1) (<= x 22500))))
+(assert (=> (<= x 1) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 1000)) false))))
+(assert (=> (not (<= x 1)) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 1000)) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 1000)) (and (= (+ (* 3 x) 1) 1) (<= x 22500))))))))
 (check-sat)
 (get-model)
 
@@ -17548,7 +17160,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 12 column 10: model is not available")
+(error "line 6 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -17573,14 +17185,8 @@ modified_func def sat(n: int, t=wrap_int(2000), upper=wrap_int(206)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(assert (>= i_0 0))
-(assert (< i_0 2000))
-(assert (=> (<= x 1) false))
-(assert (>= i_1 0))
-(assert (< i_1 2000))
-(assert (=> (not (<= x 1)) (and (= (+ (* 3 x) 1) 1) (<= x 42436))))
+(assert (=> (<= x 1) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 2000)) false))))
+(assert (=> (not (<= x 1)) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 2000)) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 2000)) (and (= (+ (* 3 x) 1) 1) (<= x 42436))))))))
 (check-sat)
 (get-model)
 
@@ -17588,7 +17194,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 12 column 10: model is not available")
+(error "line 6 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -17613,14 +17219,8 @@ modified_func def sat(n: int, t=wrap_int(2283), upper=wrap_int(238)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(declare-const i_1 Int)
-(assert (>= i_0 0))
-(assert (< i_0 2283))
-(assert (=> (<= x 1) false))
-(assert (>= i_1 0))
-(assert (< i_1 2283))
-(assert (=> (not (<= x 1)) (and (= (+ (* 3 x) 1) 1) (<= x 56644))))
+(assert (=> (<= x 1) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 2283)) false))))
+(assert (=> (not (<= x 1)) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 2283)) (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 2283)) (and (= (+ (* 3 x) 1) 1) (<= x 56644))))))))
 (check-sat)
 (get-model)
 
@@ -17628,7 +17228,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 12 column 10: model is not available")
+(error "line 6 column 10: model is not available")
 ### output for cvc5
 unsat
 (error "cannot get model unless after a SAT or UNKNOWN response.")
@@ -17656,10 +17256,7 @@ modified_func def sat(n: int, year_len=wrap_int(365)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 x))
-(assert (<= (^ (- (* (/ (- 365 i_0) 365) 1.0) 0.5) 2) (/ 1 365)))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) (<= (^ (- (* (/ (- 365 i_0) 365) 1.0) 0.5) 2) (/ 1 365)))))
 (check-sat)
 (get-model)
 
@@ -17668,15 +17265,13 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    184)
   (define-fun x () Int
-    185)
+    0)
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:6.53: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:3.104: expecting same arithmetic types to POW")
 
-Found solution 185
+Found solution 0
 WARNING: Solution verification failed for puzzle BirthdayParadox:0
 
 Solving puzzle 578/723: BirthdayParadox:1
@@ -17693,10 +17288,7 @@ modified_func def sat(n: int, year_len=wrap_int(60182)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 x))
-(assert (<= (^ (- (* (/ (- 60182 i_0) 60182) 1.0) 0.5) 2) (/ 1 60182)))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) (<= (^ (- (* (/ (- 60182 i_0) 60182) 1.0) 0.5) 2) (/ 1 60182)))))
 (check-sat)
 (get-model)
 
@@ -17705,15 +17297,13 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    30092)
   (define-fun x () Int
-    30093)
+    0)
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:6.57: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:3.108: expecting same arithmetic types to POW")
 
-Found solution 30093
+Found solution 0
 WARNING: Solution verification failed for puzzle BirthdayParadox:1
 
 Solving puzzle 579/723: BirthdayParadox:2
@@ -17730,10 +17320,7 @@ modified_func def sat(n: int, year_len=wrap_int(2)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 x))
-(assert (<= (^ (- (* (/ (- 2 i_0) 2) 1.0) 0.5) 2) (/ 1 2)))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) (<= (^ (- (* (/ (- 2 i_0) 2) 1.0) 0.5) 2) (/ 1 2)))))
 (check-sat)
 (get-model)
 
@@ -17742,15 +17329,13 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
   (define-fun x () Int
-    1)
+    0)
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:6.49: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:3.100: expecting same arithmetic types to POW")
 
-Found solution 1
+Found solution 0
 Yes! Solved for puzzle  BirthdayParadox:2
 
 Solving puzzle 580/723: BirthdayParadox:3
@@ -17767,10 +17352,7 @@ modified_func def sat(n: int, year_len=wrap_int(3)):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(declare-const i_0 Int)
-(assert (>= i_0 0))
-(assert (< i_0 x))
-(assert (<= (^ (- (* (/ (- 3 i_0) 3) 1.0) 0.5) 2) (/ 1 3)))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 0) (< i_0 x)) (<= (^ (- (* (/ (- 3 i_0) 3) 1.0) 0.5) 2) (/ 1 3)))))
 (check-sat)
 (get-model)
 
@@ -17779,15 +17361,13 @@ running backend cvc5
 ### output for z3
 sat
 (
-  (define-fun i_0 () Int
-    0)
   (define-fun x () Int
-    1)
+    0)
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:6.49: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:3.100: expecting same arithmetic types to POW")
 
-Found solution 1
+Found solution 0
 Yes! Solved for puzzle  BirthdayParadox:3
 
 Solving puzzle 581/723: BirthdayParadoxMonteCarlo:0
@@ -18857,7 +18437,10 @@ sat
     "xyfurexatextoxivuquu")
 )
 ### output for cvc5
-cvc5 interrupted by timeout.
+sat
+(
+(define-fun x () String "xyfurexatextoxivuquu")
+)
 
 Found solution xyfurexatextoxivuquu
 Yes! Solved for puzzle  StrIn:2
@@ -21227,14 +20810,14 @@ Could not find any solution for puzzle Tutorial5:0
 
 The symbolic execution alone currently solves:
 - 54% (194 out of 360) of `int` puzzles,
-- 19% (69 out of 363) of `str` puzzles,
-- 36% (263 out of 723) overall.
+- 21% (75 out of 363) of `str` puzzles,
+- 37% (269 out of 723) overall.
 
 with the following errors:
 - 53 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
-- 204 errors at at staging time
-- 70 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- 133 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
+- 200 errors at at staging time
+- 61 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- 140 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
 - 992 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 

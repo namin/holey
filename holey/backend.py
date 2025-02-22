@@ -14,6 +14,17 @@ def to_smtlib_string(s):
         for ch in s
     ) + '"'
 
+def from_smtlib_string(s):
+    """Convert SMT-LIB string with unicode escapes back to Python string"""
+    import re
+    
+    def replace_unicode(match):
+        hex_val = match.group(1)
+        return chr(int(hex_val, 16))
+    
+    # Replace \u{XX} with actual unicode characters
+    return re.sub(r'\\u\{([0-9a-fA-F]+)\}', replace_unicode, s)
+
 def from_stmlib_int(v):
     if isinstance(v, list):
         if len(v)==2 and isinstance(v[0], sexpdata.Symbol) and v[0].value()=='-':
@@ -107,7 +118,11 @@ def _parse_model(output):
             var_name = defn[1].value()
             value = defn[-1]
             typ = defn[3].value()
-            _model[var_name] = from_stmlib_int(value) if typ == 'Int' else value
+            if typ == 'String':
+                value = from_smtlib_string(str(value))
+            elif typ == 'Int':
+                value = from_stmlib_int(value)
+            _model[var_name] = value
 
     return _model
 
@@ -137,7 +152,13 @@ class MockExpr:
             return str(self.args[0])
         elif not self.args:
             return self.op
-            
+        elif self.op == "forall":
+            vars = self.args[0]
+            body = self.args[1]
+            vars_str = " ".join(f"({var.args[0]} Int)" for var in vars)
+            body_str = body.to_smt2() if isinstance(body, MockExpr) else str(body)
+            return f"(forall ({vars_str}) {body_str})"
+
         args_str = " ".join(arg.to_smt2() if isinstance(arg, MockExpr) else str(arg).lower() if isinstance(arg, bool) else str(arg)
                           for arg in self.args)
         return f"({self.op} {args_str})"
@@ -410,6 +431,7 @@ class Backend():
         self.operations = []
         self.solver = MockSolver()
         self.stack = []
+        self.quantified_vars = set()
 
     def _record(self, op: str, *args) -> Any:
         """Record operation and return a MockExpr"""
@@ -439,7 +461,8 @@ class Backend():
         return self._record("not", x)
 
     def Int(self, name: str) -> MockExpr:
-        self.solver.declarations.append((name, 'Int'))
+        if name not in self.quantified_vars:
+            self.solver.declarations.append((name, 'Int'))
         return self._record("Int", name)
 
     def IntVal(self, val: int) -> MockExpr:
@@ -562,7 +585,7 @@ class Backend():
     def StrContains(self, x, y) -> MockExpr:
         return self._record("str.contains", x, y)
 
-    def StrSubstr(self, s, a, b, variant="python.str.subst") -> MockExpr:
+    def StrSubstr(self, s, a, b, variant="python.str.substr") -> MockExpr:
         return self._record(variant, s, a, b)
 
     def StrConcat(self, *args) -> MockExpr:
