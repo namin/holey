@@ -105,7 +105,7 @@ class PuzzleSolver:
                         self.success_count += 1
                         self.success_counts[ans_type] += 1
                         print("Yes! Solved for puzzle ", name)
-            if not reason and llm_solver and result is None:
+            if not reason and result is None:
                 varied_puzzle_sat_func, reason = vary(sat_func)
                 if varied_puzzle_sat_func is not None:
                     self.extrapolate_small_count += 1
@@ -115,13 +115,14 @@ class PuzzleSolver:
                     varied_result = self.solve_puzzle(varied_puzzle, cmds, llm_solver, reason=reason)
                     if varied_result is not None:
                         self.extrapolate_small_success_count += 1
-                        result = llm_solver.extrapolate(varied_puzzle_sat_func, sat_func, reason, varied_result, ans_type, name, check_result)
-                        if result is not None:
-                            self.extrapolate_large_success_count += 1
-                            self.success_count += 1
-                            self.success_counts[ans_type] += 1
-                            print("Yes! Solved via extrapolation for puzzle ", name)
-                            return result
+                        if llm_solver:
+                            result = llm_solver.extrapolate(varied_puzzle_sat_func, sat_func, reason, varied_result, ans_type, name, check_result)
+                            if result is not None:
+                                self.extrapolate_large_success_count += 1
+                                self.success_count += 1
+                                self.success_counts[ans_type] += 1
+                                print("Yes! Solved via extrapolation for puzzle ", name)
+                                return result
             if False and llm_solver and result is None:
                 print('\nFallback to LLM!')
                 result = self.llm_solver.solve_end2end(sat_func, ans_type, name, check_result) or self.llm_solver.smtlib_solve(sat_func, ans_type, name, log, check_result, cmds)
@@ -157,8 +158,11 @@ class PuzzleSolver:
 ### Extrapolation
 - {self.extrapolate_small_count} smaller problems tried
 - {self.extrapolate_small_success_count} successes on smaller problem
-- {self.extrapolate_large_success_count} successful extrapolations
 """ if self.extrapolate_small_count > 0 else ""
+
+        if self.extrapolate_large_success_count > 0:
+            extrapolation += f"""- {self.extrapolate_large_success_count} successful extrapolations
+"""
 
         return f"""
 ## Current status
