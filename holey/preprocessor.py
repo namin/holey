@@ -91,6 +91,10 @@ def sym_range(*args):
     
     tracer = first_tracer(args)
     [start, stop, step] = [tracer.ensure_symbolic(arg) for arg in [start, stop, step]]
+
+    if start.concrete is not None and stop.concrete is not None and step.concrete is not None:
+        return range(start.concrete, stop.concrete, step.concrete)
+
     name = f"i_{next(counter)}"
     tracer.backend.quantified_vars.add(name)
     i = make_symbolic(int, name, tracer=tracer)
