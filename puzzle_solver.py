@@ -171,7 +171,7 @@ class PuzzleSolver:
                 r += "- "
                 r += solver_name.rjust(10)
                 r += ('('+kind+')').rjust(15)
-                r += str(sum(agg)).rjust(3)
+                r += '_'+str(sum(agg)).rjust(3)+'_'
                 r += " "
                 r += " ".join([str(x) for x in agg])
                 r += "\n"
