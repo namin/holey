@@ -540,25 +540,26 @@ class SymbolicStrIterator:
         if self.used:
             raise StopIteration
             
-        # Create position variable only when needed in forall
+        # Create position variable directly as a Z3 variable in forall
         pos_name = f'str_pos_{SymbolicStrIterator._counter}'
         SymbolicStrIterator._counter += 1
-        self.tracer.backend.quantified_vars.add(pos_name)
+        self.tracer.backend.quantified_vars.add(pos_name)        
         pos_var = SymbolicInt(name=pos_name, tracer=self.tracer)
         
         # Add bounds constraints for position
-        bounds = self.tracer.backend.And(
-            self.tracer.backend.GE(pos_var.z3_expr, self.tracer.backend.IntVal(0)),
-            self.tracer.backend.LT(pos_var.z3_expr, self.length.z3_expr)
-        )
-        
-        # Add to forall conditions - this will be the only declaration of the position variable
-        self.tracer.forall_conditions.append((pos_var.z3_expr, bounds))
+        bounds = (pos_var.z3_expr >= 0) & (pos_var.z3_expr < self.length.z3_expr)
         
         # Get character at current position
-        char = self.sym_str[pos_var]  # This will handle the symbolic index
+        result = SymbolicStr(
+            self.tracer.backend.StrIndex(self.sym_str.z3_expr, pos_var.z3_expr),
+            tracer=self.tracer
+        )
+        
+        # Add position variable to forall condition
+        self.tracer.forall_conditions.append((pos_var.z3_expr, bounds))
+        
         self.used = True
-        return char
+        return result
 
 class SymbolicStr:
     def __init__(self, value: Optional[Any] = None, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
