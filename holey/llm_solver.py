@@ -10,7 +10,7 @@ class LLMSolver:
         self.context = {}  # Store problem context and history
         self.cache = {}  # Cache LLM responses
 
-    def extrapolate(self, sat_func_small, sat_func_large, reason, result_small, ans_type: str, name: str, check_result) -> Optional[str]:
+    def extrapolate(self, sat_func_small, sat_func_large, reason, result_small, ans_type: str, name: str, check_result, log) -> Optional[str]:
         print('Extrapolating...')
         prompt = f"""Given the smaller satisfiability predicate:
 ```python
@@ -22,6 +22,11 @@ a result is `{result_small}`, then what is a result for the bigger satisfiabilit
 ```
 ?
 Answer with just an executable Python expression that evaluates to the bigger result.
+
+It might not be helpful (in which case you can ignore it), but here is the log with the SMTLIB program that didn't work out for the bigger predicate:
+```
+{log}
+```
 """
         return self.result_from_prompt(prompt, sat_func_large, ans_type, name, check_result)
 

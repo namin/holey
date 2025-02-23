@@ -116,7 +116,7 @@ class PuzzleSolver:
                     if varied_result is not None:
                         self.extrapolate_small_success_count += 1
                         if llm_solver:
-                            result = llm_solver.extrapolate(varied_puzzle_sat_func, sat_func, reason, varied_result, ans_type, name, check_result)
+                            result = llm_solver.extrapolate(varied_puzzle_sat_func, sat_func, reason, varied_result, ans_type, name, check_result, log)
                             if result is not None:
                                 self.extrapolate_large_success_count += 1
                                 self.success_count += 1
