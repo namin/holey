@@ -524,6 +524,42 @@ class SymbolicList:
                 return result
         return SymbolicInt(count, tracer=self.tracer)
 
+class SymbolicStrIterator:
+    _counter = 0
+    
+    def __init__(self, sym_str):
+        self.tracer = sym_str.tracer
+        self.sym_str = sym_str
+        self.length = sym_str.__len__()
+        self.used = False
+        
+    def __iter__(self):
+        return self
+        
+    def __next__(self):
+        if self.used:
+            raise StopIteration
+            
+        # Create position variable only when needed in forall
+        pos_name = f'str_pos_{SymbolicStrIterator._counter}'
+        SymbolicStrIterator._counter += 1
+        self.tracer.backend.quantified_vars.add(pos_name)
+        pos_var = SymbolicInt(name=pos_name, tracer=self.tracer)
+        
+        # Add bounds constraints for position
+        bounds = self.tracer.backend.And(
+            self.tracer.backend.GE(pos_var.z3_expr, self.tracer.backend.IntVal(0)),
+            self.tracer.backend.LT(pos_var.z3_expr, self.length.z3_expr)
+        )
+        
+        # Add to forall conditions - this will be the only declaration of the position variable
+        self.tracer.forall_conditions.append((pos_var.z3_expr, bounds))
+        
+        # Get character at current position
+        char = self.sym_str[pos_var]  # This will handle the symbolic index
+        self.used = True
+        return char
+
 class SymbolicStr:
     def __init__(self, value: Optional[Any] = None, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
         self.tracer = tracer
@@ -596,7 +632,7 @@ class SymbolicStr:
     def __iter__(self):
         if self.concrete is not None:
             return iter(self.concrete)
-        raise ValueError("__iter__ on symbolic string not yet implemented")
+        return SymbolicStrIterator(self)
 
     def __len__(self):
         if self.concrete is not None:
