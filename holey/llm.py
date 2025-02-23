@@ -3,6 +3,7 @@ import socket
 
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 
 def is_docker():
     path = '/proc/self/cgroup'
@@ -18,33 +19,7 @@ def dummy_generate(pkg, extra=""):
         raise ValueError(f"Need to install pip package '{pkg}'"+extra)
     return generate
 
-if not ANTHROPIC_API_KEY and not OPENAI_API_KEY:
-    generate = None
-    try:
-        import ollama
-    except ModuleNotFoundError:
-        generate = dummy_generate('ollama', extra=", or package 'anthropic' while setting ANTHROPIC_API_KEY")
-    if generate is None:
-        model = os.environ.get('OLLAMA_MODEL', 'qwen2.5-coder')
-        def generate(prompt, max_tokens=1000, temperature=1.0, model=model):
-            print(f"Sending request to Ollama (model={model}, max_tokens={max_tokens}, temp={temperature})")
-            print(f"Prompt:\n{prompt}")
-
-            try:
-                response = ollama.generate(
-                    model=model, prompt=prompt,
-                    options={
-                        'max_tokens': max_tokens,
-                        'temperature': temperature
-                    }
-                )
-                print("Received response from Ollama")
-                print(f"Response:\n{response['response']}")
-                return response['response']
-            except Exception as e:
-                print(f"Error generating response: {e}")
-                return None
-elif OPENAI_API_KEY:
+if OPENAI_API_KEY:
     generate = None
     try:
         import openai
@@ -71,8 +46,7 @@ elif OPENAI_API_KEY:
             print("Received response from OpenAI")
             print(f"Response:\n{response}")
             return response
-else:
-    assert ANTHROPIC_API_KEY
+elif ANTHROPIC_API_KEY:
     generate = None
     try:
         import anthropic
@@ -105,6 +79,52 @@ else:
             print("Received response from Anthropic")
             print(f"Response:\n{message}")
             return message.content[0].text
+elif GEMINI_API_KEY:
+    generate = None
+    try:
+        from google import genai
+    except ModuleNotFoundError:
+        generate = dummy_generate('google-genai')
+    if generate is None:
+        def generate(prompt, max_tokens=1000, temperature=1.0, model="gemini-2.0-flash"):
+            print(f"Sending request to Google Gemini (model={model}, max_tokens={max_tokens}, temp={temperature})")
+            print(f"Prompt:\n{prompt}")
+            
+            client = genai.Client(api_key=GEMINI_API_KEY)
+
+            response = client.models.generate_content(
+                model='gemini-2.0-flash', contents=prompt
+            )
+            text = response.text
+            print("Received response from Google Gemini")
+            print(f"Response:\n{text}")
+            return text
+else:
+    generate = None
+    try:
+        import ollama
+    except ModuleNotFoundError:
+        generate = dummy_generate('ollama', extra=", or package 'anthropic' while setting ANTHROPIC_API_KEY")
+    if generate is None:
+        model = os.environ.get('OLLAMA_MODEL', 'qwen2.5-coder')
+        def generate(prompt, max_tokens=1000, temperature=1.0, model=model):
+            print(f"Sending request to Ollama (model={model}, max_tokens={max_tokens}, temp={temperature})")
+            print(f"Prompt:\n{prompt}")
+
+            try:
+                response = ollama.generate(
+                    model=model, prompt=prompt,
+                    options={
+                        'max_tokens': max_tokens,
+                        'temperature': temperature
+                    }
+                )
+                print("Received response from Ollama")
+                print(f"Response:\n{response['response']}")
+                return response['response']
+            except Exception as e:
+                print(f"Error generating response: {e}")
+                return None
 
 def extract_code_blocks(response: str) -> str:
     """Extract code blocks from LLM response, removing markdown and explanations."""
