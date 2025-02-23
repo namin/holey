@@ -1,0 +1,222 @@
+% python puzzle_solver.py --smtlib-backends z3 cvc5 --name-prefix WeirdDecodeVowels:0 --llm
+Starting with 1715 puzzles...
+Running benchmarks on 1 puzzles...
+Filtered to puzzles starting with 'WeirdDecodeVowels:0'
+Filtered to puzzles of answer types: ['int', 'str']
+
+Solving puzzle 1/1: WeirdDecodeVowels:0
+sat_func def sat(s: str, target="Hello, world!"):
+    subs = {ord(c): ord(c) + 2 for c in "aeiouAEIOU"}
+    return s.swapcase() == target.translate(subs)
+modified_func def sat(s: str, target=wrap_str('Hello, world!')):
+    subs = {sym_ord(c): sym_ord(c) + wrap_int(2) for c in wrap_str('aeiouAEIOU')}
+    return s.swapcase() == target.translate(subs)
+concrete_subs {97: 99, 101: 103, 105: 107, 111: 113, 117: 119, 65: 67, 69: 71, 73: 75, 79: 81, 85: 87}
+### smt2
+(set-logic ALL)
+
+(define-fun is_upper ((c String)) Bool
+  (and 
+    (>= (str.to_code c) 65)
+    (<= (str.to_code c) 90)))
+
+(define-fun is_lower ((c String)) Bool
+  (and
+    (>= (str.to_code c) 97)
+    (<= (str.to_code c) 122)))
+
+(define-fun to_lower ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (+ code 32))))
+
+(define-fun to_upper ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (- code 32))))
+
+(define-fun swapcase_char ((c String)) String
+  (ite (is_upper c)
+       (to_lower c)
+       (ite (is_lower c)
+            (to_upper c)
+            c)))
+
+(define-fun-rec swapcase_helper ((i Int) (n Int) (s String)) String
+  (ite (>= i n)
+       ""
+       (str.++ (swapcase_char (str.at s i))
+               (swapcase_helper (+ i 1) n s))))
+
+(define-fun swapcase ((s String)) String
+  (swapcase_helper 0 (str.len s) s))
+
+(declare-const x String)
+(assert (= (swapcase x) "Hgllq, wqrld!"))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+cvc5 interrupted by timeout.
+
+Could not find any solution for puzzle WeirdDecodeVowels:0
+Solving simpler variation replaced Hello, world! with Hel!
+sat_func def sat(s: str, target="Hel!"):
+    subs = {ord(c): ord(c) + 2 for c in "aeiouAEIOU"}
+    return s.swapcase() == target.translate(subs)
+modified_func def sat(s: str, target=wrap_str('Hel!')):
+    subs = {sym_ord(c): sym_ord(c) + wrap_int(2) for c in wrap_str('aeiouAEIOU')}
+    return s.swapcase() == target.translate(subs)
+concrete_subs {97: 99, 101: 103, 105: 107, 111: 113, 117: 119, 65: 67, 69: 71, 73: 75, 79: 81, 85: 87}
+### smt2
+(set-logic ALL)
+
+(define-fun is_upper ((c String)) Bool
+  (and 
+    (>= (str.to_code c) 65)
+    (<= (str.to_code c) 90)))
+
+(define-fun is_lower ((c String)) Bool
+  (and
+    (>= (str.to_code c) 97)
+    (<= (str.to_code c) 122)))
+
+(define-fun to_lower ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (+ code 32))))
+
+(define-fun to_upper ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (- code 32))))
+
+(define-fun swapcase_char ((c String)) String
+  (ite (is_upper c)
+       (to_lower c)
+       (ite (is_lower c)
+            (to_upper c)
+            c)))
+
+(define-fun-rec swapcase_helper ((i Int) (n Int) (s String)) String
+  (ite (>= i n)
+       ""
+       (str.++ (swapcase_char (str.at s i))
+               (swapcase_helper (+ i 1) n s))))
+
+(define-fun swapcase ((s String)) String
+  (swapcase_helper 0 (str.len s) s))
+
+(declare-const x String)
+(assert (= (swapcase x) "Hgl!"))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "hGL!")
+)
+### output for cvc5
+cvc5 interrupted by timeout.
+
+Found solution hGL!
+Extrapolating...
+Sending request to Anthropic (model=claude-3-5-sonnet-20241022, max_tokens=1000, temp=1.0)
+Prompt:
+Given the smaller satisfiability predicate:
+```python
+def sat(s: str, target="Hel!"):
+    subs = {ord(c): ord(c) + 2 for c in "aeiouAEIOU"}
+    return s.swapcase() == target.translate(subs)
+```
+a result is `hGL!`, then what is a result for the bigger satisfiability predicate:
+```python
+def sat(s: str, target="Hello, world!"):
+    subs = {ord(c): ord(c) + 2 for c in "aeiouAEIOU"}
+    return s.swapcase() == target.translate(subs)
+```
+?
+Answer with a few possibilities/guesses, each time just an executable Python expression that evaluates to the bigger result.
+
+It might not be helpful (in which case you can ignore it), but here is the log with the SMTLIB program that didn't work out for the bigger predicate:
+```
+### smt2
+(set-logic ALL)
+
+(define-fun is_upper ((c String)) Bool
+  (and 
+    (>= (str.to_code c) 65)
+    (<= (str.to_code c) 90)))
+
+(define-fun is_lower ((c String)) Bool
+  (and
+    (>= (str.to_code c) 97)
+    (<= (str.to_code c) 122)))
+
+(define-fun to_lower ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (+ code 32))))
+
+(define-fun to_upper ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (- code 32))))
+
+(define-fun swapcase_char ((c String)) String
+  (ite (is_upper c)
+       (to_lower c)
+       (ite (is_lower c)
+            (to_upper c)
+            c)))
+
+(define-fun-rec swapcase_helper ((i Int) (n Int) (s String)) String
+  (ite (>= i n)
+       ""
+       (str.++ (swapcase_char (str.at s i))
+               (swapcase_helper (+ i 1) n s))))
+
+(define-fun swapcase ((s String)) String
+  (swapcase_helper 0 (str.len s) s))
+
+(declare-const x String)
+(assert (= (swapcase x) "Hgllq, wqrld!"))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+cvc5 interrupted by timeout.
+
+```
+
+Received response from Anthropic
+Response:
+Message(id='msg_01ByZSxDVoB8WhWHmcHBbgNA', content=[TextBlock(citations=None, text='Looking at how the smaller predicate worked with "hGL!" mapping to "Hel!", I can make some educated guesses for the bigger predicate where we need a string that swapped-case equals "Hello, world!" with vowels shifted by +2.\n\nThe pattern seems to be:\n- lowercase in input becomes uppercase in output\n- uppercase in input becomes lowercase in output\n- vowels in target need to be "un-shifted" by -2 \n- non-vowels and punctuation stay the same\n\nSo for "Hello, world!" where:\n- H -> needs lowercase h\n- e+2=g -> needs uppercase G\n- l -> needs uppercase L\n- l -> needs uppercase L\n- o+2=q -> needs uppercase Q\n- etc.\n\nHere are my guesses:\n\n1. `"hGLLQ, WQRLD!"`\n2. `"hGLLQ, wQRLD!"`\n3. `"hGllQ, wQrld!"`\n\nI think the first one is most likely correct because it follows the pattern most consistently - lowercase for the first letter and uppercase for the rest of the letters (except punctuation).', type='text')], model='claude-3-5-sonnet-20241022', role='assistant', stop_reason='end_turn', stop_sequence=None, type='message', usage=Usage(cache_creation_input_tokens=0, cache_read_input_tokens=0, input_tokens=685, output_tokens=265))
+LLM result exp "hGLLQ, WQRLD!"
+LLM result verifies for puzzle WeirdDecodeVowels:0
+Yes! Solved via extrapolation for puzzle  WeirdDecodeVowels:0
+
+## Current status
+
+The symbolic execution currently solves:
+- 100% (1 out of 1) of `str` puzzles,
+- 100% (1 out of 1) overall.
+
+with the following errors:
+- 0 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
+- 0 errors at at staging time
+- 0 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- 1 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
+timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
+- 1714 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
+
+### Extrapolation
+- 1 smaller problems tried
+- 1 successes on smaller problem
+- 1 successful extrapolations
