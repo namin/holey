@@ -25,6 +25,8 @@ dependencies = [
 test = ["pytest>=6.0"]
 ollama = ["ollama"]
 anthropic = ["anthropic"]
+google-genai = ["google-genai"]
+openai = ["openai"]
 
 [project.urls]
 "Homepage" = "https://github.com/namin/holey"
