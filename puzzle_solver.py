@@ -169,9 +169,9 @@ class PuzzleSolver:
             for kind, stat in [('extrapolate', self.extrapolate_stats[solver_name]), ('end-to-end', self.end2end_stats[solver_name]), ('SMTLIB', self.smtlib_stats[solver_name])]:
                 agg = [0 if x[1] is None else 1 for x in stat]
                 r += "- "
-                r += solver_name.rjust(10)
+                r += solver_name.ljust(10)
                 r += ('('+kind+')').rjust(15)
-                r += '_'+str(sum(agg)).rjust(3)+'_'
+                r += ('_'+str(sum(agg))+'_').rjust(4)
                 r += " "
                 r += " ".join([str(x) for x in agg])
                 r += "\n"
