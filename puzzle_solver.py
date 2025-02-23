@@ -38,6 +38,8 @@ class PuzzleSolver:
         self.extrapolate_small_success_count = 0
         self.extrapolate_large_success_count = 0
         self.extrapolate_stats = defaultdict(list)
+        self.end2end_stats = defaultdict(list)
+        self.smtlib_stats = defaultdict(list)
 
     def symbolic_solve1(self, typ, sat_func: str, ans_type: str, name: str, cmds, llm_solver) -> Optional[str]:
         sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver)
@@ -118,6 +120,9 @@ class PuzzleSolver:
                         self.extrapolate_small_success_count += 1
                         if llm_solver:
                             result = call_solvers(llm_solver, self.extrapolate_stats, name, lambda x: x.extrapolate(varied_puzzle_sat_func, sat_func, reason, varied_result, ans_type, name, check_result, log))
+                            # just for the stats
+                            call_solvers(llm_solver, self.end2end_stats, name, lambda x: x.solve_end2end(sat_func, ans_type, name, check_result))
+                            call_solvers(llm_solver, self.smtlib_stats, name, lambda x: x.smtlib_solve(sat_func, ans_type, name, log, check_result, cmds))
                             if result is not None:
                                 self.extrapolate_large_success_count += 1
                                 self.success_count += 1
@@ -156,14 +161,15 @@ class PuzzleSolver:
 
     def extrapolation_matrix(self):
         r = ""
-        for solver_name, stat in self.extrapolate_stats.items():
-            agg = [0 if x[1] is None else 1 for x in stat]
-            r += "- "
-            r += solver_name.rjust(10)
-            r += str(sum(agg)).rjust(3)
-            r += " "
-            r += " ".join([str(x) for x in agg])
-            r += "\n"
+        for solver_name in self.extrapolate_stats.keys():
+            for stat in [self.extrapolate_stats[solver_name], self.end2end_stats[solver_name], self.smtlib_stats[solver_name]]:
+                agg = [0 if x[1] is None else 1 for x in stat]
+                r += "- "
+                r += solver_name.rjust(10)
+                r += str(sum(agg)).rjust(3)
+                r += " "
+                r += " ".join([str(x) for x in agg])
+                r += "\n"
         return r
 
     def pretty_stats(self):
@@ -273,7 +279,7 @@ def vary(sat_func):
 
     return None, None
 
-def call_solvers(llm_solvers, extrapolate_stats, name, callback):
+def call_solvers(llm_solvers, stats, name, callback):
     best = None
     print('Solvers:', llm_solvers.keys())
     for solver_name, solver in llm_solvers.items():
@@ -282,7 +288,7 @@ def call_solvers(llm_solvers, extrapolate_stats, name, callback):
         except Exception as e:
             print("Error with solver:", str(e))
             result = None
-        extrapolate_stats[solver_name].append((name, result))
+        stats[solver_name].append((name, result))
         if best is None and result is not None:
             best = result
     return best
