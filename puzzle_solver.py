@@ -162,10 +162,11 @@ class PuzzleSolver:
     def extrapolation_matrix(self):
         r = ""
         for solver_name in self.extrapolate_stats.keys():
-            for stat in [self.extrapolate_stats[solver_name], self.end2end_stats[solver_name], self.smtlib_stats[solver_name]]:
+            for kind, stat in [('extrapolate', self.extrapolate_stats[solver_name]), ('end-to-end', self.end2end_stats[solver_name]), ('SMTLIB', self.smtlib_stats[solver_name])]:
                 agg = [0 if x[1] is None else 1 for x in stat]
                 r += "- "
                 r += solver_name.rjust(10)
+                r += ('('+kind+')').rjust(15)
                 r += str(sum(agg)).rjust(3)
                 r += " "
                 r += " ".join([str(x) for x in agg])
