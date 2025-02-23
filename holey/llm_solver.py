@@ -1,14 +1,14 @@
-from .llm import generate as llm_generate, extract_code_blocks
+from .llm import extract_code_blocks
 from .backend import run_smt
 from typing import List, Any, Dict, Optional, Tuple
 
 class LLMSolver:
     """LLM-assisted solving capabilities that can be hooked into SymbolicTracer"""
     
-    def __init__(self, temperature=0.3):
+    def __init__(self, llm_generate, temperature=0.3):
+        self.llm_generate = llm_generate
         self.temperature = temperature
-        self.context = {}  # Store problem context and history
-        self.cache = {}  # Cache LLM responses
+        self.cache = {}
 
     def extrapolate(self, sat_func_small, sat_func_large, reason, result_small, ans_type: str, name: str, check_result, log) -> Optional[str]:
         print('Extrapolating...')
@@ -40,7 +40,7 @@ This is the log, you may copy most of any SMTLIB program below.
 
 Return only the new SMTLIB program without any context.
 """
-        blocks = extract_code_blocks(llm_generate(prompt))
+        blocks = extract_code_blocks(self.llm_generate(prompt))
         model = None
         result = None
         flag = None
@@ -65,7 +65,7 @@ Return only the executable Python expression without any context.
         return self.result_from_prompt(prompt, sat_func, ans_type, name, check_result)
 
     def result_from_prompt(self, prompt, sat_func: str, ans_type: str, name: str, check_result) -> Optional[str]:
-        results = extract_code_blocks(llm_generate(prompt))
+        results = extract_code_blocks(self.llm_generate(prompt))
         for result_expr in results:
             print('LLM result exp', result_expr)
             result = eval(result_expr)
@@ -103,8 +103,9 @@ Should we take the True or False branch? Consider:
 Return only True or False without explanation."""
 
         try:
-            result = llm_generate(prompt, 
-                                temperature=self.temperature).strip().lower() == 'true'
+            result = self.llm_generate(
+                prompt, 
+                temperature=self.temperature).strip().lower() == 'true'
             self.cache[cache_key] = result
             return result
         except Exception as e:
@@ -127,8 +128,9 @@ Return only SMT-LIB constraints without explanation."""
 
         try:
             suggestions = extract_code_blocks(
-                llm_generate(prompt, 
-                           temperature=self.temperature)
+                self.llm_generate(
+                    prompt, 
+                    temperature=self.temperature)
             )
         except:
             suggestions = []
@@ -151,8 +153,9 @@ Return only SMT-LIB patterns without explanation."""
 
         try:
             return extract_code_blocks(
-                llm_generate(prompt,
-                           temperature=self.temperature)
+                self.llm_generate(
+                    prompt,
+                    temperature=self.temperature)
             )
         except:
             return []

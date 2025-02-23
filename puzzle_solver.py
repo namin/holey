@@ -37,6 +37,7 @@ class PuzzleSolver:
         self.extrapolate_small_count = 0
         self.extrapolate_small_success_count = 0
         self.extrapolate_large_success_count = 0
+        self.extrapolate_stats = defaultdict(list)
 
     def symbolic_solve1(self, typ, sat_func: str, ans_type: str, name: str, cmds, llm_solver) -> Optional[str]:
         sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver)
@@ -116,7 +117,7 @@ class PuzzleSolver:
                     if varied_result is not None:
                         self.extrapolate_small_success_count += 1
                         if llm_solver:
-                            result = llm_solver.extrapolate(varied_puzzle_sat_func, sat_func, reason, varied_result, ans_type, name, check_result, log)
+                            result = call_solvers(llm_solver, self.extrapolate_stats, name, lambda x: x.extrapolate(varied_puzzle_sat_func, sat_func, reason, varied_result, ans_type, name, check_result, log))
                             if result is not None:
                                 self.extrapolate_large_success_count += 1
                                 self.success_count += 1
@@ -125,7 +126,7 @@ class PuzzleSolver:
                                 return result
             if False and llm_solver and result is None:
                 print('\nFallback to LLM!')
-                result = self.llm_solver.solve_end2end(sat_func, ans_type, name, check_result) or self.llm_solver.smtlib_solve(sat_func, ans_type, name, log, check_result, cmds)
+                result = call_solvers(llm_solver, {}, name, lambda x: x.solve_end2end(sat_func, ans_type, name, check_result) or x.smtlib_solve(sat_func, ans_type, name, log, check_result, cmds))
             return result
         except FunctionTimedOut:
             print("Timed out for puzzle "+name)
@@ -136,7 +137,7 @@ class PuzzleSolver:
             traceback.print_exc()
         if False and llm_solver:
             print('\nFallback to LLM after error!')
-            return self.llm_solver.solve_end2end(sat_func, ans_type, name, check_result)
+            return call_solvers(llm_solver, {}, name, lambda x: x.solve_end2end(sat_func, ans_type, name, check_result))
         return None
 
     def pretty_counts(self):
@@ -153,6 +154,18 @@ class PuzzleSolver:
         r += '\n'
         return r
 
+    def extrapolation_matrix(self):
+        r = ""
+        for solver_name, stat in self.extrapolate_stats.items():
+            agg = [0 if x[1] is None else 1 for x in stat]
+            r += "- "
+            r += solver_name.rjust(10)
+            r += str(sum(agg)).rjust(3)
+            r += " "
+            r += " ".join([str(x) for x in agg])
+            r += "\n"
+        return r
+
     def pretty_stats(self):
         extrapolation = f"""
 ### Extrapolation
@@ -162,6 +175,10 @@ class PuzzleSolver:
 
         if self.extrapolate_large_success_count > 0:
             extrapolation += f"""- {self.extrapolate_large_success_count} successful extrapolations
+"""
+            extrapolation += f"""
+#### Matrix
+{self.extrapolation_matrix()}
 """
 
         return f"""
@@ -256,6 +273,20 @@ def vary(sat_func):
 
     return None, None
 
+def call_solvers(llm_solvers, extrapolate_stats, name, callback):
+    best = None
+    print('Solvers:', llm_solvers.keys())
+    for solver_name, solver in llm_solvers.items():
+        try:
+            result = callback(solver)
+        except Exception as e:
+            print("Error with solver:", str(e))
+            result = None
+        extrapolate_stats[solver_name].append((name, result))
+        if best is None and result is not None:
+            best = result
+    return best
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
@@ -277,5 +308,6 @@ if __name__ == "__main__":
     
     llm_solver = None
     if args.llm:
-        llm_solver = LLMSolver()
+        from holey import llm_generators
+        llm_solver = {k: LLMSolver(v) for k,v in llm_generators.items()}
     run_benchmarks(args.puzzle_file, args.name_prefix, args.answer_types, args.smtlib_backends, llm_solver)

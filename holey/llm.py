@@ -4,6 +4,7 @@ import socket
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
+OLLAMA_API_KEY = os.environ.get('OLLAMA_API_KEY')
 
 def is_docker():
     path = '/proc/self/cgroup'
@@ -15,9 +16,12 @@ if is_docker():
 
 
 def dummy_generate(pkg, extra=""):
-    def generate(*args):
-        raise ValueError(f"Need to install pip package '{pkg}'"+extra)
-    return generate
+    # def generate(*args):
+    #     raise ValueError(f"Need to install pip package '{pkg}'"+extra)
+    # return generate
+    raise ValueError(f"Need to install pip package '{pkg}'"+extra)
+
+generators = {}
 
 if OPENAI_API_KEY:
     generate = None
@@ -46,7 +50,9 @@ if OPENAI_API_KEY:
             print("Received response from OpenAI")
             print(f"Response:\n{response}")
             return response
-elif ANTHROPIC_API_KEY:
+    generators['openai'] = generate
+
+if ANTHROPIC_API_KEY:
     generate = None
     try:
         import anthropic
@@ -79,7 +85,10 @@ elif ANTHROPIC_API_KEY:
             print("Received response from Anthropic")
             print(f"Response:\n{message}")
             return message.content[0].text
-elif GEMINI_API_KEY:
+
+    generators['claude'] = generate
+
+if GEMINI_API_KEY:
     generate = None
     try:
         from google import genai
@@ -99,7 +108,10 @@ elif GEMINI_API_KEY:
             print("Received response from Google Gemini")
             print(f"Response:\n{text}")
             return text
-else:
+
+    generators['gemini'] = generate
+
+if OLLAMA_API_KEY:
     generate = None
     try:
         import ollama
@@ -125,6 +137,8 @@ else:
             except Exception as e:
                 print(f"Error generating response: {e}")
                 return None
+
+    generators['ollama'] = generate
 
 def extract_code_blocks(response: str) -> str:
     """Extract code blocks from LLM response, removing markdown and explanations."""
