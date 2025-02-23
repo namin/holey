@@ -40,6 +40,8 @@ class PuzzleSolver:
         self.extrapolate_stats = defaultdict(list)
         self.end2end_stats = defaultdict(list)
         self.smtlib_stats = defaultdict(list)
+        self.names_of_extrapolated_puzzles = []
+        self.names_of_successfully_extrapolated_puzzles = []
 
     def symbolic_solve1(self, typ, sat_func: str, ans_type: str, name: str, cmds, llm_solver) -> Optional[str]:
         sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver)
@@ -118,12 +120,14 @@ class PuzzleSolver:
                     varied_result = self.solve_puzzle(varied_puzzle, cmds, llm_solver, reason=reason)
                     if varied_result is not None:
                         self.extrapolate_small_success_count += 1
+                        self.names_of_extrapolated_puzzles.append(name)
                         if llm_solver:
                             result = call_solvers(llm_solver, self.extrapolate_stats, name, lambda x: x.extrapolate(varied_puzzle_sat_func, sat_func, reason, varied_result, ans_type, name, check_result, log))
                             # just for the stats
                             call_solvers(llm_solver, self.end2end_stats, name, lambda x: x.solve_end2end(sat_func, ans_type, name, check_result))
                             call_solvers(llm_solver, self.smtlib_stats, name, lambda x: x.smtlib_solve(sat_func, ans_type, name, log, check_result, cmds))
                             if result is not None:
+                                self.names_of_successfully_extrapolated_puzzles.append(name)
                                 self.extrapolate_large_success_count += 1
                                 self.success_count += 1
                                 self.success_counts[ans_type] += 1
@@ -183,6 +187,13 @@ class PuzzleSolver:
         if self.extrapolate_large_success_count > 0:
             extrapolation += f"""- {self.extrapolate_large_success_count} successful extrapolations
 """
+            extrapolation += f"""
+#### Extrapolated puzzles
+{' '.join(self.names_of_extrapolated_puzzles)}
+#### Successfully extrapolated puzzles
+{' '.join(self.names_of_successfully_extrapolated_puzzles)}
+"""
+
             extrapolation += f"""
 #### Matrix
 {self.extrapolation_matrix()}
