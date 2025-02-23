@@ -209,6 +209,43 @@ class MockExpr:
         return self._name if self._name else str(self)
 
 library = {
+'swapcase':
+"""
+(define-fun is_upper ((c String)) Bool
+  (and 
+    (>= (str.to_code c) 65)
+    (<= (str.to_code c) 90)))
+
+(define-fun is_lower ((c String)) Bool
+  (and
+    (>= (str.to_code c) 97)
+    (<= (str.to_code c) 122)))
+
+(define-fun to_lower ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (+ code 32))))
+
+(define-fun to_upper ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (- code 32))))
+
+(define-fun swapcase_char ((c String)) String
+  (ite (is_upper c)
+       (to_lower c)
+       (ite (is_lower c)
+            (to_upper c)
+            c)))
+
+(define-fun-rec swapcase_helper ((i Int) (n Int) (s String)) String
+  (ite (>= i n)
+       ""
+       (str.++ (swapcase_char (str.at s i))
+               (swapcase_helper (+ i 1) n s))))
+
+(define-fun swapcase ((s String)) String
+  (swapcase_helper 0 (str.len s) s))
+"""
+,
 'str_multiply':
 """
 (define-fun-rec str.rev ((s String)) String
@@ -629,5 +666,8 @@ class Backend():
 
     def StrLower(self, x) -> MockExpr:
         return self._record("str.lower", x)
+
+    def SwapCase(self, x) -> MockExpr:
+        return self._record("swapcase", x)
 
 default_backend = Backend

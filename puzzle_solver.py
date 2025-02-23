@@ -248,6 +248,9 @@ def vary(sat_func):
         varied_sat_func = re.sub(rf'\b{constant2}\b', smaller2, varied_sat_func)
         if sat_func != varied_sat_func:
             return varied_sat_func, f'replaced {constant1} with {smaller1} and {constant2} with {smaller2}'
+    elif "Hello, world!" in sat_func:
+        varied_sat_func = sat_func.replace("Hello, world!", "Hel!")
+        return varied_sat_func, f'replaced Hello, world! with Hel!'
     else:
         print('Too many constants for extrapolation')
 

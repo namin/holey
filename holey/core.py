@@ -568,6 +568,11 @@ class SymbolicStr:
             return SymbolicSlice(self.concrete, key, key+1, None, tracer=self.tracer)
         return SymbolicStr(self.concrete[key], tracer=self.tracer)
 
+    def __iter__(self):
+        if self.concrete is not None:
+            return iter(self.concrete)
+        raise ValueError("__iter__ on symbolic string not yet implemented")
+
     def __len__(self):
         if self.concrete is not None:
             return SymbolicInt(len(self.concrete), tracer=self.tracer)
@@ -674,6 +679,18 @@ class SymbolicStr:
         if self.concrete is not None:
             return SymbolicStr(self.concrete.lower(), tracer=self.tracer)
         return SymbolicStr(self.tracer.backend.StrLower(self.z3_expr), tracer=self.tracer)
+
+    def swapcase(self):
+        if self.concrete is not None:
+            return SymbolicStr(self.concrete.swapcase(), tracer=self.tracer)
+        return SymbolicStr(self.tracer.backend.SwapCase(self.z3_expr), tracer=self.tracer)
+
+    def translate(self, subs):
+        if self.concrete is not None:
+            concrete_subs = dict([(as_concrete(k), as_concrete(v)) for k,v in subs.items()])
+            print('concrete_subs', concrete_subs)
+            return SymbolicStr(self.concrete.translate(concrete_subs), tracer=self.tracer)
+        raise ValueError("translate not implemented for symbolic strings")
 
     def replace(self, a, b):
         a = self.tracer.ensure_symbolic(a)
@@ -883,5 +900,11 @@ def truthy(x):
         return x != ""
     elif isinstance(x, SymbolicSlice):
         return x != "" # TODO for list too
+    else:
+        return x
+
+def as_concrete(x):
+    if hasattr(x, 'concrete') and x.concrete is not None:
+        return x.concrete
     else:
         return x

@@ -365,7 +365,7 @@ sat_func def sat(s: str):
     return sorted(s) == sorted('Permute me true') and s == s[::-1]
 modified_func def sat(s: str):
     return (sorted(s) == sorted(wrap_str('Permute me true'))).__and__(s == s[::-1])
-Exception -- for puzzle Study_25:0 Cannot convert symbolic integer to index
+Exception -- for puzzle Study_25:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 10/723: Quine:0
 sat_func def sat(quine: str):
@@ -437,7 +437,7 @@ modified_func def sat(x: str, puz=wrap_str('____9_2___7__________1_8_4____2_78__
         _assert({x[i] for i in sym_range(i, i + 81, 9)} == full, wrap_str('invalid column'))
         _assert({x[wrap_int(9) * a + b + i + wrap_int(26) * (i % wrap_int(3))] for a in sym_range(3) for b in sym_range(3)} == full, wrap_str('invalid square'))
     return True
-Exception -- for puzzle Sudoku:0 Symbolic hash not yet implemented
+Exception -- for puzzle Sudoku:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 14/723: Sudoku:1
 sat_func def sat(x: str, puz="__2__1_3__9_7_____5______8_6___5_______12____2____3_68________9_1_8__4____7____25"):
@@ -458,7 +458,7 @@ modified_func def sat(x: str, puz=wrap_str('__2__1_3__9_7_____5______8_6___5____
         _assert({x[i] for i in sym_range(i, i + 81, 9)} == full, wrap_str('invalid column'))
         _assert({x[wrap_int(9) * a + b + i + wrap_int(26) * (i % wrap_int(3))] for a in sym_range(3) for b in sym_range(3)} == full, wrap_str('invalid square'))
     return True
-Exception -- for puzzle Sudoku:1 Symbolic hash not yet implemented
+Exception -- for puzzle Sudoku:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 15/723: Sudoku:2
 sat_func def sat(x: str, puz="__721__56__27___________9______5____62______1_1___9___8_____________3197__61__32_"):
@@ -479,7 +479,7 @@ modified_func def sat(x: str, puz=wrap_str('__721__56__27___________9______5____
         _assert({x[i] for i in sym_range(i, i + 81, 9)} == full, wrap_str('invalid column'))
         _assert({x[wrap_int(9) * a + b + i + wrap_int(26) * (i % wrap_int(3))] for a in sym_range(3) for b in sym_range(3)} == full, wrap_str('invalid square'))
     return True
-Exception -- for puzzle Sudoku:2 Symbolic hash not yet implemented
+Exception -- for puzzle Sudoku:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 16/723: Sudoku:3
 sat_func def sat(x: str, puz="_____42______7_____4______9__49___626_8__3___3_7__65_4_5_3__1__1____8_7__________"):
@@ -500,7 +500,7 @@ modified_func def sat(x: str, puz=wrap_str('_____42______7_____4______9__49___62
         _assert({x[i] for i in sym_range(i, i + 81, 9)} == full, wrap_str('invalid column'))
         _assert({x[wrap_int(9) * a + b + i + wrap_int(26) * (i % wrap_int(3))] for a in sym_range(3) for b in sym_range(3)} == full, wrap_str('invalid square'))
     return True
-Exception -- for puzzle Sudoku:3 Symbolic hash not yet implemented
+Exception -- for puzzle Sudoku:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 17/723: Sudoku:4
 sat_func def sat(x: str, puz="___56_4_7__92_4_65___3______9____2___5_______7___8___1_________43_____5_____76__2"):
@@ -521,7 +521,7 @@ modified_func def sat(x: str, puz=wrap_str('___56_4_7__92_4_65___3______9____2__
         _assert({x[i] for i in sym_range(i, i + 81, 9)} == full, wrap_str('invalid column'))
         _assert({x[wrap_int(9) * a + b + i + wrap_int(26) * (i % wrap_int(3))] for a in sym_range(3) for b in sym_range(3)} == full, wrap_str('invalid square'))
     return True
-Exception -- for puzzle Sudoku:4 Symbolic hash not yet implemented
+Exception -- for puzzle Sudoku:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 18/723: NecklaceSplit:0
 sat_func def sat(n: int, lace="bbrbrbbbbbbrrrrrrrbrrrrbbbrbrrbbbrbrrrbrrbrrbrbbrrrrrbrbbbrrrbbbrbbrbbbrbrbb"):
@@ -960,14 +960,14 @@ sat_func def sat(s: str):
     return set(s) <= set("18-+*/") and s.count("8") == 2 and s.count("1") == 1 and eval(s) == 63
 modified_func def sat(s: str):
     return (set(s) <= set(wrap_str('18-+*/'))).__and__(s.count('8') == wrap_int(2)).__and__(s.count('1') == wrap_int(1)).__and__(eval(s) == wrap_int(63))
-Exception -- for puzzle Easy63:0 Symbolic hash not yet implemented
+Exception -- for puzzle Easy63:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 30/723: Harder63:0
 sat_func def sat(s: str):
     return set(s) <= set("18-+*/") and s.count("8") == 3 and s.count("1") == 1 and eval(s) == 63
 modified_func def sat(s: str):
     return (set(s) <= set(wrap_str('18-+*/'))).__and__(s.count('8') == wrap_int(3)).__and__(s.count('1') == wrap_int(1)).__and__(eval(s) == wrap_int(63))
-Exception -- for puzzle Harder63:0 Symbolic hash not yet implemented
+Exception -- for puzzle Harder63:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 31/723: PalindromeContaining:0
 sat_func def sat(ans: str, s="so easy", length=20):
@@ -2257,35 +2257,35 @@ sat_func def sat(ans: str, s="FlIp ME!"):
     return len(ans) == len(s) and all({c, d} == {d.upper(), d.lower()} for c, d in zip(ans, s))
 modified_func def sat(ans: str, s=wrap_str('FlIp ME!')):
     return (sym_len(ans) == sym_len(s)).__and__(all(({c, d} == {d.upper(), d.lower()} for c, d in zip(ans, s))))
-Exception -- for puzzle FlipCase:0 Symbolic hash not yet implemented
+Exception -- for puzzle FlipCase:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 62/723: FlipCase:1
 sat_func def sat(ans: str, s="mKC(K2.a!Z|>sv3izC3!"):
     return len(ans) == len(s) and all({c, d} == {d.upper(), d.lower()} for c, d in zip(ans, s))
 modified_func def sat(ans: str, s=wrap_str('mKC(K2.a!Z|>sv3izC3!')):
     return (sym_len(ans) == sym_len(s)).__and__(all(({c, d} == {d.upper(), d.lower()} for c, d in zip(ans, s))))
-Exception -- for puzzle FlipCase:1 Symbolic hash not yet implemented
+Exception -- for puzzle FlipCase:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 63/723: FlipCase:2
 sat_func def sat(ans: str, s="K a&3 tE 1tSG B3v3y("):
     return len(ans) == len(s) and all({c, d} == {d.upper(), d.lower()} for c, d in zip(ans, s))
 modified_func def sat(ans: str, s=wrap_str('K a&3 tE 1tSG B3v3y(')):
     return (sym_len(ans) == sym_len(s)).__and__(all(({c, d} == {d.upper(), d.lower()} for c, d in zip(ans, s))))
-Exception -- for puzzle FlipCase:2 Symbolic hash not yet implemented
+Exception -- for puzzle FlipCase:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 64/723: FlipCase:3
 sat_func def sat(ans: str, s="Sb31E#e<@3u"):
     return len(ans) == len(s) and all({c, d} == {d.upper(), d.lower()} for c, d in zip(ans, s))
 modified_func def sat(ans: str, s=wrap_str('Sb31E#e<@3u')):
     return (sym_len(ans) == sym_len(s)).__and__(all(({c, d} == {d.upper(), d.lower()} for c, d in zip(ans, s))))
-Exception -- for puzzle FlipCase:3 Symbolic hash not yet implemented
+Exception -- for puzzle FlipCase:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 65/723: FlipCase:4
 sat_func def sat(ans: str, s="q Y*.zv? !3B3::/3%F3"):
     return len(ans) == len(s) and all({c, d} == {d.upper(), d.lower()} for c, d in zip(ans, s))
 modified_func def sat(ans: str, s=wrap_str('q Y*.zv? !3B3::/3%F3')):
     return (sym_len(ans) == sym_len(s)).__and__(all(({c, d} == {d.upper(), d.lower()} for c, d in zip(ans, s))))
-Exception -- for puzzle FlipCase:4 Symbolic hash not yet implemented
+Exception -- for puzzle FlipCase:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 66/723: CatStrings:0
 sat_func def sat(cat: str, strings=['Will', 'i', 'am', 'Now', 'here']):
@@ -5396,7 +5396,7 @@ modified_func def sat(tot: int, s=wrap_str('Add ME uP AND YOU WILL GET A BIG NUM
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(assert (= (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- x (str.to_code "A")) (str.to_code "M")) (str.to_code "E")) (str.to_code "P")) (str.to_code "A")) (str.to_code "N")) (str.to_code "D")) (str.to_code "Y")) (str.to_code "O")) (str.to_code "U")) (str.to_code "W")) (str.to_code "I")) (str.to_code "L")) (str.to_code "L")) (str.to_code "G")) (str.to_code "E")) (str.to_code "T")) (str.to_code "A")) (str.to_code "B")) (str.to_code "I")) (str.to_code "G")) (str.to_code "N")) (str.to_code "U")) (str.to_code "M")) (str.to_code "B")) (str.to_code "E")) (str.to_code "R")) 0))
+(assert (= (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- (- x 65) 77) 69) 80) 65) 78) 68) 89) 79) 85) 87) 73) 76) 76) 71) 69) 84) 65) 66) 73) 71) 78) 85) 77) 66) 69) 82) 0))
 (check-sat)
 (get-model)
 
@@ -5431,7 +5431,7 @@ modified_func def sat(tot: int, s=wrap_str('VRkmX=(1oF#l')):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(assert (= (- (- (- (- x (str.to_code "V")) (str.to_code "R")) (str.to_code "X")) (str.to_code "F")) 0))
+(assert (= (- (- (- (- x 86) 82) 88) 70) 0))
 (check-sat)
 (get-model)
 
@@ -5466,7 +5466,7 @@ modified_func def sat(tot: int, s=wrap_str('*?sAJJ;FY8c!7zFwA')):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(assert (= (- (- (- (- (- (- (- x (str.to_code "A")) (str.to_code "J")) (str.to_code "J")) (str.to_code "F")) (str.to_code "Y")) (str.to_code "F")) (str.to_code "A")) 0))
+(assert (= (- (- (- (- (- (- (- x 65) 74) 74) 70) 89) 70) 65) 0))
 (check-sat)
 (get-model)
 
@@ -5501,7 +5501,7 @@ modified_func def sat(tot: int, s=wrap_str('Vmv%e8d3P')):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(assert (= (- (- x (str.to_code "V")) (str.to_code "P")) 0))
+(assert (= (- (- x 86) 80) 0))
 (check-sat)
 (get-model)
 
@@ -5536,7 +5536,7 @@ modified_func def sat(tot: int, s=wrap_str('K8B')):
 ### smt2
 (set-logic ALL)
 (declare-const x Int)
-(assert (= (- (- x (str.to_code "K")) (str.to_code "B")) 0))
+(assert (= (- (- x 75) 66) 0))
 (check-sat)
 (get-model)
 
@@ -6167,7 +6167,7 @@ sat_func def sat(pal: str, s="palindromordinals"):
 modified_func def sat(pal: str, s=wrap_str('palindromordinals')):
     _assert((pal == pal[::-1]).__and__(sym_len(pal) == sym_len(s)))
     return sum((a != b for a, b in zip(pal, s))) == sum((a != b for a, b in zip(s, s[::-1]))) // wrap_int(2)
-Exception -- for puzzle ClosestPalindrome:0 unsupported operand type(s) for +: 'int' and 'SymbolicBool'
+Exception -- for puzzle ClosestPalindrome:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 162/723: ClosestPalindrome:1
 sat_func def sat(pal: str, s="ti="):
@@ -6176,7 +6176,7 @@ sat_func def sat(pal: str, s="ti="):
 modified_func def sat(pal: str, s=wrap_str('ti=')):
     _assert((pal == pal[::-1]).__and__(sym_len(pal) == sym_len(s)))
     return sum((a != b for a, b in zip(pal, s))) == sum((a != b for a, b in zip(s, s[::-1]))) // wrap_int(2)
-Exception -- for puzzle ClosestPalindrome:1 unsupported operand type(s) for +: 'int' and 'SymbolicBool'
+Exception -- for puzzle ClosestPalindrome:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 163/723: ClosestPalindrome:2
 sat_func def sat(pal: str, s="bC"):
@@ -6185,7 +6185,7 @@ sat_func def sat(pal: str, s="bC"):
 modified_func def sat(pal: str, s=wrap_str('bC')):
     _assert((pal == pal[::-1]).__and__(sym_len(pal) == sym_len(s)))
     return sum((a != b for a, b in zip(pal, s))) == sum((a != b for a, b in zip(s, s[::-1]))) // wrap_int(2)
-Exception -- for puzzle ClosestPalindrome:2 unsupported operand type(s) for +: 'int' and 'SymbolicBool'
+Exception -- for puzzle ClosestPalindrome:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 164/723: ClosestPalindrome:3
 sat_func def sat(pal: str, s="chachatexc0vchX)e1"):
@@ -6194,7 +6194,7 @@ sat_func def sat(pal: str, s="chachatexc0vchX)e1"):
 modified_func def sat(pal: str, s=wrap_str('chachatexc0vchX)e1')):
     _assert((pal == pal[::-1]).__and__(sym_len(pal) == sym_len(s)))
     return sum((a != b for a, b in zip(pal, s))) == sum((a != b for a, b in zip(s, s[::-1]))) // wrap_int(2)
-Exception -- for puzzle ClosestPalindrome:3 unsupported operand type(s) for +: 'int' and 'SymbolicBool'
+Exception -- for puzzle ClosestPalindrome:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 165/723: ClosestPalindrome:4
 sat_func def sat(pal: str, s="w"):
@@ -6203,7 +6203,7 @@ sat_func def sat(pal: str, s="w"):
 modified_func def sat(pal: str, s=wrap_str('w')):
     _assert((pal == pal[::-1]).__and__(sym_len(pal) == sym_len(s)))
     return sum((a != b for a, b in zip(pal, s))) == sum((a != b for a, b in zip(s, s[::-1]))) // wrap_int(2)
-Exception -- for puzzle ClosestPalindrome:4 unsupported operand type(s) for +: 'int' and 'SymbolicBool'
+Exception -- for puzzle ClosestPalindrome:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 166/723: IntegerLog:0
 sat_func def sat(x: int, a=3, n=1290070078170102666248196035845070394933441741644993085810116441344597492642263849):
@@ -6584,7 +6584,7 @@ modified_func def sat(b: str, n=wrap_int(5324680297138495285)):
     for c in inside:
         m = wrap_int(2) * m + sym_int(c)
     return m == n
-Timed out for puzzle Binarize:0
+Exception -- for puzzle Binarize:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 177/723: Binarize:1
 sat_func def sat(b: str, n=88465169532890):
@@ -6605,7 +6605,7 @@ modified_func def sat(b: str, n=wrap_int(88465169532890)):
     for c in inside:
         m = wrap_int(2) * m + sym_int(c)
     return m == n
-Timed out for puzzle Binarize:1
+Exception -- for puzzle Binarize:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 178/723: Binarize:2
 sat_func def sat(b: str, n=0):
@@ -6626,7 +6626,7 @@ modified_func def sat(b: str, n=wrap_int(0)):
     for c in inside:
         m = wrap_int(2) * m + sym_int(c)
     return m == n
-Timed out for puzzle Binarize:2
+Exception -- for puzzle Binarize:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 179/723: Binarize:3
 sat_func def sat(b: str, n=16655679678386282):
@@ -6647,7 +6647,7 @@ modified_func def sat(b: str, n=wrap_int(16655679678386282)):
     for c in inside:
         m = wrap_int(2) * m + sym_int(c)
     return m == n
-Timed out for puzzle Binarize:3
+Exception -- for puzzle Binarize:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 180/723: Binarize:4
 sat_func def sat(b: str, n=2900):
@@ -6668,7 +6668,7 @@ modified_func def sat(b: str, n=wrap_int(2900)):
     for c in inside:
         m = wrap_int(2) * m + sym_int(c)
     return m == n
-Timed out for puzzle Binarize:4
+Exception -- for puzzle Binarize:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 181/723: FactorString:0
 sat_func def sat(factor: str, s="catscatcatscatcatscat"):
@@ -6870,7 +6870,7 @@ sat_func def sat(n: int, b=107, s=25):
 modified_func def sat(n: int, b=wrap_int(107), s=wrap_int(25)):
     n_str = sym_bin(n)[2:]
     return (sym_len(n_str) == b).__and__(sum((sym_int(i) for i in n_str)) == s)
-Timed out for puzzle BitSum:0
+Exception -- for puzzle BitSum:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 187/723: BitSum:1
 sat_func def sat(n: int, b=59, s=51):
@@ -6879,7 +6879,7 @@ sat_func def sat(n: int, b=59, s=51):
 modified_func def sat(n: int, b=wrap_int(59), s=wrap_int(51)):
     n_str = sym_bin(n)[2:]
     return (sym_len(n_str) == b).__and__(sum((sym_int(i) for i in n_str)) == s)
-Timed out for puzzle BitSum:1
+Exception -- for puzzle BitSum:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 188/723: BitSum:2
 sat_func def sat(n: int, b=825, s=653):
@@ -6888,7 +6888,7 @@ sat_func def sat(n: int, b=825, s=653):
 modified_func def sat(n: int, b=wrap_int(825), s=wrap_int(653)):
     n_str = sym_bin(n)[2:]
     return (sym_len(n_str) == b).__and__(sum((sym_int(i) for i in n_str)) == s)
-Timed out for puzzle BitSum:2
+Exception -- for puzzle BitSum:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 189/723: BitSum:3
 sat_func def sat(n: int, b=354, s=287):
@@ -6897,7 +6897,7 @@ sat_func def sat(n: int, b=354, s=287):
 modified_func def sat(n: int, b=wrap_int(354), s=wrap_int(287)):
     n_str = sym_bin(n)[2:]
     return (sym_len(n_str) == b).__and__(sum((sym_int(i) for i in n_str)) == s)
-Timed out for puzzle BitSum:3
+Exception -- for puzzle BitSum:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 190/723: BitSum:4
 sat_func def sat(n: int, b=256, s=1):
@@ -6906,7 +6906,7 @@ sat_func def sat(n: int, b=256, s=1):
 modified_func def sat(n: int, b=wrap_int(256), s=wrap_int(1)):
     n_str = sym_bin(n)[2:]
     return (sym_len(n_str) == b).__and__(sum((sym_int(i) for i in n_str)) == s)
-Timed out for puzzle BitSum:4
+Exception -- for puzzle BitSum:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 191/723: EvenOddSum:0
 sat_func def sat(even_odd_sum: int, nums=[2341, 125146894, 12521, -12451293476325, 535284623934, 132974693614350]):
@@ -7165,7 +7165,7 @@ sat_func def sat(encrypted: str, orig="Hello, world!"):
 modified_func def sat(encrypted: str, orig=wrap_str('Hello, world!')):
     _assert(sym_len(encrypted) == sym_len(orig))
     return all((chr(sym_ord(a) - wrap_int(2) * wrap_int(2)) == b for a, b in zip(encrypted, orig)))
-Exception -- for puzzle SubstitutionCypher:0 Cannot convert symbolic integer to index
+Exception -- for puzzle SubstitutionCypher:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 202/723: SubstitutionCypher:1
 sat_func def sat(encrypted: str, orig=""):
@@ -7174,30 +7174,7 @@ sat_func def sat(encrypted: str, orig=""):
 modified_func def sat(encrypted: str, orig=wrap_str('')):
     _assert(sym_len(encrypted) == sym_len(orig))
     return all((chr(sym_ord(a) - wrap_int(2) * wrap_int(2)) == b for a, b in zip(encrypted, orig)))
-Skipping constant true constraint
-### smt2
-(set-logic ALL)
-(declare-const x String)
-(assert (= (str.len x) 0))
-(check-sat)
-(get-model)
-
-running backend z3
-running backend cvc5
-### output for z3
-sat
-(
-  (define-fun x () String
-    "")
-)
-### output for cvc5
-sat
-(
-(define-fun x () String "")
-)
-
-Found solution 
-Yes! Solved for puzzle  SubstitutionCypher:1
+Exception -- for puzzle SubstitutionCypher:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 203/723: SubstitutionCypher:2
 sat_func def sat(encrypted: str, orig="byfykovevuvyxanofi lygolono pyzuh t"):
@@ -7206,7 +7183,7 @@ sat_func def sat(encrypted: str, orig="byfykovevuvyxanofi lygolono pyzuh t"):
 modified_func def sat(encrypted: str, orig=wrap_str('byfykovevuvyxanofi lygolono pyzuh t')):
     _assert(sym_len(encrypted) == sym_len(orig))
     return all((chr(sym_ord(a) - wrap_int(2) * wrap_int(2)) == b for a, b in zip(encrypted, orig)))
-Exception -- for puzzle SubstitutionCypher:2 Cannot convert symbolic integer to index
+Exception -- for puzzle SubstitutionCypher:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 204/723: SubstitutionCypher:3
 sat_func def sat(encrypted: str, orig="dogyvotitonucuxecequ jahuzowiz jyna"):
@@ -7215,7 +7192,7 @@ sat_func def sat(encrypted: str, orig="dogyvotitonucuxecequ jahuzowiz jyna"):
 modified_func def sat(encrypted: str, orig=wrap_str('dogyvotitonucuxecequ jahuzowiz jyna')):
     _assert(sym_len(encrypted) == sym_len(orig))
     return all((chr(sym_ord(a) - wrap_int(2) * wrap_int(2)) == b for a, b in zip(encrypted, orig)))
-Exception -- for puzzle SubstitutionCypher:3 Cannot convert symbolic integer to index
+Exception -- for puzzle SubstitutionCypher:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 205/723: SubstitutionCypher:4
 sat_func def sat(encrypted: str, orig="chodatext quycimoquytunek"):
@@ -7224,7 +7201,7 @@ sat_func def sat(encrypted: str, orig="chodatext quycimoquytunek"):
 modified_func def sat(encrypted: str, orig=wrap_str('chodatext quycimoquytunek')):
     _assert(sym_len(encrypted) == sym_len(orig))
     return all((chr(sym_ord(a) - wrap_int(2) * wrap_int(2)) == b for a, b in zip(encrypted, orig)))
-Exception -- for puzzle SubstitutionCypher:4 Cannot convert symbolic integer to index
+Exception -- for puzzle SubstitutionCypher:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 206/723: SecondSmallestUnique:0
 sat_func def sat(n: int, nums=[17, -1023589211, -293485382500, 31, -293485382500, 105762, 94328103589]):
@@ -7406,7 +7383,119 @@ sat_func def sat(s: str, target="Hello, world!"):
 modified_func def sat(s: str, target=wrap_str('Hello, world!')):
     subs = {sym_ord(c): sym_ord(c) + wrap_int(2) for c in wrap_str('aeiouAEIOU')}
     return s.swapcase() == target.translate(subs)
-Exception -- for puzzle WeirdDecodeVowels:0 'SymbolicStr' object has no attribute 'swapcase'
+concrete_subs {97: 99, 101: 103, 105: 107, 111: 113, 117: 119, 65: 67, 69: 71, 73: 75, 79: 81, 85: 87}
+### smt2
+(set-logic ALL)
+
+(define-fun is_upper ((c String)) Bool
+  (and 
+    (>= (str.to_code c) 65)
+    (<= (str.to_code c) 90)))
+
+(define-fun is_lower ((c String)) Bool
+  (and
+    (>= (str.to_code c) 97)
+    (<= (str.to_code c) 122)))
+
+(define-fun to_lower ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (+ code 32))))
+
+(define-fun to_upper ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (- code 32))))
+
+(define-fun swapcase_char ((c String)) String
+  (ite (is_upper c)
+       (to_lower c)
+       (ite (is_lower c)
+            (to_upper c)
+            c)))
+
+(define-fun-rec swapcase_helper ((i Int) (n Int) (s String)) String
+  (ite (>= i n)
+       ""
+       (str.++ (swapcase_char (str.at s i))
+               (swapcase_helper (+ i 1) n s))))
+
+(define-fun swapcase ((s String)) String
+  (swapcase_helper 0 (str.len s) s))
+
+(declare-const x String)
+(assert (= (swapcase x) "Hgllq, wqrld!"))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+cvc5 interrupted by timeout.
+
+Could not find any solution for puzzle WeirdDecodeVowels:0
+Solving simpler variation replaced Hello, world! with Hel!
+sat_func def sat(s: str, target="Hel!"):
+    subs = {ord(c): ord(c) + 2 for c in "aeiouAEIOU"}
+    return s.swapcase() == target.translate(subs)
+modified_func def sat(s: str, target=wrap_str('Hel!')):
+    subs = {sym_ord(c): sym_ord(c) + wrap_int(2) for c in wrap_str('aeiouAEIOU')}
+    return s.swapcase() == target.translate(subs)
+concrete_subs {97: 99, 101: 103, 105: 107, 111: 113, 117: 119, 65: 67, 69: 71, 73: 75, 79: 81, 85: 87}
+### smt2
+(set-logic ALL)
+
+(define-fun is_upper ((c String)) Bool
+  (and 
+    (>= (str.to_code c) 65)
+    (<= (str.to_code c) 90)))
+
+(define-fun is_lower ((c String)) Bool
+  (and
+    (>= (str.to_code c) 97)
+    (<= (str.to_code c) 122)))
+
+(define-fun to_lower ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (+ code 32))))
+
+(define-fun to_upper ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (- code 32))))
+
+(define-fun swapcase_char ((c String)) String
+  (ite (is_upper c)
+       (to_lower c)
+       (ite (is_lower c)
+            (to_upper c)
+            c)))
+
+(define-fun-rec swapcase_helper ((i Int) (n Int) (s String)) String
+  (ite (>= i n)
+       ""
+       (str.++ (swapcase_char (str.at s i))
+               (swapcase_helper (+ i 1) n s))))
+
+(define-fun swapcase ((s String)) String
+  (swapcase_helper 0 (str.len s) s))
+
+(declare-const x String)
+(assert (= (swapcase x) "Hgl!"))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "hGL!")
+)
+### output for cvc5
+cvc5 interrupted by timeout.
+
+Found solution hGL!
 
 Solving puzzle 212/723: WeirdDecodeVowels:1
 sat_func def sat(s: str, target="This is a good test"):
@@ -7415,7 +7504,58 @@ sat_func def sat(s: str, target="This is a good test"):
 modified_func def sat(s: str, target=wrap_str('This is a good test')):
     subs = {sym_ord(c): sym_ord(c) + wrap_int(2) for c in wrap_str('aeiouAEIOU')}
     return s.swapcase() == target.translate(subs)
-Exception -- for puzzle WeirdDecodeVowels:1 'SymbolicStr' object has no attribute 'swapcase'
+concrete_subs {97: 99, 101: 103, 105: 107, 111: 113, 117: 119, 65: 67, 69: 71, 73: 75, 79: 81, 85: 87}
+### smt2
+(set-logic ALL)
+
+(define-fun is_upper ((c String)) Bool
+  (and 
+    (>= (str.to_code c) 65)
+    (<= (str.to_code c) 90)))
+
+(define-fun is_lower ((c String)) Bool
+  (and
+    (>= (str.to_code c) 97)
+    (<= (str.to_code c) 122)))
+
+(define-fun to_lower ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (+ code 32))))
+
+(define-fun to_upper ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (- code 32))))
+
+(define-fun swapcase_char ((c String)) String
+  (ite (is_upper c)
+       (to_lower c)
+       (ite (is_lower c)
+            (to_upper c)
+            c)))
+
+(define-fun-rec swapcase_helper ((i Int) (n Int) (s String)) String
+  (ite (>= i n)
+       ""
+       (str.++ (swapcase_char (str.at s i))
+               (swapcase_helper (+ i 1) n s))))
+
+(define-fun swapcase ((s String)) String
+  (swapcase_helper 0 (str.len s) s))
+
+(declare-const x String)
+(assert (= (swapcase x) "Thks ks c gqqd tgst"))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+cvc5 interrupted by timeout.
+
+Could not find any solution for puzzle WeirdDecodeVowels:1
+Too many constants for extrapolation
 
 Solving puzzle 213/723: WeirdDecodeVowels:2
 sat_func def sat(s: str, target=""):
@@ -7424,7 +7564,65 @@ sat_func def sat(s: str, target=""):
 modified_func def sat(s: str, target=wrap_str('')):
     subs = {sym_ord(c): sym_ord(c) + wrap_int(2) for c in wrap_str('aeiouAEIOU')}
     return s.swapcase() == target.translate(subs)
-Exception -- for puzzle WeirdDecodeVowels:2 'SymbolicStr' object has no attribute 'swapcase'
+concrete_subs {97: 99, 101: 103, 105: 107, 111: 113, 117: 119, 65: 67, 69: 71, 73: 75, 79: 81, 85: 87}
+### smt2
+(set-logic ALL)
+
+(define-fun is_upper ((c String)) Bool
+  (and 
+    (>= (str.to_code c) 65)
+    (<= (str.to_code c) 90)))
+
+(define-fun is_lower ((c String)) Bool
+  (and
+    (>= (str.to_code c) 97)
+    (<= (str.to_code c) 122)))
+
+(define-fun to_lower ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (+ code 32))))
+
+(define-fun to_upper ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (- code 32))))
+
+(define-fun swapcase_char ((c String)) String
+  (ite (is_upper c)
+       (to_lower c)
+       (ite (is_lower c)
+            (to_upper c)
+            c)))
+
+(define-fun-rec swapcase_helper ((i Int) (n Int) (s String)) String
+  (ite (>= i n)
+       ""
+       (str.++ (swapcase_char (str.at s i))
+               (swapcase_helper (+ i 1) n s))))
+
+(define-fun swapcase ((s String)) String
+  (swapcase_helper 0 (str.len s) s))
+
+(declare-const x String)
+(assert (= (swapcase x) ""))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "")
+)
+### output for cvc5
+unknown
+(
+(define-fun x () String "")
+)
+
+Found solution 
+Yes! Solved for puzzle  WeirdDecodeVowels:2
 
 Solving puzzle 214/723: WeirdDecodeVowels:3
 sat_func def sat(s: str, target="That last test was a bad test!"):
@@ -7433,7 +7631,58 @@ sat_func def sat(s: str, target="That last test was a bad test!"):
 modified_func def sat(s: str, target=wrap_str('That last test was a bad test!')):
     subs = {sym_ord(c): sym_ord(c) + wrap_int(2) for c in wrap_str('aeiouAEIOU')}
     return s.swapcase() == target.translate(subs)
-Exception -- for puzzle WeirdDecodeVowels:3 'SymbolicStr' object has no attribute 'swapcase'
+concrete_subs {97: 99, 101: 103, 105: 107, 111: 113, 117: 119, 65: 67, 69: 71, 73: 75, 79: 81, 85: 87}
+### smt2
+(set-logic ALL)
+
+(define-fun is_upper ((c String)) Bool
+  (and 
+    (>= (str.to_code c) 65)
+    (<= (str.to_code c) 90)))
+
+(define-fun is_lower ((c String)) Bool
+  (and
+    (>= (str.to_code c) 97)
+    (<= (str.to_code c) 122)))
+
+(define-fun to_lower ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (+ code 32))))
+
+(define-fun to_upper ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (- code 32))))
+
+(define-fun swapcase_char ((c String)) String
+  (ite (is_upper c)
+       (to_lower c)
+       (ite (is_lower c)
+            (to_upper c)
+            c)))
+
+(define-fun-rec swapcase_helper ((i Int) (n Int) (s String)) String
+  (ite (>= i n)
+       ""
+       (str.++ (swapcase_char (str.at s i))
+               (swapcase_helper (+ i 1) n s))))
+
+(define-fun swapcase ((s String)) String
+  (swapcase_helper 0 (str.len s) s))
+
+(declare-const x String)
+(assert (= (swapcase x) "Thct lcst tgst wcs c bcd tgst!"))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+cvc5 interrupted by timeout.
+
+Could not find any solution for puzzle WeirdDecodeVowels:3
+Too many constants for extrapolation
 
 Solving puzzle 215/723: WeirdDecodeVowels:4
 sat_func def sat(s: str, target="pneumonoultramicroscopicsilicovolanoconiosis"):
@@ -7442,7 +7691,58 @@ sat_func def sat(s: str, target="pneumonoultramicroscopicsilicovolanoconiosis"):
 modified_func def sat(s: str, target=wrap_str('pneumonoultramicroscopicsilicovolanoconiosis')):
     subs = {sym_ord(c): sym_ord(c) + wrap_int(2) for c in wrap_str('aeiouAEIOU')}
     return s.swapcase() == target.translate(subs)
-Exception -- for puzzle WeirdDecodeVowels:4 'SymbolicStr' object has no attribute 'swapcase'
+concrete_subs {97: 99, 101: 103, 105: 107, 111: 113, 117: 119, 65: 67, 69: 71, 73: 75, 79: 81, 85: 87}
+### smt2
+(set-logic ALL)
+
+(define-fun is_upper ((c String)) Bool
+  (and 
+    (>= (str.to_code c) 65)
+    (<= (str.to_code c) 90)))
+
+(define-fun is_lower ((c String)) Bool
+  (and
+    (>= (str.to_code c) 97)
+    (<= (str.to_code c) 122)))
+
+(define-fun to_lower ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (+ code 32))))
+
+(define-fun to_upper ((c String)) String
+  (let ((code (str.to_code c)))
+    (str.from_code (- code 32))))
+
+(define-fun swapcase_char ((c String)) String
+  (ite (is_upper c)
+       (to_lower c)
+       (ite (is_lower c)
+            (to_upper c)
+            c)))
+
+(define-fun-rec swapcase_helper ((i Int) (n Int) (s String)) String
+  (ite (>= i n)
+       ""
+       (str.++ (swapcase_char (str.at s i))
+               (swapcase_helper (+ i 1) n s))))
+
+(define-fun swapcase ((s String)) String
+  (swapcase_helper 0 (str.len s) s))
+
+(declare-const x String)
+(assert (= (swapcase x) "pngwmqnqwltrcmkcrqscqpkcsklkcqvqlcnqcqnkqsks"))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+cvc5 interrupted by timeout.
+
+Could not find any solution for puzzle WeirdDecodeVowels:4
+Too many constants for extrapolation
 
 Solving puzzle 216/723: OddCase:0
 sat_func def sat(different: str, d={'cat': 'CAT', 'tree': 'T', 'pick me': 'not', 'OK': 'red', 'blah': 'blah', 'z': 'Z'}):
@@ -9210,7 +9510,7 @@ modified_func def sat(s: str, target=-wrap_int(2075)):
     if m == wrap_int(2):
         _assert(d <= wrap_int(29))
     return m - d - y == target
-Timed out for puzzle DateDiff:0
+Exception -- for puzzle DateDiff:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 267/723: DateDiff:1
 sat_func def sat(s: str, target=11):
@@ -9233,7 +9533,7 @@ modified_func def sat(s: str, target=wrap_int(11)):
     if m == wrap_int(2):
         _assert(d <= wrap_int(29))
     return m - d - y == target
-Timed out for puzzle DateDiff:1
+Exception -- for puzzle DateDiff:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 268/723: DateDiff:2
 sat_func def sat(s: str, target=-30):
@@ -9256,7 +9556,7 @@ modified_func def sat(s: str, target=-wrap_int(30)):
     if m == wrap_int(2):
         _assert(d <= wrap_int(29))
     return m - d - y == target
-Timed out for puzzle DateDiff:2
+Exception -- for puzzle DateDiff:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 269/723: DateDiff:3
 sat_func def sat(s: str, target=-1999):
@@ -9279,7 +9579,7 @@ modified_func def sat(s: str, target=-wrap_int(1999)):
     if m == wrap_int(2):
         _assert(d <= wrap_int(29))
     return m - d - y == target
-Timed out for puzzle DateDiff:3
+Exception -- for puzzle DateDiff:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 270/723: DateDiff:4
 sat_func def sat(s: str, target=-10029):
@@ -9302,7 +9602,7 @@ modified_func def sat(s: str, target=-wrap_int(10029)):
     if m == wrap_int(2):
         _assert(d <= wrap_int(29))
     return m - d - y == target
-Timed out for puzzle DateDiff:4
+Exception -- for puzzle DateDiff:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 271/723: ProductSigns:0
 sat_func def sat(n: int, arr=[1, 7, -20052, 14, -3, -11, 1025235, 14]):
@@ -9786,7 +10086,7 @@ modified_func def sat(valid: str, s=wrap_str(']]]]]]]]]]]]]]]]][][][][]]]]]]]]]]
         elif c == wrap_str(']'):
             depths.append(depths[-wrap_int(1)] - wrap_int(1))
     return (depths[-wrap_int(1)] == wrap_int(0)).__and__(min(depths) == wrap_int(0)).__and__(max(depths) > wrap_int(1))
-Exception -- for puzzle ValidBracketSubsequence:0 'SymbolicList' object has no attribute 'append'
+Exception -- for puzzle ValidBracketSubsequence:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 282/723: ValidBracketSubsequence:1
 sat_func def sat(valid: str, s="[[[[][][][][][][]][[]][]][[[][]][[]]"):
@@ -9807,7 +10107,7 @@ modified_func def sat(valid: str, s=wrap_str('[[[[][][][][][][]][[]][]][[[][]][[
         elif c == wrap_str(']'):
             depths.append(depths[-wrap_int(1)] - wrap_int(1))
     return (depths[-wrap_int(1)] == wrap_int(0)).__and__(min(depths) == wrap_int(0)).__and__(max(depths) > wrap_int(1))
-Exception -- for puzzle ValidBracketSubsequence:1 'SymbolicList' object has no attribute 'append'
+Exception -- for puzzle ValidBracketSubsequence:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 283/723: ValidBracketSubsequence:2
 sat_func def sat(valid: str, s="]][[]][[][[[[][]]][[][[[]["):
@@ -9828,7 +10128,7 @@ modified_func def sat(valid: str, s=wrap_str(']][[]][[][[[[][]]][[][[[][')):
         elif c == wrap_str(']'):
             depths.append(depths[-wrap_int(1)] - wrap_int(1))
     return (depths[-wrap_int(1)] == wrap_int(0)).__and__(min(depths) == wrap_int(0)).__and__(max(depths) > wrap_int(1))
-Exception -- for puzzle ValidBracketSubsequence:2 'SymbolicList' object has no attribute 'append'
+Exception -- for puzzle ValidBracketSubsequence:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 284/723: ValidBracketSubsequence:3
 sat_func def sat(valid: str, s="][]]][]][[[][][][][][][][]][[]][[]]][["):
@@ -9849,7 +10149,7 @@ modified_func def sat(valid: str, s=wrap_str('][]]][]][[[][][][][][][][]][[]][[]
         elif c == wrap_str(']'):
             depths.append(depths[-wrap_int(1)] - wrap_int(1))
     return (depths[-wrap_int(1)] == wrap_int(0)).__and__(min(depths) == wrap_int(0)).__and__(max(depths) > wrap_int(1))
-Exception -- for puzzle ValidBracketSubsequence:3 'SymbolicList' object has no attribute 'append'
+Exception -- for puzzle ValidBracketSubsequence:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 285/723: ValidBracketSubsequence:4
 sat_func def sat(valid: str, s="[[[][][[[[[[]][[]][[[][][][][][][][][]]["):
@@ -9870,7 +10170,7 @@ modified_func def sat(valid: str, s=wrap_str('[[[][][[[[[[]][[]][[[][][][][][][]
         elif c == wrap_str(']'):
             depths.append(depths[-wrap_int(1)] - wrap_int(1))
     return (depths[-wrap_int(1)] == wrap_int(0)).__and__(min(depths) == wrap_int(0)).__and__(max(depths) > wrap_int(1))
-Exception -- for puzzle ValidBracketSubsequence:4 'SymbolicList' object has no attribute 'append'
+Exception -- for puzzle ValidBracketSubsequence:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 286/723: ExpandSpaces:0
 sat_func def sat(orig: str, target="-Hello,_world!__This_is-so-easy!-"):
@@ -10317,7 +10617,7 @@ modified_func def sat(s: str, class_name=wrap_str('TestClass'), extensions=wrap_
                 tot -= wrap_int(1)
         return tot
     return sym_in(ext, extensions).__and__(case_delta(ext) == max([case_delta(x) for x in extensions]))
-Timed out for puzzle StrongestExtension:0
+Exception -- for puzzle StrongestExtension:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 307/723: StrongestExtension:1
 sat_func def sat(s: str, class_name="Lyhithywuwotu", extensions=['moRUTExterefI', 'vItHu', 'xIWygaly', 'zONITh', 'ChinELAbiFOfywUcU', 'sywyfIFuTagAX', 'CIcECHiriQUuXuxuh', 'JUFeSA']):
@@ -10347,7 +10647,7 @@ modified_func def sat(s: str, class_name=wrap_str('Lyhithywuwotu'), extensions=w
                 tot -= wrap_int(1)
         return tot
     return sym_in(ext, extensions).__and__(case_delta(ext) == max([case_delta(x) for x in extensions]))
-Timed out for puzzle StrongestExtension:1
+Exception -- for puzzle StrongestExtension:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 308/723: StrongestExtension:2
 sat_func def sat(s: str, class_name="Textafarole", extensions=['bEzETExTutheQuYCetH', 'FUFetEpaPafawIxegIbI', 'fUxuXYfOmutYM', 'HYCygiNY', 'FUnaVYcHity', 'th', 'dULUDyQui', 'rAvUJUlAchUHAsOBese', 'tefO', 'vy']):
@@ -10377,7 +10677,7 @@ modified_func def sat(s: str, class_name=wrap_str('Textafarole'), extensions=wra
                 tot -= wrap_int(1)
         return tot
     return sym_in(ext, extensions).__and__(case_delta(ext) == max([case_delta(x) for x in extensions]))
-Timed out for puzzle StrongestExtension:2
+Exception -- for puzzle StrongestExtension:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 309/723: StrongestExtension:3
 sat_func def sat(s: str, class_name="Gudes", extensions=['CHOXeHeTAsUxyTe', 'QuEtHeTe', 'NOtEX', 'sehYJyFecIte', 'RySyJIFADEXETYBopUL', 'taMEcYW']):
@@ -10407,7 +10707,7 @@ modified_func def sat(s: str, class_name=wrap_str('Gudes'), extensions=wrap_list
                 tot -= wrap_int(1)
         return tot
     return sym_in(ext, extensions).__and__(case_delta(ext) == max([case_delta(x) for x in extensions]))
-Timed out for puzzle StrongestExtension:3
+Exception -- for puzzle StrongestExtension:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 310/723: StrongestExtension:4
 sat_func def sat(s: str, class_name="Ruxomyw", extensions=['PUfam', 'H', 'PEVYtHAxe', 'cInyTex', 'PoJApESOch', 'teXTidaQuigUPOtho', 'TEXteSYSyWEQuy', 'C', 'ZEFutexTImyjUHi', 'CIcybAMeT', 'XIWAvaDoBe']):
@@ -10437,7 +10737,7 @@ modified_func def sat(s: str, class_name=wrap_str('Ruxomyw'), extensions=wrap_li
                 tot -= wrap_int(1)
         return tot
     return sym_in(ext, extensions).__and__(case_delta(ext) == max([case_delta(x) for x in extensions]))
-Timed out for puzzle StrongestExtension:4
+Exception -- for puzzle StrongestExtension:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 311/723: RotateString:0
 sat_func def sat(r: str, s="light star", t="I love to look at the starlight!"):
@@ -10587,7 +10887,7 @@ modified_func def sat(n: int, evens=wrap_int(17), odds=wrap_int(3)):
         else:
             odds -= wrap_int(1)
     return (evens == wrap_int(0)).__and__(odds == wrap_int(0))
-Timed out for puzzle EvenOddDigits:0
+Exception -- for puzzle EvenOddDigits:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 317/723: EvenOddDigits:1
 sat_func def sat(n: int, evens=117, odds=56):
@@ -10604,7 +10904,7 @@ modified_func def sat(n: int, evens=wrap_int(117), odds=wrap_int(56)):
         else:
             odds -= wrap_int(1)
     return (evens == wrap_int(0)).__and__(odds == wrap_int(0))
-Timed out for puzzle EvenOddDigits:1
+Exception -- for puzzle EvenOddDigits:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 318/723: EvenOddDigits:2
 sat_func def sat(n: int, evens=114, odds=119):
@@ -10621,7 +10921,7 @@ modified_func def sat(n: int, evens=wrap_int(114), odds=wrap_int(119)):
         else:
             odds -= wrap_int(1)
     return (evens == wrap_int(0)).__and__(odds == wrap_int(0))
-Timed out for puzzle EvenOddDigits:2
+Exception -- for puzzle EvenOddDigits:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 319/723: EvenOddDigits:3
 sat_func def sat(n: int, evens=133, odds=33):
@@ -10638,7 +10938,7 @@ modified_func def sat(n: int, evens=wrap_int(133), odds=wrap_int(33)):
         else:
             odds -= wrap_int(1)
     return (evens == wrap_int(0)).__and__(odds == wrap_int(0))
-Timed out for puzzle EvenOddDigits:3
+Exception -- for puzzle EvenOddDigits:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 320/723: EvenOddDigits:4
 sat_func def sat(n: int, evens=8, odds=114):
@@ -10655,7 +10955,7 @@ modified_func def sat(n: int, evens=wrap_int(8), odds=wrap_int(114)):
         else:
             odds -= wrap_int(1)
     return (evens == wrap_int(0)).__and__(odds == wrap_int(0))
-Timed out for puzzle EvenOddDigits:4
+Exception -- for puzzle EvenOddDigits:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 321/723: RomanNumerals:0
 sat_func def sat(roman: str, n=2414):
@@ -10820,7 +11120,7 @@ modified_func def sat(s: str, pool=wrap_list([wrap_str('cat'), wrap_str('catatat
     for p in pool:
         _assert(sym_len(set(p)) <= n)
     return True
-Exception -- for puzzle MostUnique:0 Symbolic hash not yet implemented
+Exception -- for puzzle MostUnique:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 327/723: MostUnique:1
 sat_func def sat(s: str, pool=['sibiloguhujuquenam', 'nyzidikedutexti', 'zatextuquyvakijahixa', 'textujig', 'cewynyrimatex', 'textusaxinypuhyheza']):
@@ -10835,7 +11135,7 @@ modified_func def sat(s: str, pool=wrap_list([wrap_str('sibiloguhujuquenam'), wr
     for p in pool:
         _assert(sym_len(set(p)) <= n)
     return True
-Exception -- for puzzle MostUnique:1 Symbolic hash not yet implemented
+Exception -- for puzzle MostUnique:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 328/723: MostUnique:2
 sat_func def sat(s: str, pool=['gylapasugatextysar', 'zapy', 'hycokelet']):
@@ -10850,7 +11150,7 @@ modified_func def sat(s: str, pool=wrap_list([wrap_str('gylapasugatextysar'), wr
     for p in pool:
         _assert(sym_len(set(p)) <= n)
     return True
-Exception -- for puzzle MostUnique:2 Symbolic hash not yet implemented
+Exception -- for puzzle MostUnique:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 329/723: MostUnique:3
 sat_func def sat(s: str, pool=['te', '', 'badypikyxucudil', 'fuhibatextixyburekan', 'chole']):
@@ -10865,7 +11165,7 @@ modified_func def sat(s: str, pool=wrap_list([wrap_str('te'), wrap_str(''), wrap
     for p in pool:
         _assert(sym_len(set(p)) <= n)
     return True
-Exception -- for puzzle MostUnique:3 Symbolic hash not yet implemented
+Exception -- for puzzle MostUnique:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 330/723: MostUnique:4
 sat_func def sat(s: str, pool=['th', 's', 'bulonu', 'r']):
@@ -10880,7 +11180,7 @@ modified_func def sat(s: str, pool=wrap_list([wrap_str('th'), wrap_str('s'), wra
     for p in pool:
         _assert(sym_len(set(p)) <= n)
     return True
-Exception -- for puzzle MostUnique:4 Symbolic hash not yet implemented
+Exception -- for puzzle MostUnique:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 331/723: Abbreviate:0
 sat_func def sat(s: str, word="antidisestablishmentarianism", max_len=10):
@@ -12918,7 +13218,7 @@ modified_func def sat(s: str, matrix=wrap_list([wrap_list([wrap_int(0), wrap_int
             for row in matrix:
                 row[j], row[j + wrap_int(1)] = (row[j + wrap_int(1)], row[j])
     return (sym_len(s) <= max_moves).__and__(matrix[wrap_int(2)][wrap_int(2)] == wrap_int(1))
-Exception -- for puzzle SlidingOne:0 'SymbolicStr' object has no attribute 'index'
+Exception -- for puzzle SlidingOne:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 357/723: SlidingOne:1
 sat_func def sat(s: str, matrix=[[1, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]], max_moves=4):
@@ -12944,7 +13244,7 @@ modified_func def sat(s: str, matrix=wrap_list([wrap_list([wrap_int(1), wrap_int
             for row in matrix:
                 row[j], row[j + wrap_int(1)] = (row[j + wrap_int(1)], row[j])
     return (sym_len(s) <= max_moves).__and__(matrix[wrap_int(2)][wrap_int(2)] == wrap_int(1))
-Exception -- for puzzle SlidingOne:1 'SymbolicStr' object has no attribute 'index'
+Exception -- for puzzle SlidingOne:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 358/723: SlidingOne:2
 sat_func def sat(s: str, matrix=[[0, 1, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]], max_moves=3):
@@ -12970,7 +13270,7 @@ modified_func def sat(s: str, matrix=wrap_list([wrap_list([wrap_int(0), wrap_int
             for row in matrix:
                 row[j], row[j + wrap_int(1)] = (row[j + wrap_int(1)], row[j])
     return (sym_len(s) <= max_moves).__and__(matrix[wrap_int(2)][wrap_int(2)] == wrap_int(1))
-Exception -- for puzzle SlidingOne:2 'SymbolicStr' object has no attribute 'index'
+Exception -- for puzzle SlidingOne:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 359/723: SlidingOne:3
 sat_func def sat(s: str, matrix=[[0, 0, 1, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]], max_moves=2):
@@ -12996,42 +13296,42 @@ modified_func def sat(s: str, matrix=wrap_list([wrap_list([wrap_int(0), wrap_int
             for row in matrix:
                 row[j], row[j + wrap_int(1)] = (row[j + wrap_int(1)], row[j])
     return (sym_len(s) <= max_moves).__and__(matrix[wrap_int(2)][wrap_int(2)] == wrap_int(1))
-Exception -- for puzzle SlidingOne:3 'SymbolicStr' object has no attribute 'index'
+Exception -- for puzzle SlidingOne:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 360/723: SortPlusPlus:0
 sat_func def sat(s: str, inp="1+1+3+1+3+2+2+1+3+1+2"):
     return all(s.count(c) == inp.count(c) for c in inp + s) and all(s[i - 2] <= s[i] for i in range(2, len(s), 2))
 modified_func def sat(s: str, inp=wrap_str('1+1+3+1+3+2+2+1+3+1+2')):
     return all((s.count(c) == inp.count(c) for c in inp + s)).__and__(all((s[i - wrap_int(2)] <= s[i] for i in sym_range(2, sym_len(s), 2))))
-Timed out for puzzle SortPlusPlus:0
+Exception -- for puzzle SortPlusPlus:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 361/723: SortPlusPlus:1
 sat_func def sat(s: str, inp="2+3+1+2+2+2+1+1+1+3+2+3+3+3+2+3+1+3+3+2+1+2+3+1+2+1+3+2+3+1+1+2+2+3+1+2+2+1+3+2+3+2+3+2+2"):
     return all(s.count(c) == inp.count(c) for c in inp + s) and all(s[i - 2] <= s[i] for i in range(2, len(s), 2))
 modified_func def sat(s: str, inp=wrap_str('2+3+1+2+2+2+1+1+1+3+2+3+3+3+2+3+1+3+3+2+1+2+3+1+2+1+3+2+3+1+1+2+2+3+1+2+2+1+3+2+3+2+3+2+2')):
     return all((s.count(c) == inp.count(c) for c in inp + s)).__and__(all((s[i - wrap_int(2)] <= s[i] for i in sym_range(2, sym_len(s), 2))))
-Timed out for puzzle SortPlusPlus:1
+Exception -- for puzzle SortPlusPlus:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 362/723: SortPlusPlus:2
 sat_func def sat(s: str, inp="3+2+2"):
     return all(s.count(c) == inp.count(c) for c in inp + s) and all(s[i - 2] <= s[i] for i in range(2, len(s), 2))
 modified_func def sat(s: str, inp=wrap_str('3+2+2')):
     return all((s.count(c) == inp.count(c) for c in inp + s)).__and__(all((s[i - wrap_int(2)] <= s[i] for i in sym_range(2, sym_len(s), 2))))
-Timed out for puzzle SortPlusPlus:2
+Exception -- for puzzle SortPlusPlus:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 363/723: SortPlusPlus:3
 sat_func def sat(s: str, inp="3+2+1+1+3+3+2+2+2+3+2+3+3+1+1"):
     return all(s.count(c) == inp.count(c) for c in inp + s) and all(s[i - 2] <= s[i] for i in range(2, len(s), 2))
 modified_func def sat(s: str, inp=wrap_str('3+2+1+1+3+3+2+2+2+3+2+3+3+1+1')):
     return all((s.count(c) == inp.count(c) for c in inp + s)).__and__(all((s[i - wrap_int(2)] <= s[i] for i in sym_range(2, sym_len(s), 2))))
-Timed out for puzzle SortPlusPlus:3
+Exception -- for puzzle SortPlusPlus:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 364/723: SortPlusPlus:4
 sat_func def sat(s: str, inp="2+2+2+1+1+1+2+1+3+3+3+3+2+2+2+1+2+3+3+1+3+2+3+2+3+2+2+3+2+3+1+2+1+3+3+2+3+1+1+3+3+1"):
     return all(s.count(c) == inp.count(c) for c in inp + s) and all(s[i - 2] <= s[i] for i in range(2, len(s), 2))
 modified_func def sat(s: str, inp=wrap_str('2+2+2+1+1+1+2+1+3+3+3+3+2+2+2+1+2+3+3+1+3+2+3+2+3+2+2+3+2+3+1+2+1+3+3+2+3+1+1+3+3+1')):
     return all((s.count(c) == inp.count(c) for c in inp + s)).__and__(all((s[i - wrap_int(2)] <= s[i] for i in sym_range(2, sym_len(s), 2))))
-Timed out for puzzle SortPlusPlus:4
+Exception -- for puzzle SortPlusPlus:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 365/723: CapitalizeFirstLetter:0
 sat_func def sat(s: str, word="konjac"):
@@ -13298,7 +13598,7 @@ modified_func def sat(t: str, s=wrap_str('abbbcabbac'), target=wrap_int(7)):
             i += wrap_int(1)
         i += wrap_int(1)
     return (sym_len(t) >= target).__and__(all((t[i] != t[i + wrap_int(1)] for i in sym_range(sym_len(t) - 1))))
-Timed out for puzzle LongestSubsetString:0
+Exception -- for puzzle LongestSubsetString:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 371/723: LongestSubsetString:1
 sat_func def sat(t: str, s="cbbbbbcbbbbbbbaccacacaacbbcaaacbbaacbabacabccbbbcaacbbacaabcabbaacbbaa", target=43):
@@ -13315,7 +13615,7 @@ modified_func def sat(t: str, s=wrap_str('cbbbbbcbbbbbbbaccacacaacbbcaaacbbaacba
             i += wrap_int(1)
         i += wrap_int(1)
     return (sym_len(t) >= target).__and__(all((t[i] != t[i + wrap_int(1)] for i in sym_range(sym_len(t) - 1))))
-Timed out for puzzle LongestSubsetString:1
+Exception -- for puzzle LongestSubsetString:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 372/723: LongestSubsetString:2
 sat_func def sat(t: str, s="bcb", target=3):
@@ -13332,7 +13632,7 @@ modified_func def sat(t: str, s=wrap_str('bcb'), target=wrap_int(3)):
             i += wrap_int(1)
         i += wrap_int(1)
     return (sym_len(t) >= target).__and__(all((t[i] != t[i + wrap_int(1)] for i in sym_range(sym_len(t) - 1))))
-Timed out for puzzle LongestSubsetString:2
+Exception -- for puzzle LongestSubsetString:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 373/723: LongestSubsetString:3
 sat_func def sat(t: str, s="c", target=1):
@@ -13349,7 +13649,7 @@ modified_func def sat(t: str, s=wrap_str('c'), target=wrap_int(1)):
             i += wrap_int(1)
         i += wrap_int(1)
     return (sym_len(t) >= target).__and__(all((t[i] != t[i + wrap_int(1)] for i in sym_range(sym_len(t) - 1))))
-Timed out for puzzle LongestSubsetString:3
+Exception -- for puzzle LongestSubsetString:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 374/723: LongestSubsetString:4
 sat_func def sat(t: str, s="bcbcabba", target=7):
@@ -13366,7 +13666,7 @@ modified_func def sat(t: str, s=wrap_str('bcbcabba'), target=wrap_int(7)):
             i += wrap_int(1)
         i += wrap_int(1)
     return (sym_len(t) >= target).__and__(all((t[i] != t[i + wrap_int(1)] for i in sym_range(sym_len(t) - 1))))
-Timed out for puzzle LongestSubsetString:4
+Exception -- for puzzle LongestSubsetString:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 375/723: FindHomogeneousSubstring:0
 sat_func def sat(n: int, s="0000101111111000010", k=5):
@@ -14965,70 +15265,70 @@ sat_func def sat(d: int, n=6002685529):
     return n % d == 0 and all(i in "47" for i in str(d))
 modified_func def sat(d: int, n=wrap_int(6002685529)):
     return (n % d == wrap_int(0)).__and__(all((sym_in(i, wrap_str('47')) for i in sym_str(d))))
-Timed out for puzzle Factor47:0
+Exception -- for puzzle Factor47:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 406/723: Factor47:1
 sat_func def sat(d: int, n=16):
     return n % d == 0 and all(i in "47" for i in str(d))
 modified_func def sat(d: int, n=wrap_int(16)):
     return (n % d == wrap_int(0)).__and__(all((sym_in(i, wrap_str('47')) for i in sym_str(d))))
-Timed out for puzzle Factor47:1
+Exception -- for puzzle Factor47:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 407/723: Factor47:2
 sat_func def sat(d: int, n=433459952851983617609247):
     return n % d == 0 and all(i in "47" for i in str(d))
 modified_func def sat(d: int, n=wrap_int(433459952851983617609247)):
     return (n % d == wrap_int(0)).__and__(all((sym_in(i, wrap_str('47')) for i in sym_str(d))))
-Timed out for puzzle Factor47:2
+Exception -- for puzzle Factor47:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 408/723: Factor47:3
 sat_func def sat(d: int, n=738195924589532712188415):
     return n % d == 0 and all(i in "47" for i in str(d))
 modified_func def sat(d: int, n=wrap_int(738195924589532712188415)):
     return (n % d == wrap_int(0)).__and__(all((sym_in(i, wrap_str('47')) for i in sym_str(d))))
-Timed out for puzzle Factor47:3
+Exception -- for puzzle Factor47:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 409/723: Factor47:4
 sat_func def sat(d: int, n=323190690645573746957862):
     return n % d == 0 and all(i in "47" for i in str(d))
 modified_func def sat(d: int, n=wrap_int(323190690645573746957862)):
     return (n % d == wrap_int(0)).__and__(all((sym_in(i, wrap_str('47')) for i in sym_str(d))))
-Timed out for puzzle Factor47:4
+Exception -- for puzzle Factor47:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 410/723: Count47:0
 sat_func def sat(d: int, n=123456789):
     return d > n and all(i in "47" for i in str(str(d).count("4") + str(d).count("7")))
 modified_func def sat(d: int, n=wrap_int(123456789)):
     return (d > n).__and__(all((sym_in(i, wrap_str('47')) for i in sym_str(sym_str(d).count('4') + sym_str(d).count('7')))))
-Timed out for puzzle Count47:0
+Exception -- for puzzle Count47:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 411/723: Count47:1
 sat_func def sat(d: int, n=659104579100082212):
     return d > n and all(i in "47" for i in str(str(d).count("4") + str(d).count("7")))
 modified_func def sat(d: int, n=wrap_int(659104579100082212)):
     return (d > n).__and__(all((sym_in(i, wrap_str('47')) for i in sym_str(sym_str(d).count('4') + sym_str(d).count('7')))))
-Timed out for puzzle Count47:1
+Exception -- for puzzle Count47:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 412/723: Count47:2
 sat_func def sat(d: int, n=476988101965):
     return d > n and all(i in "47" for i in str(str(d).count("4") + str(d).count("7")))
 modified_func def sat(d: int, n=wrap_int(476988101965)):
     return (d > n).__and__(all((sym_in(i, wrap_str('47')) for i in sym_str(sym_str(d).count('4') + sym_str(d).count('7')))))
-Timed out for puzzle Count47:2
+Exception -- for puzzle Count47:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 413/723: Count47:3
 sat_func def sat(d: int, n=3169877099077541094754):
     return d > n and all(i in "47" for i in str(str(d).count("4") + str(d).count("7")))
 modified_func def sat(d: int, n=wrap_int(3169877099077541094754)):
     return (d > n).__and__(all((sym_in(i, wrap_str('47')) for i in sym_str(sym_str(d).count('4') + sym_str(d).count('7')))))
-Timed out for puzzle Count47:3
+Exception -- for puzzle Count47:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 414/723: Count47:4
 sat_func def sat(d: int, n=707):
     return d > n and all(i in "47" for i in str(str(d).count("4") + str(d).count("7")))
 modified_func def sat(d: int, n=wrap_int(707)):
     return (d > n).__and__(all((sym_in(i, wrap_str('47')) for i in sym_str(sym_str(d).count('4') + sym_str(d).count('7')))))
-Timed out for puzzle Count47:4
+Exception -- for puzzle Count47:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 415/723: MaybeReversed:0
 sat_func def sat(s: str, target="reverse me", reverse=True):
@@ -16763,35 +17063,35 @@ sat_func def sat(x: str, s=679):
     return s == sum([int(d) for d in x])
 modified_func def sat(x: str, s=wrap_int(679)):
     return s == sum([sym_int(d) for d in x])
-Timed out for puzzle SumOfDigits:0
+Exception -- for puzzle SumOfDigits:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 461/723: SumOfDigits:1
 sat_func def sat(x: str, s=40427):
     return s == sum([int(d) for d in x])
 modified_func def sat(x: str, s=wrap_int(40427)):
     return s == sum([sym_int(d) for d in x])
-Timed out for puzzle SumOfDigits:1
+Exception -- for puzzle SumOfDigits:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 462/723: SumOfDigits:2
 sat_func def sat(x: str, s=8071):
     return s == sum([int(d) for d in x])
 modified_func def sat(x: str, s=wrap_int(8071)):
     return s == sum([sym_int(d) for d in x])
-Timed out for puzzle SumOfDigits:2
+Exception -- for puzzle SumOfDigits:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 463/723: SumOfDigits:3
 sat_func def sat(x: str, s=86120):
     return s == sum([int(d) for d in x])
 modified_func def sat(x: str, s=wrap_int(86120)):
     return s == sum([sym_int(d) for d in x])
-Timed out for puzzle SumOfDigits:3
+Exception -- for puzzle SumOfDigits:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 464/723: SumOfDigits:4
 sat_func def sat(x: str, s=26785):
     return s == sum([int(d) for d in x])
 modified_func def sat(x: str, s=wrap_int(26785)):
     return s == sum([sym_int(d) for d in x])
-Timed out for puzzle SumOfDigits:4
+Exception -- for puzzle SumOfDigits:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 465/723: IfProblem:0
 sat_func def sat(x: int, a=324554, b=1345345):
@@ -18739,7 +19039,7 @@ modified_func def sat(cut_position: int, ring=wrap_str('yRrsmOkLCHSDJywpVDEDsjgC
         else:
             matches[c.lower()] += wrap_int(1)
     return sum((i == wrap_int(0) for i in matches.values())) >= lower
-Exception -- for puzzle MatchingMarkers:0 Symbolic hash not yet implemented
+Exception -- for puzzle MatchingMarkers:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 531/723: MatchingMarkers:1
 sat_func def sat(cut_position: int, ring="MvI", lower=0):
@@ -18760,7 +19060,7 @@ modified_func def sat(cut_position: int, ring=wrap_str('MvI'), lower=wrap_int(0)
         else:
             matches[c.lower()] += wrap_int(1)
     return sum((i == wrap_int(0) for i in matches.values())) >= lower
-Exception -- for puzzle MatchingMarkers:1 Symbolic hash not yet implemented
+Exception -- for puzzle MatchingMarkers:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 532/723: MatchingMarkers:2
 sat_func def sat(cut_position: int, ring="s", lower=0):
@@ -18781,7 +19081,7 @@ modified_func def sat(cut_position: int, ring=wrap_str('s'), lower=wrap_int(0)):
         else:
             matches[c.lower()] += wrap_int(1)
     return sum((i == wrap_int(0) for i in matches.values())) >= lower
-Exception -- for puzzle MatchingMarkers:2 Symbolic hash not yet implemented
+Exception -- for puzzle MatchingMarkers:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 533/723: MatchingMarkers:3
 sat_func def sat(cut_position: int, ring="fyVYVBfGHVYsBrYVgsgHYvVD", lower=0):
@@ -18802,7 +19102,7 @@ modified_func def sat(cut_position: int, ring=wrap_str('fyVYVBfGHVYsBrYVgsgHYvVD
         else:
             matches[c.lower()] += wrap_int(1)
     return sum((i == wrap_int(0) for i in matches.values())) >= lower
-Exception -- for puzzle MatchingMarkers:3 Symbolic hash not yet implemented
+Exception -- for puzzle MatchingMarkers:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 534/723: MatchingMarkers:4
 sat_func def sat(cut_position: int, ring="ClaKdLCuSddLdafuRKuqUqSLqquLCSlrCfFdcRAlfkLlqqqccQSacsDCUqDaLurDlqqfcAaKasCf", lower=1):
@@ -18823,7 +19123,7 @@ modified_func def sat(cut_position: int, ring=wrap_str('ClaKdLCuSddLdafuRKuqUqSL
         else:
             matches[c.lower()] += wrap_int(1)
     return sum((i == wrap_int(0) for i in matches.values())) >= lower
-Exception -- for puzzle MatchingMarkers:4 Symbolic hash not yet implemented
+Exception -- for puzzle MatchingMarkers:4 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 535/723: GCD:0
 sat_func def sat(n: int, a=15482, b=23223, lower_bound=5):
@@ -20445,28 +20745,28 @@ sat_func def sat(s: str, dups=2021):
     return len(set(s)) == len(s) - dups
 modified_func def sat(s: str, dups=wrap_int(2021)):
     return sym_len(set(s)) == sym_len(s) - dups
-Exception -- for puzzle StrSetLen:0 Symbolic hash not yet implemented
+Exception -- for puzzle StrSetLen:0 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 593/723: StrSetLen:1
 sat_func def sat(s: str, dups=0):
     return len(set(s)) == len(s) - dups
 modified_func def sat(s: str, dups=wrap_int(0)):
     return sym_len(set(s)) == sym_len(s) - dups
-Exception -- for puzzle StrSetLen:1 Symbolic hash not yet implemented
+Exception -- for puzzle StrSetLen:1 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 594/723: StrSetLen:2
 sat_func def sat(s: str, dups=1):
     return len(set(s)) == len(s) - dups
 modified_func def sat(s: str, dups=wrap_int(1)):
     return sym_len(set(s)) == sym_len(s) - dups
-Exception -- for puzzle StrSetLen:2 Symbolic hash not yet implemented
+Exception -- for puzzle StrSetLen:2 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 595/723: StrSetLen:3
 sat_func def sat(s: str, dups=2):
     return len(set(s)) == len(s) - dups
 modified_func def sat(s: str, dups=wrap_int(2)):
     return sym_len(set(s)) == sym_len(s) - dups
-Exception -- for puzzle StrSetLen:3 Symbolic hash not yet implemented
+Exception -- for puzzle StrSetLen:3 __iter__ on symbolic string not yet implemented
 
 Solving puzzle 596/723: StrMul:0
 sat_func def sat(s: str, target="foofoofoofoo", n=2):
@@ -24138,14 +24438,14 @@ The symbolic execution alone currently solves:
 - 42% (305 out of 723) overall.
 
 with the following errors:
-- 55 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
-- 198 errors at at staging time
+- 5 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
+- 244 errors at at staging time
 - 81 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- 102 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
+- 106 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
 - 992 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 
 ### Extrapolation
-- 76 smaller problems tried
-- 13 successes on smaller problem
+- 77 smaller problems tried
+- 14 successes on smaller problem
 
