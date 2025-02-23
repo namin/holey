@@ -77,15 +77,15 @@ timeouts after staging (while building the SMTLIB program), errors during stagin
 - 8 successful extrapolations
 
 #### Matrix
--     claude  (extrapolate)_  5_ 1 0 0 0 0 0 0 1 1 0 0 1 0 1
--     claude   (end-to-end)_  4_ 0 0 0 0 0 1 0 1 1 0 0 1 0 0
--     claude       (SMTLIB)_  0_ 0 0 0 0 0 0 0 0 0 0 0 0 0 0
--     gemini  (extrapolate)_  3_ 1 0 0 0 0 0 1 0 0 0 1 0 0 0
--     gemini   (end-to-end)_  2_ 0 0 0 0 1 0 0 0 0 0 0 1 0 0
--     gemini       (SMTLIB)_  0_ 0 0 0 0 0 0 0 0 0 0 0 0 0 0
--     ollama  (extrapolate)_  1_ 0 0 0 1 0 0 0 0 0 0 0 0 0 0
--     ollama   (end-to-end)_  1_ 0 0 1 0 0 0 0 0 0 0 0 0 0 0
--     ollama       (SMTLIB)_  0_ 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+- claude  (extrapolate)_  5_ 1 0 0 0 0 0 0 1 1 0 0 1 0 1
+- claude   (end-to-end)_  4_ 0 0 0 0 0 1 0 1 1 0 0 1 0 0
+- claude       (SMTLIB)_  0_ 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+- gemini  (extrapolate)_  3_ 1 0 0 0 0 0 1 0 0 0 1 0 0 0
+- gemini   (end-to-end)_  2_ 0 0 0 0 1 0 0 0 0 0 0 1 0 0
+- gemini       (SMTLIB)_  0_ 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+- ollama  (extrapolate)_  1_ 0 0 0 1 0 0 0 0 0 0 0 0 0 0
+- ollama   (end-to-end)_  1_ 0 0 1 0 0 0 0 0 0 0 0 0 0 0
+- ollama       (SMTLIB)_  0_ 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 
 ## Source map
 
