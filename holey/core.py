@@ -137,6 +137,31 @@ class SymbolicBool:
         if self.concrete is not None:
             return SymbolicBool(not self.concrete, tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.Not(self.z3_expr), tracer=self.tracer)
+
+    def __add__(self, other):
+        as_int = SymbolicInt(
+            int(self.concrete) if self.concrete is not None else
+            self.tracer.backend.If(
+                self.z3_expr,
+                self.tracer.backend.IntVal(1),
+                self.tracer.backend.IntVal(0)
+            ),
+            tracer=self.tracer
+        )
+        if isinstance(other, SymbolicBool):
+            other = SymbolicInt(
+                int(other.concrete) if other.concrete is not None else
+                self.tracer.backend.If(
+                    other.z3_expr,
+                    self.tracer.backend.IntVal(1),
+                    self.tracer.backend.IntVal(0)
+                ),
+                tracer=self.tracer
+            )
+        return as_int + other
+        
+    def __radd__(self, other):
+        return self.__add__(other)
     
 class SymbolicInt:
     """Wrapper class for symbolic integer expressions"""
