@@ -21,7 +21,7 @@ a result is `{result_small}`, then what is a result for the bigger satisfiabilit
 {sat_func_large}
 ```
 ?
-Answer with a few possibilities/guesses, each time just an executable Python expression that evaluates to the bigger result.
+Answer with a few possibilities/guesses, each time just an executable Python expression that evaluates to the bigger result. Do not use `sat`, just an expression that should be used as its argument.
 
 It might not be helpful (in which case you can ignore it), but here is the log with the SMTLIB program that didn't work out for the bigger predicate:
 ```

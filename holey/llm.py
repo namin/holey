@@ -2,6 +2,7 @@ import os
 import socket
 
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
 def is_docker():
     path = '/proc/self/cgroup'
@@ -17,7 +18,7 @@ def dummy_generate(pkg, extra=""):
         raise ValueError(f"Need to install pip package '{pkg}'"+extra)
     return generate
 
-if not ANTHROPIC_API_KEY:
+if not ANTHROPIC_API_KEY and not OPENAI_API_KEY:
     generate = None
     try:
         import ollama
@@ -43,7 +44,35 @@ if not ANTHROPIC_API_KEY:
             except Exception as e:
                 print(f"Error generating response: {e}")
                 return None
+elif OPENAI_API_KEY:
+    generate = None
+    try:
+        import openai
+    except ModuleNotFoundError:
+        generate = dummy_generate('openai')
+    if generate is None:
+        OPENAI_BASE_URL = os.environ.get('OPENAI_BASE_URL')
+        if OPENAI_BASE_URL:
+            openai.base_url = OPENAI_BASE_URL
+        def generate(prompt, max_tokens=1000, temperature=1.0, model="gpt-4o"):
+            print(f"Sending request to OpenAI (model={model}, max_tokens={max_tokens}, temp={temperature})")
+            print(f"Prompt:\n{prompt}")
+
+            completion = openai.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt,
+                    },
+                ],
+            )
+            response = completion.choices[0].message.content
+            print("Received response from OpenAI")
+            print(f"Response:\n{response}")
+            return response
 else:
+    assert ANTHROPIC_API_KEY
     generate = None
     try:
         import anthropic
