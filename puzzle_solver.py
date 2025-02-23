@@ -226,7 +226,7 @@ def check_result(result, sat_func):
         return False
     return True
 
-def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, smtlib_backends = None, llm_solver = None):
+def run_benchmarks(puzzle_file: str, name_prefixes = None, answer_types = None, smtlib_backends = None, llm_solver = None):
     with open(puzzle_file) as f:
         puzzles = json.load(f)
     
@@ -234,8 +234,8 @@ def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, sm
     print(f"Starting with {total} puzzles...")
 
     # Filter puzzles
-    if name_prefix:
-        puzzles = [p for p in puzzles if p.get('name', '').startswith(name_prefix)]
+    if name_prefixes:
+        puzzles = [p for p in puzzles if any(p.get('name', '').startswith(name_prefix) for name_prefix in name_prefixes)]
     if answer_types:
         puzzles = [p for p in puzzles if p['ans_type'] in answer_types]
         
@@ -244,8 +244,8 @@ def run_benchmarks(puzzle_file: str, name_prefix = None, answer_types = None, sm
     solver.llm_solver = llm_solver
 
     print(f"Running benchmarks on {len(puzzles)} puzzles...")
-    if name_prefix:
-        print(f"Filtered to puzzles starting with '{name_prefix}'")
+    if name_prefixes:
+        print(f"Filtered to puzzles starting with '{name_prefixes}'")
     if answer_types:
         print(f"Filtered to puzzles of answer types: {answer_types}")
 
@@ -310,7 +310,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--puzzle-file', default="benchmarks/PythonProgrammingPuzzles/puzzles/puzzles.json",
                       help='path to the puzzle JSON file')
-    parser.add_argument('--name-prefix', help='only run puzzles whose names start with this prefix')
+    parser.add_argument('--name-prefix',
+                        nargs='+',
+                        default=[],
+                        help='only run puzzles whose names start with this prefix')
     parser.add_argument('--answer-types',
                         nargs='+',
                         choices=['int', 'str'],
