@@ -617,6 +617,9 @@ class Backend():
     def StrIndex(self, x, y) -> MockExpr:
         return self._record("python.str.at", x, y)
 
+    def StrIndexOf(self, s, sub, start) -> MockExpr:
+        return self._record("str.indexof", s, sub, start)
+
     def StrLen(self, x) -> MockExpr:
         return self._record("str.len", x)
 

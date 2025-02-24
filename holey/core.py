@@ -574,6 +574,12 @@ class SymbolicStr:
             self.z3_expr = value
         self.name = name
 
+    def index(self, sub, start=0):
+        [sub, start] = [self.tracer.ensure_symbolic(x) for x in [sub, start]]
+        if all(x.concrete is not None for x in [self, sub, start]):
+            return SymbolicInt(self.concrete.index(sub.concrete, start.concrete))
+        return SymbolicInt(self.tracer.backend.StrIndexOf(self.z3_expr, sub.z3_expr, start.z3_expr), tracer=self.tracer)
+
     def __hash__(self):
         if self.concrete is not None:
             return hash(self.concrete)
