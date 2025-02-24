@@ -15513,35 +15513,265 @@ sat_func def sat(s: str, inp="1+1+3+1+3+2+2+1+3+1+2"):
     return all(s.count(c) == inp.count(c) for c in inp + s) and all(s[i - 2] <= s[i] for i in range(2, len(s), 2))
 modified_func def sat(s: str, inp=wrap_str('1+1+3+1+3+2+2+1+3+1+2')):
     return all(sym_generator((s.count(c) == inp.count(c) for c in inp + s))).__and__(all(sym_generator((s[i - wrap_int(2)] <= s[i] for i in sym_range(2, sym_len(s), 2)))))
-Exception -- for puzzle SortPlusPlus:0 '<=' not supported between instances of 'SymbolicStr' and 'SymbolicStr'
+### smt2
+(set-logic ALL)
+
+(define-fun python.str.at ((s String) (start Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start)))
+    (str.substr s start 1)))
+
+
+(define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
+  (let ((idx (str.indexof s sub start)))
+    (ite (or (= idx (- 1)) (> start (str.len s)))
+         0
+         (+ 1 (str.count.rec s sub (+ idx (str.len sub)))))))
+
+(define-fun str.count ((s String) (sub String)) Int
+  (ite (= (str.len sub) 0)
+       (+ 1 (str.len s))
+       (str.count.rec s sub 0)))
+
+(declare-const x String)
+(declare-const k_1 Int)
+(assert (forall ((str_pos_76 Int)) (=> (and (>= str_pos_76 0) (< str_pos_76 (str.len (str.++ "1+1+3+1+3+2+2+1+3+1+2" x)))) (>= (str.count x (python.str.at (str.++ "1+1+3+1+3+2+2+1+3+1+2" x) str_pos_76)) 0))))
+(assert (forall ((str_pos_76 Int)) (=> (and (>= str_pos_76 0) (< str_pos_76 (str.len (str.++ "1+1+3+1+3+2+2+1+3+1+2" x)))) (>= (str.count "1+1+3+1+3+2+2+1+3+1+2" (python.str.at (str.++ "1+1+3+1+3+2+2+1+3+1+2" x) str_pos_76)) 0))))
+(assert (forall ((i_0 Int)) (=> (and (and (and (and (>= i_0 2) (< i_0 (str.len x))) (>= k_1 0)) (= i_0 (+ 2 (* k_1 2)))) (< k_1 (div (- (str.len x) 2) 2))) (forall ((str_pos_76 Int)) (=> (and (>= str_pos_76 0) (< str_pos_76 (str.len (str.++ "1+1+3+1+3+2+2+1+3+1+2" x)))) (and (= (str.count x (python.str.at (str.++ "1+1+3+1+3+2+2+1+3+1+2" x) str_pos_76)) (str.count "1+1+3+1+3+2+2+1+3+1+2" (python.str.at (str.++ "1+1+3+1+3+2+2+1+3+1+2" x) str_pos_76))) (or (str.< (python.str.at x (- i_0 2)) (python.str.at x i_0)) (= (python.str.at x (- i_0 2)) (python.str.at x i_0)))))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "!0!")
+  (define-fun k_1 () Int
+    (- 1))
+)
+### output for cvc5
+unknown
+(
+(define-fun x () String "")
+(define-fun k_1 () Int 0)
+)
+
+Found solution !0!
+WARNING: Solution verification failed for puzzle SortPlusPlus:0
+Too many constants for extrapolation
 
 Solving puzzle 361/723: SortPlusPlus:1
 sat_func def sat(s: str, inp="2+3+1+2+2+2+1+1+1+3+2+3+3+3+2+3+1+3+3+2+1+2+3+1+2+1+3+2+3+1+1+2+2+3+1+2+2+1+3+2+3+2+3+2+2"):
     return all(s.count(c) == inp.count(c) for c in inp + s) and all(s[i - 2] <= s[i] for i in range(2, len(s), 2))
 modified_func def sat(s: str, inp=wrap_str('2+3+1+2+2+2+1+1+1+3+2+3+3+3+2+3+1+3+3+2+1+2+3+1+2+1+3+2+3+1+1+2+2+3+1+2+2+1+3+2+3+2+3+2+2')):
     return all(sym_generator((s.count(c) == inp.count(c) for c in inp + s))).__and__(all(sym_generator((s[i - wrap_int(2)] <= s[i] for i in sym_range(2, sym_len(s), 2)))))
-Exception -- for puzzle SortPlusPlus:1 '<=' not supported between instances of 'SymbolicStr' and 'SymbolicStr'
+### smt2
+(set-logic ALL)
+
+(define-fun python.str.at ((s String) (start Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start)))
+    (str.substr s start 1)))
+
+
+(define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
+  (let ((idx (str.indexof s sub start)))
+    (ite (or (= idx (- 1)) (> start (str.len s)))
+         0
+         (+ 1 (str.count.rec s sub (+ idx (str.len sub)))))))
+
+(define-fun str.count ((s String) (sub String)) Int
+  (ite (= (str.len sub) 0)
+       (+ 1 (str.len s))
+       (str.count.rec s sub 0)))
+
+(declare-const x String)
+(declare-const k_1 Int)
+(assert (forall ((str_pos_77 Int)) (=> (and (>= str_pos_77 0) (< str_pos_77 (str.len (str.++ "2+3+1+2+2+2+1+1+1+3+2+3+3+3+2+3+1+3+3+2+1+2+3+1+2+1+3+2+3+1+1+2+2+3+1+2+2+1+3+2+3+2+3+2+2" x)))) (>= (str.count x (python.str.at (str.++ "2+3+1+2+2+2+1+1+1+3+2+3+3+3+2+3+1+3+3+2+1+2+3+1+2+1+3+2+3+1+1+2+2+3+1+2+2+1+3+2+3+2+3+2+2" x) str_pos_77)) 0))))
+(assert (forall ((str_pos_77 Int)) (=> (and (>= str_pos_77 0) (< str_pos_77 (str.len (str.++ "2+3+1+2+2+2+1+1+1+3+2+3+3+3+2+3+1+3+3+2+1+2+3+1+2+1+3+2+3+1+1+2+2+3+1+2+2+1+3+2+3+2+3+2+2" x)))) (>= (str.count "2+3+1+2+2+2+1+1+1+3+2+3+3+3+2+3+1+3+3+2+1+2+3+1+2+1+3+2+3+1+1+2+2+3+1+2+2+1+3+2+3+2+3+2+2" (python.str.at (str.++ "2+3+1+2+2+2+1+1+1+3+2+3+3+3+2+3+1+3+3+2+1+2+3+1+2+1+3+2+3+1+1+2+2+3+1+2+2+1+3+2+3+2+3+2+2" x) str_pos_77)) 0))))
+(assert (forall ((i_0 Int)) (=> (and (and (and (and (>= i_0 2) (< i_0 (str.len x))) (>= k_1 0)) (= i_0 (+ 2 (* k_1 2)))) (< k_1 (div (- (str.len x) 2) 2))) (forall ((str_pos_77 Int)) (=> (and (>= str_pos_77 0) (< str_pos_77 (str.len (str.++ "2+3+1+2+2+2+1+1+1+3+2+3+3+3+2+3+1+3+3+2+1+2+3+1+2+1+3+2+3+1+1+2+2+3+1+2+2+1+3+2+3+2+3+2+2" x)))) (and (= (str.count x (python.str.at (str.++ "2+3+1+2+2+2+1+1+1+3+2+3+3+3+2+3+1+3+3+2+1+2+3+1+2+1+3+2+3+1+1+2+2+3+1+2+2+1+3+2+3+2+3+2+2" x) str_pos_77)) (str.count "2+3+1+2+2+2+1+1+1+3+2+3+3+3+2+3+1+3+3+2+1+2+3+1+2+1+3+2+3+1+1+2+2+3+1+2+2+1+3+2+3+2+3+2+2" (python.str.at (str.++ "2+3+1+2+2+2+1+1+1+3+2+3+3+3+2+3+1+3+3+2+1+2+3+1+2+1+3+2+3+1+1+2+2+3+1+2+2+1+3+2+3+2+3+2+2" x) str_pos_77))) (or (str.< (python.str.at x (- i_0 2)) (python.str.at x i_0)) (= (python.str.at x (- i_0 2)) (python.str.at x i_0)))))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "!0!")
+  (define-fun k_1 () Int
+    (- 1))
+)
+### output for cvc5
+unknown
+(
+(define-fun x () String "")
+(define-fun k_1 () Int 0)
+)
+
+Found solution !0!
+WARNING: Solution verification failed for puzzle SortPlusPlus:1
+Too many constants for extrapolation
 
 Solving puzzle 362/723: SortPlusPlus:2
 sat_func def sat(s: str, inp="3+2+2"):
     return all(s.count(c) == inp.count(c) for c in inp + s) and all(s[i - 2] <= s[i] for i in range(2, len(s), 2))
 modified_func def sat(s: str, inp=wrap_str('3+2+2')):
     return all(sym_generator((s.count(c) == inp.count(c) for c in inp + s))).__and__(all(sym_generator((s[i - wrap_int(2)] <= s[i] for i in sym_range(2, sym_len(s), 2)))))
-Exception -- for puzzle SortPlusPlus:2 '<=' not supported between instances of 'SymbolicStr' and 'SymbolicStr'
+### smt2
+(set-logic ALL)
+
+(define-fun python.str.at ((s String) (start Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start)))
+    (str.substr s start 1)))
+
+
+(define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
+  (let ((idx (str.indexof s sub start)))
+    (ite (or (= idx (- 1)) (> start (str.len s)))
+         0
+         (+ 1 (str.count.rec s sub (+ idx (str.len sub)))))))
+
+(define-fun str.count ((s String) (sub String)) Int
+  (ite (= (str.len sub) 0)
+       (+ 1 (str.len s))
+       (str.count.rec s sub 0)))
+
+(declare-const x String)
+(declare-const k_1 Int)
+(assert (forall ((str_pos_78 Int)) (=> (and (>= str_pos_78 0) (< str_pos_78 (str.len (str.++ "3+2+2" x)))) (>= (str.count x (python.str.at (str.++ "3+2+2" x) str_pos_78)) 0))))
+(assert (forall ((str_pos_78 Int)) (=> (and (>= str_pos_78 0) (< str_pos_78 (str.len (str.++ "3+2+2" x)))) (>= (str.count "3+2+2" (python.str.at (str.++ "3+2+2" x) str_pos_78)) 0))))
+(assert (forall ((i_0 Int)) (=> (and (and (and (and (>= i_0 2) (< i_0 (str.len x))) (>= k_1 0)) (= i_0 (+ 2 (* k_1 2)))) (< k_1 (div (- (str.len x) 2) 2))) (forall ((str_pos_78 Int)) (=> (and (>= str_pos_78 0) (< str_pos_78 (str.len (str.++ "3+2+2" x)))) (and (= (str.count x (python.str.at (str.++ "3+2+2" x) str_pos_78)) (str.count "3+2+2" (python.str.at (str.++ "3+2+2" x) str_pos_78))) (or (str.< (python.str.at x (- i_0 2)) (python.str.at x i_0)) (= (python.str.at x (- i_0 2)) (python.str.at x i_0)))))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "!0!")
+  (define-fun k_1 () Int
+    (- 1))
+)
+### output for cvc5
+unknown
+(
+(define-fun x () String "")
+(define-fun k_1 () Int 0)
+)
+
+Found solution !0!
+WARNING: Solution verification failed for puzzle SortPlusPlus:2
+Too many constants for extrapolation
 
 Solving puzzle 363/723: SortPlusPlus:3
 sat_func def sat(s: str, inp="3+2+1+1+3+3+2+2+2+3+2+3+3+1+1"):
     return all(s.count(c) == inp.count(c) for c in inp + s) and all(s[i - 2] <= s[i] for i in range(2, len(s), 2))
 modified_func def sat(s: str, inp=wrap_str('3+2+1+1+3+3+2+2+2+3+2+3+3+1+1')):
     return all(sym_generator((s.count(c) == inp.count(c) for c in inp + s))).__and__(all(sym_generator((s[i - wrap_int(2)] <= s[i] for i in sym_range(2, sym_len(s), 2)))))
-Exception -- for puzzle SortPlusPlus:3 '<=' not supported between instances of 'SymbolicStr' and 'SymbolicStr'
+### smt2
+(set-logic ALL)
+
+(define-fun python.str.at ((s String) (start Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start)))
+    (str.substr s start 1)))
+
+
+(define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
+  (let ((idx (str.indexof s sub start)))
+    (ite (or (= idx (- 1)) (> start (str.len s)))
+         0
+         (+ 1 (str.count.rec s sub (+ idx (str.len sub)))))))
+
+(define-fun str.count ((s String) (sub String)) Int
+  (ite (= (str.len sub) 0)
+       (+ 1 (str.len s))
+       (str.count.rec s sub 0)))
+
+(declare-const x String)
+(declare-const k_1 Int)
+(assert (forall ((str_pos_79 Int)) (=> (and (>= str_pos_79 0) (< str_pos_79 (str.len (str.++ "3+2+1+1+3+3+2+2+2+3+2+3+3+1+1" x)))) (>= (str.count x (python.str.at (str.++ "3+2+1+1+3+3+2+2+2+3+2+3+3+1+1" x) str_pos_79)) 0))))
+(assert (forall ((str_pos_79 Int)) (=> (and (>= str_pos_79 0) (< str_pos_79 (str.len (str.++ "3+2+1+1+3+3+2+2+2+3+2+3+3+1+1" x)))) (>= (str.count "3+2+1+1+3+3+2+2+2+3+2+3+3+1+1" (python.str.at (str.++ "3+2+1+1+3+3+2+2+2+3+2+3+3+1+1" x) str_pos_79)) 0))))
+(assert (forall ((i_0 Int)) (=> (and (and (and (and (>= i_0 2) (< i_0 (str.len x))) (>= k_1 0)) (= i_0 (+ 2 (* k_1 2)))) (< k_1 (div (- (str.len x) 2) 2))) (forall ((str_pos_79 Int)) (=> (and (>= str_pos_79 0) (< str_pos_79 (str.len (str.++ "3+2+1+1+3+3+2+2+2+3+2+3+3+1+1" x)))) (and (= (str.count x (python.str.at (str.++ "3+2+1+1+3+3+2+2+2+3+2+3+3+1+1" x) str_pos_79)) (str.count "3+2+1+1+3+3+2+2+2+3+2+3+3+1+1" (python.str.at (str.++ "3+2+1+1+3+3+2+2+2+3+2+3+3+1+1" x) str_pos_79))) (or (str.< (python.str.at x (- i_0 2)) (python.str.at x i_0)) (= (python.str.at x (- i_0 2)) (python.str.at x i_0)))))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "!0!")
+  (define-fun k_1 () Int
+    (- 1))
+)
+### output for cvc5
+unknown
+(
+(define-fun x () String "")
+(define-fun k_1 () Int 0)
+)
+
+Found solution !0!
+WARNING: Solution verification failed for puzzle SortPlusPlus:3
+Too many constants for extrapolation
 
 Solving puzzle 364/723: SortPlusPlus:4
 sat_func def sat(s: str, inp="2+2+2+1+1+1+2+1+3+3+3+3+2+2+2+1+2+3+3+1+3+2+3+2+3+2+2+3+2+3+1+2+1+3+3+2+3+1+1+3+3+1"):
     return all(s.count(c) == inp.count(c) for c in inp + s) and all(s[i - 2] <= s[i] for i in range(2, len(s), 2))
 modified_func def sat(s: str, inp=wrap_str('2+2+2+1+1+1+2+1+3+3+3+3+2+2+2+1+2+3+3+1+3+2+3+2+3+2+2+3+2+3+1+2+1+3+3+2+3+1+1+3+3+1')):
     return all(sym_generator((s.count(c) == inp.count(c) for c in inp + s))).__and__(all(sym_generator((s[i - wrap_int(2)] <= s[i] for i in sym_range(2, sym_len(s), 2)))))
-Exception -- for puzzle SortPlusPlus:4 '<=' not supported between instances of 'SymbolicStr' and 'SymbolicStr'
+### smt2
+(set-logic ALL)
+
+(define-fun python.str.at ((s String) (start Int)) String
+  (let ((start (ite (< start 0) (+ (str.len s) start) start)))
+    (str.substr s start 1)))
+
+
+(define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
+  (let ((idx (str.indexof s sub start)))
+    (ite (or (= idx (- 1)) (> start (str.len s)))
+         0
+         (+ 1 (str.count.rec s sub (+ idx (str.len sub)))))))
+
+(define-fun str.count ((s String) (sub String)) Int
+  (ite (= (str.len sub) 0)
+       (+ 1 (str.len s))
+       (str.count.rec s sub 0)))
+
+(declare-const x String)
+(declare-const k_1 Int)
+(assert (forall ((str_pos_80 Int)) (=> (and (>= str_pos_80 0) (< str_pos_80 (str.len (str.++ "2+2+2+1+1+1+2+1+3+3+3+3+2+2+2+1+2+3+3+1+3+2+3+2+3+2+2+3+2+3+1+2+1+3+3+2+3+1+1+3+3+1" x)))) (>= (str.count x (python.str.at (str.++ "2+2+2+1+1+1+2+1+3+3+3+3+2+2+2+1+2+3+3+1+3+2+3+2+3+2+2+3+2+3+1+2+1+3+3+2+3+1+1+3+3+1" x) str_pos_80)) 0))))
+(assert (forall ((str_pos_80 Int)) (=> (and (>= str_pos_80 0) (< str_pos_80 (str.len (str.++ "2+2+2+1+1+1+2+1+3+3+3+3+2+2+2+1+2+3+3+1+3+2+3+2+3+2+2+3+2+3+1+2+1+3+3+2+3+1+1+3+3+1" x)))) (>= (str.count "2+2+2+1+1+1+2+1+3+3+3+3+2+2+2+1+2+3+3+1+3+2+3+2+3+2+2+3+2+3+1+2+1+3+3+2+3+1+1+3+3+1" (python.str.at (str.++ "2+2+2+1+1+1+2+1+3+3+3+3+2+2+2+1+2+3+3+1+3+2+3+2+3+2+2+3+2+3+1+2+1+3+3+2+3+1+1+3+3+1" x) str_pos_80)) 0))))
+(assert (forall ((i_0 Int)) (=> (and (and (and (and (>= i_0 2) (< i_0 (str.len x))) (>= k_1 0)) (= i_0 (+ 2 (* k_1 2)))) (< k_1 (div (- (str.len x) 2) 2))) (forall ((str_pos_80 Int)) (=> (and (>= str_pos_80 0) (< str_pos_80 (str.len (str.++ "2+2+2+1+1+1+2+1+3+3+3+3+2+2+2+1+2+3+3+1+3+2+3+2+3+2+2+3+2+3+1+2+1+3+3+2+3+1+1+3+3+1" x)))) (and (= (str.count x (python.str.at (str.++ "2+2+2+1+1+1+2+1+3+3+3+3+2+2+2+1+2+3+3+1+3+2+3+2+3+2+2+3+2+3+1+2+1+3+3+2+3+1+1+3+3+1" x) str_pos_80)) (str.count "2+2+2+1+1+1+2+1+3+3+3+3+2+2+2+1+2+3+3+1+3+2+3+2+3+2+2+3+2+3+1+2+1+3+3+2+3+1+1+3+3+1" (python.str.at (str.++ "2+2+2+1+1+1+2+1+3+3+3+3+2+2+2+1+2+3+3+1+3+2+3+2+3+2+2+3+2+3+1+2+1+3+3+2+3+1+1+3+3+1" x) str_pos_80))) (or (str.< (python.str.at x (- i_0 2)) (python.str.at x i_0)) (= (python.str.at x (- i_0 2)) (python.str.at x i_0)))))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "!0!")
+  (define-fun k_1 () Int
+    (- 1))
+)
+### output for cvc5
+unknown
+(
+(define-fun x () String "")
+(define-fun k_1 () Int 0)
+)
+
+Found solution !0!
+WARNING: Solution verification failed for puzzle SortPlusPlus:4
+Too many constants for extrapolation
 
 Solving puzzle 365/723: CapitalizeFirstLetter:0
 sat_func def sat(s: str, word="konjac"):
@@ -21774,70 +22004,274 @@ sat_func def sat(s: str, strings=['cat', 'dog', 'bird', 'fly', 'moose']):
     return s in strings and sum(t > s for t in strings) == 1
 modified_func def sat(s: str, strings=wrap_list([wrap_str('cat'), wrap_str('dog'), wrap_str('bird'), wrap_str('fly'), wrap_str('moose')])):
     return sym_in(s, strings).__and__(sym_sum(sym_generator((t > s for t in strings))) == wrap_int(1))
-Exception -- for puzzle PenultimateString:0 '>' not supported between instances of 'SymbolicStr' and 'SymbolicStr'
+### smt2
+(set-logic ALL)
+(declare-const x String)
+(assert (and (or (= x "cat") (= x "dog") (= x "bird") (= x "fly") (= x "moose")) (= (+ (+ (+ (+ (+ (ite (str.< x "cat") 1 0) 0) (ite (str.< x "dog") 1 0)) (ite (str.< x "bird") 1 0)) (ite (str.< x "fly") 1 0)) (ite (str.< x "moose") 1 0)) 1)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "fly")
+)
+### output for cvc5
+sat
+(
+(define-fun x () String "fly")
+)
+
+Found solution fly
+Yes! Solved for puzzle  PenultimateString:0
 
 Solving puzzle 506/723: PenultimateString:1
 sat_func def sat(s: str, strings=['ryzapychybykydege', 'mivowepe', 'sovywos', 'chanyrorybynid', 'vafechajufo', 'nokymocymoxac', 'jahejafuquoduk', 'gogy', 'bytothice', 'ruminuvixixutudigom']):
     return s in strings and sum(t > s for t in strings) == 1
 modified_func def sat(s: str, strings=wrap_list([wrap_str('ryzapychybykydege'), wrap_str('mivowepe'), wrap_str('sovywos'), wrap_str('chanyrorybynid'), wrap_str('vafechajufo'), wrap_str('nokymocymoxac'), wrap_str('jahejafuquoduk'), wrap_str('gogy'), wrap_str('bytothice'), wrap_str('ruminuvixixutudigom')])):
     return sym_in(s, strings).__and__(sym_sum(sym_generator((t > s for t in strings))) == wrap_int(1))
-Exception -- for puzzle PenultimateString:1 '>' not supported between instances of 'SymbolicStr' and 'SymbolicStr'
+### smt2
+(set-logic ALL)
+(declare-const x String)
+(assert (and (or (= x "ryzapychybykydege") (= x "mivowepe") (= x "sovywos") (= x "chanyrorybynid") (= x "vafechajufo") (= x "nokymocymoxac") (= x "jahejafuquoduk") (= x "gogy") (= x "bytothice") (= x "ruminuvixixutudigom")) (= (+ (+ (+ (+ (+ (+ (+ (+ (+ (+ (ite (str.< x "ryzapychybykydege") 1 0) 0) (ite (str.< x "mivowepe") 1 0)) (ite (str.< x "sovywos") 1 0)) (ite (str.< x "chanyrorybynid") 1 0)) (ite (str.< x "vafechajufo") 1 0)) (ite (str.< x "nokymocymoxac") 1 0)) (ite (str.< x "jahejafuquoduk") 1 0)) (ite (str.< x "gogy") 1 0)) (ite (str.< x "bytothice") 1 0)) (ite (str.< x "ruminuvixixutudigom") 1 0)) 1)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+sat
+(
+(define-fun x () String "sovywos")
+)
+
+Found solution sovywos
+Yes! Solved for puzzle  PenultimateString:1
 
 Solving puzzle 507/723: PenultimateString:2
 sat_func def sat(s: str, strings=['mipelavychekecy', 'pythujutisoxofe', 'diliwagacivychinofiw', 'na', 'dobynaramithibolo', 'cugupyfytextofoxat', 'gyfokebo', 'bymitextitextizoc', 'rekimuk', 'bepumyxitubachek']):
     return s in strings and sum(t > s for t in strings) == 1
 modified_func def sat(s: str, strings=wrap_list([wrap_str('mipelavychekecy'), wrap_str('pythujutisoxofe'), wrap_str('diliwagacivychinofiw'), wrap_str('na'), wrap_str('dobynaramithibolo'), wrap_str('cugupyfytextofoxat'), wrap_str('gyfokebo'), wrap_str('bymitextitextizoc'), wrap_str('rekimuk'), wrap_str('bepumyxitubachek')])):
     return sym_in(s, strings).__and__(sym_sum(sym_generator((t > s for t in strings))) == wrap_int(1))
-Exception -- for puzzle PenultimateString:2 '>' not supported between instances of 'SymbolicStr' and 'SymbolicStr'
+### smt2
+(set-logic ALL)
+(declare-const x String)
+(assert (and (or (= x "mipelavychekecy") (= x "pythujutisoxofe") (= x "diliwagacivychinofiw") (= x "na") (= x "dobynaramithibolo") (= x "cugupyfytextofoxat") (= x "gyfokebo") (= x "bymitextitextizoc") (= x "rekimuk") (= x "bepumyxitubachek")) (= (+ (+ (+ (+ (+ (+ (+ (+ (+ (+ (ite (str.< x "mipelavychekecy") 1 0) 0) (ite (str.< x "pythujutisoxofe") 1 0)) (ite (str.< x "diliwagacivychinofiw") 1 0)) (ite (str.< x "na") 1 0)) (ite (str.< x "dobynaramithibolo") 1 0)) (ite (str.< x "cugupyfytextofoxat") 1 0)) (ite (str.< x "gyfokebo") 1 0)) (ite (str.< x "bymitextitextizoc") 1 0)) (ite (str.< x "rekimuk") 1 0)) (ite (str.< x "bepumyxitubachek") 1 0)) 1)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+sat
+(
+(define-fun x () String "pythujutisoxofe")
+)
+
+Found solution pythujutisoxofe
+Yes! Solved for puzzle  PenultimateString:2
 
 Solving puzzle 508/723: PenultimateString:3
 sat_func def sat(s: str, strings=['hunuvarufefikaq', 'xejegu', 'minoc', 'puthyvyc', 'xyzeryberi', 'tyl', 'thyvojyvijazetonowa', 'jahygywuchitho', 'quuvuvigy', 'zuhechywituthexe']):
     return s in strings and sum(t > s for t in strings) == 1
 modified_func def sat(s: str, strings=wrap_list([wrap_str('hunuvarufefikaq'), wrap_str('xejegu'), wrap_str('minoc'), wrap_str('puthyvyc'), wrap_str('xyzeryberi'), wrap_str('tyl'), wrap_str('thyvojyvijazetonowa'), wrap_str('jahygywuchitho'), wrap_str('quuvuvigy'), wrap_str('zuhechywituthexe')])):
     return sym_in(s, strings).__and__(sym_sum(sym_generator((t > s for t in strings))) == wrap_int(1))
-Exception -- for puzzle PenultimateString:3 '>' not supported between instances of 'SymbolicStr' and 'SymbolicStr'
+### smt2
+(set-logic ALL)
+(declare-const x String)
+(assert (and (or (= x "hunuvarufefikaq") (= x "xejegu") (= x "minoc") (= x "puthyvyc") (= x "xyzeryberi") (= x "tyl") (= x "thyvojyvijazetonowa") (= x "jahygywuchitho") (= x "quuvuvigy") (= x "zuhechywituthexe")) (= (+ (+ (+ (+ (+ (+ (+ (+ (+ (+ (ite (str.< x "hunuvarufefikaq") 1 0) 0) (ite (str.< x "xejegu") 1 0)) (ite (str.< x "minoc") 1 0)) (ite (str.< x "puthyvyc") 1 0)) (ite (str.< x "xyzeryberi") 1 0)) (ite (str.< x "tyl") 1 0)) (ite (str.< x "thyvojyvijazetonowa") 1 0)) (ite (str.< x "jahygywuchitho") 1 0)) (ite (str.< x "quuvuvigy") 1 0)) (ite (str.< x "zuhechywituthexe") 1 0)) 1)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+sat
+(
+(define-fun x () String "xyzeryberi")
+)
+
+Found solution xyzeryberi
+Yes! Solved for puzzle  PenultimateString:3
 
 Solving puzzle 509/723: PenultimateString:4
 sat_func def sat(s: str, strings=['wesolotelunyzecemexi', 'pociquuwygocysahef', 'lequusigipitexti', 'quojuxaq', 'fyt', 'm', 'bavalepynoza', 'zihath', 'lodomijibuxoju', 'xasuwytextochypuli']):
     return s in strings and sum(t > s for t in strings) == 1
 modified_func def sat(s: str, strings=wrap_list([wrap_str('wesolotelunyzecemexi'), wrap_str('pociquuwygocysahef'), wrap_str('lequusigipitexti'), wrap_str('quojuxaq'), wrap_str('fyt'), wrap_str('m'), wrap_str('bavalepynoza'), wrap_str('zihath'), wrap_str('lodomijibuxoju'), wrap_str('xasuwytextochypuli')])):
     return sym_in(s, strings).__and__(sym_sum(sym_generator((t > s for t in strings))) == wrap_int(1))
-Exception -- for puzzle PenultimateString:4 '>' not supported between instances of 'SymbolicStr' and 'SymbolicStr'
+### smt2
+(set-logic ALL)
+(declare-const x String)
+(assert (and (or (= x "wesolotelunyzecemexi") (= x "pociquuwygocysahef") (= x "lequusigipitexti") (= x "quojuxaq") (= x "fyt") (= x "m") (= x "bavalepynoza") (= x "zihath") (= x "lodomijibuxoju") (= x "xasuwytextochypuli")) (= (+ (+ (+ (+ (+ (+ (+ (+ (+ (+ (ite (str.< x "wesolotelunyzecemexi") 1 0) 0) (ite (str.< x "pociquuwygocysahef") 1 0)) (ite (str.< x "lequusigipitexti") 1 0)) (ite (str.< x "quojuxaq") 1 0)) (ite (str.< x "fyt") 1 0)) (ite (str.< x "m") 1 0)) (ite (str.< x "bavalepynoza") 1 0)) (ite (str.< x "zihath") 1 0)) (ite (str.< x "lodomijibuxoju") 1 0)) (ite (str.< x "xasuwytextochypuli") 1 0)) 1)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+sat
+(
+(define-fun x () String "xasuwytextochypuli")
+)
+
+Found solution xasuwytextochypuli
+Yes! Solved for puzzle  PenultimateString:4
 
 Solving puzzle 510/723: PenultimateRevString:0
 sat_func def sat(s: str, strings=['cat', 'dog', 'bird', 'fly', 'moose']):
     return s[::-1] in strings and sum(t < s[::-1] for t in strings) == 1
 modified_func def sat(s: str, strings=wrap_list([wrap_str('cat'), wrap_str('dog'), wrap_str('bird'), wrap_str('fly'), wrap_str('moose')])):
     return sym_in(s[::-1], strings).__and__(sym_sum(sym_generator((t < s[::-1] for t in strings))) == wrap_int(1))
-Exception -- for puzzle PenultimateRevString:0 '<' not supported between instances of 'SymbolicStr' and 'SymbolicStr'
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str.reverse ((s String)) String
+  (ite (= s "")
+       ""
+       (str.++ (str.substr s (- (str.len s) 1) 1)
+               (str.reverse (str.substr s 0 (- (str.len s) 1))))))
+
+(declare-const x String)
+(assert (and (or (= (str.reverse x) "cat") (= (str.reverse x) "dog") (= (str.reverse x) "bird") (= (str.reverse x) "fly") (= (str.reverse x) "moose")) (= (+ (+ (+ (+ (+ (ite (str.< "cat" (str.reverse x)) 1 0) 0) (ite (str.< "dog" (str.reverse x)) 1 0)) (ite (str.< "bird" (str.reverse x)) 1 0)) (ite (str.< "fly" (str.reverse x)) 1 0)) (ite (str.< "moose" (str.reverse x)) 1 0)) 1)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+cvc5 interrupted by timeout.
+
+Could not find any solution for puzzle PenultimateRevString:0
+Too many constants for extrapolation
 
 Solving puzzle 511/723: PenultimateRevString:1
 sat_func def sat(s: str, strings=['rawithelen', 'que', 'pikuf', 'koze', 'zehyquorofyxytextef', 'text', 'jezebox', 'zychopucebychokyz', 'pyzyxatevafugedix', 'buzogehabojyb']):
     return s[::-1] in strings and sum(t < s[::-1] for t in strings) == 1
 modified_func def sat(s: str, strings=wrap_list([wrap_str('rawithelen'), wrap_str('que'), wrap_str('pikuf'), wrap_str('koze'), wrap_str('zehyquorofyxytextef'), wrap_str('text'), wrap_str('jezebox'), wrap_str('zychopucebychokyz'), wrap_str('pyzyxatevafugedix'), wrap_str('buzogehabojyb')])):
     return sym_in(s[::-1], strings).__and__(sym_sum(sym_generator((t < s[::-1] for t in strings))) == wrap_int(1))
-Exception -- for puzzle PenultimateRevString:1 '<' not supported between instances of 'SymbolicStr' and 'SymbolicStr'
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str.reverse ((s String)) String
+  (ite (= s "")
+       ""
+       (str.++ (str.substr s (- (str.len s) 1) 1)
+               (str.reverse (str.substr s 0 (- (str.len s) 1))))))
+
+(declare-const x String)
+(assert (and (or (= (str.reverse x) "rawithelen") (= (str.reverse x) "que") (= (str.reverse x) "pikuf") (= (str.reverse x) "koze") (= (str.reverse x) "zehyquorofyxytextef") (= (str.reverse x) "text") (= (str.reverse x) "jezebox") (= (str.reverse x) "zychopucebychokyz") (= (str.reverse x) "pyzyxatevafugedix") (= (str.reverse x) "buzogehabojyb")) (= (+ (+ (+ (+ (+ (+ (+ (+ (+ (+ (ite (str.< "rawithelen" (str.reverse x)) 1 0) 0) (ite (str.< "que" (str.reverse x)) 1 0)) (ite (str.< "pikuf" (str.reverse x)) 1 0)) (ite (str.< "koze" (str.reverse x)) 1 0)) (ite (str.< "zehyquorofyxytextef" (str.reverse x)) 1 0)) (ite (str.< "text" (str.reverse x)) 1 0)) (ite (str.< "jezebox" (str.reverse x)) 1 0)) (ite (str.< "zychopucebychokyz" (str.reverse x)) 1 0)) (ite (str.< "pyzyxatevafugedix" (str.reverse x)) 1 0)) (ite (str.< "buzogehabojyb" (str.reverse x)) 1 0)) 1)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+cvc5 interrupted by timeout.
+
+Could not find any solution for puzzle PenultimateRevString:1
+Too many constants for extrapolation
 
 Solving puzzle 512/723: PenultimateRevString:2
 sat_func def sat(s: str, strings=['thythanaham', 'quiroxebadivogis', 'kyh', 'xa', 'gathytyjonymihahahy', 'musyzisequyxyhenico', 'poxizitizexokigewifi', 'mife', 'chyjuratexta', 'gyrato']):
     return s[::-1] in strings and sum(t < s[::-1] for t in strings) == 1
 modified_func def sat(s: str, strings=wrap_list([wrap_str('thythanaham'), wrap_str('quiroxebadivogis'), wrap_str('kyh'), wrap_str('xa'), wrap_str('gathytyjonymihahahy'), wrap_str('musyzisequyxyhenico'), wrap_str('poxizitizexokigewifi'), wrap_str('mife'), wrap_str('chyjuratexta'), wrap_str('gyrato')])):
     return sym_in(s[::-1], strings).__and__(sym_sum(sym_generator((t < s[::-1] for t in strings))) == wrap_int(1))
-Exception -- for puzzle PenultimateRevString:2 '<' not supported between instances of 'SymbolicStr' and 'SymbolicStr'
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str.reverse ((s String)) String
+  (ite (= s "")
+       ""
+       (str.++ (str.substr s (- (str.len s) 1) 1)
+               (str.reverse (str.substr s 0 (- (str.len s) 1))))))
+
+(declare-const x String)
+(assert (and (or (= (str.reverse x) "thythanaham") (= (str.reverse x) "quiroxebadivogis") (= (str.reverse x) "kyh") (= (str.reverse x) "xa") (= (str.reverse x) "gathytyjonymihahahy") (= (str.reverse x) "musyzisequyxyhenico") (= (str.reverse x) "poxizitizexokigewifi") (= (str.reverse x) "mife") (= (str.reverse x) "chyjuratexta") (= (str.reverse x) "gyrato")) (= (+ (+ (+ (+ (+ (+ (+ (+ (+ (+ (ite (str.< "thythanaham" (str.reverse x)) 1 0) 0) (ite (str.< "quiroxebadivogis" (str.reverse x)) 1 0)) (ite (str.< "kyh" (str.reverse x)) 1 0)) (ite (str.< "xa" (str.reverse x)) 1 0)) (ite (str.< "gathytyjonymihahahy" (str.reverse x)) 1 0)) (ite (str.< "musyzisequyxyhenico" (str.reverse x)) 1 0)) (ite (str.< "poxizitizexokigewifi" (str.reverse x)) 1 0)) (ite (str.< "mife" (str.reverse x)) 1 0)) (ite (str.< "chyjuratexta" (str.reverse x)) 1 0)) (ite (str.< "gyrato" (str.reverse x)) 1 0)) 1)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+cvc5 interrupted by timeout.
+
+Could not find any solution for puzzle PenultimateRevString:2
+Too many constants for extrapolation
 
 Solving puzzle 513/723: PenultimateRevString:3
 sat_func def sat(s: str, strings=['habicynanikadifovac', 'bozehathyfoz', 'hud', 'textudunachuxarise', 'hewohahatazabab', 'lutumelimevabutha', 'wocher', 'wacifufixudizon', 'tazibedo', 'xytu']):
     return s[::-1] in strings and sum(t < s[::-1] for t in strings) == 1
 modified_func def sat(s: str, strings=wrap_list([wrap_str('habicynanikadifovac'), wrap_str('bozehathyfoz'), wrap_str('hud'), wrap_str('textudunachuxarise'), wrap_str('hewohahatazabab'), wrap_str('lutumelimevabutha'), wrap_str('wocher'), wrap_str('wacifufixudizon'), wrap_str('tazibedo'), wrap_str('xytu')])):
     return sym_in(s[::-1], strings).__and__(sym_sum(sym_generator((t < s[::-1] for t in strings))) == wrap_int(1))
-Exception -- for puzzle PenultimateRevString:3 '<' not supported between instances of 'SymbolicStr' and 'SymbolicStr'
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str.reverse ((s String)) String
+  (ite (= s "")
+       ""
+       (str.++ (str.substr s (- (str.len s) 1) 1)
+               (str.reverse (str.substr s 0 (- (str.len s) 1))))))
+
+(declare-const x String)
+(assert (and (or (= (str.reverse x) "habicynanikadifovac") (= (str.reverse x) "bozehathyfoz") (= (str.reverse x) "hud") (= (str.reverse x) "textudunachuxarise") (= (str.reverse x) "hewohahatazabab") (= (str.reverse x) "lutumelimevabutha") (= (str.reverse x) "wocher") (= (str.reverse x) "wacifufixudizon") (= (str.reverse x) "tazibedo") (= (str.reverse x) "xytu")) (= (+ (+ (+ (+ (+ (+ (+ (+ (+ (+ (ite (str.< "habicynanikadifovac" (str.reverse x)) 1 0) 0) (ite (str.< "bozehathyfoz" (str.reverse x)) 1 0)) (ite (str.< "hud" (str.reverse x)) 1 0)) (ite (str.< "textudunachuxarise" (str.reverse x)) 1 0)) (ite (str.< "hewohahatazabab" (str.reverse x)) 1 0)) (ite (str.< "lutumelimevabutha" (str.reverse x)) 1 0)) (ite (str.< "wocher" (str.reverse x)) 1 0)) (ite (str.< "wacifufixudizon" (str.reverse x)) 1 0)) (ite (str.< "tazibedo" (str.reverse x)) 1 0)) (ite (str.< "xytu" (str.reverse x)) 1 0)) 1)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+cvc5 interrupted by timeout.
+
+Could not find any solution for puzzle PenultimateRevString:3
+Too many constants for extrapolation
 
 Solving puzzle 514/723: PenultimateRevString:4
 sat_func def sat(s: str, strings=['vekykothumygochuth', 'xujatajazisiqu', 'vapyvymobymethotexto', 'tygope', 'g', 'ripalotextaj', 'tecehuthojodogucivaj', 'xyjulecometihesej', 'ribo', 'gutachowagexatoset']):
     return s[::-1] in strings and sum(t < s[::-1] for t in strings) == 1
 modified_func def sat(s: str, strings=wrap_list([wrap_str('vekykothumygochuth'), wrap_str('xujatajazisiqu'), wrap_str('vapyvymobymethotexto'), wrap_str('tygope'), wrap_str('g'), wrap_str('ripalotextaj'), wrap_str('tecehuthojodogucivaj'), wrap_str('xyjulecometihesej'), wrap_str('ribo'), wrap_str('gutachowagexatoset')])):
     return sym_in(s[::-1], strings).__and__(sym_sum(sym_generator((t < s[::-1] for t in strings))) == wrap_int(1))
-Exception -- for puzzle PenultimateRevString:4 '<' not supported between instances of 'SymbolicStr' and 'SymbolicStr'
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str.reverse ((s String)) String
+  (ite (= s "")
+       ""
+       (str.++ (str.substr s (- (str.len s) 1) 1)
+               (str.reverse (str.substr s 0 (- (str.len s) 1))))))
+
+(declare-const x String)
+(assert (and (or (= (str.reverse x) "vekykothumygochuth") (= (str.reverse x) "xujatajazisiqu") (= (str.reverse x) "vapyvymobymethotexto") (= (str.reverse x) "tygope") (= (str.reverse x) "g") (= (str.reverse x) "ripalotextaj") (= (str.reverse x) "tecehuthojodogucivaj") (= (str.reverse x) "xyjulecometihesej") (= (str.reverse x) "ribo") (= (str.reverse x) "gutachowagexatoset")) (= (+ (+ (+ (+ (+ (+ (+ (+ (+ (+ (ite (str.< "vekykothumygochuth" (str.reverse x)) 1 0) 0) (ite (str.< "xujatajazisiqu" (str.reverse x)) 1 0)) (ite (str.< "vapyvymobymethotexto" (str.reverse x)) 1 0)) (ite (str.< "tygope" (str.reverse x)) 1 0)) (ite (str.< "g" (str.reverse x)) 1 0)) (ite (str.< "ripalotextaj" (str.reverse x)) 1 0)) (ite (str.< "tecehuthojodogucivaj" (str.reverse x)) 1 0)) (ite (str.< "xyjulecometihesej" (str.reverse x)) 1 0)) (ite (str.< "ribo" (str.reverse x)) 1 0)) (ite (str.< "gutachowagexatoset" (str.reverse x)) 1 0)) 1)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+cvc5 interrupted by timeout.
+
+Could not find any solution for puzzle PenultimateRevString:4
+Too many constants for extrapolation
 
 Solving puzzle 515/723: CenteredString:0
 sat_func def sat(s: str, target="foobarbazwow", length=6):
@@ -28044,14 +28478,14 @@ Found solution 6
 
 The symbolic execution alone currently solves:
 - 59% (214 out of 360) of `int` puzzles,
-- 29% (106 out of 363) of `str` puzzles,
-- 44% (320 out of 723) overall.
+- 31% (111 out of 363) of `str` puzzles,
+- 45% (325 out of 723) overall.
 
 with the following errors:
 - 10 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
-- 189 errors at at staging time
-- 109 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- 126 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
+- 174 errors at at staging time
+- 114 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- 131 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
 - 992 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 

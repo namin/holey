@@ -194,6 +194,17 @@ class SymbolicInt:
             return SymbolicFloat(self.tracer.backend.Add(self.z3_expr, other.z3_expr), tracer=self.tracer)
         if self.concrete is not None and other.concrete is not None:
             return SymbolicInt(self.concrete + other.concrete, tracer=self.tracer)
+        if isinstance(other, SymbolicBool):
+            as_int = SymbolicInt(
+                int(other.concrete) if other.concrete is not None else
+                self.tracer.backend.If(
+                    other.z3_expr,
+                    self.tracer.backend.IntVal(1),
+                    self.tracer.backend.IntVal(0)
+                ),
+                tracer=self.tracer
+            )
+            return SymbolicInt(self.tracer.backend.Add(self.z3_expr, as_int.z3_expr), tracer=self.tracer)
         return SymbolicInt(self.tracer.backend.Add(self.z3_expr, other.z3_expr), tracer=self.tracer)
     
     def __sub__(self, other):

@@ -139,6 +139,35 @@ def sym_sum(iterable):
                     )
             
             return sum_var
+        
+        # Handle boolean conditions
+        conditions = list(iterable)
+        if conditions:
+            # Find first condition with a tracer
+            tracer = None
+            for cond in conditions:
+                if hasattr(cond, 'tracer'):
+                    tracer = cond.tracer
+                    break
+            
+            if tracer:
+                terms = []
+                for cond in conditions:
+                    # Ensure condition is symbolic boolean
+                    cond = tracer.ensure_symbolic(cond)
+                    if not isinstance(cond, SymbolicBool):
+                        cond = truthy(cond)
+                    
+                    # Convert to 0/1 integer
+                    term = tracer.backend.If(
+                        cond.z3_expr,
+                        tracer.backend.IntVal(1),
+                        tracer.backend.IntVal(0)
+                    )
+                    terms.append(term)
+                
+                # Create final sum as one operation
+                return SymbolicInt(tracer.backend.Add(*terms), tracer=tracer)
     
     # For non-symbolic case
     return sum(iterable)
