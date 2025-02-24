@@ -21,11 +21,24 @@ The solver incorporates heuristics from LLMs in addition to symbolic execution.
 git clone --recursive https://github.com/namin/holey.git
 ```
 
-### Setup environment
+### Setup Python environment
 ```
 conda create -n holey python=3.12
 conda activate holey
 pip install -e ".[test,ollama,anthropic]"
+```
+
+### Setup LLM environments
+
+For each LLM you want to use, provide an LLM API key, even if only a dummy one is needed.
+Only provide a key if you want to use that particular LLM provider.
+All provided keys will be used in parallel to generate a matrix of successes per LLM provider.
+
+```
+export OLLAMA_API_KEY=ollama
+export ANTHROPIC_API_KEY=...
+export GEMINI_API_KEY=...
+export OPENAI_API_KEY=...
 ```
 
 ## Run
