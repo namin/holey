@@ -60,8 +60,8 @@ class SymbolicZipIterator:
         self.iterables = iterables
         self.tracer = tracer
         self.used = False
-        self.pos = None  # Will store position variable
-        self.bounds = None  # Will store bounds expression
+        self.pos = None
+        self.bounds = None
             
     def __iter__(self):
         return self
@@ -75,7 +75,7 @@ class SymbolicZipIterator:
         self.tracer.backend.quantified_vars.add(name)
         self.pos = make_symbolic(int, name, tracer=self.tracer)
         
-        # Get min length to zip
+        # Get min length
         min_length = self.iterables[0].__len__()
         for it in self.iterables[1:]:
             length = it.__len__()
@@ -94,13 +94,9 @@ class SymbolicZipIterator:
         # Add to forall conditions
         self.tracer.forall_conditions.append((self.pos.z3_expr, self.bounds.z3_expr))
         
-        # Create tuple of elements at position i
-        elements = []
-        for it in self.iterables:
-            if isinstance(it, (SymbolicStr, SymbolicList)):
-                elements.append(it[self.pos])
-            else:
-                elements.append(it)
+        # Let each iterable's __getitem__ handle the indexing
+        elements = [it[self.pos] if hasattr(it, '__getitem__') else it 
+                   for it in self.iterables]
         
         self.used = True
         return tuple(elements)
