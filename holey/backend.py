@@ -583,7 +583,7 @@ class Backend():
     
     def LT(self, a, b) -> MockExpr:
         return self._record("<", a, b)
-    
+   
     def LE(self, a, b) -> MockExpr:
         return self._record("<=", a, b)
     
@@ -619,6 +619,9 @@ class Backend():
 
     def StrIndexOf(self, s, sub, start) -> MockExpr:
         return self._record("str.indexof", s, sub, start)
+
+    def StrLT(self, a, b) -> MockExpr:
+        return self._record("str.<", a, b)
 
     def StrLen(self, x) -> MockExpr:
         return self._record("str.len", x)

@@ -580,6 +580,28 @@ class SymbolicStr:
             return SymbolicInt(self.concrete.index(sub.concrete, start.concrete))
         return SymbolicInt(self.tracer.backend.StrIndexOf(self.z3_expr, sub.z3_expr, start.z3_expr), tracer=self.tracer)
 
+    def __lt__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicBool(self.concrete < other.concrete, tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.StrLT(self.z3_expr, other.z3_expr), tracer=self.tracer)
+    
+    def __gt__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicBool(self.concrete > other.concrete, tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.StrLT(other.z3_expr, self.z3_expr), tracer=self.tracer)
+
+    def __le__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        return self.__lt__(other).__or__(self.__eq__(other))
+    
+    def __ge__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicBool(self.concrete >= other.concrete, tracer=self.tracer)
+        return other.__le__(self)
+
     def __hash__(self):
         if self.concrete is not None:
             return hash(self.concrete)
