@@ -11,6 +11,106 @@ def reset():
     global counter
     counter = itertools.count()
 
+class SymbolicZipIterator:
+    def __init__(self, iterables, tracer):
+        self.iterables = iterables
+        self.tracer = tracer
+        self.used = False
+        self.pos = None
+        
+        # Calculate minimum length using symbolic operations
+        min_len = None
+        for it in iterables:
+            # Use symbolic length operation
+            curr_len = sym_len(it)
+            if min_len is None:
+                min_len = curr_len
+            else:
+                # Use symbolic comparison to find minimum
+                min_len = SymbolicInt(
+                    self.tracer.backend.If(
+                        min_len.z3_expr < curr_len.z3_expr,
+                        min_len.z3_expr,
+                        curr_len.z3_expr
+                    ),
+                    tracer=self.tracer
+                )
+        self.length = min_len
+            
+    def __iter__(self):
+        return self
+            
+    def __next__(self):
+        if self.used:
+            raise StopIteration
+            
+        # Create symbolic index
+        name = f"zip_pos_{next(counter)}"
+        self.tracer.backend.quantified_vars.add(name)
+        self.pos = make_symbolic(int, name, tracer=self.tracer)
+        
+        # Create bounds condition
+        self.bounds = (self.pos >= 0).__and__(self.pos < self.length)
+        
+        # Add to forall conditions
+        self.tracer.forall_conditions.append((self.pos.z3_expr, self.bounds.z3_expr))
+        
+        # Let each iterable's __getitem__ handle the indexing
+        elements = tuple(it[self.pos] if hasattr(it, '__getitem__') else it 
+                        for it in self.iterables)
+        
+        self.used = True
+        return elements
+
+def sym_sum(iterable):
+    """Symbolic summation that maintains symbolic operations"""
+    if isinstance(iterable, SymbolicGenerator):
+        iterator = iterable.iterator
+        if isinstance(iterator, SymbolicZipIterator):
+            # Get the comparison from the generator
+            comparison = iterable.comparison
+            tracer = iterator.tracer
+            
+            # Create accumulator for sum
+            sum_var = make_symbolic(int, f"sum_{next(counter)}", tracer=tracer)
+            
+            # Create position variable for sum
+            pos = make_symbolic(int, f"sum_pos_{next(counter)}", tracer=tracer)
+            
+            # Add constraint that sum equals count of true comparisons
+            # Use forall to ensure proper handling of symbolic lengths
+            bounds = (pos.z3_expr >= 0).__and__(pos.z3_expr < iterator.length.z3_expr)
+            count_expr = tracer.backend.If(
+                truthy(comparison).z3_expr,
+                tracer.backend.IntVal(1),
+                tracer.backend.IntVal(0)
+            )
+            
+            tracer.add_constraint(
+                tracer.backend.ForAll(
+                    [pos.z3_expr],
+                    tracer.backend.Implies(
+                        bounds,
+                        sum_var.z3_expr == count_expr
+                    )
+                )
+            )
+            
+            return sum_var
+    
+    # For non-symbolic case
+    return sum(iterable)
+
+def sym_generator(gen):
+    """Convert a generator expression to a symbolic generator"""
+    if isinstance(gen, types.GeneratorType):
+        frame = gen.gi_frame
+        iterator = iter(frame.f_locals['.0'])  # Get underlying iterator
+        if isinstance(iterator, SymbolicZipIterator):
+            comparison = next(gen)  # Get comparison expression
+            return SymbolicGenerator(iterator, comparison)
+    return gen
+
 class SymbolicGenerator:
     """Wrapper for generator expressions to maintain symbolic evaluation"""
     def __init__(self, iterator, comparison):
@@ -26,80 +126,6 @@ class SymbolicGenerator:
         if self.iterator.used:
             raise StopIteration
         return self.comparison
-
-def sym_generator(gen):
-    """Convert a generator expression to a symbolic generator"""
-    if isinstance(gen, types.GeneratorType):
-        frame = gen.gi_frame
-        iterator = iter(frame.f_locals['.0'])  # Get underlying iterator
-        if isinstance(iterator, SymbolicZipIterator):
-            comparison = next(gen)  # Get comparison expression
-            return SymbolicGenerator(iterator, comparison)
-    return gen
-
-def sym_sum(iterable):
-    """Symbolic summation that maintains symbolic operations"""
-    if isinstance(iterable, SymbolicGenerator):
-        iterator = iterable.iterator
-        if isinstance(iterator, SymbolicZipIterator):
-            # Get the comparison from the generator
-            comparison = iterable.comparison
-            tracer = iterator.tracer
-            term = tracer.backend.If(
-                truthy(comparison).z3_expr,
-                tracer.backend.IntVal(1),
-                tracer.backend.IntVal(0)
-            )
-            return SymbolicInt(term, tracer=tracer)
-    
-    # For non-symbolic case
-    return sum(iterable)
-
-class SymbolicZipIterator:
-    def __init__(self, iterables, tracer):
-        self.iterables = iterables
-        self.tracer = tracer
-        self.used = False
-        self.pos = None
-        self.bounds = None
-            
-    def __iter__(self):
-        return self
-            
-    def __next__(self):
-        if self.used:
-            raise StopIteration
-            
-        # Create symbolic index
-        name = f"zip_pos_{next(counter)}"
-        self.tracer.backend.quantified_vars.add(name)
-        self.pos = make_symbolic(int, name, tracer=self.tracer)
-        
-        # Get min length
-        min_length = self.iterables[0].__len__()
-        for it in self.iterables[1:]:
-            length = it.__len__()
-            min_length = SymbolicInt(
-                self.tracer.backend.If(
-                    min_length.z3_expr < length.z3_expr,
-                    min_length.z3_expr,
-                    length.z3_expr
-                ),
-                tracer=self.tracer
-            )
-        
-        # Create bounds condition
-        self.bounds = (self.pos >= 0).__and__(self.pos < min_length)
-        
-        # Add to forall conditions
-        self.tracer.forall_conditions.append((self.pos.z3_expr, self.bounds.z3_expr))
-        
-        # Let each iterable's __getitem__ handle the indexing
-        elements = [it[self.pos] if hasattr(it, '__getitem__') else it 
-                   for it in self.iterables]
-        
-        self.used = True
-        return tuple(elements)
 
 def sym_zip(*iterables):
     """Symbolic version of zip that works with symbolic sequences"""
