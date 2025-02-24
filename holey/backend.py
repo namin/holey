@@ -209,6 +209,20 @@ class MockExpr:
         return self._name if self._name else str(self)
 
 library = {
+'python.join':
+"""
+(declare-datatypes ((List 1)) 
+    ((par (T) ((cons (head T) (tail (List T))) (nil)))))
+(define-fun-rec python.join ((lst (List String)) (delim String)) String
+    (ite (= lst nil)
+         ""
+         (ite (= (tail lst) nil)
+              (head lst)
+              (str.++ (head lst) 
+                     delim 
+                     (python.join (tail lst) delim)))))
+"""
+,
 'swapcase':
 """
 (define-fun is_upper ((c String)) Bool
@@ -616,6 +630,15 @@ class Backend():
 
     def StrIndex(self, x, y) -> MockExpr:
         return self._record("python.str.at", x, y)
+
+    def StrJoin(self, s, ss) -> MockExpr:
+        return self._record("python.join", ss, s)
+
+    def StrList(self, xs) -> MockExpr:
+        if xs:
+            return self._record("cons", xs[0], self.StrList(xs[1:]))
+        else:
+            return self._record("nil")
 
     def StrIndexOf(self, s, sub, start) -> MockExpr:
         return self._record("str.indexof", s, sub, start)

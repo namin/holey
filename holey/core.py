@@ -591,6 +591,10 @@ class SymbolicStr:
             return SymbolicInt(self.concrete.index(sub.concrete, start.concrete))
         return SymbolicInt(self.tracer.backend.StrIndexOf(self.z3_expr, sub.z3_expr, start.z3_expr), tracer=self.tracer)
 
+    def join(self, ss):
+        ss = self.tracer.ensure_symbolic(ss)
+        return SymbolicStr(self.tracer.backend.StrJoin(self.z3_expr, self.tracer.backend.StrList([self.tracer.ensure_symbolic(x).z3_expr for x in ss.concrete])), tracer=self.tracer)
+
     def __lt__(self, other):
         other = self.tracer.ensure_symbolic(other)
         if self.concrete is not None and other.concrete is not None:
