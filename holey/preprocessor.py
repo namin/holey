@@ -74,24 +74,69 @@ def sym_sum(iterable):
                 s1, s2 = iterator.iterables
                 length = iterator.length
                 
-                # Define number of differences at each position
-                diffs = []
-                for i in range(17):  # We know length is 17 for this puzzle
-                    pos = tracer.backend.IntVal(i)
+                # Extract the concrete length if one of the strings has it
+                concrete_length = None
+                for s in (s1, s2):
+                    if isinstance(s, str):
+                        concrete_length = len(s)
+                        break
+                    if hasattr(s, 'concrete') and isinstance(s.concrete, str):
+                        concrete_length = len(s.concrete)
+                        break
+                
+                if concrete_length is not None:
+                    # If we have a concrete length, use it for enumeration
+                    diffs = []
+                    for i in range(concrete_length):
+                        pos = tracer.backend.IntVal(i)
+                        diff = tracer.backend.If(
+                            tracer.backend.Not(tracer.backend.Eq(
+                                tracer.backend.StrIndex(s1.z3_expr, pos),
+                                tracer.backend.StrIndex(s2.z3_expr, pos)
+                            )),
+                            tracer.backend.IntVal(1),
+                            tracer.backend.IntVal(0)
+                        )
+                        diffs.append(diff)
+                    
+                    # Sum must equal total differences
+                    tracer.add_constraint(
+                        sum_var.z3_expr == tracer.backend.Add(*diffs)
+                    )
+                else:
+                    # For fully symbolic case, use a counter and forall
+                    cnt_name = f"cnt_{next(counter)}"
+                    tracer.backend.quantified_vars.add(cnt_name)
+                    cnt = make_symbolic(int, cnt_name, tracer=tracer)
+                    
+                    # Bounds and difference at current position
+                    bounds = tracer.backend.And(
+                        cnt.z3_expr >= 0,
+                        cnt.z3_expr < length.z3_expr
+                    )
+                    
                     diff = tracer.backend.If(
                         tracer.backend.Not(tracer.backend.Eq(
-                            tracer.backend.StrIndex(s1.z3_expr, pos),
-                            tracer.backend.StrIndex(s2.z3_expr, pos)
+                            tracer.backend.StrIndex(s1.z3_expr, cnt.z3_expr),
+                            tracer.backend.StrIndex(s2.z3_expr, cnt.z3_expr)
                         )),
                         tracer.backend.IntVal(1),
                         tracer.backend.IntVal(0)
                     )
-                    diffs.append(diff)
-                
-                # Sum must equal total differences
-                tracer.add_constraint(
-                    sum_var.z3_expr == tracer.backend.Add(*diffs)
-                )
+                    
+                    # Use different constraint form for symbolic case
+                    tracer.add_constraint(
+                        tracer.backend.ForAll(
+                            [cnt.z3_expr],
+                            tracer.backend.Implies(
+                                bounds,
+                                tracer.backend.And(
+                                    sum_var.z3_expr >= diff,
+                                    sum_var.z3_expr <= length.z3_expr
+                                )
+                            )
+                        )
+                    )
             
             return sum_var
     
