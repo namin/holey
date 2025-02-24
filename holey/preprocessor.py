@@ -11,6 +11,120 @@ def reset():
     global counter
     counter = itertools.count()
 
+class SymbolicGenerator:
+    """Wrapper for generator expressions to maintain symbolic evaluation"""
+    def __init__(self, iterator, comparison):
+        self.iterator = iterator
+        self.comparison = comparison  # Store the comparison expression
+    
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if not isinstance(self.iterator, SymbolicZipIterator):
+            return next(self.iterator)
+        if self.iterator.used:
+            raise StopIteration
+        return self.comparison
+
+def sym_generator(gen):
+    """Convert a generator expression to a symbolic generator"""
+    if isinstance(gen, types.GeneratorType):
+        frame = gen.gi_frame
+        iterator = iter(frame.f_locals['.0'])  # Get underlying iterator
+        if isinstance(iterator, SymbolicZipIterator):
+            comparison = next(gen)  # Get comparison expression
+            return SymbolicGenerator(iterator, comparison)
+    return gen
+
+def sym_sum(iterable):
+    """Symbolic summation that maintains symbolic operations"""
+    if isinstance(iterable, SymbolicGenerator):
+        iterator = iterable.iterator
+        if isinstance(iterator, SymbolicZipIterator):
+            # Get the comparison from the generator
+            comparison = iterable.comparison
+            tracer = iterator.tracer
+            term = tracer.backend.If(
+                truthy(comparison).z3_expr,
+                tracer.backend.IntVal(1),
+                tracer.backend.IntVal(0)
+            )
+            return SymbolicInt(term, tracer=tracer)
+    
+    # For non-symbolic case
+    return sum(iterable)
+
+class SymbolicZipIterator:
+    def __init__(self, iterables, tracer):
+        self.iterables = iterables
+        self.tracer = tracer
+        self.used = False
+        self.pos = None  # Will store position variable
+        self.bounds = None  # Will store bounds expression
+            
+    def __iter__(self):
+        return self
+            
+    def __next__(self):
+        if self.used:
+            raise StopIteration
+            
+        # Create symbolic index
+        name = f"zip_pos_{next(counter)}"
+        self.tracer.backend.quantified_vars.add(name)
+        self.pos = make_symbolic(int, name, tracer=self.tracer)
+        
+        # Get min length to zip
+        min_length = self.iterables[0].__len__()
+        for it in self.iterables[1:]:
+            length = it.__len__()
+            min_length = SymbolicInt(
+                self.tracer.backend.If(
+                    min_length.z3_expr < length.z3_expr,
+                    min_length.z3_expr,
+                    length.z3_expr
+                ),
+                tracer=self.tracer
+            )
+        
+        # Create bounds condition
+        self.bounds = (self.pos >= 0).__and__(self.pos < min_length)
+        
+        # Add to forall conditions
+        self.tracer.forall_conditions.append((self.pos.z3_expr, self.bounds.z3_expr))
+        
+        # Create tuple of elements at position i
+        elements = []
+        for it in self.iterables:
+            if isinstance(it, (SymbolicStr, SymbolicList)):
+                elements.append(it[self.pos])
+            else:
+                elements.append(it)
+        
+        self.used = True
+        return tuple(elements)
+
+def sym_zip(*iterables):
+    """Symbolic version of zip that works with symbolic sequences"""
+    # Handle empty case
+    if not iterables:
+        return []
+
+    # Get first symbolic tracer we find
+    tracer = first_tracer(iterables)
+    if tracer is None:
+        return zip(*iterables)  # If no symbolic values, use regular zip
+
+    # Convert all items to symbolic form
+    symbolic_iterables = [tracer.ensure_symbolic(it) for it in iterables]
+    
+    # If all concrete, use regular zip
+    if all(hasattr(it, 'concrete') and it.concrete is not None for it in symbolic_iterables):
+        return zip(*[it.concrete for it in symbolic_iterables])
+
+    return SymbolicZipIterator(symbolic_iterables, tracer)
+
 def sym_ord(x):
     if isinstance(x, SymbolicStr):
         return SymbolicInt(x.tracer.backend.StrToCode(x.z3_expr), tracer=x.tracer)
@@ -280,7 +394,7 @@ class HoleyWrapper(ast.NodeTransformer):
     def visit_Call(self, node):
         node = self.generic_visit(node)
         if isinstance(node.func, ast.Name):
-            if node.func.id in ['int', 'float', 'str', 'len', 'range', 'bin', 'ord']:
+            if node.func.id in ['int', 'float', 'str', 'len', 'range', 'bin', 'ord', 'sum', 'zip']:
                 return ast.Call(
                     func=ast.Name(id='sym_'+node.func.id, ctx=ast.Load()),
                     args=node.args,
@@ -313,6 +427,17 @@ class HoleyWrapper(ast.NodeTransformer):
             result = ast.BinOp(left=result, op=ast.Add(), right=part)
         return result
 
+    def visit_GeneratorExp(self, node):
+        """Transform: (expr for x in iter)
+        Into: sym_generator(expr for x in iter)
+        """
+        node = self.generic_visit(node)
+        return ast.Call(
+            func=ast.Name(id='sym_generator', ctx=ast.Load()),
+            args=[node],
+            keywords=[]
+        )
+
 def inject(sat_func):
     tree = ast.parse(sat_func)
     modified_tree = HoleyWrapper().visit(tree)
@@ -339,7 +464,10 @@ def create_namespace(tracer):
         'sym_len': sym_len,
         'sym_range': sym_range,
         'sym_bin': sym_bin,
-        'sym_ord': sym_ord
+        'sym_ord': sym_ord,
+        "sym_sum": sym_sum,
+        'sym_zip': sym_zip,
+        'sym_generator': sym_generator
     }
 
 def driver(sat_func, typ, cmds=None, llm_solver=None):
