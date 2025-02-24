@@ -300,9 +300,10 @@ def call_solvers(llm_solvers, stats, name, callback):
         except Exception as e:
             print("Error with solver:", str(e))
             result = None
-        stats[solver_name].append((name, result))
-        if best is None and result is not None:
-            best = result
+        if solver_name:
+            stats[solver_name].append((name, result))
+            if best is None and result is not None:
+                best = result
     return best
 
 if __name__ == "__main__":
