@@ -15428,7 +15428,7 @@ modified_func def sat(s: str, matrix=wrap_list([wrap_list([wrap_int(0), wrap_int
             for row in matrix:
                 row[j], row[j + wrap_int(1)] = (row[j + wrap_int(1)], row[j])
     return (sym_len(s) <= max_moves).__and__(matrix[wrap_int(2)][wrap_int(2)] == wrap_int(1))
-Exception -- for puzzle SlidingOne:0 'SymbolicStr' object has no attribute 'index'
+Exception -- for puzzle SlidingOne:0 Cannot convert symbolic integer to index
 
 Solving puzzle 357/723: SlidingOne:1
 sat_func def sat(s: str, matrix=[[1, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]], max_moves=4):
@@ -15454,7 +15454,7 @@ modified_func def sat(s: str, matrix=wrap_list([wrap_list([wrap_int(1), wrap_int
             for row in matrix:
                 row[j], row[j + wrap_int(1)] = (row[j + wrap_int(1)], row[j])
     return (sym_len(s) <= max_moves).__and__(matrix[wrap_int(2)][wrap_int(2)] == wrap_int(1))
-Exception -- for puzzle SlidingOne:1 'SymbolicStr' object has no attribute 'index'
+Exception -- for puzzle SlidingOne:1 Cannot convert symbolic integer to index
 
 Solving puzzle 358/723: SlidingOne:2
 sat_func def sat(s: str, matrix=[[0, 1, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]], max_moves=3):
@@ -15480,7 +15480,7 @@ modified_func def sat(s: str, matrix=wrap_list([wrap_list([wrap_int(0), wrap_int
             for row in matrix:
                 row[j], row[j + wrap_int(1)] = (row[j + wrap_int(1)], row[j])
     return (sym_len(s) <= max_moves).__and__(matrix[wrap_int(2)][wrap_int(2)] == wrap_int(1))
-Exception -- for puzzle SlidingOne:2 'SymbolicStr' object has no attribute 'index'
+Exception -- for puzzle SlidingOne:2 Cannot convert symbolic integer to index
 
 Solving puzzle 359/723: SlidingOne:3
 sat_func def sat(s: str, matrix=[[0, 0, 1, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]], max_moves=2):
@@ -15506,7 +15506,7 @@ modified_func def sat(s: str, matrix=wrap_list([wrap_list([wrap_int(0), wrap_int
             for row in matrix:
                 row[j], row[j + wrap_int(1)] = (row[j + wrap_int(1)], row[j])
     return (sym_len(s) <= max_moves).__and__(matrix[wrap_int(2)][wrap_int(2)] == wrap_int(1))
-Exception -- for puzzle SlidingOne:3 'SymbolicStr' object has no attribute 'index'
+Exception -- for puzzle SlidingOne:3 Cannot convert symbolic integer to index
 
 Solving puzzle 360/723: SortPlusPlus:0
 sat_func def sat(s: str, inp="1+1+3+1+3+2+2+1+3+1+2"):
@@ -24975,70 +24975,278 @@ sat_func def sat(s: str, big_str="foobar", index=2):
     return big_str.index(s) == index
 modified_func def sat(s: str, big_str=wrap_str('foobar'), index=wrap_int(2)):
     return big_str.index(s) == index
-Exception -- for puzzle StrIndex:0 'SymbolicStr' object has no attribute 'index'
+### smt2
+(set-logic ALL)
+(declare-const x String)
+(assert (= (str.indexof "foobar" x 0) 2))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "ob")
+)
+### output for cvc5
+sat
+(
+(define-fun x () String "obar")
+)
+
+Found solution ob
+Yes! Solved for puzzle  StrIndex:0
 
 Solving puzzle 622/723: StrIndex:1
 sat_func def sat(s: str, big_str="fukulagatextuj", index=10):
     return big_str.index(s) == index
 modified_func def sat(s: str, big_str=wrap_str('fukulagatextuj'), index=wrap_int(10)):
     return big_str.index(s) == index
-Exception -- for puzzle StrIndex:1 'SymbolicStr' object has no attribute 'index'
+### smt2
+(set-logic ALL)
+(declare-const x String)
+(assert (= (str.indexof "fukulagatextuj" x 0) 10))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "x")
+)
+### output for cvc5
+sat
+(
+(define-fun x () String "xtuj")
+)
+
+Found solution x
+Yes! Solved for puzzle  StrIndex:1
 
 Solving puzzle 623/723: StrIndex:2
 sat_func def sat(s: str, big_str="nunalurejijunopyrewithocukopojot", index=12):
     return big_str.index(s) == index
 modified_func def sat(s: str, big_str=wrap_str('nunalurejijunopyrewithocukopojot'), index=wrap_int(12)):
     return big_str.index(s) == index
-Exception -- for puzzle StrIndex:2 'SymbolicStr' object has no attribute 'index'
+### smt2
+(set-logic ALL)
+(declare-const x String)
+(assert (= (str.indexof "nunalurejijunopyrewithocukopojot" x 0) 12))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "no")
+)
+### output for cvc5
+sat
+(
+(define-fun x () String "nopyrewithocukopojot")
+)
+
+Found solution no
+Yes! Solved for puzzle  StrIndex:2
 
 Solving puzzle 624/723: StrIndex:3
 sat_func def sat(s: str, big_str="fu", index=1):
     return big_str.index(s) == index
 modified_func def sat(s: str, big_str=wrap_str('fu'), index=wrap_int(1)):
     return big_str.index(s) == index
-Exception -- for puzzle StrIndex:3 'SymbolicStr' object has no attribute 'index'
+### smt2
+(set-logic ALL)
+(declare-const x String)
+(assert (= (str.indexof "fu" x 0) 1))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "u")
+)
+### output for cvc5
+sat
+(
+(define-fun x () String "u")
+)
+
+Found solution u
+Yes! Solved for puzzle  StrIndex:3
 
 Solving puzzle 625/723: StrIndex:4
 sat_func def sat(s: str, big_str="fatextemedyrotichipicecojon", index=24):
     return big_str.index(s) == index
 modified_func def sat(s: str, big_str=wrap_str('fatextemedyrotichipicecojon'), index=wrap_int(24)):
     return big_str.index(s) == index
-Exception -- for puzzle StrIndex:4 'SymbolicStr' object has no attribute 'index'
+### smt2
+(set-logic ALL)
+(declare-const x String)
+(assert (= (str.indexof "fatextemedyrotichipicecojon" x 0) 24))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "j")
+)
+### output for cvc5
+sat
+(
+(define-fun x () String "jon")
+)
+
+Found solution j
+Yes! Solved for puzzle  StrIndex:4
 
 Solving puzzle 626/723: StrIndex2:0
 sat_func def sat(big_str: str, sub_str="foobar", index=2):
     return big_str.index(sub_str) == index
 modified_func def sat(big_str: str, sub_str=wrap_str('foobar'), index=wrap_int(2)):
     return big_str.index(sub_str) == index
-Exception -- for puzzle StrIndex2:0 'SymbolicStr' object has no attribute 'index'
+### smt2
+(set-logic ALL)
+(declare-const x String)
+(assert (= (str.indexof x "foobar" 0) 2))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "DBfoobar")
+)
+### output for cvc5
+sat
+(
+(define-fun x () String "AAfoobar")
+)
+
+Found solution DBfoobar
+Yes! Solved for puzzle  StrIndex2:0
 
 Solving puzzle 627/723: StrIndex2:1
 sat_func def sat(big_str: str, sub_str="quadox", index=75):
     return big_str.index(sub_str) == index
 modified_func def sat(big_str: str, sub_str=wrap_str('quadox'), index=wrap_int(75)):
     return big_str.index(sub_str) == index
-Exception -- for puzzle StrIndex2:1 'SymbolicStr' object has no attribute 'index'
+### smt2
+(set-logic ALL)
+(declare-const x String)
+(assert (= (str.indexof x "quadox" 0) 75))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+sat
+(
+(define-fun x () String "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAquadox")
+)
+
+Found solution AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAquadox
+Yes! Solved for puzzle  StrIndex2:1
 
 Solving puzzle 628/723: StrIndex2:2
 sat_func def sat(big_str: str, sub_str="votextymuvethic", index=880):
     return big_str.index(sub_str) == index
 modified_func def sat(big_str: str, sub_str=wrap_str('votextymuvethic'), index=wrap_int(880)):
     return big_str.index(sub_str) == index
-Exception -- for puzzle StrIndex2:2 'SymbolicStr' object has no attribute 'index'
+### smt2
+(set-logic ALL)
+(declare-const x String)
+(assert (= (str.indexof x "votextymuvethic" 0) 880))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+sat
+(
+(define-fun x () String "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAvotextymuvethic")
+)
+
+Found solution AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAvotextymuvethic
+Yes! Solved for puzzle  StrIndex2:2
 
 Solving puzzle 629/723: StrIndex2:3
 sat_func def sat(big_str: str, sub_str="pyrumymasekalihochyvibisamaquythifedetextityvath", index=0):
     return big_str.index(sub_str) == index
 modified_func def sat(big_str: str, sub_str=wrap_str('pyrumymasekalihochyvibisamaquythifedetextityvath'), index=wrap_int(0)):
     return big_str.index(sub_str) == index
-Exception -- for puzzle StrIndex2:3 'SymbolicStr' object has no attribute 'index'
+### smt2
+(set-logic ALL)
+(declare-const x String)
+(assert (= (str.indexof x "pyrumymasekalihochyvibisamaquythifedetextityvath" 0) 0))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () String
+    "pyrumymasekalihochyvibisamaquythifedetextityvathpyrumymasekalihochyvibisamaquythifedetextityvath")
+)
+### output for cvc5
+sat
+(
+(define-fun x () String "pyrumymasekalihochyvibisamaquythifedetextityvath")
+)
+
+Found solution pyrumymasekalihochyvibisamaquythifedetextityvathpyrumymasekalihochyvibisamaquythifedetextityvath
+Yes! Solved for puzzle  StrIndex2:3
 
 Solving puzzle 630/723: StrIndex2:4
 sat_func def sat(big_str: str, sub_str="nofufaxunetextesitocedezyxuxexyfoquichitiracyquat", index=185):
     return big_str.index(sub_str) == index
 modified_func def sat(big_str: str, sub_str=wrap_str('nofufaxunetextesitocedezyxuxexyfoquichitiracyquat'), index=wrap_int(185)):
     return big_str.index(sub_str) == index
-Exception -- for puzzle StrIndex2:4 'SymbolicStr' object has no attribute 'index'
+### smt2
+(set-logic ALL)
+(declare-const x String)
+(assert (= (str.indexof x "nofufaxunetextesitocedezyxuxexyfoquichitiracyquat" 0) 185))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+timeout
+### output for cvc5
+sat
+(
+(define-fun x () String "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnofufaxunetextesitocedezyxuxexyfoquichitiracyquat")
+)
+
+Found solution AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnofufaxunetextesitocedezyxuxexyfoquichitiracyquat
+Yes! Solved for puzzle  StrIndex2:4
 
 Solving puzzle 631/723: StrIn:0
 sat_func def sat(s: str, a="hello", b="yellow", length=4):
@@ -27836,12 +28044,12 @@ Found solution 6
 
 The symbolic execution alone currently solves:
 - 59% (214 out of 360) of `int` puzzles,
-- 26% (96 out of 363) of `str` puzzles,
-- 43% (310 out of 723) overall.
+- 29% (106 out of 363) of `str` puzzles,
+- 44% (320 out of 723) overall.
 
 with the following errors:
 - 10 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
-- 199 errors at at staging time
+- 189 errors at at staging time
 - 109 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
 - 126 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
