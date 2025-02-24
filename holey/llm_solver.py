@@ -68,16 +68,17 @@ Return only the executable Python expression without any context.
         results = extract_code_blocks(self.llm_generate(prompt))
         for result_expr in results:
             print('LLM result exp', result_expr)
-            result = eval(result_expr)
+            try:
+                result = eval(result_expr)
+            except Exception as e:
+                print("Error with eval:", str(e))
+                continue
             if ans_type == 'int':
                 try:
                     result = int(result)
                 except ValueError as e:
                     print('LLM returned bad type for int', e)
                     break
-            elif ans_type == 'str':
-                if result and result[0] in ["'", '"']:
-                    result = result[1:-1] # TODO
             if not check_result(result, sat_func):
                 print('LLM result fails to verify for puzzle '+name)
             else:
