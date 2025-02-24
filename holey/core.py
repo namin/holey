@@ -697,7 +697,7 @@ class SymbolicStr:
             if self.concrete is not None and other.concrete is not None:
                 result = self.concrete == other.concrete
             else:
-                result = self.z3_expr == other.z3_expr
+                result = self.tracer.backend.Eq(self.z3_expr, other.z3_expr)
             return SymbolicBool(result, tracer=self.tracer)
         else:
             return SymbolicBool(self.tracer.backend.BoolVal(False), tracer=self.tracer)
