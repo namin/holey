@@ -67,42 +67,42 @@ def sym_sum(iterable):
             comparison = iterable.comparison
             tracer = iterator.tracer
             
-            # Create sum variable
+            # Create single sum variable to hold total differences
             sum_var = make_symbolic(int, f"sum_{next(counter)}", tracer=tracer)
             
-            # Create a fresh position variable
-            pos_name = f"pos_{next(counter)}"
-            tracer.backend.quantified_vars.add(pos_name)
-            pos = make_symbolic(int, pos_name, tracer=tracer)
+            # Create counter variable for iteration
+            cnt_name = f"cnt_{next(counter)}"
+            tracer.backend.quantified_vars.add(cnt_name)
+            cnt = make_symbolic(int, cnt_name, tracer=tracer)
             
-            # Get the strings being compared
+            # Get strings being compared
             if len(iterator.iterables) == 2:
                 s1, s2 = iterator.iterables
                 
-                # Build comparison based on position
-                diff_expr = tracer.backend.If(
-                    tracer.backend.And(pos.z3_expr >= 0, pos.z3_expr < iterator.length.z3_expr),
+                # Create the base expression for differing characters at position cnt
+                diff_expr = tracer.backend.And(
+                    cnt.z3_expr >= 0,
+                    cnt.z3_expr < iterator.length.z3_expr,
                     tracer.backend.Not(tracer.backend.Eq(
-                        tracer.backend.StrIndex(s1.z3_expr, pos.z3_expr),
-                        tracer.backend.StrIndex(s2.z3_expr, pos.z3_expr)
-                    )),
-                    tracer.backend.BoolVal(False)
+                        tracer.backend.StrIndex(s1.z3_expr, cnt.z3_expr),
+                        tracer.backend.StrIndex(s2.z3_expr, cnt.z3_expr)
+                    ))
                 )
                 
-                # Count differences
-                count_expr = tracer.backend.If(
-                    diff_expr,
-                    tracer.backend.IntVal(1),
-                    tracer.backend.IntVal(0)
-                )
-                
-                # Sum up differences
+                # Use the diff_expr directly in constraints
                 tracer.add_constraint(
                     tracer.backend.ForAll(
-                        [pos.z3_expr],
-                        count_expr == sum_var.z3_expr / iterator.length.z3_expr
+                        [cnt.z3_expr],
+                        tracer.backend.Implies(
+                            diff_expr,
+                            sum_var.z3_expr > 0
+                        )
                     )
                 )
+                
+                # Add bounds for sum_var
+                tracer.add_constraint(sum_var.z3_expr >= 0)
+                tracer.add_constraint(sum_var.z3_expr <= iterator.length.z3_expr)
             
             return sum_var
     
