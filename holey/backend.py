@@ -214,9 +214,9 @@ library = {
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 (define-fun-rec python.join ((lst (List String)) (delim String)) String
-    (ite (= lst nil)
+    (ite (= lst (as nil (List String)))
          ""
-         (ite (= (tail lst) nil)
+         (ite (= (tail lst) (as nil (List String)))
               (head lst)
               (str.++ (head lst) 
                      delim 
@@ -638,7 +638,7 @@ class Backend():
         if xs:
             return self._record("cons", xs[0], self.StrList(xs[1:]))
         else:
-            return self._record("nil")
+            return self._record("(as nil (List String))")
 
     def StrIndexOf(self, s, sub, start) -> MockExpr:
         return self._record("str.indexof", s, sub, start)

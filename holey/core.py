@@ -58,6 +58,12 @@ class SymbolicTracer:
         if self.llm_solver:
             self.llm_solver.add_constraint_refinements(constraint, self.backend)
 
+        if self.path_conditions:
+            constraint = self.backend.Implies(
+                self.backend.And(*self.path_conditions),
+                constraint
+            )
+
         if self.forall_conditions:
             for var_expr, bounds_expr in self.forall_conditions:
                 var_decl = self.backend.Int(var_expr.decl().name())
@@ -69,11 +75,6 @@ class SymbolicTracer:
                     )
                 )
 
-        if self.path_conditions:
-            constraint = self.backend.Implies(
-                self.backend.And(*self.path_conditions),
-                constraint
-            )
         self.backend.solver.add(constraint)
     
     def check(self):
@@ -592,8 +593,8 @@ class SymbolicStr:
         return SymbolicInt(self.tracer.backend.StrIndexOf(self.z3_expr, sub.z3_expr, start.z3_expr), tracer=self.tracer)
 
     def join(self, ss):
-        ss = self.tracer.ensure_symbolic(ss)
-        return SymbolicStr(self.tracer.backend.StrJoin(self.z3_expr, self.tracer.backend.StrList([self.tracer.ensure_symbolic(x).z3_expr for x in ss.concrete])), tracer=self.tracer)
+        underlying = ss.concrete if hasattr(ss, 'concrete') and ss.concrete is not None else list(ss)
+        return SymbolicStr(self.tracer.backend.StrJoin(self.z3_expr, self.tracer.backend.StrList([self.tracer.ensure_symbolic(x).z3_expr for x in underlying])), tracer=self.tracer)
 
     def __lt__(self, other):
         other = self.tracer.ensure_symbolic(other)
