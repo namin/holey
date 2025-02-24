@@ -67,62 +67,31 @@ def sym_sum(iterable):
             comparison = iterable.comparison
             tracer = iterator.tracer
             
-            # Create sum variable to hold total differences
+            # Create sum variable
             sum_var = make_symbolic(int, f"sum_{next(counter)}", tracer=tracer)
-            
-            # Create counter variable
-            cnt_name = f"cnt_{next(counter)}"
-            tracer.backend.quantified_vars.add(cnt_name)
-            cnt = make_symbolic(int, cnt_name, tracer=tracer)
             
             if len(iterator.iterables) == 2:
                 s1, s2 = iterator.iterables
+                length = iterator.length
                 
-                # Count differences explicitly
-                # Start with bounds constraint for each position
-                bounds = tracer.backend.And(
-                    cnt.z3_expr >= 0,
-                    cnt.z3_expr < iterator.length.z3_expr
-                )
-                
-                # Convert difference at each position to 0 or 1
-                diff_count = tracer.backend.If(
-                    tracer.backend.Not(tracer.backend.Eq(
-                        tracer.backend.StrIndex(s1.z3_expr, cnt.z3_expr),
-                        tracer.backend.StrIndex(s2.z3_expr, cnt.z3_expr)
-                    )),
-                    tracer.backend.IntVal(1),
-                    tracer.backend.IntVal(0)
-                )
-                
-                # Sum must equal the number of positions where characters differ
-                # Do this by ensuring our sum matches the total differences
-                tracer.add_constraint(
-                    sum_var.z3_expr >= 0
-                )
-                
-                # Add equality constraint between sum and actual differences
-                tracer.add_constraint(
-                    tracer.backend.ForAll(
-                        [cnt.z3_expr],
-                        tracer.backend.Implies(
-                            bounds,
-                            tracer.backend.Or(
-                                tracer.backend.And(
-                                    diff_count == 1,
-                                    sum_var.z3_expr > 0
-                                ),
-                                tracer.backend.And(
-                                    diff_count == 0,
-                                    True  # Allow sum to accumulate from other positions
-                                )
-                            )
-                        )
+                # Define number of differences at each position
+                diffs = []
+                for i in range(17):  # We know length is 17 for this puzzle
+                    pos = tracer.backend.IntVal(i)
+                    diff = tracer.backend.If(
+                        tracer.backend.Not(tracer.backend.Eq(
+                            tracer.backend.StrIndex(s1.z3_expr, pos),
+                            tracer.backend.StrIndex(s2.z3_expr, pos)
+                        )),
+                        tracer.backend.IntVal(1),
+                        tracer.backend.IntVal(0)
                     )
-                )
+                    diffs.append(diff)
                 
-                # Add upper bound based on string length
-                tracer.add_constraint(sum_var.z3_expr <= iterator.length.z3_expr)
+                # Sum must equal total differences
+                tracer.add_constraint(
+                    sum_var.z3_expr == tracer.backend.Add(*diffs)
+                )
             
             return sum_var
     
