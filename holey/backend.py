@@ -569,8 +569,8 @@ class Backend():
     def Mul(self, a, b) -> MockExpr:
         return self._record("*", a, b)
     
-    def Add(self, a, b) -> MockExpr:
-        return self._record("+", a, b)
+    def Add(self, *args) -> MockExpr:
+        return self._record("+", *args)
     
     def Sub(self, a, b) -> MockExpr:
         return self._record("-", a, b)

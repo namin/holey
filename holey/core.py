@@ -524,6 +524,43 @@ class SymbolicList:
                 return result
         return SymbolicInt(count, tracer=self.tracer)
 
+class SymbolicStrIterator:
+    _counter = 0
+    
+    def __init__(self, sym_str):
+        self.tracer = sym_str.tracer
+        self.sym_str = sym_str
+        self.length = sym_str.__len__()
+        self.used = False
+        
+    def __iter__(self):
+        return self
+        
+    def __next__(self):
+        if self.used:
+            raise StopIteration
+            
+        # Create position variable directly as a Z3 variable in forall
+        pos_name = f'str_pos_{SymbolicStrIterator._counter}'
+        SymbolicStrIterator._counter += 1
+        self.tracer.backend.quantified_vars.add(pos_name)        
+        pos_var = SymbolicInt(name=pos_name, tracer=self.tracer)
+        
+        # Add bounds constraints for position
+        bounds = (pos_var.z3_expr >= 0) & (pos_var.z3_expr < self.length.z3_expr)
+        
+        # Get character at current position
+        result = SymbolicStr(
+            self.tracer.backend.StrIndex(self.sym_str.z3_expr, pos_var.z3_expr),
+            tracer=self.tracer
+        )
+        
+        # Add position variable to forall condition
+        self.tracer.forall_conditions.append((pos_var.z3_expr, bounds))
+        
+        self.used = True
+        return result
+
 class SymbolicStr:
     def __init__(self, value: Optional[Any] = None, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
         self.tracer = tracer
@@ -596,7 +633,7 @@ class SymbolicStr:
     def __iter__(self):
         if self.concrete is not None:
             return iter(self.concrete)
-        raise ValueError("__iter__ on symbolic string not yet implemented")
+        return SymbolicStrIterator(self)
 
     def __len__(self):
         if self.concrete is not None:
@@ -660,7 +697,7 @@ class SymbolicStr:
             if self.concrete is not None and other.concrete is not None:
                 result = self.concrete == other.concrete
             else:
-                result = self.z3_expr == other.z3_expr
+                result = self.tracer.backend.Eq(self.z3_expr, other.z3_expr)
             return SymbolicBool(result, tracer=self.tracer)
         else:
             return SymbolicBool(self.tracer.backend.BoolVal(False), tracer=self.tracer)
