@@ -118,7 +118,7 @@ if OLLAMA_API_KEY:
     except ModuleNotFoundError:
         generate = dummy_generate('ollama', extra=", or package 'anthropic' while setting ANTHROPIC_API_KEY")
     if generate is None:
-        model = os.environ.get('OLLAMA_MODEL', 'qwen2.5-coder')
+        model = os.environ.get('OLLAMA_MODEL', 'qwen2.5')
         def generate(prompt, max_tokens=1000, temperature=1.0, model=model):
             print(f"Sending request to Ollama (model={model}, max_tokens={max_tokens}, temp={temperature})")
             print(f"Prompt:\n{prompt}")
