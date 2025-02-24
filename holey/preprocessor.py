@@ -11,6 +11,13 @@ def reset():
     global counter
     counter = itertools.count()
 
+def sym_sorted(s):
+    if isinstance(s, SymbolicStr):
+        if s.concrete is not None:
+            return SymbolicStr("".join(sorted(s.concrete)), tracer=s.tracer)
+        return SymbolicStr(s.tracer.backend.StrSorted(s.z3_expr), tracer=s.tracer)
+    return sorted(s)
+
 class SymbolicZipIterator:
     def __init__(self, iterables, tracer):
         self.iterables = iterables
@@ -487,7 +494,7 @@ class HoleyWrapper(ast.NodeTransformer):
     def visit_Call(self, node):
         node = self.generic_visit(node)
         if isinstance(node.func, ast.Name):
-            if node.func.id in ['int', 'float', 'str', 'len', 'range', 'bin', 'ord', 'sum', 'zip']:
+            if node.func.id in ['int', 'float', 'str', 'len', 'range', 'bin', 'ord', 'sum', 'zip', 'sorted']:
                 return ast.Call(
                     func=ast.Name(id='sym_'+node.func.id, ctx=ast.Load()),
                     args=node.args,
@@ -560,7 +567,8 @@ def create_namespace(tracer):
         'sym_ord': sym_ord,
         "sym_sum": sym_sum,
         'sym_zip': sym_zip,
-        'sym_generator': sym_generator
+        'sym_generator': sym_generator,
+        'sym_sorted': sym_sorted
     }
 
 def driver(sat_func, typ, cmds=None, llm_solver=None):

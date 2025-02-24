@@ -209,6 +209,35 @@ class MockExpr:
         return self._name if self._name else str(self)
 
 library = {
+'str.sorted':
+"""
+(define-fun-rec str.min_char ((s String)) String
+  (let ((len (str.len s)))
+    (ite (<= len 1)
+         s
+         (let ((first (str.at s 0))
+               (rest_min (str.min_char (str.substr s 1 (- len 1)))))
+           (ite (str.< first rest_min)
+                first
+                rest_min)))))
+
+(define-fun-rec str.remove_first_occurrence ((s String) (c String)) String
+  (let ((len (str.len s)))
+    (ite (= len 0)
+         ""
+         (ite (= (str.at s 0) c)
+              (str.substr s 1 (- len 1))
+              (str.++ (str.substr s 0 1) 
+                     (str.remove_first_occurrence (str.substr s 1 (- len 1)) c))))))
+
+(define-fun-rec str.sorted ((s String)) String
+  (let ((len (str.len s)))
+    (ite (= len 0)
+         ""
+         (let ((min_c (str.min_char s)))
+           (str.++ min_c (str.sorted (str.remove_first_occurrence s min_c)))))))
+"""
+,
 'python.join':
 """
 (declare-datatypes ((List 1)) 
@@ -661,6 +690,9 @@ class Backend():
 
     def StrReverse(self, s) -> MockExpr:
         return self._record("str.reverse", s)
+
+    def StrSorted(self, s) -> MockExpr:
+        return self._record("str.sorted", s)
 
     def StrCount(self, s, sub) -> MockExpr:
         return self._record("str.count", s, sub)
