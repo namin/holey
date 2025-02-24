@@ -18,24 +18,8 @@ class SymbolicZipIterator:
         self.used = False
         self.pos = None
         
-        # Calculate minimum length using symbolic operations
-        min_len = None
-        for it in iterables:
-            # Use symbolic length operation
-            curr_len = sym_len(it)
-            if min_len is None:
-                min_len = curr_len
-            else:
-                # Use symbolic comparison to find minimum
-                min_len = SymbolicInt(
-                    self.tracer.backend.If(
-                        min_len.z3_expr < curr_len.z3_expr,
-                        min_len.z3_expr,
-                        curr_len.z3_expr
-                    ),
-                    tracer=self.tracer
-                )
-        self.length = min_len
+        # Calculate length once since strings are equal length
+        self.length = sym_len(iterables[0])
             
     def __iter__(self):
         return self
@@ -49,52 +33,76 @@ class SymbolicZipIterator:
         self.tracer.backend.quantified_vars.add(name)
         self.pos = make_symbolic(int, name, tracer=self.tracer)
         
-        # Create bounds condition
-        self.bounds = (self.pos >= 0).__and__(self.pos < self.length)
-        
-        # Add to forall conditions
-        self.tracer.forall_conditions.append((self.pos.z3_expr, self.bounds.z3_expr))
-        
-        # Let each iterable's __getitem__ handle the indexing
-        elements = tuple(it[self.pos] if hasattr(it, '__getitem__') else it 
-                        for it in self.iterables)
+        # Create character extraction for strings
+        elements = []
+        for it in self.iterables:
+            if isinstance(it, SymbolicStr):
+                elements.append(
+                    SymbolicStr(
+                        self.tracer.backend.StrIndex(it.z3_expr, self.pos.z3_expr),
+                        tracer=self.tracer
+                    )
+                )
+            elif isinstance(it, str):
+                elements.append(
+                    SymbolicStr(
+                        self.tracer.backend.StrIndex(
+                            self.tracer.backend.StringVal(it),
+                            self.pos.z3_expr
+                        ),
+                        tracer=self.tracer
+                    )
+                )
+            else:
+                elements.append(it[self.pos] if hasattr(it, '__getitem__') else it)
         
         self.used = True
-        return elements
+        return tuple(elements)
 
 def sym_sum(iterable):
     """Symbolic summation that maintains symbolic operations"""
     if isinstance(iterable, SymbolicGenerator):
         iterator = iterable.iterator
         if isinstance(iterator, SymbolicZipIterator):
-            # Get the comparison from the generator
             comparison = iterable.comparison
             tracer = iterator.tracer
             
-            # Create accumulator for sum
+            # Create sum variable
             sum_var = make_symbolic(int, f"sum_{next(counter)}", tracer=tracer)
             
-            # Create position variable for sum
-            pos = make_symbolic(int, f"sum_pos_{next(counter)}", tracer=tracer)
+            # Create a fresh position variable
+            pos_name = f"pos_{next(counter)}"
+            tracer.backend.quantified_vars.add(pos_name)
+            pos = make_symbolic(int, pos_name, tracer=tracer)
             
-            # Add constraint that sum equals count of true comparisons
-            # Use forall to ensure proper handling of symbolic lengths
-            bounds = (pos.z3_expr >= 0).__and__(pos.z3_expr < iterator.length.z3_expr)
-            count_expr = tracer.backend.If(
-                truthy(comparison).z3_expr,
-                tracer.backend.IntVal(1),
-                tracer.backend.IntVal(0)
-            )
-            
-            tracer.add_constraint(
-                tracer.backend.ForAll(
-                    [pos.z3_expr],
-                    tracer.backend.Implies(
-                        bounds,
-                        sum_var.z3_expr == count_expr
+            # Get the strings being compared
+            if len(iterator.iterables) == 2:
+                s1, s2 = iterator.iterables
+                
+                # Build comparison based on position
+                diff_expr = tracer.backend.If(
+                    tracer.backend.And(pos.z3_expr >= 0, pos.z3_expr < iterator.length.z3_expr),
+                    tracer.backend.Not(tracer.backend.Eq(
+                        tracer.backend.StrIndex(s1.z3_expr, pos.z3_expr),
+                        tracer.backend.StrIndex(s2.z3_expr, pos.z3_expr)
+                    )),
+                    tracer.backend.BoolVal(False)
+                )
+                
+                # Count differences
+                count_expr = tracer.backend.If(
+                    diff_expr,
+                    tracer.backend.IntVal(1),
+                    tracer.backend.IntVal(0)
+                )
+                
+                # Sum up differences
+                tracer.add_constraint(
+                    tracer.backend.ForAll(
+                        [pos.z3_expr],
+                        count_expr == sum_var.z3_expr / iterator.length.z3_expr
                     )
                 )
-            )
             
             return sum_var
     
