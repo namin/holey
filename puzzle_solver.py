@@ -42,8 +42,10 @@ class PuzzleSolver:
         self.smtlib_stats = defaultdict(list)
         self.names_of_extrapolated_puzzles = []
         self.names_of_successfully_extrapolated_puzzles = []
+        self.total_count = 0
+        self.llm_solver = None
 
-    def symbolic_solve1(self, typ, sat_func: str, ans_type: str, name: str, cmds, llm_solver) -> Optional[str]:
+    def symbolic_solve1(self, typ, sat_func: str, ans_type: str, name: str, cmds, llm_solver) -> Tuple[Any, Any, Any, str]:
         sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver)
         tracer = sym_var.tracer
         with capture_output() as captured:
@@ -52,7 +54,7 @@ class PuzzleSolver:
         print(log)
         return tracer, sym_var, solution, log
 
-    def symbolic_solve(self, sat_func: str, ans_type: str, name: str, cmds, llm_solver, counting=True) -> Optional[str]:
+    def symbolic_solve(self, sat_func: str, ans_type: str, name: str, cmds, llm_solver, counting=True) -> Tuple[Optional[Any], str]:
         typ = None
         if ans_type == 'int':
             typ = int
@@ -63,14 +65,14 @@ class PuzzleSolver:
         if not typ:
             print("Unsupported answer type", ans_type)
             self.error_unsupported_answer_type += 1
-            return None
+            return None, ""
 
         if counting:
             self.count += 1
             self.counts[ans_type] += 1
-        tracer, sym_var, solution, log = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=None)
+        tracer, sym_var, solution, log = self.symbolic_solve1(typ, sat_func, ans_type, name, cmds, llm_solver=None)
         if False and llm_solver and solution is None:
-            tracer_llm, sym_var_llm, solution_llm, log_llm = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=llm_solver)
+            tracer_llm, sym_var_llm, solution_llm, log_llm = self.symbolic_solve1(typ, sat_func, ans_type, name, cmds, llm_solver=llm_solver)
             if solution is not None:
                 tracer, sym_var, solution, log = tracer_llm, sym_var_llm, solution_llm, log_llm
         if solution is None:
