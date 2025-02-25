@@ -1,0 +1,1312 @@
+Starting with 1715 puzzles...
+Running benchmarks on 51 puzzles...
+Filtered to puzzles of answer types: ['float']
+
+Solving puzzle 1/51: Study_13:0
+sat_func def sat(x: float):
+    return str(x - 3.1415).startswith("123.456")
+modified_func def sat(x: float):
+    return sym_str(x - 3.1415).startswith('123.456')
+Exception -- for puzzle Study_13:0 found bad constraint False of type <class 'bool'>
+
+Solving puzzle 2/51: Frac:0
+sat_func def sat(x: float, v=523.12892):
+    return 0 <= x < 1 and (v - x).is_integer()
+modified_func def sat(x: float, v=523.12892):
+    return (wrap_int(0) <= x).__and__(x < wrap_int(1)).__and__((v - x).is_integer())
+Exception -- for puzzle Frac:0 unsupported operand type(s) for -: 'float' and 'SymbolicFloat'
+
+Solving puzzle 3/51: Frac:1
+sat_func def sat(x: float, v=93.86070917102649):
+    return 0 <= x < 1 and (v - x).is_integer()
+modified_func def sat(x: float, v=93.86070917102649):
+    return (wrap_int(0) <= x).__and__(x < wrap_int(1)).__and__((v - x).is_integer())
+Exception -- for puzzle Frac:1 unsupported operand type(s) for -: 'float' and 'SymbolicFloat'
+
+Solving puzzle 4/51: Frac:2
+sat_func def sat(x: float, v=-6.770237138115334):
+    return 0 <= x < 1 and (v - x).is_integer()
+modified_func def sat(x: float, v=-6.770237138115334):
+    return (wrap_int(0) <= x).__and__(x < wrap_int(1)).__and__((v - x).is_integer())
+Exception -- for puzzle Frac:2 unsupported operand type(s) for -: 'float' and 'SymbolicFloat'
+
+Solving puzzle 5/51: Frac:3
+sat_func def sat(x: float, v=61.58244309946389):
+    return 0 <= x < 1 and (v - x).is_integer()
+modified_func def sat(x: float, v=61.58244309946389):
+    return (wrap_int(0) <= x).__and__(x < wrap_int(1)).__and__((v - x).is_integer())
+Exception -- for puzzle Frac:3 unsupported operand type(s) for -: 'float' and 'SymbolicFloat'
+
+Solving puzzle 6/51: Frac:4
+sat_func def sat(x: float, v=-80.9341003381162):
+    return 0 <= x < 1 and (v - x).is_integer()
+modified_func def sat(x: float, v=-80.9341003381162):
+    return (wrap_int(0) <= x).__and__(x < wrap_int(1)).__and__((v - x).is_integer())
+Exception -- for puzzle Frac:4 unsupported operand type(s) for -: 'float' and 'SymbolicFloat'
+
+Solving puzzle 7/51: MinSquaredDeviation:0
+sat_func def sat(x: float, nums=[12, -2, 14, 3, -15, 10, -45, 3, 30]):
+    return sum((n - x) ** 2 for n in nums) * len(nums) <= sum((m - n) ** 2 for m in nums for n in nums) * .5 + 1e-4
+modified_func def sat(x: float, nums=wrap_list([wrap_int(12), -wrap_int(2), wrap_int(14), wrap_int(3), -wrap_int(15), wrap_int(10), -wrap_int(45), wrap_int(3), wrap_int(30)])):
+    return sym_sum(sym_generator(((n - x) ** wrap_int(2) for n in nums))) * sym_len(nums) <= sym_sum(sym_generator(((m - n) ** wrap_int(2) for m in nums for n in nums))) * 0.5 + 0.0001
+Exception -- for puzzle MinSquaredDeviation:0 unsupported operand type(s) for +: 'int' and 'SymbolicFloat'
+
+Solving puzzle 8/51: MinSquaredDeviation:1
+sat_func def sat(x: float, nums=[-47, -58, -46, -29, 48, -7, 85, -48]):
+    return sum((n - x) ** 2 for n in nums) * len(nums) <= sum((m - n) ** 2 for m in nums for n in nums) * .5 + 1e-4
+modified_func def sat(x: float, nums=wrap_list([-wrap_int(47), -wrap_int(58), -wrap_int(46), -wrap_int(29), wrap_int(48), -wrap_int(7), wrap_int(85), -wrap_int(48)])):
+    return sym_sum(sym_generator(((n - x) ** wrap_int(2) for n in nums))) * sym_len(nums) <= sym_sum(sym_generator(((m - n) ** wrap_int(2) for m in nums for n in nums))) * 0.5 + 0.0001
+Exception -- for puzzle MinSquaredDeviation:1 unsupported operand type(s) for +: 'int' and 'SymbolicFloat'
+
+Solving puzzle 9/51: MinSquaredDeviation:2
+sat_func def sat(x: float, nums=[-76, -99, 72, 33, 21, -54, -21, 24, 97, 89]):
+    return sum((n - x) ** 2 for n in nums) * len(nums) <= sum((m - n) ** 2 for m in nums for n in nums) * .5 + 1e-4
+modified_func def sat(x: float, nums=wrap_list([-wrap_int(76), -wrap_int(99), wrap_int(72), wrap_int(33), wrap_int(21), -wrap_int(54), -wrap_int(21), wrap_int(24), wrap_int(97), wrap_int(89)])):
+    return sym_sum(sym_generator(((n - x) ** wrap_int(2) for n in nums))) * sym_len(nums) <= sym_sum(sym_generator(((m - n) ** wrap_int(2) for m in nums for n in nums))) * 0.5 + 0.0001
+Exception -- for puzzle MinSquaredDeviation:2 unsupported operand type(s) for +: 'int' and 'SymbolicFloat'
+
+Solving puzzle 10/51: MinSquaredDeviation:3
+sat_func def sat(x: float, nums=[-62, -53, -80]):
+    return sum((n - x) ** 2 for n in nums) * len(nums) <= sum((m - n) ** 2 for m in nums for n in nums) * .5 + 1e-4
+modified_func def sat(x: float, nums=wrap_list([-wrap_int(62), -wrap_int(53), -wrap_int(80)])):
+    return sym_sum(sym_generator(((n - x) ** wrap_int(2) for n in nums))) * sym_len(nums) <= sym_sum(sym_generator(((m - n) ** wrap_int(2) for m in nums for n in nums))) * 0.5 + 0.0001
+Exception -- for puzzle MinSquaredDeviation:3 unsupported operand type(s) for +: 'int' and 'SymbolicFloat'
+
+Solving puzzle 11/51: MinSquaredDeviation:4
+sat_func def sat(x: float, nums=[-76, 76, -88, 37, 7]):
+    return sum((n - x) ** 2 for n in nums) * len(nums) <= sum((m - n) ** 2 for m in nums for n in nums) * .5 + 1e-4
+modified_func def sat(x: float, nums=wrap_list([-wrap_int(76), wrap_int(76), -wrap_int(88), wrap_int(37), wrap_int(7)])):
+    return sym_sum(sym_generator(((n - x) ** wrap_int(2) for n in nums))) * sym_len(nums) <= sym_sum(sym_generator(((m - n) ** wrap_int(2) for m in nums for n in nums))) * 0.5 + 0.0001
+Exception -- for puzzle MinSquaredDeviation:4 unsupported operand type(s) for +: 'int' and 'SymbolicFloat'
+
+Solving puzzle 12/51: OddDegreePolynomialRoot:0
+sat_func def sat(root: float, coeffs=[1, 2, 3, 17]):
+    return abs(sum(coeff * (root ** i) for i, coeff in enumerate(coeffs))) < 1e-4
+modified_func def sat(root: float, coeffs=wrap_list([wrap_int(1), wrap_int(2), wrap_int(3), wrap_int(17)])):
+    return abs(sym_sum(sym_generator((coeff * root ** i for i, coeff in enumerate(coeffs))))) < 0.0001
+Exception -- for puzzle OddDegreePolynomialRoot:0 unsupported operand type(s) for ** or pow(): 'SymbolicFloat' and 'int'
+
+Solving puzzle 13/51: OddDegreePolynomialRoot:1
+sat_func def sat(root: float, coeffs=[-1, -5, 4, -8, 3, -1, 0, 7]):
+    return abs(sum(coeff * (root ** i) for i, coeff in enumerate(coeffs))) < 1e-4
+modified_func def sat(root: float, coeffs=wrap_list([-wrap_int(1), -wrap_int(5), wrap_int(4), -wrap_int(8), wrap_int(3), -wrap_int(1), wrap_int(0), wrap_int(7)])):
+    return abs(sym_sum(sym_generator((coeff * root ** i for i, coeff in enumerate(coeffs))))) < 0.0001
+Exception -- for puzzle OddDegreePolynomialRoot:1 unsupported operand type(s) for ** or pow(): 'SymbolicFloat' and 'int'
+
+Solving puzzle 14/51: OddDegreePolynomialRoot:2
+sat_func def sat(root: float, coeffs=[7, 1]):
+    return abs(sum(coeff * (root ** i) for i, coeff in enumerate(coeffs))) < 1e-4
+modified_func def sat(root: float, coeffs=wrap_list([wrap_int(7), wrap_int(1)])):
+    return abs(sym_sum(sym_generator((coeff * root ** i for i, coeff in enumerate(coeffs))))) < 0.0001
+Exception -- for puzzle OddDegreePolynomialRoot:2 unsupported operand type(s) for ** or pow(): 'SymbolicFloat' and 'int'
+
+Solving puzzle 15/51: OddDegreePolynomialRoot:3
+sat_func def sat(root: float, coeffs=[1, 4, 1, -7, 5, 0, -10, -9, 4, 9]):
+    return abs(sum(coeff * (root ** i) for i, coeff in enumerate(coeffs))) < 1e-4
+modified_func def sat(root: float, coeffs=wrap_list([wrap_int(1), wrap_int(4), wrap_int(1), -wrap_int(7), wrap_int(5), wrap_int(0), -wrap_int(10), -wrap_int(9), wrap_int(4), wrap_int(9)])):
+    return abs(sym_sum(sym_generator((coeff * root ** i for i, coeff in enumerate(coeffs))))) < 0.0001
+Exception -- for puzzle OddDegreePolynomialRoot:3 unsupported operand type(s) for ** or pow(): 'SymbolicFloat' and 'int'
+
+Solving puzzle 16/51: OddDegreePolynomialRoot:4
+sat_func def sat(root: float, coeffs=[7, 8]):
+    return abs(sum(coeff * (root ** i) for i, coeff in enumerate(coeffs))) < 1e-4
+modified_func def sat(root: float, coeffs=wrap_list([wrap_int(7), wrap_int(8)])):
+    return abs(sym_sum(sym_generator((coeff * root ** i for i, coeff in enumerate(coeffs))))) < 0.0001
+Exception -- for puzzle OddDegreePolynomialRoot:4 unsupported operand type(s) for ** or pow(): 'SymbolicFloat' and 'int'
+
+Solving puzzle 17/51: LargestStringNum:0
+sat_func def sat(x: float, str_nums=['1,3', '-11', '17.5', '-11', '2', '2.2', '2,2', '4', '-18,18', '99.09']):
+    found = False
+    for s in str_nums:
+        y = float(s.replace(",", "."))
+        assert y <= x
+        if y == x:
+            found = True
+    return found
+modified_func def sat(x: float, str_nums=wrap_list([wrap_str('1,3'), wrap_str('-11'), wrap_str('17.5'), wrap_str('-11'), wrap_str('2'), wrap_str('2.2'), wrap_str('2,2'), wrap_str('4'), wrap_str('-18,18'), wrap_str('99.09')])):
+    found = False
+    for s in str_nums:
+        y = sym_float(s.replace(wrap_str(','), wrap_str('.')))
+        _assert(y <= x)
+        if y == x:
+            found = True
+    return found
+### smt2
+(set-logic ALL)
+
+(define-fun str.to.float ((s String)) Real
+  (let ((dot_pos (str.indexof s "." 0)))
+    (ite (= dot_pos (- 1))
+      ; No decimal point - convert whole string as integer
+      (to_real (str.to_int s))
+      ; Has decimal point - handle integer and decimal parts
+      (let ((int_part (str.substr s 0 dot_pos))
+            (dec_part (str.substr s (+ dot_pos 1) (- (str.len s) (+ dot_pos 1)))))
+        (+ (to_real (str.to_int int_part))
+           (/ (to_real (str.to_int dec_part))
+              (^ 10.0 (- (str.len s) (+ dot_pos 1)))))))))
+
+(declare-const x Real)
+(assert (<= (str.to.float "1.3") (Real x)))
+(assert (=> (= (str.to.float "1.3") (Real x)) (<= (str.to.float "-11") (Real x))))
+(assert (=> (and (= (str.to.float "1.3") (Real x)) (= (str.to.float "-11") (Real x))) (<= (str.to.float "17.5") (Real x))))
+(assert (=> (and (= (str.to.float "1.3") (Real x)) (= (str.to.float "-11") (Real x)) (= (str.to.float "17.5") (Real x))) (<= (str.to.float "-11") (Real x))))
+(assert (=> (and (= (str.to.float "1.3") (Real x)) (= (str.to.float "-11") (Real x)) (= (str.to.float "17.5") (Real x)) (= (str.to.float "-11") (Real x))) (<= (str.to.float "2") (Real x))))
+(assert (=> (and (= (str.to.float "1.3") (Real x)) (= (str.to.float "-11") (Real x)) (= (str.to.float "17.5") (Real x)) (= (str.to.float "-11") (Real x)) (= (str.to.float "2") (Real x))) (<= (str.to.float "2.2") (Real x))))
+(assert (=> (and (= (str.to.float "1.3") (Real x)) (= (str.to.float "-11") (Real x)) (= (str.to.float "17.5") (Real x)) (= (str.to.float "-11") (Real x)) (= (str.to.float "2") (Real x)) (= (str.to.float "2.2") (Real x))) (<= (str.to.float "2.2") (Real x))))
+(assert (=> (and (= (str.to.float "1.3") (Real x)) (= (str.to.float "-11") (Real x)) (= (str.to.float "17.5") (Real x)) (= (str.to.float "-11") (Real x)) (= (str.to.float "2") (Real x)) (= (str.to.float "2.2") (Real x)) (= (str.to.float "2.2") (Real x))) (<= (str.to.float "4") (Real x))))
+(assert (=> (and (= (str.to.float "1.3") (Real x)) (= (str.to.float "-11") (Real x)) (= (str.to.float "17.5") (Real x)) (= (str.to.float "-11") (Real x)) (= (str.to.float "2") (Real x)) (= (str.to.float "2.2") (Real x)) (= (str.to.float "2.2") (Real x)) (= (str.to.float "4") (Real x))) (<= (str.to.float "-18.18") (Real x))))
+(assert (=> (and (= (str.to.float "1.3") (Real x)) (= (str.to.float "-11") (Real x)) (= (str.to.float "17.5") (Real x)) (= (str.to.float "-11") (Real x)) (= (str.to.float "2") (Real x)) (= (str.to.float "2.2") (Real x)) (= (str.to.float "2.2") (Real x)) (= (str.to.float "4") (Real x)) (= (str.to.float "-18.18") (Real x))) (<= (str.to.float "99.09") (Real x))))
+(assert (=> (and (= (str.to.float "1.3") (Real x)) (= (str.to.float "-11") (Real x)) (= (str.to.float "17.5") (Real x)) (= (str.to.float "-11") (Real x)) (= (str.to.float "2") (Real x)) (= (str.to.float "2.2") (Real x)) (= (str.to.float "2.2") (Real x)) (= (str.to.float "4") (Real x)) (= (str.to.float "-18.18") (Real x)) (= (str.to.float "99.09") (Real x))) true))
+(assert (<= (str.to.float "1.3") (Real x)))
+(assert (=> (not (= (str.to.float "1.3") (Real x))) (<= (str.to.float "-11") (Real x))))
+(assert (=> (and (not (= (str.to.float "1.3") (Real x))) (not (= (str.to.float "-11") (Real x)))) (<= (str.to.float "17.5") (Real x))))
+(assert (=> (and (not (= (str.to.float "1.3") (Real x))) (not (= (str.to.float "-11") (Real x))) (not (= (str.to.float "17.5") (Real x)))) (<= (str.to.float "-11") (Real x))))
+(assert (=> (and (not (= (str.to.float "1.3") (Real x))) (not (= (str.to.float "-11") (Real x))) (not (= (str.to.float "17.5") (Real x))) (not (= (str.to.float "-11") (Real x)))) (<= (str.to.float "2") (Real x))))
+(assert (=> (and (not (= (str.to.float "1.3") (Real x))) (not (= (str.to.float "-11") (Real x))) (not (= (str.to.float "17.5") (Real x))) (not (= (str.to.float "-11") (Real x))) (not (= (str.to.float "2") (Real x)))) (<= (str.to.float "2.2") (Real x))))
+(assert (=> (and (not (= (str.to.float "1.3") (Real x))) (not (= (str.to.float "-11") (Real x))) (not (= (str.to.float "17.5") (Real x))) (not (= (str.to.float "-11") (Real x))) (not (= (str.to.float "2") (Real x))) (not (= (str.to.float "2.2") (Real x)))) (<= (str.to.float "2.2") (Real x))))
+(assert (=> (and (not (= (str.to.float "1.3") (Real x))) (not (= (str.to.float "-11") (Real x))) (not (= (str.to.float "17.5") (Real x))) (not (= (str.to.float "-11") (Real x))) (not (= (str.to.float "2") (Real x))) (not (= (str.to.float "2.2") (Real x))) (not (= (str.to.float "2.2") (Real x)))) (<= (str.to.float "4") (Real x))))
+(assert (=> (and (not (= (str.to.float "1.3") (Real x))) (not (= (str.to.float "-11") (Real x))) (not (= (str.to.float "17.5") (Real x))) (not (= (str.to.float "-11") (Real x))) (not (= (str.to.float "2") (Real x))) (not (= (str.to.float "2.2") (Real x))) (not (= (str.to.float "2.2") (Real x))) (not (= (str.to.float "4") (Real x)))) (<= (str.to.float "-18.18") (Real x))))
+(assert (=> (and (not (= (str.to.float "1.3") (Real x))) (not (= (str.to.float "-11") (Real x))) (not (= (str.to.float "17.5") (Real x))) (not (= (str.to.float "-11") (Real x))) (not (= (str.to.float "2") (Real x))) (not (= (str.to.float "2.2") (Real x))) (not (= (str.to.float "2.2") (Real x))) (not (= (str.to.float "4") (Real x))) (not (= (str.to.float "-18.18") (Real x)))) (<= (str.to.float "99.09") (Real x))))
+(assert (=> (and (not (= (str.to.float "1.3") (Real x))) (not (= (str.to.float "-11") (Real x))) (not (= (str.to.float "17.5") (Real x))) (not (= (str.to.float "-11") (Real x))) (not (= (str.to.float "2") (Real x))) (not (= (str.to.float "2.2") (Real x))) (not (= (str.to.float "2.2") (Real x))) (not (= (str.to.float "4") (Real x))) (not (= (str.to.float "-18.18") (Real x))) (not (= (str.to.float "99.09") (Real x)))) false))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 16 column 40: unknown constant Real (Real) ")
+(error "line 17 column 43: unknown constant Real (Real) ")
+(error "line 18 column 48: unknown constant Real (Real) ")
+(error "line 19 column 48: unknown constant Real (Real) ")
+(error "line 20 column 48: unknown constant Real (Real) ")
+(error "line 21 column 48: unknown constant Real (Real) ")
+(error "line 22 column 48: unknown constant Real (Real) ")
+(error "line 23 column 48: unknown constant Real (Real) ")
+(error "line 24 column 48: unknown constant Real (Real) ")
+(error "line 25 column 48: unknown constant Real (Real) ")
+(error "line 26 column 48: unknown constant Real (Real) ")
+(error "line 27 column 40: unknown constant Real (Real) ")
+(error "line 28 column 48: unknown constant Real (Real) ")
+(error "line 29 column 53: unknown constant Real (Real) ")
+(error "line 30 column 53: unknown constant Real (Real) ")
+(error "line 31 column 53: unknown constant Real (Real) ")
+(error "line 32 column 53: unknown constant Real (Real) ")
+(error "line 33 column 53: unknown constant Real (Real) ")
+(error "line 34 column 53: unknown constant Real (Real) ")
+(error "line 35 column 53: unknown constant Real (Real) ")
+(error "line 36 column 53: unknown constant Real (Real) ")
+(error "line 37 column 53: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:13.52: expecting same arithmetic types to POW")
+
+Could not find any solution for puzzle LargestStringNum:0
+Too many constants for extrapolation
+
+Solving puzzle 18/51: LargestStringNum:1
+sat_func def sat(x: float, str_nums=['31.39683666368859', '73,72440474051831', '72.34060469647804', '73']):
+    found = False
+    for s in str_nums:
+        y = float(s.replace(",", "."))
+        assert y <= x
+        if y == x:
+            found = True
+    return found
+modified_func def sat(x: float, str_nums=wrap_list([wrap_str('31.39683666368859'), wrap_str('73,72440474051831'), wrap_str('72.34060469647804'), wrap_str('73')])):
+    found = False
+    for s in str_nums:
+        y = sym_float(s.replace(wrap_str(','), wrap_str('.')))
+        _assert(y <= x)
+        if y == x:
+            found = True
+    return found
+### smt2
+(set-logic ALL)
+
+(define-fun str.to.float ((s String)) Real
+  (let ((dot_pos (str.indexof s "." 0)))
+    (ite (= dot_pos (- 1))
+      ; No decimal point - convert whole string as integer
+      (to_real (str.to_int s))
+      ; Has decimal point - handle integer and decimal parts
+      (let ((int_part (str.substr s 0 dot_pos))
+            (dec_part (str.substr s (+ dot_pos 1) (- (str.len s) (+ dot_pos 1)))))
+        (+ (to_real (str.to_int int_part))
+           (/ (to_real (str.to_int dec_part))
+              (^ 10.0 (- (str.len s) (+ dot_pos 1)))))))))
+
+(declare-const x Real)
+(assert (<= (str.to.float "31.39683666368859") (Real x)))
+(assert (=> (= (str.to.float "31.39683666368859") (Real x)) (<= (str.to.float "73.72440474051831") (Real x))))
+(assert (=> (and (= (str.to.float "31.39683666368859") (Real x)) (= (str.to.float "73.72440474051831") (Real x))) (<= (str.to.float "72.34060469647804") (Real x))))
+(assert (=> (and (= (str.to.float "31.39683666368859") (Real x)) (= (str.to.float "73.72440474051831") (Real x)) (= (str.to.float "72.34060469647804") (Real x))) (<= (str.to.float "73") (Real x))))
+(assert (=> (and (= (str.to.float "31.39683666368859") (Real x)) (= (str.to.float "73.72440474051831") (Real x)) (= (str.to.float "72.34060469647804") (Real x)) (= (str.to.float "73") (Real x))) true))
+(assert (<= (str.to.float "31.39683666368859") (Real x)))
+(assert (=> (not (= (str.to.float "31.39683666368859") (Real x))) (<= (str.to.float "73.72440474051831") (Real x))))
+(assert (=> (and (not (= (str.to.float "31.39683666368859") (Real x))) (not (= (str.to.float "73.72440474051831") (Real x)))) (<= (str.to.float "72.34060469647804") (Real x))))
+(assert (=> (and (not (= (str.to.float "31.39683666368859") (Real x))) (not (= (str.to.float "73.72440474051831") (Real x))) (not (= (str.to.float "72.34060469647804") (Real x)))) (<= (str.to.float "73") (Real x))))
+(assert (=> (and (not (= (str.to.float "31.39683666368859") (Real x))) (not (= (str.to.float "73.72440474051831") (Real x))) (not (= (str.to.float "72.34060469647804") (Real x))) (not (= (str.to.float "73") (Real x)))) false))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 16 column 54: unknown constant Real (Real) ")
+(error "line 17 column 57: unknown constant Real (Real) ")
+(error "line 18 column 62: unknown constant Real (Real) ")
+(error "line 19 column 62: unknown constant Real (Real) ")
+(error "line 20 column 62: unknown constant Real (Real) ")
+(error "line 21 column 54: unknown constant Real (Real) ")
+(error "line 22 column 62: unknown constant Real (Real) ")
+(error "line 23 column 67: unknown constant Real (Real) ")
+(error "line 24 column 67: unknown constant Real (Real) ")
+(error "line 25 column 67: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:13.52: expecting same arithmetic types to POW")
+
+Could not find any solution for puzzle LargestStringNum:1
+Too many constants for extrapolation
+
+Solving puzzle 19/51: LargestStringNum:2
+sat_func def sat(x: float, str_nums=['-6', '68', '-100', '42,449764091997196', '-29,24317717823544', '-41.15991554949425', '93.91903086808122', '-40', '95,64713000645497', '10.987133348617888', '-12', '-30', '-67.5420580170809', '58', '66,77819624303987', '-37.8232752327492', '8', '-99', '98']):
+    found = False
+    for s in str_nums:
+        y = float(s.replace(",", "."))
+        assert y <= x
+        if y == x:
+            found = True
+    return found
+modified_func def sat(x: float, str_nums=wrap_list([wrap_str('-6'), wrap_str('68'), wrap_str('-100'), wrap_str('42,449764091997196'), wrap_str('-29,24317717823544'), wrap_str('-41.15991554949425'), wrap_str('93.91903086808122'), wrap_str('-40'), wrap_str('95,64713000645497'), wrap_str('10.987133348617888'), wrap_str('-12'), wrap_str('-30'), wrap_str('-67.5420580170809'), wrap_str('58'), wrap_str('66,77819624303987'), wrap_str('-37.8232752327492'), wrap_str('8'), wrap_str('-99'), wrap_str('98')])):
+    found = False
+    for s in str_nums:
+        y = sym_float(s.replace(wrap_str(','), wrap_str('.')))
+        _assert(y <= x)
+        if y == x:
+            found = True
+    return found
+### smt2
+(set-logic ALL)
+
+(define-fun str.to.float ((s String)) Real
+  (let ((dot_pos (str.indexof s "." 0)))
+    (ite (= dot_pos (- 1))
+      ; No decimal point - convert whole string as integer
+      (to_real (str.to_int s))
+      ; Has decimal point - handle integer and decimal parts
+      (let ((int_part (str.substr s 0 dot_pos))
+            (dec_part (str.substr s (+ dot_pos 1) (- (str.len s) (+ dot_pos 1)))))
+        (+ (to_real (str.to_int int_part))
+           (/ (to_real (str.to_int dec_part))
+              (^ 10.0 (- (str.len s) (+ dot_pos 1)))))))))
+
+(declare-const x Real)
+(assert (<= (str.to.float "-6") (Real x)))
+(assert (=> (= (str.to.float "-6") (Real x)) (<= (str.to.float "68") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x))) (<= (str.to.float "-100") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x))) (<= (str.to.float "42.449764091997196") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x))) (<= (str.to.float "-29.24317717823544") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x)) (= (str.to.float "-29.24317717823544") (Real x))) (<= (str.to.float "-41.15991554949425") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x)) (= (str.to.float "-29.24317717823544") (Real x)) (= (str.to.float "-41.15991554949425") (Real x))) (<= (str.to.float "93.91903086808122") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x)) (= (str.to.float "-29.24317717823544") (Real x)) (= (str.to.float "-41.15991554949425") (Real x)) (= (str.to.float "93.91903086808122") (Real x))) (<= (str.to.float "-40") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x)) (= (str.to.float "-29.24317717823544") (Real x)) (= (str.to.float "-41.15991554949425") (Real x)) (= (str.to.float "93.91903086808122") (Real x)) (= (str.to.float "-40") (Real x))) (<= (str.to.float "95.64713000645497") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x)) (= (str.to.float "-29.24317717823544") (Real x)) (= (str.to.float "-41.15991554949425") (Real x)) (= (str.to.float "93.91903086808122") (Real x)) (= (str.to.float "-40") (Real x)) (= (str.to.float "95.64713000645497") (Real x))) (<= (str.to.float "10.987133348617888") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x)) (= (str.to.float "-29.24317717823544") (Real x)) (= (str.to.float "-41.15991554949425") (Real x)) (= (str.to.float "93.91903086808122") (Real x)) (= (str.to.float "-40") (Real x)) (= (str.to.float "95.64713000645497") (Real x)) (= (str.to.float "10.987133348617888") (Real x))) (<= (str.to.float "-12") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x)) (= (str.to.float "-29.24317717823544") (Real x)) (= (str.to.float "-41.15991554949425") (Real x)) (= (str.to.float "93.91903086808122") (Real x)) (= (str.to.float "-40") (Real x)) (= (str.to.float "95.64713000645497") (Real x)) (= (str.to.float "10.987133348617888") (Real x)) (= (str.to.float "-12") (Real x))) (<= (str.to.float "-30") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x)) (= (str.to.float "-29.24317717823544") (Real x)) (= (str.to.float "-41.15991554949425") (Real x)) (= (str.to.float "93.91903086808122") (Real x)) (= (str.to.float "-40") (Real x)) (= (str.to.float "95.64713000645497") (Real x)) (= (str.to.float "10.987133348617888") (Real x)) (= (str.to.float "-12") (Real x)) (= (str.to.float "-30") (Real x))) (<= (str.to.float "-67.5420580170809") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x)) (= (str.to.float "-29.24317717823544") (Real x)) (= (str.to.float "-41.15991554949425") (Real x)) (= (str.to.float "93.91903086808122") (Real x)) (= (str.to.float "-40") (Real x)) (= (str.to.float "95.64713000645497") (Real x)) (= (str.to.float "10.987133348617888") (Real x)) (= (str.to.float "-12") (Real x)) (= (str.to.float "-30") (Real x)) (= (str.to.float "-67.5420580170809") (Real x))) (<= (str.to.float "58") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x)) (= (str.to.float "-29.24317717823544") (Real x)) (= (str.to.float "-41.15991554949425") (Real x)) (= (str.to.float "93.91903086808122") (Real x)) (= (str.to.float "-40") (Real x)) (= (str.to.float "95.64713000645497") (Real x)) (= (str.to.float "10.987133348617888") (Real x)) (= (str.to.float "-12") (Real x)) (= (str.to.float "-30") (Real x)) (= (str.to.float "-67.5420580170809") (Real x)) (= (str.to.float "58") (Real x))) (<= (str.to.float "66.77819624303987") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x)) (= (str.to.float "-29.24317717823544") (Real x)) (= (str.to.float "-41.15991554949425") (Real x)) (= (str.to.float "93.91903086808122") (Real x)) (= (str.to.float "-40") (Real x)) (= (str.to.float "95.64713000645497") (Real x)) (= (str.to.float "10.987133348617888") (Real x)) (= (str.to.float "-12") (Real x)) (= (str.to.float "-30") (Real x)) (= (str.to.float "-67.5420580170809") (Real x)) (= (str.to.float "58") (Real x)) (= (str.to.float "66.77819624303987") (Real x))) (<= (str.to.float "-37.8232752327492") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x)) (= (str.to.float "-29.24317717823544") (Real x)) (= (str.to.float "-41.15991554949425") (Real x)) (= (str.to.float "93.91903086808122") (Real x)) (= (str.to.float "-40") (Real x)) (= (str.to.float "95.64713000645497") (Real x)) (= (str.to.float "10.987133348617888") (Real x)) (= (str.to.float "-12") (Real x)) (= (str.to.float "-30") (Real x)) (= (str.to.float "-67.5420580170809") (Real x)) (= (str.to.float "58") (Real x)) (= (str.to.float "66.77819624303987") (Real x)) (= (str.to.float "-37.8232752327492") (Real x))) (<= (str.to.float "8") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x)) (= (str.to.float "-29.24317717823544") (Real x)) (= (str.to.float "-41.15991554949425") (Real x)) (= (str.to.float "93.91903086808122") (Real x)) (= (str.to.float "-40") (Real x)) (= (str.to.float "95.64713000645497") (Real x)) (= (str.to.float "10.987133348617888") (Real x)) (= (str.to.float "-12") (Real x)) (= (str.to.float "-30") (Real x)) (= (str.to.float "-67.5420580170809") (Real x)) (= (str.to.float "58") (Real x)) (= (str.to.float "66.77819624303987") (Real x)) (= (str.to.float "-37.8232752327492") (Real x)) (= (str.to.float "8") (Real x))) (<= (str.to.float "-99") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x)) (= (str.to.float "-29.24317717823544") (Real x)) (= (str.to.float "-41.15991554949425") (Real x)) (= (str.to.float "93.91903086808122") (Real x)) (= (str.to.float "-40") (Real x)) (= (str.to.float "95.64713000645497") (Real x)) (= (str.to.float "10.987133348617888") (Real x)) (= (str.to.float "-12") (Real x)) (= (str.to.float "-30") (Real x)) (= (str.to.float "-67.5420580170809") (Real x)) (= (str.to.float "58") (Real x)) (= (str.to.float "66.77819624303987") (Real x)) (= (str.to.float "-37.8232752327492") (Real x)) (= (str.to.float "8") (Real x)) (= (str.to.float "-99") (Real x))) (<= (str.to.float "98") (Real x))))
+(assert (=> (and (= (str.to.float "-6") (Real x)) (= (str.to.float "68") (Real x)) (= (str.to.float "-100") (Real x)) (= (str.to.float "42.449764091997196") (Real x)) (= (str.to.float "-29.24317717823544") (Real x)) (= (str.to.float "-41.15991554949425") (Real x)) (= (str.to.float "93.91903086808122") (Real x)) (= (str.to.float "-40") (Real x)) (= (str.to.float "95.64713000645497") (Real x)) (= (str.to.float "10.987133348617888") (Real x)) (= (str.to.float "-12") (Real x)) (= (str.to.float "-30") (Real x)) (= (str.to.float "-67.5420580170809") (Real x)) (= (str.to.float "58") (Real x)) (= (str.to.float "66.77819624303987") (Real x)) (= (str.to.float "-37.8232752327492") (Real x)) (= (str.to.float "8") (Real x)) (= (str.to.float "-99") (Real x)) (= (str.to.float "98") (Real x))) true))
+(assert (<= (str.to.float "-6") (Real x)))
+(assert (=> (not (= (str.to.float "-6") (Real x))) (<= (str.to.float "68") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x)))) (<= (str.to.float "-100") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x)))) (<= (str.to.float "42.449764091997196") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x)))) (<= (str.to.float "-29.24317717823544") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x))) (not (= (str.to.float "-29.24317717823544") (Real x)))) (<= (str.to.float "-41.15991554949425") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x))) (not (= (str.to.float "-29.24317717823544") (Real x))) (not (= (str.to.float "-41.15991554949425") (Real x)))) (<= (str.to.float "93.91903086808122") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x))) (not (= (str.to.float "-29.24317717823544") (Real x))) (not (= (str.to.float "-41.15991554949425") (Real x))) (not (= (str.to.float "93.91903086808122") (Real x)))) (<= (str.to.float "-40") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x))) (not (= (str.to.float "-29.24317717823544") (Real x))) (not (= (str.to.float "-41.15991554949425") (Real x))) (not (= (str.to.float "93.91903086808122") (Real x))) (not (= (str.to.float "-40") (Real x)))) (<= (str.to.float "95.64713000645497") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x))) (not (= (str.to.float "-29.24317717823544") (Real x))) (not (= (str.to.float "-41.15991554949425") (Real x))) (not (= (str.to.float "93.91903086808122") (Real x))) (not (= (str.to.float "-40") (Real x))) (not (= (str.to.float "95.64713000645497") (Real x)))) (<= (str.to.float "10.987133348617888") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x))) (not (= (str.to.float "-29.24317717823544") (Real x))) (not (= (str.to.float "-41.15991554949425") (Real x))) (not (= (str.to.float "93.91903086808122") (Real x))) (not (= (str.to.float "-40") (Real x))) (not (= (str.to.float "95.64713000645497") (Real x))) (not (= (str.to.float "10.987133348617888") (Real x)))) (<= (str.to.float "-12") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x))) (not (= (str.to.float "-29.24317717823544") (Real x))) (not (= (str.to.float "-41.15991554949425") (Real x))) (not (= (str.to.float "93.91903086808122") (Real x))) (not (= (str.to.float "-40") (Real x))) (not (= (str.to.float "95.64713000645497") (Real x))) (not (= (str.to.float "10.987133348617888") (Real x))) (not (= (str.to.float "-12") (Real x)))) (<= (str.to.float "-30") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x))) (not (= (str.to.float "-29.24317717823544") (Real x))) (not (= (str.to.float "-41.15991554949425") (Real x))) (not (= (str.to.float "93.91903086808122") (Real x))) (not (= (str.to.float "-40") (Real x))) (not (= (str.to.float "95.64713000645497") (Real x))) (not (= (str.to.float "10.987133348617888") (Real x))) (not (= (str.to.float "-12") (Real x))) (not (= (str.to.float "-30") (Real x)))) (<= (str.to.float "-67.5420580170809") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x))) (not (= (str.to.float "-29.24317717823544") (Real x))) (not (= (str.to.float "-41.15991554949425") (Real x))) (not (= (str.to.float "93.91903086808122") (Real x))) (not (= (str.to.float "-40") (Real x))) (not (= (str.to.float "95.64713000645497") (Real x))) (not (= (str.to.float "10.987133348617888") (Real x))) (not (= (str.to.float "-12") (Real x))) (not (= (str.to.float "-30") (Real x))) (not (= (str.to.float "-67.5420580170809") (Real x)))) (<= (str.to.float "58") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x))) (not (= (str.to.float "-29.24317717823544") (Real x))) (not (= (str.to.float "-41.15991554949425") (Real x))) (not (= (str.to.float "93.91903086808122") (Real x))) (not (= (str.to.float "-40") (Real x))) (not (= (str.to.float "95.64713000645497") (Real x))) (not (= (str.to.float "10.987133348617888") (Real x))) (not (= (str.to.float "-12") (Real x))) (not (= (str.to.float "-30") (Real x))) (not (= (str.to.float "-67.5420580170809") (Real x))) (not (= (str.to.float "58") (Real x)))) (<= (str.to.float "66.77819624303987") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x))) (not (= (str.to.float "-29.24317717823544") (Real x))) (not (= (str.to.float "-41.15991554949425") (Real x))) (not (= (str.to.float "93.91903086808122") (Real x))) (not (= (str.to.float "-40") (Real x))) (not (= (str.to.float "95.64713000645497") (Real x))) (not (= (str.to.float "10.987133348617888") (Real x))) (not (= (str.to.float "-12") (Real x))) (not (= (str.to.float "-30") (Real x))) (not (= (str.to.float "-67.5420580170809") (Real x))) (not (= (str.to.float "58") (Real x))) (not (= (str.to.float "66.77819624303987") (Real x)))) (<= (str.to.float "-37.8232752327492") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x))) (not (= (str.to.float "-29.24317717823544") (Real x))) (not (= (str.to.float "-41.15991554949425") (Real x))) (not (= (str.to.float "93.91903086808122") (Real x))) (not (= (str.to.float "-40") (Real x))) (not (= (str.to.float "95.64713000645497") (Real x))) (not (= (str.to.float "10.987133348617888") (Real x))) (not (= (str.to.float "-12") (Real x))) (not (= (str.to.float "-30") (Real x))) (not (= (str.to.float "-67.5420580170809") (Real x))) (not (= (str.to.float "58") (Real x))) (not (= (str.to.float "66.77819624303987") (Real x))) (not (= (str.to.float "-37.8232752327492") (Real x)))) (<= (str.to.float "8") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x))) (not (= (str.to.float "-29.24317717823544") (Real x))) (not (= (str.to.float "-41.15991554949425") (Real x))) (not (= (str.to.float "93.91903086808122") (Real x))) (not (= (str.to.float "-40") (Real x))) (not (= (str.to.float "95.64713000645497") (Real x))) (not (= (str.to.float "10.987133348617888") (Real x))) (not (= (str.to.float "-12") (Real x))) (not (= (str.to.float "-30") (Real x))) (not (= (str.to.float "-67.5420580170809") (Real x))) (not (= (str.to.float "58") (Real x))) (not (= (str.to.float "66.77819624303987") (Real x))) (not (= (str.to.float "-37.8232752327492") (Real x))) (not (= (str.to.float "8") (Real x)))) (<= (str.to.float "-99") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x))) (not (= (str.to.float "-29.24317717823544") (Real x))) (not (= (str.to.float "-41.15991554949425") (Real x))) (not (= (str.to.float "93.91903086808122") (Real x))) (not (= (str.to.float "-40") (Real x))) (not (= (str.to.float "95.64713000645497") (Real x))) (not (= (str.to.float "10.987133348617888") (Real x))) (not (= (str.to.float "-12") (Real x))) (not (= (str.to.float "-30") (Real x))) (not (= (str.to.float "-67.5420580170809") (Real x))) (not (= (str.to.float "58") (Real x))) (not (= (str.to.float "66.77819624303987") (Real x))) (not (= (str.to.float "-37.8232752327492") (Real x))) (not (= (str.to.float "8") (Real x))) (not (= (str.to.float "-99") (Real x)))) (<= (str.to.float "98") (Real x))))
+(assert (=> (and (not (= (str.to.float "-6") (Real x))) (not (= (str.to.float "68") (Real x))) (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "42.449764091997196") (Real x))) (not (= (str.to.float "-29.24317717823544") (Real x))) (not (= (str.to.float "-41.15991554949425") (Real x))) (not (= (str.to.float "93.91903086808122") (Real x))) (not (= (str.to.float "-40") (Real x))) (not (= (str.to.float "95.64713000645497") (Real x))) (not (= (str.to.float "10.987133348617888") (Real x))) (not (= (str.to.float "-12") (Real x))) (not (= (str.to.float "-30") (Real x))) (not (= (str.to.float "-67.5420580170809") (Real x))) (not (= (str.to.float "58") (Real x))) (not (= (str.to.float "66.77819624303987") (Real x))) (not (= (str.to.float "-37.8232752327492") (Real x))) (not (= (str.to.float "8") (Real x))) (not (= (str.to.float "-99") (Real x))) (not (= (str.to.float "98") (Real x)))) false))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 16 column 39: unknown constant Real (Real) ")
+(error "line 17 column 42: unknown constant Real (Real) ")
+(error "line 18 column 47: unknown constant Real (Real) ")
+(error "line 19 column 47: unknown constant Real (Real) ")
+(error "line 20 column 47: unknown constant Real (Real) ")
+(error "line 21 column 47: unknown constant Real (Real) ")
+(error "line 22 column 47: unknown constant Real (Real) ")
+(error "line 23 column 47: unknown constant Real (Real) ")
+(error "line 24 column 47: unknown constant Real (Real) ")
+(error "line 25 column 47: unknown constant Real (Real) ")
+(error "line 26 column 47: unknown constant Real (Real) ")
+(error "line 27 column 47: unknown constant Real (Real) ")
+(error "line 28 column 47: unknown constant Real (Real) ")
+(error "line 29 column 47: unknown constant Real (Real) ")
+(error "line 30 column 47: unknown constant Real (Real) ")
+(error "line 31 column 47: unknown constant Real (Real) ")
+(error "line 32 column 47: unknown constant Real (Real) ")
+(error "line 33 column 47: unknown constant Real (Real) ")
+(error "line 34 column 47: unknown constant Real (Real) ")
+(error "line 35 column 47: unknown constant Real (Real) ")
+(error "line 36 column 39: unknown constant Real (Real) ")
+(error "line 37 column 47: unknown constant Real (Real) ")
+(error "line 38 column 52: unknown constant Real (Real) ")
+(error "line 39 column 52: unknown constant Real (Real) ")
+(error "line 40 column 52: unknown constant Real (Real) ")
+(error "line 41 column 52: unknown constant Real (Real) ")
+(error "line 42 column 52: unknown constant Real (Real) ")
+(error "line 43 column 52: unknown constant Real (Real) ")
+(error "line 44 column 52: unknown constant Real (Real) ")
+(error "line 45 column 52: unknown constant Real (Real) ")
+(error "line 46 column 52: unknown constant Real (Real) ")
+(error "line 47 column 52: unknown constant Real (Real) ")
+(error "line 48 column 52: unknown constant Real (Real) ")
+(error "line 49 column 52: unknown constant Real (Real) ")
+(error "line 50 column 52: unknown constant Real (Real) ")
+(error "line 51 column 52: unknown constant Real (Real) ")
+(error "line 52 column 52: unknown constant Real (Real) ")
+(error "line 53 column 52: unknown constant Real (Real) ")
+(error "line 54 column 52: unknown constant Real (Real) ")
+(error "line 55 column 52: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:13.52: expecting same arithmetic types to POW")
+
+Could not find any solution for puzzle LargestStringNum:2
+Too many constants for extrapolation
+
+Solving puzzle 20/51: LargestStringNum:3
+sat_func def sat(x: float, str_nums=['-13', '-9,405268331489253', '86,60853263788738', '1.6303719756540573', '25,638544353710756']):
+    found = False
+    for s in str_nums:
+        y = float(s.replace(",", "."))
+        assert y <= x
+        if y == x:
+            found = True
+    return found
+modified_func def sat(x: float, str_nums=wrap_list([wrap_str('-13'), wrap_str('-9,405268331489253'), wrap_str('86,60853263788738'), wrap_str('1.6303719756540573'), wrap_str('25,638544353710756')])):
+    found = False
+    for s in str_nums:
+        y = sym_float(s.replace(wrap_str(','), wrap_str('.')))
+        _assert(y <= x)
+        if y == x:
+            found = True
+    return found
+### smt2
+(set-logic ALL)
+
+(define-fun str.to.float ((s String)) Real
+  (let ((dot_pos (str.indexof s "." 0)))
+    (ite (= dot_pos (- 1))
+      ; No decimal point - convert whole string as integer
+      (to_real (str.to_int s))
+      ; Has decimal point - handle integer and decimal parts
+      (let ((int_part (str.substr s 0 dot_pos))
+            (dec_part (str.substr s (+ dot_pos 1) (- (str.len s) (+ dot_pos 1)))))
+        (+ (to_real (str.to_int int_part))
+           (/ (to_real (str.to_int dec_part))
+              (^ 10.0 (- (str.len s) (+ dot_pos 1)))))))))
+
+(declare-const x Real)
+(assert (<= (str.to.float "-13") (Real x)))
+(assert (=> (= (str.to.float "-13") (Real x)) (<= (str.to.float "-9.405268331489253") (Real x))))
+(assert (=> (and (= (str.to.float "-13") (Real x)) (= (str.to.float "-9.405268331489253") (Real x))) (<= (str.to.float "86.60853263788738") (Real x))))
+(assert (=> (and (= (str.to.float "-13") (Real x)) (= (str.to.float "-9.405268331489253") (Real x)) (= (str.to.float "86.60853263788738") (Real x))) (<= (str.to.float "1.6303719756540573") (Real x))))
+(assert (=> (and (= (str.to.float "-13") (Real x)) (= (str.to.float "-9.405268331489253") (Real x)) (= (str.to.float "86.60853263788738") (Real x)) (= (str.to.float "1.6303719756540573") (Real x))) (<= (str.to.float "25.638544353710756") (Real x))))
+(assert (=> (and (= (str.to.float "-13") (Real x)) (= (str.to.float "-9.405268331489253") (Real x)) (= (str.to.float "86.60853263788738") (Real x)) (= (str.to.float "1.6303719756540573") (Real x)) (= (str.to.float "25.638544353710756") (Real x))) true))
+(assert (<= (str.to.float "-13") (Real x)))
+(assert (=> (not (= (str.to.float "-13") (Real x))) (<= (str.to.float "-9.405268331489253") (Real x))))
+(assert (=> (and (not (= (str.to.float "-13") (Real x))) (not (= (str.to.float "-9.405268331489253") (Real x)))) (<= (str.to.float "86.60853263788738") (Real x))))
+(assert (=> (and (not (= (str.to.float "-13") (Real x))) (not (= (str.to.float "-9.405268331489253") (Real x))) (not (= (str.to.float "86.60853263788738") (Real x)))) (<= (str.to.float "1.6303719756540573") (Real x))))
+(assert (=> (and (not (= (str.to.float "-13") (Real x))) (not (= (str.to.float "-9.405268331489253") (Real x))) (not (= (str.to.float "86.60853263788738") (Real x))) (not (= (str.to.float "1.6303719756540573") (Real x)))) (<= (str.to.float "25.638544353710756") (Real x))))
+(assert (=> (and (not (= (str.to.float "-13") (Real x))) (not (= (str.to.float "-9.405268331489253") (Real x))) (not (= (str.to.float "86.60853263788738") (Real x))) (not (= (str.to.float "1.6303719756540573") (Real x))) (not (= (str.to.float "25.638544353710756") (Real x)))) false))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 16 column 40: unknown constant Real (Real) ")
+(error "line 17 column 43: unknown constant Real (Real) ")
+(error "line 18 column 48: unknown constant Real (Real) ")
+(error "line 19 column 48: unknown constant Real (Real) ")
+(error "line 20 column 48: unknown constant Real (Real) ")
+(error "line 21 column 48: unknown constant Real (Real) ")
+(error "line 22 column 40: unknown constant Real (Real) ")
+(error "line 23 column 48: unknown constant Real (Real) ")
+(error "line 24 column 53: unknown constant Real (Real) ")
+(error "line 25 column 53: unknown constant Real (Real) ")
+(error "line 26 column 53: unknown constant Real (Real) ")
+(error "line 27 column 53: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:13.52: expecting same arithmetic types to POW")
+
+Could not find any solution for puzzle LargestStringNum:3
+Too many constants for extrapolation
+
+Solving puzzle 21/51: LargestStringNum:4
+sat_func def sat(x: float, str_nums=['-100', '43', '12,380225941003388', '-10', '55', '40,34567619114577', '45', '-26,348841728512014', '-79.01130149535118', '48', '57', '-87', '24,13286574459906', '8', '57.12265333169756', '19,864244993734175', '24', '-82', '22']):
+    found = False
+    for s in str_nums:
+        y = float(s.replace(",", "."))
+        assert y <= x
+        if y == x:
+            found = True
+    return found
+modified_func def sat(x: float, str_nums=wrap_list([wrap_str('-100'), wrap_str('43'), wrap_str('12,380225941003388'), wrap_str('-10'), wrap_str('55'), wrap_str('40,34567619114577'), wrap_str('45'), wrap_str('-26,348841728512014'), wrap_str('-79.01130149535118'), wrap_str('48'), wrap_str('57'), wrap_str('-87'), wrap_str('24,13286574459906'), wrap_str('8'), wrap_str('57.12265333169756'), wrap_str('19,864244993734175'), wrap_str('24'), wrap_str('-82'), wrap_str('22')])):
+    found = False
+    for s in str_nums:
+        y = sym_float(s.replace(wrap_str(','), wrap_str('.')))
+        _assert(y <= x)
+        if y == x:
+            found = True
+    return found
+### smt2
+(set-logic ALL)
+
+(define-fun str.to.float ((s String)) Real
+  (let ((dot_pos (str.indexof s "." 0)))
+    (ite (= dot_pos (- 1))
+      ; No decimal point - convert whole string as integer
+      (to_real (str.to_int s))
+      ; Has decimal point - handle integer and decimal parts
+      (let ((int_part (str.substr s 0 dot_pos))
+            (dec_part (str.substr s (+ dot_pos 1) (- (str.len s) (+ dot_pos 1)))))
+        (+ (to_real (str.to_int int_part))
+           (/ (to_real (str.to_int dec_part))
+              (^ 10.0 (- (str.len s) (+ dot_pos 1)))))))))
+
+(declare-const x Real)
+(assert (<= (str.to.float "-100") (Real x)))
+(assert (=> (= (str.to.float "-100") (Real x)) (<= (str.to.float "43") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x))) (<= (str.to.float "12.380225941003388") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x))) (<= (str.to.float "-10") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x))) (<= (str.to.float "55") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x)) (= (str.to.float "55") (Real x))) (<= (str.to.float "40.34567619114577") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x)) (= (str.to.float "55") (Real x)) (= (str.to.float "40.34567619114577") (Real x))) (<= (str.to.float "45") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x)) (= (str.to.float "55") (Real x)) (= (str.to.float "40.34567619114577") (Real x)) (= (str.to.float "45") (Real x))) (<= (str.to.float "-26.348841728512014") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x)) (= (str.to.float "55") (Real x)) (= (str.to.float "40.34567619114577") (Real x)) (= (str.to.float "45") (Real x)) (= (str.to.float "-26.348841728512014") (Real x))) (<= (str.to.float "-79.01130149535118") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x)) (= (str.to.float "55") (Real x)) (= (str.to.float "40.34567619114577") (Real x)) (= (str.to.float "45") (Real x)) (= (str.to.float "-26.348841728512014") (Real x)) (= (str.to.float "-79.01130149535118") (Real x))) (<= (str.to.float "48") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x)) (= (str.to.float "55") (Real x)) (= (str.to.float "40.34567619114577") (Real x)) (= (str.to.float "45") (Real x)) (= (str.to.float "-26.348841728512014") (Real x)) (= (str.to.float "-79.01130149535118") (Real x)) (= (str.to.float "48") (Real x))) (<= (str.to.float "57") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x)) (= (str.to.float "55") (Real x)) (= (str.to.float "40.34567619114577") (Real x)) (= (str.to.float "45") (Real x)) (= (str.to.float "-26.348841728512014") (Real x)) (= (str.to.float "-79.01130149535118") (Real x)) (= (str.to.float "48") (Real x)) (= (str.to.float "57") (Real x))) (<= (str.to.float "-87") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x)) (= (str.to.float "55") (Real x)) (= (str.to.float "40.34567619114577") (Real x)) (= (str.to.float "45") (Real x)) (= (str.to.float "-26.348841728512014") (Real x)) (= (str.to.float "-79.01130149535118") (Real x)) (= (str.to.float "48") (Real x)) (= (str.to.float "57") (Real x)) (= (str.to.float "-87") (Real x))) (<= (str.to.float "24.13286574459906") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x)) (= (str.to.float "55") (Real x)) (= (str.to.float "40.34567619114577") (Real x)) (= (str.to.float "45") (Real x)) (= (str.to.float "-26.348841728512014") (Real x)) (= (str.to.float "-79.01130149535118") (Real x)) (= (str.to.float "48") (Real x)) (= (str.to.float "57") (Real x)) (= (str.to.float "-87") (Real x)) (= (str.to.float "24.13286574459906") (Real x))) (<= (str.to.float "8") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x)) (= (str.to.float "55") (Real x)) (= (str.to.float "40.34567619114577") (Real x)) (= (str.to.float "45") (Real x)) (= (str.to.float "-26.348841728512014") (Real x)) (= (str.to.float "-79.01130149535118") (Real x)) (= (str.to.float "48") (Real x)) (= (str.to.float "57") (Real x)) (= (str.to.float "-87") (Real x)) (= (str.to.float "24.13286574459906") (Real x)) (= (str.to.float "8") (Real x))) (<= (str.to.float "57.12265333169756") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x)) (= (str.to.float "55") (Real x)) (= (str.to.float "40.34567619114577") (Real x)) (= (str.to.float "45") (Real x)) (= (str.to.float "-26.348841728512014") (Real x)) (= (str.to.float "-79.01130149535118") (Real x)) (= (str.to.float "48") (Real x)) (= (str.to.float "57") (Real x)) (= (str.to.float "-87") (Real x)) (= (str.to.float "24.13286574459906") (Real x)) (= (str.to.float "8") (Real x)) (= (str.to.float "57.12265333169756") (Real x))) (<= (str.to.float "19.864244993734175") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x)) (= (str.to.float "55") (Real x)) (= (str.to.float "40.34567619114577") (Real x)) (= (str.to.float "45") (Real x)) (= (str.to.float "-26.348841728512014") (Real x)) (= (str.to.float "-79.01130149535118") (Real x)) (= (str.to.float "48") (Real x)) (= (str.to.float "57") (Real x)) (= (str.to.float "-87") (Real x)) (= (str.to.float "24.13286574459906") (Real x)) (= (str.to.float "8") (Real x)) (= (str.to.float "57.12265333169756") (Real x)) (= (str.to.float "19.864244993734175") (Real x))) (<= (str.to.float "24") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x)) (= (str.to.float "55") (Real x)) (= (str.to.float "40.34567619114577") (Real x)) (= (str.to.float "45") (Real x)) (= (str.to.float "-26.348841728512014") (Real x)) (= (str.to.float "-79.01130149535118") (Real x)) (= (str.to.float "48") (Real x)) (= (str.to.float "57") (Real x)) (= (str.to.float "-87") (Real x)) (= (str.to.float "24.13286574459906") (Real x)) (= (str.to.float "8") (Real x)) (= (str.to.float "57.12265333169756") (Real x)) (= (str.to.float "19.864244993734175") (Real x)) (= (str.to.float "24") (Real x))) (<= (str.to.float "-82") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x)) (= (str.to.float "55") (Real x)) (= (str.to.float "40.34567619114577") (Real x)) (= (str.to.float "45") (Real x)) (= (str.to.float "-26.348841728512014") (Real x)) (= (str.to.float "-79.01130149535118") (Real x)) (= (str.to.float "48") (Real x)) (= (str.to.float "57") (Real x)) (= (str.to.float "-87") (Real x)) (= (str.to.float "24.13286574459906") (Real x)) (= (str.to.float "8") (Real x)) (= (str.to.float "57.12265333169756") (Real x)) (= (str.to.float "19.864244993734175") (Real x)) (= (str.to.float "24") (Real x)) (= (str.to.float "-82") (Real x))) (<= (str.to.float "22") (Real x))))
+(assert (=> (and (= (str.to.float "-100") (Real x)) (= (str.to.float "43") (Real x)) (= (str.to.float "12.380225941003388") (Real x)) (= (str.to.float "-10") (Real x)) (= (str.to.float "55") (Real x)) (= (str.to.float "40.34567619114577") (Real x)) (= (str.to.float "45") (Real x)) (= (str.to.float "-26.348841728512014") (Real x)) (= (str.to.float "-79.01130149535118") (Real x)) (= (str.to.float "48") (Real x)) (= (str.to.float "57") (Real x)) (= (str.to.float "-87") (Real x)) (= (str.to.float "24.13286574459906") (Real x)) (= (str.to.float "8") (Real x)) (= (str.to.float "57.12265333169756") (Real x)) (= (str.to.float "19.864244993734175") (Real x)) (= (str.to.float "24") (Real x)) (= (str.to.float "-82") (Real x)) (= (str.to.float "22") (Real x))) true))
+(assert (<= (str.to.float "-100") (Real x)))
+(assert (=> (not (= (str.to.float "-100") (Real x))) (<= (str.to.float "43") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x)))) (<= (str.to.float "12.380225941003388") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x)))) (<= (str.to.float "-10") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x)))) (<= (str.to.float "55") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x))) (not (= (str.to.float "55") (Real x)))) (<= (str.to.float "40.34567619114577") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x))) (not (= (str.to.float "55") (Real x))) (not (= (str.to.float "40.34567619114577") (Real x)))) (<= (str.to.float "45") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x))) (not (= (str.to.float "55") (Real x))) (not (= (str.to.float "40.34567619114577") (Real x))) (not (= (str.to.float "45") (Real x)))) (<= (str.to.float "-26.348841728512014") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x))) (not (= (str.to.float "55") (Real x))) (not (= (str.to.float "40.34567619114577") (Real x))) (not (= (str.to.float "45") (Real x))) (not (= (str.to.float "-26.348841728512014") (Real x)))) (<= (str.to.float "-79.01130149535118") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x))) (not (= (str.to.float "55") (Real x))) (not (= (str.to.float "40.34567619114577") (Real x))) (not (= (str.to.float "45") (Real x))) (not (= (str.to.float "-26.348841728512014") (Real x))) (not (= (str.to.float "-79.01130149535118") (Real x)))) (<= (str.to.float "48") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x))) (not (= (str.to.float "55") (Real x))) (not (= (str.to.float "40.34567619114577") (Real x))) (not (= (str.to.float "45") (Real x))) (not (= (str.to.float "-26.348841728512014") (Real x))) (not (= (str.to.float "-79.01130149535118") (Real x))) (not (= (str.to.float "48") (Real x)))) (<= (str.to.float "57") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x))) (not (= (str.to.float "55") (Real x))) (not (= (str.to.float "40.34567619114577") (Real x))) (not (= (str.to.float "45") (Real x))) (not (= (str.to.float "-26.348841728512014") (Real x))) (not (= (str.to.float "-79.01130149535118") (Real x))) (not (= (str.to.float "48") (Real x))) (not (= (str.to.float "57") (Real x)))) (<= (str.to.float "-87") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x))) (not (= (str.to.float "55") (Real x))) (not (= (str.to.float "40.34567619114577") (Real x))) (not (= (str.to.float "45") (Real x))) (not (= (str.to.float "-26.348841728512014") (Real x))) (not (= (str.to.float "-79.01130149535118") (Real x))) (not (= (str.to.float "48") (Real x))) (not (= (str.to.float "57") (Real x))) (not (= (str.to.float "-87") (Real x)))) (<= (str.to.float "24.13286574459906") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x))) (not (= (str.to.float "55") (Real x))) (not (= (str.to.float "40.34567619114577") (Real x))) (not (= (str.to.float "45") (Real x))) (not (= (str.to.float "-26.348841728512014") (Real x))) (not (= (str.to.float "-79.01130149535118") (Real x))) (not (= (str.to.float "48") (Real x))) (not (= (str.to.float "57") (Real x))) (not (= (str.to.float "-87") (Real x))) (not (= (str.to.float "24.13286574459906") (Real x)))) (<= (str.to.float "8") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x))) (not (= (str.to.float "55") (Real x))) (not (= (str.to.float "40.34567619114577") (Real x))) (not (= (str.to.float "45") (Real x))) (not (= (str.to.float "-26.348841728512014") (Real x))) (not (= (str.to.float "-79.01130149535118") (Real x))) (not (= (str.to.float "48") (Real x))) (not (= (str.to.float "57") (Real x))) (not (= (str.to.float "-87") (Real x))) (not (= (str.to.float "24.13286574459906") (Real x))) (not (= (str.to.float "8") (Real x)))) (<= (str.to.float "57.12265333169756") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x))) (not (= (str.to.float "55") (Real x))) (not (= (str.to.float "40.34567619114577") (Real x))) (not (= (str.to.float "45") (Real x))) (not (= (str.to.float "-26.348841728512014") (Real x))) (not (= (str.to.float "-79.01130149535118") (Real x))) (not (= (str.to.float "48") (Real x))) (not (= (str.to.float "57") (Real x))) (not (= (str.to.float "-87") (Real x))) (not (= (str.to.float "24.13286574459906") (Real x))) (not (= (str.to.float "8") (Real x))) (not (= (str.to.float "57.12265333169756") (Real x)))) (<= (str.to.float "19.864244993734175") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x))) (not (= (str.to.float "55") (Real x))) (not (= (str.to.float "40.34567619114577") (Real x))) (not (= (str.to.float "45") (Real x))) (not (= (str.to.float "-26.348841728512014") (Real x))) (not (= (str.to.float "-79.01130149535118") (Real x))) (not (= (str.to.float "48") (Real x))) (not (= (str.to.float "57") (Real x))) (not (= (str.to.float "-87") (Real x))) (not (= (str.to.float "24.13286574459906") (Real x))) (not (= (str.to.float "8") (Real x))) (not (= (str.to.float "57.12265333169756") (Real x))) (not (= (str.to.float "19.864244993734175") (Real x)))) (<= (str.to.float "24") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x))) (not (= (str.to.float "55") (Real x))) (not (= (str.to.float "40.34567619114577") (Real x))) (not (= (str.to.float "45") (Real x))) (not (= (str.to.float "-26.348841728512014") (Real x))) (not (= (str.to.float "-79.01130149535118") (Real x))) (not (= (str.to.float "48") (Real x))) (not (= (str.to.float "57") (Real x))) (not (= (str.to.float "-87") (Real x))) (not (= (str.to.float "24.13286574459906") (Real x))) (not (= (str.to.float "8") (Real x))) (not (= (str.to.float "57.12265333169756") (Real x))) (not (= (str.to.float "19.864244993734175") (Real x))) (not (= (str.to.float "24") (Real x)))) (<= (str.to.float "-82") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x))) (not (= (str.to.float "55") (Real x))) (not (= (str.to.float "40.34567619114577") (Real x))) (not (= (str.to.float "45") (Real x))) (not (= (str.to.float "-26.348841728512014") (Real x))) (not (= (str.to.float "-79.01130149535118") (Real x))) (not (= (str.to.float "48") (Real x))) (not (= (str.to.float "57") (Real x))) (not (= (str.to.float "-87") (Real x))) (not (= (str.to.float "24.13286574459906") (Real x))) (not (= (str.to.float "8") (Real x))) (not (= (str.to.float "57.12265333169756") (Real x))) (not (= (str.to.float "19.864244993734175") (Real x))) (not (= (str.to.float "24") (Real x))) (not (= (str.to.float "-82") (Real x)))) (<= (str.to.float "22") (Real x))))
+(assert (=> (and (not (= (str.to.float "-100") (Real x))) (not (= (str.to.float "43") (Real x))) (not (= (str.to.float "12.380225941003388") (Real x))) (not (= (str.to.float "-10") (Real x))) (not (= (str.to.float "55") (Real x))) (not (= (str.to.float "40.34567619114577") (Real x))) (not (= (str.to.float "45") (Real x))) (not (= (str.to.float "-26.348841728512014") (Real x))) (not (= (str.to.float "-79.01130149535118") (Real x))) (not (= (str.to.float "48") (Real x))) (not (= (str.to.float "57") (Real x))) (not (= (str.to.float "-87") (Real x))) (not (= (str.to.float "24.13286574459906") (Real x))) (not (= (str.to.float "8") (Real x))) (not (= (str.to.float "57.12265333169756") (Real x))) (not (= (str.to.float "19.864244993734175") (Real x))) (not (= (str.to.float "24") (Real x))) (not (= (str.to.float "-82") (Real x))) (not (= (str.to.float "22") (Real x)))) false))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 16 column 41: unknown constant Real (Real) ")
+(error "line 17 column 44: unknown constant Real (Real) ")
+(error "line 18 column 49: unknown constant Real (Real) ")
+(error "line 19 column 49: unknown constant Real (Real) ")
+(error "line 20 column 49: unknown constant Real (Real) ")
+(error "line 21 column 49: unknown constant Real (Real) ")
+(error "line 22 column 49: unknown constant Real (Real) ")
+(error "line 23 column 49: unknown constant Real (Real) ")
+(error "line 24 column 49: unknown constant Real (Real) ")
+(error "line 25 column 49: unknown constant Real (Real) ")
+(error "line 26 column 49: unknown constant Real (Real) ")
+(error "line 27 column 49: unknown constant Real (Real) ")
+(error "line 28 column 49: unknown constant Real (Real) ")
+(error "line 29 column 49: unknown constant Real (Real) ")
+(error "line 30 column 49: unknown constant Real (Real) ")
+(error "line 31 column 49: unknown constant Real (Real) ")
+(error "line 32 column 49: unknown constant Real (Real) ")
+(error "line 33 column 49: unknown constant Real (Real) ")
+(error "line 34 column 49: unknown constant Real (Real) ")
+(error "line 35 column 49: unknown constant Real (Real) ")
+(error "line 36 column 41: unknown constant Real (Real) ")
+(error "line 37 column 49: unknown constant Real (Real) ")
+(error "line 38 column 54: unknown constant Real (Real) ")
+(error "line 39 column 54: unknown constant Real (Real) ")
+(error "line 40 column 54: unknown constant Real (Real) ")
+(error "line 41 column 54: unknown constant Real (Real) ")
+(error "line 42 column 54: unknown constant Real (Real) ")
+(error "line 43 column 54: unknown constant Real (Real) ")
+(error "line 44 column 54: unknown constant Real (Real) ")
+(error "line 45 column 54: unknown constant Real (Real) ")
+(error "line 46 column 54: unknown constant Real (Real) ")
+(error "line 47 column 54: unknown constant Real (Real) ")
+(error "line 48 column 54: unknown constant Real (Real) ")
+(error "line 49 column 54: unknown constant Real (Real) ")
+(error "line 50 column 54: unknown constant Real (Real) ")
+(error "line 51 column 54: unknown constant Real (Real) ")
+(error "line 52 column 54: unknown constant Real (Real) ")
+(error "line 53 column 54: unknown constant Real (Real) ")
+(error "line 54 column 54: unknown constant Real (Real) ")
+(error "line 55 column 54: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:13.52: expecting same arithmetic types to POW")
+
+Could not find any solution for puzzle LargestStringNum:4
+Too many constants for extrapolation
+
+Solving puzzle 22/51: QuadraticRoot:0
+sat_func def sat(x: float, coeffs=[2.5, 1.3, -0.5]):
+    a, b, c = coeffs
+    return abs(a * x ** 2 + b * x + c) < 1e-6
+modified_func def sat(x: float, coeffs=wrap_list([2.5, 1.3, -0.5])):
+    a, b, c = coeffs
+    return abs(a * x ** wrap_int(2) + b * x + c) < 1e-06
+Exception -- for puzzle QuadraticRoot:0 unsupported operand type(s) for *: 'float' and 'SymbolicFloat'
+
+Solving puzzle 23/51: QuadraticRoot:1
+sat_func def sat(x: float, coeffs=[0.0685642998539026, -0.10446230957339113, -0.11141402891228723]):
+    a, b, c = coeffs
+    return abs(a * x ** 2 + b * x + c) < 1e-6
+modified_func def sat(x: float, coeffs=wrap_list([0.0685642998539026, -0.10446230957339113, -0.11141402891228723])):
+    a, b, c = coeffs
+    return abs(a * x ** wrap_int(2) + b * x + c) < 1e-06
+Exception -- for puzzle QuadraticRoot:1 unsupported operand type(s) for *: 'float' and 'SymbolicFloat'
+
+Solving puzzle 24/51: QuadraticRoot:2
+sat_func def sat(x: float, coeffs=[0.2622487694588566, 0.48521166316030495, -41.749384651642444]):
+    a, b, c = coeffs
+    return abs(a * x ** 2 + b * x + c) < 1e-6
+modified_func def sat(x: float, coeffs=wrap_list([0.2622487694588566, 0.48521166316030495, -41.749384651642444])):
+    a, b, c = coeffs
+    return abs(a * x ** wrap_int(2) + b * x + c) < 1e-06
+Exception -- for puzzle QuadraticRoot:2 unsupported operand type(s) for *: 'float' and 'SymbolicFloat'
+
+Solving puzzle 25/51: QuadraticRoot:3
+sat_func def sat(x: float, coeffs=[145.72190605632582, 0.027358325157428014, -5.149342624051854]):
+    a, b, c = coeffs
+    return abs(a * x ** 2 + b * x + c) < 1e-6
+modified_func def sat(x: float, coeffs=wrap_list([145.72190605632582, 0.027358325157428014, -5.149342624051854])):
+    a, b, c = coeffs
+    return abs(a * x ** wrap_int(2) + b * x + c) < 1e-06
+Exception -- for puzzle QuadraticRoot:3 unsupported operand type(s) for *: 'float' and 'SymbolicFloat'
+
+Solving puzzle 26/51: QuadraticRoot:4
+sat_func def sat(x: float, coeffs=[1.1222556871110754, -0.007015312913509468, -309237.6867547677]):
+    a, b, c = coeffs
+    return abs(a * x ** 2 + b * x + c) < 1e-6
+modified_func def sat(x: float, coeffs=wrap_list([1.1222556871110754, -0.007015312913509468, -309237.6867547677])):
+    a, b, c = coeffs
+    return abs(a * x ** wrap_int(2) + b * x + c) < 1e-06
+Exception -- for puzzle QuadraticRoot:4 unsupported operand type(s) for *: 'float' and 'SymbolicFloat'
+
+Solving puzzle 27/51: CubicRoot:0
+sat_func def sat(x: float, coeffs=[2.0, 1.0, 0.0, 8.0]):
+    return abs(sum(c * x ** (3 - i) for i, c in enumerate(coeffs))) < 1e-6
+modified_func def sat(x: float, coeffs=wrap_list([2.0, 1.0, 0.0, 8.0])):
+    return abs(sym_sum(sym_generator((c * x ** (wrap_int(3) - i) for i, c in enumerate(coeffs))))) < 1e-06
+Exception -- for puzzle CubicRoot:0 unsupported operand type(s) for *: 'float' and 'SymbolicFloat'
+
+Solving puzzle 28/51: CubicRoot:1
+sat_func def sat(x: float, coeffs=[0.009597657937719273, -10.297175825569942, 0.15891220226280925, 10.530249049250433]):
+    return abs(sum(c * x ** (3 - i) for i, c in enumerate(coeffs))) < 1e-6
+modified_func def sat(x: float, coeffs=wrap_list([0.009597657937719273, -10.297175825569942, 0.15891220226280925, 10.530249049250433])):
+    return abs(sym_sum(sym_generator((c * x ** (wrap_int(3) - i) for i, c in enumerate(coeffs))))) < 1e-06
+Exception -- for puzzle CubicRoot:1 unsupported operand type(s) for *: 'float' and 'SymbolicFloat'
+
+Solving puzzle 29/51: CubicRoot:2
+sat_func def sat(x: float, coeffs=[-0.17749172356645268, -1.3894267878542186, 0.03752944532850555, 0.2624916128068381]):
+    return abs(sum(c * x ** (3 - i) for i, c in enumerate(coeffs))) < 1e-6
+modified_func def sat(x: float, coeffs=wrap_list([-0.17749172356645268, -1.3894267878542186, 0.03752944532850555, 0.2624916128068381])):
+    return abs(sym_sum(sym_generator((c * x ** (wrap_int(3) - i) for i, c in enumerate(coeffs))))) < 1e-06
+Exception -- for puzzle CubicRoot:2 unsupported operand type(s) for *: 'float' and 'SymbolicFloat'
+
+Solving puzzle 30/51: CubicRoot:3
+sat_func def sat(x: float, coeffs=[0.41725114111706524, 155.2589446092116, -0.10619077904258341, -0.024129284994425074]):
+    return abs(sum(c * x ** (3 - i) for i, c in enumerate(coeffs))) < 1e-6
+modified_func def sat(x: float, coeffs=wrap_list([0.41725114111706524, 155.2589446092116, -0.10619077904258341, -0.024129284994425074])):
+    return abs(sym_sum(sym_generator((c * x ** (wrap_int(3) - i) for i, c in enumerate(coeffs))))) < 1e-06
+Exception -- for puzzle CubicRoot:3 unsupported operand type(s) for *: 'float' and 'SymbolicFloat'
+
+Solving puzzle 31/51: CubicRoot:4
+sat_func def sat(x: float, coeffs=[-2.3153234528266906, 11.247619504308075, -72.3705721705674, 53.97429005428236]):
+    return abs(sum(c * x ** (3 - i) for i, c in enumerate(coeffs))) < 1e-6
+modified_func def sat(x: float, coeffs=wrap_list([-2.3153234528266906, 11.247619504308075, -72.3705721705674, 53.97429005428236])):
+    return abs(sym_sum(sym_generator((c * x ** (wrap_int(3) - i) for i, c in enumerate(coeffs))))) < 1e-06
+Exception -- for puzzle CubicRoot:4 unsupported operand type(s) for *: 'float' and 'SymbolicFloat'
+
+Solving puzzle 32/51: FloatWithDecimalValue:0
+sat_func def sat(z: float, v=9, d=0.0001):
+    return int(z * 1 / d % 10) == v
+modified_func def sat(z: float, v=wrap_int(9), d=0.0001):
+    return sym_int(z * wrap_int(1) / d % wrap_int(10)) == v
+Exception -- for puzzle FloatWithDecimalValue:0 unsupported operand type(s) for /: 'SymbolicFloat' and 'float'
+
+Solving puzzle 33/51: FloatWithDecimalValue:1
+sat_func def sat(z: float, v=1, d=1e-17):
+    return int(z * 1 / d % 10) == v
+modified_func def sat(z: float, v=wrap_int(1), d=1e-17):
+    return sym_int(z * wrap_int(1) / d % wrap_int(10)) == v
+Exception -- for puzzle FloatWithDecimalValue:1 unsupported operand type(s) for /: 'SymbolicFloat' and 'float'
+
+Solving puzzle 34/51: FloatWithDecimalValue:2
+sat_func def sat(z: float, v=9, d=1e+83):
+    return int(z * 1 / d % 10) == v
+modified_func def sat(z: float, v=wrap_int(9), d=1e+83):
+    return sym_int(z * wrap_int(1) / d % wrap_int(10)) == v
+Exception -- for puzzle FloatWithDecimalValue:2 unsupported operand type(s) for /: 'SymbolicFloat' and 'float'
+
+Solving puzzle 35/51: FloatWithDecimalValue:3
+sat_func def sat(z: float, v=5, d=1e-18):
+    return int(z * 1 / d % 10) == v
+modified_func def sat(z: float, v=wrap_int(5), d=1e-18):
+    return sym_int(z * wrap_int(1) / d % wrap_int(10)) == v
+Exception -- for puzzle FloatWithDecimalValue:3 unsupported operand type(s) for /: 'SymbolicFloat' and 'float'
+
+Solving puzzle 36/51: FloatWithDecimalValue:4
+sat_func def sat(z: float, v=5, d=1e+90):
+    return int(z * 1 / d % 10) == v
+modified_func def sat(z: float, v=wrap_int(5), d=1e+90):
+    return sym_int(z * wrap_int(1) / d % wrap_int(10)) == v
+Exception -- for puzzle FloatWithDecimalValue:4 unsupported operand type(s) for /: 'SymbolicFloat' and 'float'
+
+Solving puzzle 37/51: ExponentialProbability:0
+sat_func def sat(p_stop: float, steps=10, target_prob=0.5):
+    prob = sum(p_stop*(1-p_stop)**t for t in range(steps))
+    return abs(prob - target_prob) < 1e-6
+modified_func def sat(p_stop: float, steps=wrap_int(10), target_prob=0.5):
+    prob = sym_sum(sym_generator((p_stop * (wrap_int(1) - p_stop) ** t for t in sym_range(steps))))
+    return abs(prob - target_prob) < 1e-06
+Exception -- for puzzle ExponentialProbability:0 unsupported operand type(s) for ** or pow(): 'SymbolicFloat' and 'int'
+
+Solving puzzle 38/51: ExponentialProbability:1
+sat_func def sat(p_stop: float, steps=43, target_prob=0.2661542669448821):
+    prob = sum(p_stop*(1-p_stop)**t for t in range(steps))
+    return abs(prob - target_prob) < 1e-6
+modified_func def sat(p_stop: float, steps=wrap_int(43), target_prob=0.2661542669448821):
+    prob = sym_sum(sym_generator((p_stop * (wrap_int(1) - p_stop) ** t for t in sym_range(steps))))
+    return abs(prob - target_prob) < 1e-06
+Exception -- for puzzle ExponentialProbability:1 unsupported operand type(s) for ** or pow(): 'SymbolicFloat' and 'int'
+
+Solving puzzle 39/51: ExponentialProbability:2
+sat_func def sat(p_stop: float, steps=91, target_prob=0.03729141037377781):
+    prob = sum(p_stop*(1-p_stop)**t for t in range(steps))
+    return abs(prob - target_prob) < 1e-6
+modified_func def sat(p_stop: float, steps=wrap_int(91), target_prob=0.03729141037377781):
+    prob = sym_sum(sym_generator((p_stop * (wrap_int(1) - p_stop) ** t for t in sym_range(steps))))
+    return abs(prob - target_prob) < 1e-06
+Exception -- for puzzle ExponentialProbability:2 unsupported operand type(s) for ** or pow(): 'SymbolicFloat' and 'int'
+
+Solving puzzle 40/51: ExponentialProbability:3
+sat_func def sat(p_stop: float, steps=11, target_prob=0.9742781783529525):
+    prob = sum(p_stop*(1-p_stop)**t for t in range(steps))
+    return abs(prob - target_prob) < 1e-6
+modified_func def sat(p_stop: float, steps=wrap_int(11), target_prob=0.9742781783529525):
+    prob = sym_sum(sym_generator((p_stop * (wrap_int(1) - p_stop) ** t for t in sym_range(steps))))
+    return abs(prob - target_prob) < 1e-06
+Exception -- for puzzle ExponentialProbability:3 unsupported operand type(s) for ** or pow(): 'SymbolicFloat' and 'int'
+
+Solving puzzle 41/51: ExponentialProbability:4
+sat_func def sat(p_stop: float, steps=65, target_prob=0.8318555442956944):
+    prob = sum(p_stop*(1-p_stop)**t for t in range(steps))
+    return abs(prob - target_prob) < 1e-6
+modified_func def sat(p_stop: float, steps=wrap_int(65), target_prob=0.8318555442956944):
+    prob = sym_sum(sym_generator((p_stop * (wrap_int(1) - p_stop) ** t for t in sym_range(steps))))
+    return abs(prob - target_prob) < 1e-06
+Exception -- for puzzle ExponentialProbability:4 unsupported operand type(s) for ** or pow(): 'SymbolicFloat' and 'int'
+
+Solving puzzle 42/51: FloatSquareRoot:0
+sat_func def sat(x: float, a=1020):
+    return abs(x ** 2 - a) < 10 ** -3
+modified_func def sat(x: float, a=wrap_int(1020)):
+    return abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (> 59049 (ite (>= (- (^ (Real x) 2) 1020) 0) (- (^ (Real x) 2) 1020) (- (- (^ (Real x) 2) 1020)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 39: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.40: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatSquareRoot:0
+One large constant for extrapolation
+Solving simpler variation replaced 1020 with 3
+sat_func def sat(x: float, a=3):
+    return abs(x ** 2 - a) < 10 ** -3
+modified_func def sat(x: float, a=wrap_int(3)):
+    return abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (> 59049 (ite (>= (- (^ (Real x) 2) 3) 0) (- (^ (Real x) 2) 3) (- (- (^ (Real x) 2) 3)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 39: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.40: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatSquareRoot:0
+
+Solving puzzle 43/51: FloatSquareRoot:1
+sat_func def sat(x: float, a=6173281296):
+    return abs(x ** 2 - a) < 10 ** -3
+modified_func def sat(x: float, a=wrap_int(6173281296)):
+    return abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (> 59049 (ite (>= (- (^ (Real x) 2) 6173281296) 0) (- (^ (Real x) 2) 6173281296) (- (- (^ (Real x) 2) 6173281296)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 39: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.40: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatSquareRoot:1
+One large constant for extrapolation
+Solving simpler variation replaced 6173281296 with 3
+sat_func def sat(x: float, a=3):
+    return abs(x ** 2 - a) < 10 ** -3
+modified_func def sat(x: float, a=wrap_int(3)):
+    return abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (> 59049 (ite (>= (- (^ (Real x) 2) 3) 0) (- (^ (Real x) 2) 3) (- (- (^ (Real x) 2) 3)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 39: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.40: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatSquareRoot:1
+
+Solving puzzle 44/51: FloatSquareRoot:2
+sat_func def sat(x: float, a=7987622700):
+    return abs(x ** 2 - a) < 10 ** -3
+modified_func def sat(x: float, a=wrap_int(7987622700)):
+    return abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (> 59049 (ite (>= (- (^ (Real x) 2) 7987622700) 0) (- (^ (Real x) 2) 7987622700) (- (- (^ (Real x) 2) 7987622700)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 39: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.40: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatSquareRoot:2
+One large constant for extrapolation
+Solving simpler variation replaced 7987622700 with 3
+sat_func def sat(x: float, a=3):
+    return abs(x ** 2 - a) < 10 ** -3
+modified_func def sat(x: float, a=wrap_int(3)):
+    return abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (> 59049 (ite (>= (- (^ (Real x) 2) 3) 0) (- (^ (Real x) 2) 3) (- (- (^ (Real x) 2) 3)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 39: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.40: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatSquareRoot:2
+
+Solving puzzle 45/51: FloatSquareRoot:3
+sat_func def sat(x: float, a=2732656229):
+    return abs(x ** 2 - a) < 10 ** -3
+modified_func def sat(x: float, a=wrap_int(2732656229)):
+    return abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (> 59049 (ite (>= (- (^ (Real x) 2) 2732656229) 0) (- (^ (Real x) 2) 2732656229) (- (- (^ (Real x) 2) 2732656229)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 39: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.40: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatSquareRoot:3
+One large constant for extrapolation
+Solving simpler variation replaced 2732656229 with 3
+sat_func def sat(x: float, a=3):
+    return abs(x ** 2 - a) < 10 ** -3
+modified_func def sat(x: float, a=wrap_int(3)):
+    return abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (> 59049 (ite (>= (- (^ (Real x) 2) 3) 0) (- (^ (Real x) 2) 3) (- (- (^ (Real x) 2) 3)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 39: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.40: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatSquareRoot:3
+
+Solving puzzle 46/51: FloatSquareRoot:4
+sat_func def sat(x: float, a=1873585696):
+    return abs(x ** 2 - a) < 10 ** -3
+modified_func def sat(x: float, a=wrap_int(1873585696)):
+    return abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (> 59049 (ite (>= (- (^ (Real x) 2) 1873585696) 0) (- (^ (Real x) 2) 1873585696) (- (- (^ (Real x) 2) 1873585696)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 39: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.40: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatSquareRoot:4
+One large constant for extrapolation
+Solving simpler variation replaced 1873585696 with 3
+sat_func def sat(x: float, a=3):
+    return abs(x ** 2 - a) < 10 ** -3
+modified_func def sat(x: float, a=wrap_int(3)):
+    return abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (> 59049 (ite (>= (- (^ (Real x) 2) 3) 0) (- (^ (Real x) 2) 3) (- (- (^ (Real x) 2) 3)))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 39: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.40: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatSquareRoot:4
+
+Solving puzzle 47/51: FloatNegSquareRoot:0
+sat_func def sat(x: float, a=1020):
+    return abs(x ** 2 - a) < 10 ** -3 and x < 0
+modified_func def sat(x: float, a=wrap_int(1020)):
+    return (abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))).__and__(x < wrap_int(0))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (and (> 59049 (ite (>= (- (^ (Real x) 2) 1020) 0) (- (^ (Real x) 2) 1020) (- (- (^ (Real x) 2) 1020)))) (> 0 (Real x))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 44: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.45: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatNegSquareRoot:0
+One large constant for extrapolation
+Solving simpler variation replaced 1020 with 3
+sat_func def sat(x: float, a=3):
+    return abs(x ** 2 - a) < 10 ** -3 and x < 0
+modified_func def sat(x: float, a=wrap_int(3)):
+    return (abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))).__and__(x < wrap_int(0))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (and (> 59049 (ite (>= (- (^ (Real x) 2) 3) 0) (- (^ (Real x) 2) 3) (- (- (^ (Real x) 2) 3)))) (> 0 (Real x))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 44: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.45: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatNegSquareRoot:0
+
+Solving puzzle 48/51: FloatNegSquareRoot:1
+sat_func def sat(x: float, a=2681275499):
+    return abs(x ** 2 - a) < 10 ** -3 and x < 0
+modified_func def sat(x: float, a=wrap_int(2681275499)):
+    return (abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))).__and__(x < wrap_int(0))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (and (> 59049 (ite (>= (- (^ (Real x) 2) 2681275499) 0) (- (^ (Real x) 2) 2681275499) (- (- (^ (Real x) 2) 2681275499)))) (> 0 (Real x))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 44: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.45: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatNegSquareRoot:1
+One large constant for extrapolation
+Solving simpler variation replaced 2681275499 with 3
+sat_func def sat(x: float, a=3):
+    return abs(x ** 2 - a) < 10 ** -3 and x < 0
+modified_func def sat(x: float, a=wrap_int(3)):
+    return (abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))).__and__(x < wrap_int(0))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (and (> 59049 (ite (>= (- (^ (Real x) 2) 3) 0) (- (^ (Real x) 2) 3) (- (- (^ (Real x) 2) 3)))) (> 0 (Real x))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 44: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.45: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatNegSquareRoot:1
+
+Solving puzzle 49/51: FloatNegSquareRoot:2
+sat_func def sat(x: float, a=1363713245):
+    return abs(x ** 2 - a) < 10 ** -3 and x < 0
+modified_func def sat(x: float, a=wrap_int(1363713245)):
+    return (abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))).__and__(x < wrap_int(0))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (and (> 59049 (ite (>= (- (^ (Real x) 2) 1363713245) 0) (- (^ (Real x) 2) 1363713245) (- (- (^ (Real x) 2) 1363713245)))) (> 0 (Real x))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 44: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.45: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatNegSquareRoot:2
+One large constant for extrapolation
+Solving simpler variation replaced 1363713245 with 3
+sat_func def sat(x: float, a=3):
+    return abs(x ** 2 - a) < 10 ** -3 and x < 0
+modified_func def sat(x: float, a=wrap_int(3)):
+    return (abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))).__and__(x < wrap_int(0))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (and (> 59049 (ite (>= (- (^ (Real x) 2) 3) 0) (- (^ (Real x) 2) 3) (- (- (^ (Real x) 2) 3)))) (> 0 (Real x))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 44: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.45: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatNegSquareRoot:2
+
+Solving puzzle 50/51: FloatNegSquareRoot:3
+sat_func def sat(x: float, a=3858703402):
+    return abs(x ** 2 - a) < 10 ** -3 and x < 0
+modified_func def sat(x: float, a=wrap_int(3858703402)):
+    return (abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))).__and__(x < wrap_int(0))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (and (> 59049 (ite (>= (- (^ (Real x) 2) 3858703402) 0) (- (^ (Real x) 2) 3858703402) (- (- (^ (Real x) 2) 3858703402)))) (> 0 (Real x))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 44: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.45: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatNegSquareRoot:3
+One large constant for extrapolation
+Solving simpler variation replaced 3858703402 with 3
+sat_func def sat(x: float, a=3):
+    return abs(x ** 2 - a) < 10 ** -3 and x < 0
+modified_func def sat(x: float, a=wrap_int(3)):
+    return (abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))).__and__(x < wrap_int(0))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (and (> 59049 (ite (>= (- (^ (Real x) 2) 3) 0) (- (^ (Real x) 2) 3) (- (- (^ (Real x) 2) 3)))) (> 0 (Real x))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 44: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.45: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatNegSquareRoot:3
+
+Solving puzzle 51/51: FloatNegSquareRoot:4
+sat_func def sat(x: float, a=3804892221):
+    return abs(x ** 2 - a) < 10 ** -3 and x < 0
+modified_func def sat(x: float, a=wrap_int(3804892221)):
+    return (abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))).__and__(x < wrap_int(0))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (and (> 59049 (ite (>= (- (^ (Real x) 2) 3804892221) 0) (- (^ (Real x) 2) 3804892221) (- (- (^ (Real x) 2) 3804892221)))) (> 0 (Real x))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 44: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.45: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatNegSquareRoot:4
+One large constant for extrapolation
+Solving simpler variation replaced 3804892221 with 3
+sat_func def sat(x: float, a=3):
+    return abs(x ** 2 - a) < 10 ** -3 and x < 0
+modified_func def sat(x: float, a=wrap_int(3)):
+    return (abs(x ** wrap_int(2) - a) < wrap_int(10) ** (-wrap_int(3))).__and__(x < wrap_int(0))
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (and (> 59049 (ite (>= (- (^ (Real x) 2) 3) 0) (- (^ (Real x) 2) 3) (- (- (^ (Real x) 2) 3)))) (> 0 (Real x))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+(error "line 3 column 44: unknown constant Real (Real) ")
+sat
+(
+  (define-fun x () Real
+    0.0)
+)
+### output for cvc5
+(error "Parse Error: tmp.smt2:3.45: Symbol 'Real' not declared as a variable")
+
+Could not find any solution for puzzle FloatNegSquareRoot:4
+
+## Current status
+
+The symbolic execution alone currently solves:
+- 0% (0 out of 51) of `float` puzzles,
+- 0% (0 out of 51) overall.
+
+with the following errors:
+- 0 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
+- 36 errors at at staging time
+- 0 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- 15 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
+timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
+- 1664 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
+
+### Extrapolation
+- 10 smaller problems tried
+- 0 successes on smaller problem
+

@@ -565,6 +565,14 @@ class Backend():
     def IntVal(self, val: int) -> MockExpr:
         return self._record("IntVal", val)
 
+    def Real(self, name: str) -> MockExpr:
+        if name not in self.quantified_vars:
+            self.solver.declarations.append((name, 'Real'))
+        return self._record("Real", name)
+
+    def RealVal(self, val: int) -> MockExpr:
+        return self._record("RealVal", val)
+
     def BoolVal(self, val: bool) -> MockExpr:
         return self._record("BoolVal", val)
 

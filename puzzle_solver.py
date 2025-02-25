@@ -58,6 +58,8 @@ class PuzzleSolver:
             typ = int
         elif ans_type == 'str':
             typ = str
+        elif ans_type == 'float':
+            typ = float
         if not typ:
             print("Unsupported answer type", ans_type)
             self.error_unsupported_answer_type += 1
@@ -317,7 +319,7 @@ if __name__ == "__main__":
                         help='only run puzzles whose names start with this prefix')
     parser.add_argument('--answer-types',
                         nargs='+',
-                        choices=['int', 'str'],
+                        choices=['int', 'str', 'float'],
                         default=['int', 'str'],
                         help='only run some answer types')
     parser.add_argument('--smtlib-backends',

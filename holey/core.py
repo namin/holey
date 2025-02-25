@@ -371,10 +371,17 @@ class SymbolicInt:
         raise ValueError("Cannot convert symbolic integer to index")
 
 class SymbolicFloat:
-    def __init__(self, value, tracer=None):
-        self.tracer = tracer
-        self.z3_expr = value
-        self.concrete = value if isinstance(value, (int, float)) else None
+    def __init__(self, value: Optional[Any] = None, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
+        self.tracer = tracer or SymbolicTracer()
+        self.concrete = None
+        if name is not None:
+            self.z3_expr = self.tracer.backend.Real(name)
+        elif isinstance(value, (int, float)):
+            self.concrete = value
+            self.z3_expr = self.tracer.backend.RealVal(value)
+        else:
+            self.z3_expr = value
+        self.name = name
 
     def __sub__(self, other):
         other = self.tracer.ensure_symbolic(other)
