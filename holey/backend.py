@@ -123,12 +123,31 @@ def _parse_model(output):
             elif typ == 'Int':
                 value = from_stmlib_int(value)
             elif typ == 'Real':
-                # Handle Real values, including fractions
-                if isinstance(value, list) and len(value) == 3 and value[0].value() == '/':
-                    # It's a fraction like (/ 3223.0 25000.0)
-                    numerator = float(value[1])
-                    denominator = float(value[2])
-                    value = numerator / denominator
+                # Handle Real values, including fractions and negative fractions
+                if isinstance(value, list):
+                    if len(value) == 3 and value[0].value() == '/':
+                        # It's a fraction like (/ 3223.0 25000.0)
+                        numerator = float(value[1])
+                        denominator = float(value[2])
+                        value = numerator / denominator
+                    elif len(value) == 2 and value[0].value() == '-':
+                        # It's a negative value
+                        if isinstance(value[1], list) and len(value[1]) == 3 and value[1][0].value() == '/':
+                            # It's a negative fraction like (- (/ 5567.0 16384.0))
+                            numerator = float(value[1][1])
+                            denominator = float(value[1][2])
+                            value = -1 * (numerator / denominator)
+                        else:
+                            # It's a simple negative number
+                            value = -1 * float(str(value[1]))
+                    else:
+                        # Try to convert the list to a string and then to a float
+                        try:
+                            value = float(str(value))
+                        except ValueError:
+                            # If conversion fails, return a default value
+                            print(f"Warning: Could not convert {value} to float, using 0.0 as default")
+                            value = 0.0
                 else:
                     # It's a simple number
                     value = float(str(value))
@@ -621,6 +640,15 @@ class Backend():
         return self._record("mod", a, b)
 
     def Pow(self, a, b) -> MockExpr:
+        # If the second argument is an integer, convert it to a RealVal for CVC5 compatibility
+        if isinstance(b, MockExpr) and b.op == "IntVal":
+            b = self.RealVal(float(b.args[0]))
+        # Special case for x^0 which should always be 1
+        if isinstance(b, MockExpr) and b.op == "RealVal" and float(b.args[0]) == 0.0:
+            return self.RealVal(1.0)
+        # Special case for x^1 which should always be x
+        if isinstance(b, MockExpr) and b.op == "RealVal" and float(b.args[0]) == 1.0:
+            return a
         return self._record("^", a, b)
 
     def Solver(self) -> MockSolver:
