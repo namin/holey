@@ -378,7 +378,7 @@ class SymbolicFloat:
             self.z3_expr = self.tracer.backend.Real(name)
         elif isinstance(value, (int, float)):
             self.concrete = value
-            self.z3_expr = self.tracer.backend.RealVal(value)
+            self.z3_expr = self.tracer.backend.RealVal(float(value))
         else:
             self.z3_expr = value
         self.name = name
@@ -412,6 +412,64 @@ class SymbolicFloat:
             ),
             tracer=self.tracer
         )
+        
+    def __rsub__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        return SymbolicFloat(self.tracer.backend.Sub(other.z3_expr, self.z3_expr), tracer=self.tracer)
+        
+    def __add__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicFloat(self.concrete + other.concrete, tracer=self.tracer)
+        return SymbolicFloat(self.tracer.backend.Add(self.z3_expr, other.z3_expr), tracer=self.tracer)
+    
+    def __radd__(self, other):
+        return self.__add__(other)
+    
+    def __mul__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicFloat(self.concrete * other.concrete, tracer=self.tracer)
+        return SymbolicFloat(self.tracer.backend.Mul(self.z3_expr, other.z3_expr), tracer=self.tracer)
+    
+    def __rmul__(self, other):
+        return self.__mul__(other)
+    
+    def __pow__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicFloat(self.concrete ** other.concrete, tracer=self.tracer)
+        return SymbolicFloat(self.tracer.backend.Pow(self.z3_expr, other.z3_expr), tracer=self.tracer)
+    
+    def __rpow__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        return SymbolicFloat(self.tracer.backend.Pow(other.z3_expr, self.z3_expr), tracer=self.tracer)
+    
+    def __gt__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicBool(self.concrete > other.concrete, tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.GT(self.z3_expr, other.z3_expr), tracer=self.tracer)
+    
+    def __lt__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicBool(self.concrete < other.concrete, tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.LT(self.z3_expr, other.z3_expr), tracer=self.tracer)
+    
+    def __ge__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicBool(self.concrete >= other.concrete, tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.GE(self.z3_expr, other.z3_expr), tracer=self.tracer)
+    
+    def __str__(self):
+        if self.concrete is not None:
+            return str(self.concrete)
+        return f"SymbolicFloat({self.name})"
+    
+    def __repr__(self):
+        return self.__str__()
 
 class SymbolicList:
     def __init__(self, value, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
