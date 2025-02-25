@@ -267,8 +267,10 @@ class SymbolicInt:
         return self.__add__(other)
     
     def __rsub__(self, other):
-        if isinstance(other, (int, float)):
+        if isinstance(other, int):
             other = SymbolicInt(self.tracer.backend.IntVal(other), tracer=self.tracer)
+        elif isinstance(other, float):
+            other = SymbolicFloat(self.tracer.backend.RealVal(other), tracer=self.tracer)
         return SymbolicInt(self.tracer.backend.Sub(other.z3_expr, self.z3_expr), tracer=self.tracer)
     
     def __hash__(self):
@@ -473,10 +475,11 @@ class SymbolicFloat:
 
 class SymbolicList:
     def __init__(self, value, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
-        self.tracer = tracer        
+        self.tracer = tracer or SymbolicTracer()        
         assert name is None       
         assert isinstance(value, list), "Symbolic lists not yet supported: found "+str(value)+" of type "+str(type(value))
         self.concrete = value
+        self.z3_expr = None
 
     def __contains__(self, item):
         item = self.tracer.ensure_symbolic(item)
@@ -640,7 +643,7 @@ class SymbolicStrIterator:
 
 class SymbolicStr:
     def __init__(self, value: Optional[Any] = None, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
-        self.tracer = tracer
+        self.tracer = tracer or SymbolicTracer()
         self.concrete = None
         if name is not None:
             self.z3_expr = self.tracer.backend.String(name)
@@ -877,7 +880,7 @@ class SymbolicSlice:
         self.start = start
         self.end = end
         self.step = step
-        self.tracer = tracer
+        self.tracer = tracer or SymbolicTracer()
 
     def __add__(self, other):
         return self.get_slice() + other.get_slice()
@@ -968,8 +971,9 @@ class SymbolicSlice:
         
         if isinstance(self.concrete, str):
             # Use Z3's Extract for strings
-            start_expr = start.z3_expr if isinstance(start, SymbolicInt) else self.tracer.backend.IntVal(start)
-            length_expr = (end.z3_expr if isinstance(end, SymbolicInt) else self.tracer.backend.IntVal(end)) - start_expr
+            start_expr = start.z3_expr if isinstance(start, SymbolicInt) else self.tracer.backend.IntVal(int(start))
+            end_expr = end.z3_expr if isinstance(end, SymbolicInt) else self.tracer.backend.IntVal(int(end))
+            length_expr = self.tracer.backend.Sub(end_expr, start_expr)
             return SymbolicStr(
                 self.tracer.backend.StrSubstr(self.tracer.backend.StringVal(self.concrete), start_expr, length_expr, variant="str.substr"),
                 tracer=self.tracer
