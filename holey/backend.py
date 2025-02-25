@@ -122,6 +122,16 @@ def _parse_model(output):
                 value = from_smtlib_string(str(value))
             elif typ == 'Int':
                 value = from_stmlib_int(value)
+            elif typ == 'Real':
+                # Handle Real values, including fractions
+                if isinstance(value, list) and len(value) == 3 and value[0].value() == '/':
+                    # It's a fraction like (/ 3223.0 25000.0)
+                    numerator = float(value[1])
+                    denominator = float(value[2])
+                    value = numerator / denominator
+                else:
+                    # It's a simple number
+                    value = float(str(value))
             _model[var_name] = value
 
     return _model
@@ -143,11 +153,13 @@ class MockExpr:
             return self._name
         if self.op == "IntVal":
             return str(self.args[0])
+        elif self.op == "RealVal":
+            return str(self.args[0])
         elif self.op == "BoolVal":
             return str(self.args[0]).lower()
         elif self.op == 'str.val':
             return to_smtlib_string(self.args[0])
-        elif self.op in ["Int", "String"]:
+        elif self.op in ["Int", "String", "Real"]:
             # For variable references, just return the name
             return str(self.args[0])
         elif not self.args:
@@ -570,7 +582,7 @@ class Backend():
             self.solver.declarations.append((name, 'Real'))
         return self._record("Real", name)
 
-    def RealVal(self, val: int) -> MockExpr:
+    def RealVal(self, val: float) -> MockExpr:
         return self._record("RealVal", val)
 
     def BoolVal(self, val: bool) -> MockExpr:
@@ -661,6 +673,9 @@ class Backend():
 
     def StrToFloat(self, x) -> MockExpr:
         return self._record("str.to.float", x)
+        
+    def IntToFloat(self, x) -> MockExpr:
+        return self._record("to_real", x)
 
     def StrReplace(self, x, y, z) -> MockExpr:
         return self._record("str.replace", x, y, z)
