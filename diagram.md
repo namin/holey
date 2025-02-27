@@ -10,8 +10,8 @@ graph TD
     LLMSolver["holey/llm_solver.py<br>LLM Solutions"]
     
     %% External Components
-    SMTSolvers["SMT Solvers<br>(Z3, CVC5)"]
     LLMProviders["LLM APIs<br>(Claude, OpenAI, etc)"]
+    SMTSolvers["SMT Solvers<br>(Z3, CVC5)"]
     
     %% Main Dependencies with labels
     PuzzleSolver -->|"Uses for symbolic execution"| Core
@@ -41,4 +41,15 @@ graph TD
     %% Connect to main flow
     PuzzleSolver -.- ExtrapolationProcess
     LLMSolver -.-> Step4
+    
+    %% Component Grouping
+    subgraph SymbolicExecution["Symbolic Execution Engine"]
+        Core
+        Backend
+    end
+    
+    subgraph LLMIntegration["LLM Integration"]
+        LLM
+        LLMSolver
+    end
 ```
