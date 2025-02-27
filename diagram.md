@@ -13,20 +13,20 @@ graph TD
     LLMProviders["LLM APIs<br>(Claude, OpenAI, etc)"]
     SMTSolvers["SMT Solvers<br>(Z3, CVC5)"]
     
-    %% Main Dependencies with labels
-    PuzzleSolver -->|"Uses for symbolic execution"| Core
-    PuzzleSolver -->|"Uses for extrapolation & fallback"| LLMSolver
-    Core -->|"Translates to SMTLIB"| Backend
-    Backend -->|"Executes constraints"| SMTSolvers
-    LLMSolver -->|"Makes API calls"| LLM
-    LLMSolver -->|"Refines SMTLIB constraints"| Backend
-    LLM -->|"Communicates with"| LLMProviders
-    Core -.->|"Requests branch guidance"| LLMSolver
+    %% Main Execution Path (thicker lines)
+    UserPuzzle["User Puzzle"] ==>|"(1) Provides puzzle"| PuzzleSolver
+    PuzzleSolver ==>|"(2) Symbolic execution"| Core
+    Core ==>|"(3) SMTLIB translation"| Backend
+    Backend ==>|"(4) Constraint solving"| SMTSolvers
+    PuzzleSolver ==>|"(8) Returns solution"| Solution["Solution"]
     
-    %% Input/Output
-    UserPuzzle["User Puzzle"] -->|"Provides puzzle definition"| PuzzleSolver
-    PuzzleSolver -->|"Returns solution"| Solution["Solution"]
-
+    %% Alternative/Fallback Paths
+    PuzzleSolver -->|"(5) Fallback if SMT fails"| LLMSolver
+    LLMSolver -->|"(6) Makes API calls"| LLM
+    LLMSolver -->|"(7) Refines constraints"| Backend
+    LLM -->|"API requests"| LLMProviders
+    Core -.->|"Branch guidance"| LLMSolver
+    
     %% Extrapolation Process Highlight
     subgraph ExtrapolationProcess["Extrapolation Process"]
         Step1["Identify Complex Problem"]
