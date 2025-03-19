@@ -486,6 +486,24 @@ library = {
 (define-fun bin ((x Int)) String
   (str.++ "0b" (bin.rec x 32)))
 """
+,
+"str.from_real"
+:
+"""
+(define-fun str.from_real ((r Real)) String
+  (let ((is-negative (< r 0.0)))
+    (let ((abs-r (ite is-negative (- 0.0 r) r)))
+      (let ((int-part (to_int abs-r)))
+        (let ((frac-part (- abs-r (to_real int-part))))
+          (let ((int-str (str.from_int int-part)))
+            (let ((sign-str (ite is-negative "-" "")))
+              (let ((decimal-str "."))
+                (let ((precision 6.0)) ;; Show 6 decimal places
+                  (let ((frac-expanded (to_int (* frac-part (^ 10.0 precision)))))
+                    (let ((frac-str (str.from_int frac-expanded)))
+                      ;; Combine all parts: sign + integer part + decimal point + fraction part
+                      (str.++ sign-str (str.++ int-str (str.++ decimal-str frac-str))))))))))))))
+"""
 }
 
 @dataclass
@@ -670,6 +688,9 @@ class Backend():
 
     def IntToStr(self, x) -> MockExpr:
         return self._record("str.from_int", x)
+
+    def RealToStr(self, x) -> MockExpr:
+        return self._record("str.from_real", x)
 
     def StrToCode(self, x) -> MockExpr:
         return self._record("str.to_code", x)

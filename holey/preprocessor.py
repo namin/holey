@@ -278,6 +278,8 @@ def sym_len(x):
 def sym_str(x):
     if isinstance(x, SymbolicInt):
         return SymbolicStr(str(x.concrete) if x.concrete is not None else x.tracer.backend.IntToStr(x.z3_expr), tracer=x.tracer)
+    if isinstance(x, SymbolicFloat):
+        return SymbolicStr(str(x.concrete) if x.concrete is not None else x.tracer.backend.RealToStr(x.z3_expr), tracer=x.tracer)
     if isinstance(x, SymbolicStr):
         return x
     return x.__str__()
