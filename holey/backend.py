@@ -33,6 +33,20 @@ def from_stmlib_int(v):
         return None
     return int(v)
 
+def from_stmlib_float(value):
+    # Handle Real values, including fractions
+    if isinstance(value, list) and len(value) == 3 and value[0].value() == '/':
+        # It's a fraction like (/ 3223.0 25000.0)
+        numerator = float(value[1])
+        denominator = float(value[2])
+        value = numerator / denominator
+    elif isinstance(value, list) and len(value) == 2 and value[0].value() == '-':
+        value = -from_stmlib_float(value[1])
+    else:
+        # It's a simple number
+        value = float(str(value))
+    return value
+
 cmd_prefixes = {
     'z3': ['z3', '-T:2'],
     'cvc5': ['cvc5', '--tlimit=2000', '--produce-model']
@@ -123,15 +137,7 @@ def _parse_model(output):
             elif typ == 'Int':
                 value = from_stmlib_int(value)
             elif typ == 'Real':
-                # Handle Real values, including fractions
-                if isinstance(value, list) and len(value) == 3 and value[0].value() == '/':
-                    # It's a fraction like (/ 3223.0 25000.0)
-                    numerator = float(value[1])
-                    denominator = float(value[2])
-                    value = numerator / denominator
-                else:
-                    # It's a simple number
-                    value = float(str(value))
+                value = from_stmlib_float(value)
             _model[var_name] = value
 
     return _model
