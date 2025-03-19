@@ -462,7 +462,15 @@ class SymbolicFloat:
         if self.concrete is not None and other.concrete is not None:
             return SymbolicBool(self.concrete >= other.concrete, tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.GE(self.z3_expr, other.z3_expr), tracer=self.tracer)
+
+    def __truediv__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        return SymbolicFloat(self.z3_expr / other.z3_expr, tracer=self.tracer)
     
+    def __rtruediv__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        return SymbolicFloat(other.z3_expr / self.z3_expr, tracer=self.tracer)
+
     def __str__(self):
         if self.concrete is not None:
             return str(self.concrete)
