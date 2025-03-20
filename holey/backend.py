@@ -158,8 +158,8 @@ def _parse_model(output):
             _model[var_name] = value
 
     # Add debugging
-    for var_name, value in _model.items():
-        print(f"DEBUG: Parsed variable {var_name} = {value!r} (type: {type(value).__name__})")
+    # for var_name, value in _model.items():
+    #     print(f"DEBUG: Parsed variable {var_name} = {value!r} (type: {type(value).__name__})")
 
     return _model
 

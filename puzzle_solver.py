@@ -49,7 +49,6 @@ class PuzzleSolver:
         with capture_output() as captured:
             solution = tracer.solution()
         log = captured.getvalue()
-        print('SOLUTION', solution)
         print(log)
         return tracer, sym_var, solution, log
 
