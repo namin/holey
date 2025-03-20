@@ -329,6 +329,11 @@ class MockExpr:
     def name(self) -> str:
         return self._name if self._name else str(self)
 
+# from lib to users
+library_deps = {
+'list': ['str.split']
+}
+
 library = {
 'list':
 """
@@ -336,38 +341,59 @@ library = {
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
 ;; List utility functions
-(define-fun-rec list.length ((l (List Int))) Int
+(define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
-       (+ 1 (list.length (tail l)))))
+       (+ 1 (list.length.int (tail l)))))
 
-(define-fun-rec list.get ((l (List Int)) (idx Int)) Int
+(define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
   (ite (= idx 0)
        (head l)
-       (list.get (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1))))
 
-(define-fun-rec list.contains ((l (List Int)) (val Int)) Bool
+(define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
        false
        (ite (= (head l) val)
             true
-            (list.contains (tail l) val))))
+            (list.contains.int (tail l) val))))
 
-(define-fun-rec list.sum ((l (List Int))) Int
+(define-fun-rec list.length.string ((l (List String))) Int
+  (ite (= l (as nil (List String)))
+       0
+       (+ 1 (list.length.string (tail l)))))
+
+(define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (= idx 0)
+       (head l)
+       (list.get.string (tail l) (- idx 1))))
+
+(define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
+  (ite (= l (as nil (List String)))
+       false
+       (ite (= (head l) val)
+            true
+            (list.contains.string (tail l) val))))
+
+(define-fun-rec list.sum.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
-       (+ (head l) (list.sum (tail l)))))
+       (+ (head l) (list.sum.int (tail l)))))
 
-(define-fun-rec list.append ((l1 (List Int)) (l2 (List Int))) (List Int)
+(define-fun-rec list.append.int ((l1 (List Int)) (l2 (List Int))) (List Int)
   (ite (= l1 (as nil (List Int)))
        l2
-       (cons (head l1) (list.append (tail l1) l2))))
+       (cons (head l1) (list.append.int (tail l1) l2))))
 
-(define-fun-rec list.map_add ((l (List Int)) (val Int)) (List Int)
+(define-fun-rec list.append.string ((l1 (List String)) (l2 (List String))) (List String)
+  (ite (= l1 (as nil (List String)))
+       l2
+       (cons (head l1) (list.append.string (tail l1) l2))))
+
+(define-fun-rec list.map_add.int ((l (List Int)) (val Int)) (List Int)
   (ite (= l (as nil (List Int)))
        (as nil (List Int))
-       (cons (+ (head l) val) (list.map_add (tail l) val))))
-
+       (cons (+ (head l) val) (list.map_add.int (tail l) val))))
 
 (define-fun-rec list.count.int ((l (List Int)) (val Int)) Int
   (ite (= l (as nil (List Int)))
@@ -392,6 +418,48 @@ library = {
        0
        (+ (ite (= (head l) val) 1 0)
           (list.count.real (tail l) val))))
+"""
+,
+'str.split':
+"""
+; Helper function to check if a character matches the delimiter
+(define-fun is-delimiter ((c String) (delim String)) Bool
+  (= c delim))
+
+; Helper function to get the substring from start to end (exclusive)
+(define-fun substring ((s String) (start Int) (end Int)) String
+  (let ((len (- end start)))
+    (ite (or (< start 0) (< len 0) (> end (str.len s)))
+         ""
+         (str.substr s start len))))
+
+; Recursive helper function to do the actual splitting
+; This simulates a loop through the string
+(define-fun-rec loop-split ((s String) (delim String) (start Int) (pos Int) 
+                            (result (List String)) (len Int)) (List String)
+  (ite (>= pos len)
+       ; If we reached the end of the string, add the final substring
+       (let ((final-part (substring s start len)))
+         (cons final-part result))
+       ; If not at the end, check if current character is a delimiter
+       (ite (is-delimiter (str.at s pos) delim)
+            ; If it's a delimiter, add the substring to result and continue
+            (let ((part (substring s start pos)))
+              (let ((new-result (cons part result)))
+                (loop-split s delim (+ pos 1) (+ pos 1) new-result len)))
+            ; If not a delimiter, just continue
+            (loop-split s delim start (+ pos 1) result len))))
+
+(define-fun str.split ((s String) (delim String)) (List String)
+  (let ((len (str.len s)))
+    (ite (= len 0)
+         (cons "" (as nil (List String)))
+         (let ((result (as nil (List String)))
+               (start 0))
+           ; We need to manually iterate through the string
+           ; and build our list of substrings
+           (let ((result (loop-split s delim 0 0 result len)))
+             result)))))
 """
 ,
 'str.sorted':
@@ -716,7 +784,7 @@ class MockSolver:
         smt2_preambule = "(set-logic ALL)\n" 
         smt2_lower = smt2.lower()
         for fun,defn in library.items():
-            if fun in smt2_lower:
+            if fun in smt2_lower or any([user_fun in smt2_lower for user_fun in library_deps.get(fun, [])]):
                 smt2_preambule += defn + "\n"
         smt2 = smt2_preambule + smt2
 
@@ -934,7 +1002,7 @@ class Backend():
 
     def StrSplit(self, s, sep) -> MockExpr:
         """Split string by separator"""
-        return self._record("str.to.re", s, sep)
+        return self._record("str.split", s, sep)
 
     def Bin(self, x) -> MockExpr:
         return self._record("bin", x)
@@ -995,25 +1063,25 @@ class Backend():
 
         return result
 
-    def ListLength(self, lst) -> MockExpr:
+    def ListLength(self, lst, element_type) -> MockExpr:
         """Get the length of a list"""
-        return self._record("list.length", lst)
+        return self._record("list.length."+element_type.lower(), lst)
 
-    def ListGet(self, lst, idx) -> MockExpr:
+    def ListGet(self, lst, idx, element_type) -> MockExpr:
         """Get an element from a list at the given index"""
-        return self._record("list.get", lst, idx)
+        return self._record("list.get."+element_type.lower(), lst, idx)
 
-    def ListContains(self, lst, val) -> MockExpr:
+    def ListContains(self, lst, val, element_type) -> MockExpr:
         """Check if a list contains a value"""
-        return self._record("list.contains", lst, val)
+        return self._record("list.contains."+element_type.lower(), lst, val)
 
     def ListSum(self, lst) -> MockExpr:
         """Get the sum of all elements in a list"""
-        return self._record("list.sum", lst)
+        return self._record("list.sum.int", lst)
 
-    def ListAppend(self, lst1, lst2) -> MockExpr:
+    def ListAppend(self, lst1, lst2, element_type) -> MockExpr:
         """Append two lists"""
-        return self._record("list.append", lst1, lst2)
+        return self._record("list.append."+element_type.lower(), lst1, lst2)
 
     def ListMapAdd(self, lst, val) -> MockExpr:
         """Add a value to each element in a list"""
@@ -1028,11 +1096,7 @@ class Backend():
         return self._record(f"(as nil (List {element_type}))")
 
     def ListCount(self, lst, val, element_type: str) -> MockExpr:
-        """Count occurrences of a value in a list
-
-        Select the appropriate count function based on the element type
-        """
-        count_fn = "list.count."+element_type.lower()
-        return self._record(count_fn, lst, val)
+        """Count occurrences of a value in a list"""
+        return self._record("list.count."+element_type.lower(), lst, val)
 
 default_backend = Backend

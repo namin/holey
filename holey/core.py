@@ -488,7 +488,7 @@ class SymbolicListIterator:
     def __init__(self, sym_list):
         self.tracer = sym_list.tracer
         self.sym_list = sym_list
-        self.element_type = sym_list.elementTyp
+        self.elementTyp = sym_list.elementTyp
         self.length = sym_list.__len__()
         self.used = False
         
@@ -507,22 +507,9 @@ class SymbolicListIterator:
         
         # Add bounds constraints for position
         bounds = (pos_var.z3_expr >= 0) & (pos_var.z3_expr < self.length.z3_expr)
-        
         # Get element at current position
-        element_expr = self.tracer.backend.ListGet(self.sym_list.z3_expr, pos_var.z3_expr)
-        
-        # Create the appropriate type of symbolic variable based on element_type
-        if self.element_type == int:
-            result = SymbolicInt(element_expr, tracer=self.tracer)
-        elif self.element_type == float:
-            result = SymbolicFloat(element_expr, tracer=self.tracer)
-        elif self.element_type == bool:
-            result = SymbolicBool(element_expr, tracer=self.tracer)
-        elif self.element_type == str:
-            result = SymbolicStr(element_expr, tracer=self.tracer)
-        else:
-            # Default to returning the raw expression
-            result = element_expr
+        element_expr = self.tracer.backend.ListGet(self.sym_list.z3_expr, pos_var.z3_expr, self.tracer.backend.Type(self.elementTyp))
+        result = make_symbolic_value(self.elementTyp, element_expr, tracer=self.tracer)
         
         # Add position variable to forall condition
         self.tracer.forall_conditions.append((pos_var.z3_expr, bounds))
@@ -557,7 +544,7 @@ class SymbolicList:
                 return item.concrete in self.concrete
             else:
                 return self.tracer.backend.Or(*[(item == x).z3_expr for x in self.concrete])
-        return SymbolicBool(self.tracer.backend.ListContains(self.z3_expr, item.z3_expr), tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.ListContains(self.z3_expr, item.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
 
 
     def contains(self, item):
@@ -598,7 +585,7 @@ class SymbolicList:
                 return result
             return self.concrete[key]
         key = self.tracer.ensure_symbolic(key)
-        return make_symbolic_value(self.elementTyp, self.tracer.backend.ListGet(self.z3_expr, key.z3_expr), tracer=self.tracer)
+        return make_symbolic_value(self.elementTyp, self.tracer.backend.ListGet(self.z3_expr, key.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
 
     def __iter__(self):
         if self.concrete is not None:
@@ -608,19 +595,19 @@ class SymbolicList:
     def __len__(self):
         if self.concrete is not None:
             len(self.concrete)
-        return SymbolicInt(self.tracer.backend.ListLength(self.z3_expr), tracer=self.tracer)
+        return SymbolicInt(self.tracer.backend.ListLength(self.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
 
     def __add__(self, other):
         other = self.tracer.ensure_symbolic(other)
         if self.concrete is not None and other.concrete is not None:
             return SymbolicList(self.concrete + other.concrete, self.elementTyp, tracer=self.tracer)
-        return SymbolicList(self.tracer.backend.ListAppend(self.z3_expr, other.z3_expr), self.elementTyp, tracer=self.tracer)
+        return SymbolicList(self.tracer.backend.ListAppend(self.z3_expr, other.z3_expr, self.tracer.backend.Type(self.elementTyp)), self.elementTyp, tracer=self.tracer)
 
     def __radd__(self, other):
         other = self.tracer.ensure_symbolic(other)
         if self.concrete is not None and other.concrete is not None:
             return SymbolicList(other.concrete + self.concrete, self.elementTyp, tracer=self.tracer)
-        return SymbolicList(self.tracer.backend.ListAppend(other.z3_expr, self.z3_expr), self.elementTyp, tracer=self.tracer)
+        return SymbolicList(self.tracer.backend.ListAppend(other.z3_expr, self.z3_expr, self.tracer.backend.Type(self.elementTyp)), self.elementTyp, tracer=self.tracer)
 
     def index(self, item):
         # Return first index where item appears as SymbolicInt
