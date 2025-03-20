@@ -113,6 +113,7 @@ def parse_output(output):
         return 'unknown', None
 
 def _parse_model(output):
+    """Parse the SMT model output into a Python dictionary"""
     # Parse the entire output as S-expressions
     lines = output.strip().split('\n')
     if not lines[0] == 'sat':
@@ -127,20 +128,122 @@ def _parse_model(output):
 
     # Each definition in the model is a list like:
     # (define-fun x () Int 42)
+    # (define-fun y () (List Int) (cons 1 (cons 2 nil)))
     for defn in model_sexp:
         if defn[0].value() == 'define-fun':
             var_name = defn[1].value()
             value = defn[-1]
-            typ = defn[3].value()
-            if typ == 'String':
-                value = from_smtlib_string(str(value))
-            elif typ == 'Int':
-                value = from_stmlib_int(value)
-            elif typ == 'Real':
-                value = from_stmlib_float(value)
+            
+            # Extract type information
+            typ = defn[3]
+            
+            # Handle different types
+            if isinstance(typ, sexpdata.Symbol):
+                # Simple type like Int, String, etc.
+                type_name = typ.value()
+                if type_name == 'String':
+                    value = from_smtlib_string(str(value))
+                elif type_name == 'Int':
+                    value = from_stmlib_int(value)
+                elif type_name == 'Real':
+                    value = from_stmlib_float(value)
+                elif type_name == 'Bool':
+                    value = str(value) == 'true'
+            elif isinstance(typ, list) and len(typ) >= 2:
+                # Complex type like (List Int)
+                if isinstance(typ[0], sexpdata.Symbol) and typ[0].value() == 'List':
+                    element_type = typ[1].value() if isinstance(typ[1], sexpdata.Symbol) else str(typ[1])
+                    value = _parse_list_value(value)
+            
             _model[var_name] = value
 
+    # Add debugging
+    for var_name, value in _model.items():
+        print(f"DEBUG: Parsed variable {var_name} = {value!r} (type: {type(value).__name__})")
+
     return _model
+
+def _parse_list_value(list_sexp):
+    """Parse a list value from SMT-LIB output using a simple recursive approach"""
+    # Handle 'as' expressions: (as expr type) -> parse expr
+    if isinstance(list_sexp, list) and len(list_sexp) >= 2 and isinstance(list_sexp[0], sexpdata.Symbol) and list_sexp[0].value() == 'as':
+        # Recursively parse the expression part, ignoring the type annotation
+        return _parse_list_value(list_sexp[1])
+    
+    # Handle nil symbol (empty list)
+    if isinstance(list_sexp, sexpdata.Symbol) and list_sexp.value() == 'nil':
+        return []
+    
+    # Handle empty list represented as []
+    if list_sexp == []:
+        return []
+        
+    # Handle cons cell (cons head tail)
+    if isinstance(list_sexp, list) and len(list_sexp) >= 3 and isinstance(list_sexp[0], sexpdata.Symbol) and list_sexp[0].value() == 'cons':
+        head = list_sexp[1]
+        tail = list_sexp[2]
+        
+        # Parse head value
+        parsed_head = _parse_sexp_value(head)
+        
+        # Recursively parse the tail
+        parsed_tail = _parse_list_value(tail)
+        
+        # Combine head and tail into a new list
+        return [parsed_head] + parsed_tail
+    
+    # If we get here, it's an unexpected format
+    print(f"Warning: Unexpected list format in SMT output: {list_sexp}")
+    return []
+
+def _parse_sexp_value(sexp):
+    """Parse any S-expression value to an appropriate Python value"""
+    # Handle simple values
+    if isinstance(sexp, (int, float, bool)):
+        return sexp
+    
+    # Handle symbols
+    if isinstance(sexp, sexpdata.Symbol):
+        sym_val = sexp.value()
+        if sym_val == 'true':
+            return True
+        elif sym_val == 'false':
+            return False
+        elif sym_val == 'nil':
+            return []
+        else:
+            try:
+                # Try to convert to int/float if possible
+                return int(sym_val)
+            except ValueError:
+                try:
+                    return float(sym_val)
+                except ValueError:
+                    return sym_val  # Return as string
+    
+    # Handle 'as' expressions
+    if isinstance(sexp, list) and len(sexp) >= 2 and isinstance(sexp[0], sexpdata.Symbol) and sexp[0].value() == 'as':
+        return _parse_sexp_value(sexp[1])
+    
+    # Handle lists
+    if isinstance(sexp, list):
+        if len(sexp) >= 3 and isinstance(sexp[0], sexpdata.Symbol) and sexp[0].value() == 'cons':
+            return _parse_list_value(sexp)
+        elif len(sexp) >= 1 and isinstance(sexp[0], sexpdata.Symbol):
+            # Handle other SMT-LIB expressions
+            op = sexp[0].value()
+            if op == '-' and len(sexp) == 2:
+                # Unary minus
+                return -_parse_sexp_value(sexp[1])
+            elif op == '/' and len(sexp) == 3:
+                # Division expression
+                return _parse_sexp_value(sexp[1]) / _parse_sexp_value(sexp[2])
+        
+        # Otherwise parse each element recursively
+        return [_parse_sexp_value(elem) for elem in sexp]
+    
+    # String or other primitive
+    return sexp
 
 @dataclass
 class MockExpr:
@@ -165,7 +268,7 @@ class MockExpr:
             return str(self.args[0]).lower()
         elif self.op == 'str.val':
             return to_smtlib_string(self.args[0])
-        elif self.op in ["Int", "String", "Real"]:
+        elif self.op in ["Int", "String", "Real", "Bool", "List"]:
             # For variable references, just return the name
             return str(self.args[0])
         elif not self.args:
@@ -227,6 +330,70 @@ class MockExpr:
         return self._name if self._name else str(self)
 
 library = {
+'list':
+"""
+(declare-datatypes ((List 1)) 
+    ((par (T) ((cons (head T) (tail (List T))) (nil)))))
+
+;; List utility functions
+(define-fun-rec list.length ((l (List Int))) Int
+  (ite (= l (as nil (List Int)))
+       0
+       (+ 1 (list.length (tail l)))))
+
+(define-fun-rec list.get ((l (List Int)) (idx Int)) Int
+  (ite (= idx 0)
+       (head l)
+       (list.get (tail l) (- idx 1))))
+
+(define-fun-rec list.contains ((l (List Int)) (val Int)) Bool
+  (ite (= l (as nil (List Int)))
+       false
+       (ite (= (head l) val)
+            true
+            (list.contains (tail l) val))))
+
+(define-fun-rec list.sum ((l (List Int))) Int
+  (ite (= l (as nil (List Int)))
+       0
+       (+ (head l) (list.sum (tail l)))))
+
+(define-fun-rec list.append ((l1 (List Int)) (l2 (List Int))) (List Int)
+  (ite (= l1 (as nil (List Int)))
+       l2
+       (cons (head l1) (list.append (tail l1) l2))))
+
+(define-fun-rec list.map_add ((l (List Int)) (val Int)) (List Int)
+  (ite (= l (as nil (List Int)))
+       (as nil (List Int))
+       (cons (+ (head l) val) (list.map_add (tail l) val))))
+
+
+(define-fun-rec list.count.int ((l (List Int)) (val Int)) Int
+  (ite (= l (as nil (List Int)))
+       0
+       (+ (ite (= (head l) val) 1 0)
+          (list.count.int (tail l) val))))
+
+(define-fun-rec list.count.string ((l (List String)) (val String)) Int
+  (ite (= l (as nil (List String)))
+       0
+       (+ (ite (= (head l) val) 1 0)
+          (list.count.string (tail l) val))))
+
+(define-fun-rec list.count.bool ((l (List Bool)) (val Bool)) Int
+  (ite (= l (as nil (List Bool)))
+       0
+       (+ (ite (= (head l) val) 1 0)
+          (list.count.bool (tail l) val))))
+
+(define-fun-rec list.count.real ((l (List Real)) (val Real)) Int
+  (ite (= l (as nil (List Real)))
+       0
+       (+ (ite (= (head l) val) 1 0)
+          (list.count.real (tail l) val))))
+"""
+,
 'str.sorted':
 """
 (define-fun-rec str.min_char ((s String)) String
@@ -547,8 +714,9 @@ class MockSolver:
         smt2 += "(check-sat)\n(get-model)\n"
 
         smt2_preambule = "(set-logic ALL)\n" 
+        smt2_lower = smt2.lower()
         for fun,defn in library.items():
-            if fun in smt2:
+            if fun in smt2_lower:
                 smt2_preambule += defn + "\n"
         smt2 = smt2_preambule + smt2
 
@@ -785,5 +953,86 @@ class Backend():
 
     def SwapCase(self, x) -> MockExpr:
         return self._record("swapcase", x)
+
+    def Type(self, typ: type) -> str:
+        if typ == int:
+            return "Int"
+        if typ == bool:
+            return "Bool"
+        if typ == float:
+            return "Real"
+        if typ == str:
+            return "String"
+        raise ValueError("Unsupported type " + str(typ))
+
+    def List(self, name: str, element_type: str) -> MockExpr:
+        """Declare a list variable with elements of the given type"""
+        full_type = f"(List {element_type})"
+        if name not in self.quantified_vars:
+            self.solver.declarations.append((name, full_type))
+        return self._record("List", name, element_type)
+
+    def ListVal(self, elements: list, element_type: str) -> MockExpr:
+        """Create a list value with the given elements"""
+        if not elements:
+            return self._record(f"(as nil (List {element_type}))")
+
+        result = self._record(f"(as nil (List {element_type}))")
+        # Build the list in reverse order
+        for element in reversed(elements):
+            # Ensure the element is a MockExpr
+            if not isinstance(element, MockExpr):
+                if element_type == "Int":
+                    element = self.IntVal(element)
+                elif element_type == "Real":
+                    element = self.RealVal(element)
+                elif element_type == "Bool":
+                    element = self.BoolVal(element)
+                elif element_type == "String":
+                    element = self.StringVal(element)
+
+            result = self._record("cons", element, result)
+
+        return result
+
+    def ListLength(self, lst) -> MockExpr:
+        """Get the length of a list"""
+        return self._record("list.length", lst)
+
+    def ListGet(self, lst, idx) -> MockExpr:
+        """Get an element from a list at the given index"""
+        return self._record("list.get", lst, idx)
+
+    def ListContains(self, lst, val) -> MockExpr:
+        """Check if a list contains a value"""
+        return self._record("list.contains", lst, val)
+
+    def ListSum(self, lst) -> MockExpr:
+        """Get the sum of all elements in a list"""
+        return self._record("list.sum", lst)
+
+    def ListAppend(self, lst1, lst2) -> MockExpr:
+        """Append two lists"""
+        return self._record("list.append", lst1, lst2)
+
+    def ListMapAdd(self, lst, val) -> MockExpr:
+        """Add a value to each element in a list"""
+        return self._record("list.map_add", lst, val)
+
+    def ListCons(self, head, tail) -> MockExpr:
+        """Add an element to the front of a list"""
+        return self._record("cons", head, tail)
+
+    def ListNil(self, element_type: str) -> MockExpr:
+        """Create an empty list of the given element type"""
+        return self._record(f"(as nil (List {element_type}))")
+
+    def ListCount(self, lst, val, element_type: str) -> MockExpr:
+        """Count occurrences of a value in a list
+
+        Select the appropriate count function based on the element type
+        """
+        count_fn = "list.count."+element_type.lower()
+        return self._record(count_fn, lst, val)
 
 default_backend = Backend

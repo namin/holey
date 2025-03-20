@@ -49,6 +49,7 @@ class PuzzleSolver:
         with capture_output() as captured:
             solution = tracer.solution()
         log = captured.getvalue()
+        print('SOLUTION', solution)
         print(log)
         return tracer, sym_var, solution, log
 
@@ -62,6 +63,10 @@ class PuzzleSolver:
             typ = float
         elif ans_type == 'bool':
             typ = bool
+        elif ans_type == 'List[int]':
+            typ = list[int]
+        elif ans_type == 'List[str]':
+            typ = list[str]
         if not typ:
             print("Unsupported answer type", ans_type)
             self.error_unsupported_answer_type += 1
@@ -87,7 +92,7 @@ class PuzzleSolver:
             print('Solution', solution)
             print("Could not find any solution var")
             return None, log
-        result = typ(str(solution_var))
+        result = solution_var if isinstance(solution_var, typ) else typ(str(solution_var))
         print("Found solution", result)
         return result, log
 
@@ -218,7 +223,7 @@ timeouts after staging (while building the SMTLIB program), errors during stagin
 """+extrapolation
 
 def check_result(result, sat_func):
-    namespace = {}
+    namespace = {'List': list}
     exec(sat_func, namespace)
     sat = namespace['sat']
     try:
@@ -321,7 +326,7 @@ if __name__ == "__main__":
                         help='only run puzzles whose names start with this prefix')
     parser.add_argument('--answer-types',
                         nargs='+',
-                        choices=['int', 'str', 'float', 'bool'],
+                        choices=['int', 'str', 'float', 'bool', 'List[int]', 'List[str]'],
                         default=['int', 'str'],
                         help='only run some answer types')
     parser.add_argument('--smtlib-backends',

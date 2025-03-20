@@ -482,12 +482,73 @@ class SymbolicFloat:
     def __repr__(self):
         return self.__str__()
 
+class SymbolicListIterator:
+    _counter = 0
+    
+    def __init__(self, sym_list):
+        self.tracer = sym_list.tracer
+        self.sym_list = sym_list
+        self.element_type = sym_list.elementTyp
+        self.length = sym_list.__len__()
+        self.used = False
+        
+    def __iter__(self):
+        return self
+        
+    def __next__(self):
+        if self.used:
+            raise StopIteration
+            
+        # Create position variable directly as a variable in forall
+        pos_name = f'list_pos_{SymbolicListIterator._counter}'
+        SymbolicListIterator._counter += 1
+        self.tracer.backend.quantified_vars.add(pos_name)        
+        pos_var = SymbolicInt(name=pos_name, tracer=self.tracer)
+        
+        # Add bounds constraints for position
+        bounds = (pos_var.z3_expr >= 0) & (pos_var.z3_expr < self.length.z3_expr)
+        
+        # Get element at current position
+        element_expr = self.tracer.backend.ListGet(self.sym_list.z3_expr, pos_var.z3_expr)
+        
+        # Create the appropriate type of symbolic variable based on element_type
+        if self.element_type == int:
+            result = SymbolicInt(element_expr, tracer=self.tracer)
+        elif self.element_type == float:
+            result = SymbolicFloat(element_expr, tracer=self.tracer)
+        elif self.element_type == bool:
+            result = SymbolicBool(element_expr, tracer=self.tracer)
+        elif self.element_type == str:
+            result = SymbolicStr(element_expr, tracer=self.tracer)
+        else:
+            # Default to returning the raw expression
+            result = element_expr
+        
+        # Add position variable to forall condition
+        self.tracer.forall_conditions.append((pos_var.z3_expr, bounds))
+        
+        self.used = True
+        return result
+
 class SymbolicList:
-    def __init__(self, value, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
-        self.tracer = tracer        
-        assert name is None       
-        assert isinstance(value, list), "Symbolic lists not yet supported: found "+str(value)+" of type "+str(type(value))
-        self.concrete = value
+    def __init__(self, value, elementTyp, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
+        self.tracer = tracer or SymbolicTracer()
+        self.elementTyp = elementTyp
+        self.concrete = None
+        if name is not None:
+            self.z3_expr = self.tracer.backend.List(name, self.tracer.backend.Type(elementTyp))
+        elif isinstance(value, list):
+            self.concrete = value
+            converted_values = []
+            for elem in value:
+                if hasattr(elem, 'z3_expr'):
+                    converted_values.append(elem.z3_expr)
+                else:
+                    converted_values.append(elem)
+            self.z3_expr = self.tracer.backend.ListVal(converted_values, self.tracer.backend.Type(elementTyp))
+        else:
+            self.z3_expr = value
+        self.name = name
 
     def __contains__(self, item):
         item = self.tracer.ensure_symbolic(item)
@@ -496,58 +557,70 @@ class SymbolicList:
                 return item.concrete in self.concrete
             else:
                 return self.tracer.backend.Or(*[(item == x).z3_expr for x in self.concrete])
-        return ValueError("Cannot check contains symbolically")
+        return SymbolicBool(self.tracer.backend.ListContains(self.z3_expr, item.z3_expr), tracer=self.tracer)
+
 
     def contains(self, item):
         return SymbolicBool(self.__contains__(item), tracer=self.tracer)
 
     def __getitem__(self, key):
-        if isinstance(key, slice):
-            if (not isinstance(key.start, SymbolicInt) and 
-                not isinstance(key.stop, SymbolicInt) and 
-                not isinstance(key.step, SymbolicInt)):
-                return SymbolicList(self.concrete[key], tracer=self.tracer)
-            return SymbolicSlice(self.concrete, key.start, key.stop, key.step, tracer=self.tracer)
-        elif isinstance(key, SymbolicInt):
-            # If we have a concrete value, use it directly
-            if key.concrete is not None:
-                return self.concrete[key.concrete]
-                
-            # Add bounds check
-            n = len(self)
-            self.tracer.add_constraint(key < n)
-            self.tracer.add_constraint(key > -n)
+        if self.concrete is not None:
+            if isinstance(key, slice):
+                if (not isinstance(key.start, SymbolicInt) and 
+                    not isinstance(key.stop, SymbolicInt) and 
+                    not isinstance(key.step, SymbolicInt)):
+                    return SymbolicList(self.concrete[key], self.elementTyp, tracer=self.tracer)
+                return SymbolicSlice(self.concrete, key.start, key.stop, key.step, tracer=self.tracer)
+            elif isinstance(key, SymbolicInt):
+                # If we have a concrete value, use it directly
+                if key.concrete is not None:
+                    return self.concrete[key.concrete]
 
-            # Build an If expression to select the right value
-            result = None
-            for i, item in enumerate(self.concrete):
-                if result is None:
-                    result = item
-                else:
-                    result = SymbolicInt(
-                        self.tracer.backend.If(
-                            self.tracer.backend.Or(key.z3_expr == i, key.z3_expr == -n+i),
-                            item.z3_expr,
-                            result.z3_expr
-                        ),
-                        tracer=self.tracer
-                    )
-            return result
-        return self.concrete[key]
+                # Add bounds check
+                n = len(self)
+                self.tracer.add_constraint(key < n)
+                self.tracer.add_constraint(key > -n)
+
+                # Build an If expression to select the right value
+                result = None
+                for i, item in enumerate(self.concrete):
+                    if result is None:
+                        result = item
+                    else:
+                        result = make_symbolic_value(self.elementTyp,
+                            self.tracer.backend.If(
+                                self.tracer.backend.Or(key.z3_expr == i, key.z3_expr == -n+i),
+                                item.z3_expr,
+                                result.z3_expr
+                            ),
+                            tracer=self.tracer
+                        )
+                return result
+            return self.concrete[key]
+        key = self.tracer.ensure_symbolic(key)
+        return make_symbolic_value(self.elementTyp, self.tracer.backend.ListGet(self.z3_expr, key.z3_expr), tracer=self.tracer)
 
     def __iter__(self):
-        return iter(self.concrete)
+        if self.concrete is not None:
+            return iter(self.concrete)
+        return SymbolicListIterator(self)
 
     def __len__(self):
-        return len(self.concrete)
+        if self.concrete is not None:
+            len(self.concrete)
+        return SymbolicInt(self.tracer.backend.ListLength(self.z3_expr), tracer=self.tracer)
 
     def __add__(self, other):
         other = self.tracer.ensure_symbolic(other)
-        return SymbolicList(self.concrete + other.concrete, tracer=self.tracer)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicList(self.concrete + other.concrete, self.elementTyp, tracer=self.tracer)
+        return SymbolicList(self.tracer.backend.ListAppend(self.z3_expr, other.z3_expr), self.elementTyp, tracer=self.tracer)
 
     def __radd__(self, other):
         other = self.tracer.ensure_symbolic(other)
-        return SymbolicList(other.concrete + self.concrete, tracer=self.tracer)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicList(other.concrete + self.concrete, self.elementTyp, tracer=self.tracer)
+        return SymbolicList(self.tracer.backend.ListAppend(other.z3_expr, self.z3_expr), self.elementTyp, tracer=self.tracer)
 
     def index(self, item):
         # Return first index where item appears as SymbolicInt
@@ -580,37 +653,40 @@ class SymbolicList:
 
     def count(self, item):
         """Count occurrences of item in list"""
-        count = 0
-        for x in self.concrete:
-            eq = (x == item)  # This gives us a SymbolicBool
-            if eq.concrete is not None:  # If we can evaluate it concretely
-                count += int(eq.concrete)
-            else:
-                # For now, just return a symbolic int for the whole count
-                # This could be made more precise later
-                result = None
-                for x in self.concrete:
-                    eq = (x == item)
-                    if result is None:
-                        result = SymbolicInt(
-                            self.tracer.backend.If(
-                                eq.z3_expr,
-                                self.tracer.backend.IntVal(1),
-                                self.tracer.backend.IntVal(0)
-                            ),
-                            tracer=self.tracer
-                        )
-                    else:
-                        result = result + SymbolicInt(
-                            self.tracer.backend.If(
-                                eq.z3_expr,
-                                self.tracer.backend.IntVal(1),
-                                self.tracer.backend.IntVal(0)
-                            ),
-                            tracer=self.tracer
-                        )
-                return result
-        return SymbolicInt(count, tracer=self.tracer)
+        if self.concrete is not None:
+            count = 0
+            for x in self.concrete:
+                eq = (x == item)  # This gives us a SymbolicBool
+                if eq.concrete is not None:  # If we can evaluate it concretely
+                    count += int(eq.concrete)
+                else:
+                    # For now, just return a symbolic int for the whole count
+                    # This could be made more precise later
+                    result = None
+                    for x in self.concrete:
+                        eq = (x == item)
+                        if result is None:
+                            result = SymbolicInt(
+                                self.tracer.backend.If(
+                                    eq.z3_expr,
+                                    self.tracer.backend.IntVal(1),
+                                    self.tracer.backend.IntVal(0)
+                                ),
+                                tracer=self.tracer
+                            )
+                        else:
+                            result = result + SymbolicInt(
+                                self.tracer.backend.If(
+                                    eq.z3_expr,
+                                    self.tracer.backend.IntVal(1),
+                                    self.tracer.backend.IntVal(0)
+                                ),
+                                tracer=self.tracer
+                            )
+                    return result
+            return SymbolicInt(count, tracer=self.tracer)
+        item = self.tracer.ensure_symbolic(item)
+        return SymbolicInt(self.tracer.backend.ListCount(self.z3_expr, item.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
 
 class SymbolicStrIterator:
     _counter = 0
@@ -669,8 +745,34 @@ class SymbolicStr:
         return SymbolicInt(self.tracer.backend.StrIndexOf(self.z3_expr, sub.z3_expr, start.z3_expr), tracer=self.tracer)
 
     def join(self, ss):
-        underlying = ss.concrete if hasattr(ss, 'concrete') and ss.concrete is not None else list(ss)
-        return SymbolicStr(self.tracer.backend.StrJoin(self.z3_expr, self.tracer.backend.StrList([self.tracer.ensure_symbolic(x).z3_expr for x in underlying])), tracer=self.tracer)
+        """Join a list of strings with this string as separator"""
+        # Handle case where ss is a SymbolicList
+        if isinstance(ss, SymbolicList):
+            if ss.concrete is not None:
+                # If list has concrete values, use those
+                elements = [self.tracer.ensure_symbolic(x) for x in ss.concrete]
+                element_exprs = [elem.z3_expr for elem in elements]
+            else:
+                # For fully symbolic list, we need a special handling
+                # This will depend on the backend implementation details
+                return SymbolicStr(
+                    self.tracer.backend.StrJoin(self.z3_expr, ss.z3_expr),
+                    tracer=self.tracer
+                )
+        else:
+            # Try to handle iterable objects that aren't SymbolicList
+            try:
+                elements = [self.tracer.ensure_symbolic(x) for x in ss]
+                element_exprs = [elem.z3_expr for elem in elements]
+            except Exception as e:
+                raise ValueError(f"Cannot join items in {type(ss)}: {e}")
+
+        # Create a StrList and then join it
+        str_list = self.tracer.backend.StrList(element_exprs)
+        return SymbolicStr(
+            self.tracer.backend.StrJoin(self.z3_expr, str_list),
+            tracer=self.tracer
+        )
 
     def __lt__(self, other):
         other = self.tracer.ensure_symbolic(other)
@@ -704,7 +806,7 @@ class SymbolicStr:
         if self.concrete is not None:
             # If we have a concrete string, use Python's split
             parts = self.concrete.split(sep)
-            return SymbolicList([SymbolicStr(p, tracer=self.tracer) for p in parts], tracer=self.tracer)
+            return SymbolicList([SymbolicStr(p, tracer=self.tracer) for p in parts], str, tracer=self.tracer)
         
         # For symbolic strings, we need to use Z3's string operations
         if sep is None:
@@ -712,7 +814,7 @@ class SymbolicStr:
         sep = self.tracer.ensure_symbolic(sep)
         # Use Z3's string operations to split
         result = self.tracer.backend.StrSplit(self.z3_expr, sep.z3_expr)
-        return SymbolicList(result, tracer=self.tracer)
+        return SymbolicList(result, str, tracer=self.tracer)
 
     def __contains__(self, item):
         item = self.tracer.ensure_symbolic(item)
@@ -971,7 +1073,7 @@ class SymbolicSlice:
             step = self.step if self.step is not None else 1
             result = self.concrete[start:end:step]
             return (SymbolicStr(result, tracer=self.tracer) if isinstance(self.concrete, str)
-                   else SymbolicList(result, tracer=self.tracer))
+                   else SymbolicList(result, str, tracer=self.tracer))
         
         # For symbolic indices, use substring operation
         start = self.start if self.start is not None else 0
@@ -1069,6 +1171,28 @@ def make_symbolic(typ: Type, name: str, tracer: Optional[SymbolicTracer] = None)
         sym = SymbolicFloat(name=name, tracer=tracer)
     elif typ == str or typ == 'str':
         sym = SymbolicStr(name=name, tracer=tracer)
+    elif typ == list[str] or typ == 'List[str]':
+        sym = SymbolicList(None, str, name=name, tracer=tracer)
+    elif typ == list[int] or typ == 'List[int]':
+        sym = SymbolicList(None, int, name=name, tracer=tracer)
+    else:
+        raise ValueError(f"Unsupported symbolic type: {typ}")
+    return sym
+
+def make_symbolic_value(typ: Type, v: Any, tracer: Optional[SymbolicTracer] = None) -> Any:
+    """Create a new symbolic value of given type"""
+    if typ == int or typ == 'int':
+        sym = SymbolicInt(v, tracer=tracer)
+    elif typ == bool or typ == 'bool':
+        sym = SymbolicBool(v, tracer=tracer)
+    elif typ == float or typ == 'float':
+        sym = SymbolicFloat(v, tracer=tracer)
+    elif typ == str or typ == 'str':
+        sym = SymbolicStr(v, tracer=tracer)
+    elif typ == list[str] or typ == 'List[str]':
+        sym = SymbolicList(v, str, name=name, tracer=tracer)
+    elif typ == list[int] or typ == 'List[int]':
+        sym = SymbolicList(v, int, name=name, tracer=tracer)
     else:
         raise ValueError(f"Unsupported symbolic type: {typ}")
     return sym

@@ -292,6 +292,22 @@ def first_tracer(xs):
     else:
         return first_tracer(xs[1:])
 
+def infer_element_type(elements):
+    for elem in elements:
+        if isinstance(elem, (SymbolicStr, str)):
+            return str
+        elif isinstance(elem, (SymbolicFloat, float)):
+            return float
+        elif isinstance(elem, (SymbolicInt, int)):
+            return int
+        elif isinstance(elem, (SymbolicBool, bool)):
+            return bool
+    return int # Default
+
+def wrap_list(elements, tracer=None):
+    element_type = infer_element_type(elements)
+    return SymbolicList(elements, element_type, tracer=tracer)
+
 def sym_range(*args):
     """Symbolic version of range that adds proper bounds"""
     if all(isinstance(arg, int) for arg in args):
@@ -550,11 +566,12 @@ def inject(sat_func):
 def create_namespace(tracer):
     return {
         'tracer': tracer,
+        'List': list,
         'SymbolicStr': SymbolicStr,
         'SymbolicInt': SymbolicInt,
         'wrap_str': lambda s: SymbolicStr(s, tracer=tracer),
         'wrap_int': lambda n: SymbolicInt(n, tracer=tracer),
-        'wrap_list': lambda l: SymbolicList(l, tracer=tracer),
+        'wrap_list': wrap_list,
         '_assert': lambda x, msg=None: tracer.add_constraint(x),
         'any': sym_any,
         'all': sym_all,
