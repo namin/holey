@@ -109,17 +109,20 @@ class SymbolicTracer:
 
 class SymbolicBool:
     """Wrapper class for symbolic boolean expressions"""
-    def __init__(self, value, tracer: Optional[SymbolicTracer] = None):
-        """Initialize boolean expression with optional tracer"""
+    def __init__(self, value: Optional[bool] = None, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
         self.tracer = tracer or SymbolicTracer()
-        self.z3_expr = value
-        if isinstance(value, bool):
-            self.concrete = value
+        self.concrete = None
         # TODO: weird that we need this
-        elif str(value) in ['true', 'false']:
-            self.concrete = str(value)!='false'
+        if str(value) in ['true', 'false']:
+            value = str(value)!='false'
+        if name is not None:
+            self.z3_expr = self.tracer.backend.Bool(name)
+        elif isinstance(value, bool):
+            self.concrete = value
+            self.z3_expr = self.tracer.backend.BoolVal(value)
         else:
-            self.concrete = None
+            self.z3_expr = value
+        self.name = name
 
     def __bool__(self):
         if self.concrete is not None:
