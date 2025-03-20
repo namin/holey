@@ -72,29 +72,30 @@ python puzzle_solver.py --name-prefix ListIn:1  --llm
 ## Current status
 
 The symbolic execution currently solves:
-- 61% (221 out of 360) of `int` puzzles,
-- 31% (114 out of 363) of `str` puzzles,
-- 46% (335 out of 723) overall.
+- 61% (220 out of 360) of `int` puzzles,
+- 33% (119 out of 363) of `str` puzzles,
+- 18% (9 out of 51) of `float` puzzles,
+- 45% (348 out of 774) overall.
 
 with the following errors:
 - 10 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
-- 174 errors at at staging time
-- 114 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- 131 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
+- 158 errors at at staging time
+- 161 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- 151 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
-- 992 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
+- 941 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 
 ### Extrapolation
-- 103 smaller problems tried
+- 117 smaller problems tried
 - 14 successes on smaller problem
-- 10 successful extrapolations
+- 9 successful extrapolations
 
 #### Matrix
-- claude      (extrapolate) _4_ 0 0 0 0 0 1 1 1 0 0 1 0 0 0
-- claude       (end-to-end) _6_ 0 0 0 0 0 1 0 1 1 0 0 1 1 1
+- claude      (extrapolate) _6_ 1 0 0 1 1 0 0 0 1 0 0 1 0 1
+- claude       (end-to-end) _3_ 0 0 0 0 0 1 0 0 0 0 0 1 0 1
 - claude           (SMTLIB) _0_ 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-- gemini      (extrapolate)_10_ 1 1 1 1 1 1 1 1 1 0 1 0 0 0
-- gemini       (end-to-end) _2_ 0 0 0 0 1 0 0 0 0 0 0 1 0 0
+- gemini      (extrapolate) _7_ 0 1 1 1 1 0 0 0 1 0 1 0 0 1
+- gemini       (end-to-end) _3_ 0 0 0 0 0 0 0 1 0 0 0 1 0 1
 - gemini           (SMTLIB) _0_ 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 - ollama      (extrapolate) _0_ 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 - ollama       (end-to-end) _0_ 0 0 0 0 0 0 0 0 0 0 0 0 0 0
