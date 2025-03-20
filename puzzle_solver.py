@@ -91,7 +91,7 @@ class PuzzleSolver:
             print('Solution', solution)
             print("Could not find any solution var")
             return None, log
-        result = solution_var if isinstance(solution_var, typ) else typ(str(solution_var))
+        result = solution_var if str(typ).startswith('list') or isinstance(solution_var, typ) else typ(str(solution_var))
         print("Found solution", result)
         return result, log
 

@@ -610,6 +610,9 @@ class SymbolicList:
         return SymbolicList(self.tracer.backend.ListAppend(other.z3_expr, self.z3_expr, self.tracer.backend.Type(self.elementTyp)), self.elementTyp, tracer=self.tracer)
 
     def index(self, item):
+        if self.concrete is None:
+            item = self.tracer.ensure_symbolic(item)
+            return SymbolicInt(self.tracer.backend.ListIndex(self.z3_expr, item.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
         # Return first index where item appears as SymbolicInt
         result = None
         for i, x in enumerate(self.concrete):

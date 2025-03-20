@@ -358,6 +358,16 @@ library = {
             true
             (list.contains.int (tail l) val))))
 
+(define-fun-rec list.index.rec.int ((i Int) (l (List Int)) (val Int)) Int
+  (ite (= l (as nil (List Int)))
+       -1
+       (ite (= (head l) val)
+            i
+            (list.index.rec.int (+ 1 i) (tail l) val))))
+
+(define-fun list.index.int ((l (List Int)) (val Int)) Int
+  (list.index.rec.int 0 l val))
+
 (define-fun-rec list.length.string ((l (List String))) Int
   (ite (= l (as nil (List String)))
        0
@@ -1074,6 +1084,9 @@ class Backend():
     def ListContains(self, lst, val, element_type) -> MockExpr:
         """Check if a list contains a value"""
         return self._record("list.contains."+element_type.lower(), lst, val)
+
+    def ListIndex(self, lst, val, element_type) -> MockExpr:
+        return self._record("list.index."+element_type.lower(), lst, val)
 
     def ListSum(self, lst) -> MockExpr:
         """Get the sum of all elements in a list"""
