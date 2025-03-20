@@ -331,7 +331,7 @@ class MockExpr:
 
 # from lib to users
 library_deps = {
-'list': ['str.split']
+'list': ['str.split', 'python.join']
 }
 
 library = {
@@ -503,8 +503,6 @@ library = {
 ,
 'python.join':
 """
-(declare-datatypes ((List 1)) 
-    ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 (define-fun-rec python.join ((lst (List String)) (delim String)) String
     (ite (= lst (as nil (List String)))
          ""
