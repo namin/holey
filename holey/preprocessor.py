@@ -273,6 +273,8 @@ def sym_float(x):
 def sym_len(x):
     if isinstance(x, SymbolicStr):
         return x.__len__()
+    if isinstance(x, SymbolicList):
+        return x.__len__()
     return len(x)
 
 def sym_str(x):
