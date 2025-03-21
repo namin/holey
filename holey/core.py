@@ -594,7 +594,7 @@ class SymbolicList:
 
     def __len__(self):
         if self.concrete is not None:
-            len(self.concrete)
+            return len(self.concrete)
         return SymbolicInt(self.tracer.backend.ListLength(self.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
 
     def __add__(self, other):
