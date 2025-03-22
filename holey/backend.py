@@ -335,6 +335,16 @@ library_deps = {
 }
 
 library = {
+'str.isdigit':
+"""
+(define-fun str.isdigit ((s String)) Bool
+  (forall ((i Int))
+    (=> (and (<= 0 i) (< i (str.len s)))
+        (let ((c (str.at s i)))
+          (or (= c "0") (= c "1") (= c "2") (= c "3") (= c "4")
+              (= c "5") (= c "6") (= c "7") (= c "8") (= c "9"))))))
+"""
+,
 'list':
 """
 (declare-datatypes ((List 1)) 
@@ -1026,6 +1036,9 @@ class Backend():
 
     def StrLower(self, x) -> MockExpr:
         return self._record("str.lower", x)
+
+    def StrIsDigit(self, x) -> MockExpr:
+        return self._record("str.isdigit", x)
 
     def SwapCase(self, x) -> MockExpr:
         return self._record("swapcase", x)
