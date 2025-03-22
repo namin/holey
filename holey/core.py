@@ -954,6 +954,11 @@ class SymbolicStr:
             return SymbolicStr(self.concrete.lower(), tracer=self.tracer)
         return SymbolicStr(self.tracer.backend.StrLower(self.z3_expr), tracer=self.tracer)
 
+    def isdigit(self):
+        if self.concrete is not None:
+            return SymbolicBool(self.concrete.isdigit(), tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.StrIsDigit(self.z3_expr), tracer=self.tracer)
+
     def swapcase(self):
         if self.concrete is not None:
             return SymbolicStr(self.concrete.swapcase(), tracer=self.tracer)
