@@ -74,7 +74,7 @@ class PuzzleSolver:
         if counting:
             self.count += 1
             self.counts[ans_type] += 1
-        tracer, sym_var, solution, log = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=None)
+        tracer, sym_var, solution, log = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=pick_first(llm_solver))
         if False and llm_solver and solution is None:
             tracer_llm, sym_var_llm, solution_llm, log_llm = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=llm_solver)
             if solution is not None:
@@ -314,6 +314,14 @@ def call_solvers(llm_solvers, stats, name, callback):
                 best = result
     return best
 
+def pick_first(llm_solvers):
+    if llm_solvers:
+        solvers = [v for k,v in llm_solvers.items() if k is not None]
+        if solvers:
+            return solvers[0]
+    return None
+
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
@@ -339,5 +347,5 @@ if __name__ == "__main__":
     llm_solver = None
     if args.llm:
         from holey import llm_generators
-        llm_solver = {k: LLMSolver(v) for k,v in llm_generators.items()}
+        llm_solver = {k: LLMSolver(v) for k,v in llm_generators.items() if v is not None}
     run_benchmarks(args.puzzle_file, args.name_prefix, args.answer_types, args.smtlib_backends, llm_solver)

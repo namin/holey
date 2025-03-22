@@ -25,13 +25,24 @@ class SymbolicTracer:
                 self.branch_counter = 0
                 self.path_conditions = []
 
+    def pick_index(self, si):
+        numbers = None
+        if self.llm_solver:
+            print('Picking index with LLM solver')
+            numbers = self.llm_solver.pick_indices(si.z3_expr.to_smt2())
+        else:
+            print('No LLM solver')
+        if numbers:
+            print('Suggested numbers', numbers)
+            return numbers[0]
+        raise ValueError("Cannot pick symbolic index")
+
     def branch(self, condition):
         """Handle branching with optional LLM guidance"""
         if len(self.current_branch_exploration) > self.branch_counter:
             branch_val = self.current_branch_exploration[self.branch_counter]
         else:
-            # Use LLM guidance if available
-            if self.llm_solver:
+            if False and self.llm_solver:
                 branch_val = self.llm_solver.get_branch_guidance(
                     condition, self.path_conditions
                 )
@@ -55,7 +66,7 @@ class SymbolicTracer:
         if isinstance(constraint, (SymbolicInt, SymbolicBool)):
             constraint = truthy(constraint).z3_expr
             
-        if self.llm_solver:
+        if False and self.llm_solver:
             self.llm_solver.add_constraint_refinements(constraint, self.backend)
 
         if self.path_conditions:
@@ -371,7 +382,7 @@ class SymbolicInt:
     def __index__(self):
         if self.concrete is not None:
             return self.concrete
-        raise ValueError("Cannot convert symbolic integer to index")
+        return self.tracer.pick_index(self)
 
 class SymbolicFloat:
     def __init__(self, value: Optional[Any] = None, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):

@@ -1,6 +1,12 @@
 from .llm import extract_code_blocks
 from .backend import run_smt
 from typing import List, Any, Dict, Optional, Tuple
+import re
+
+def parse_numbers(text, n=3):
+    numbers = re.findall(r'-?\d+(?:\.\d+)?', text)
+    print('Found numbers', numbers)
+    return [int(x) for x in numbers[:n]]
 
 class LLMSolver:
     """LLM-assisted solving capabilities that can be hooked into SymbolicTracer"""
@@ -84,6 +90,29 @@ Return only the executable Python expression without any context.
             else:
                 print('LLM result verifies for puzzle '+name)
                 return result
+        return None
+
+    def pick_indices(self, exp):
+        cache_key = exp
+        if cache_key in self.cache:
+            return self.cache[cache_key]
+
+        prompt = f"""Given the SMTLIB expression: {exp}
+pick a few values of an integer that could serve like an index: 0, 1, 2, etc. that this expression could evaluate to.
+Return only the index numbers separated by space, for example:
+0 2 3
+"""
+        try:
+            result = self.llm_generate(
+                prompt,
+                temperature=self.temperature)
+        except Exception as e:
+            print('Exception with picking indices', str(e))
+            result = None
+        if result:
+            numbers = parse_numbers(result)
+            self.cache[cache_key] = numbers
+            return numbers
         return None
 
     def get_branch_guidance(self, condition, path_conditions):
