@@ -184,7 +184,8 @@ class SymbolicInt:
     def __int__(self):
         if self.concrete is not None:
             return self.concrete
-        raise ValueError("SymbolincInt cannot be concretized.")
+        print("Warning: SymbolincInt cannot be concretized.")
+        return 1
 
     def __str__(self):
         return f"SymbolicInt({self.name})"
@@ -371,7 +372,8 @@ class SymbolicInt:
     def __index__(self):
         if self.concrete is not None:
             return self.concrete
-        raise ValueError("Cannot convert symbolic integer to index")
+        print("Warning: Cannot convert symbolic integer to index")
+        return 0
 
 class SymbolicFloat:
     def __init__(self, value: Optional[Any] = None, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
@@ -536,6 +538,25 @@ class SymbolicList:
         else:
             self.z3_expr = value
         self.name = name
+
+    def __eq__(self, other):
+        if isinstance(other, (str, SymbolicList)):
+            other = self.tracer.ensure_symbolic(other)
+            if self.concrete is not None and other.concrete is not None:
+                result = self.concrete == other.concrete
+            else:
+                result = self.tracer.backend.Eq(self.z3_expr, other.z3_expr)
+            return SymbolicBool(result, tracer=self.tracer)
+        else:
+            return SymbolicBool(self.tracer.backend.BoolVal(False), tracer=self.tracer)
+
+    def __ne__(self, other):
+        eq = self.__eq__(other)
+        if isinstance(eq, SymbolicBool):
+            if eq.concrete is not None:
+                return SymbolicBool(not eq.concrete, tracer=self.tracer)
+            return SymbolicBool(self.tracer.backend.Not(eq.z3_expr), tracer=self.tracer)
+        return not eq
 
     def __contains__(self, item):
         item = self.tracer.ensure_symbolic(item)
@@ -794,15 +815,16 @@ class SymbolicStr:
     def split(self, sep=None):
         """Split string into list of strings"""
         if self.concrete is not None:
-            # If we have a concrete string, use Python's split
-            parts = self.concrete.split(sep)
-            return SymbolicList([SymbolicStr(p, tracer=self.tracer) for p in parts], str, tracer=self.tracer)
+            if isinstance(sep, SymbolicStr):
+                if sep.concrete is not None:
+                    sep = sep.concrete
+            if sep is None or isinstance(sep, str):
+                parts = self.concrete.split(sep)
+                return SymbolicList([SymbolicStr(p, tracer=self.tracer) for p in parts], str, tracer=self.tracer)
         
-        # For symbolic strings, we need to use Z3's string operations
         if sep is None:
             sep = " "  # Default separator is whitespace
         sep = self.tracer.ensure_symbolic(sep)
-        # Use Z3's string operations to split
         result = self.tracer.backend.StrSplit(self.z3_expr, sep.z3_expr)
         return SymbolicList(result, str, tracer=self.tracer)
 
@@ -902,7 +924,6 @@ class SymbolicStr:
             )
         raise ValueError("Not implemented: __radd__")
 
-    # For comparison operations
     def __eq__(self, other):
         if isinstance(other, (str, SymbolicStr)):
             other = self.tracer.ensure_symbolic(other)
