@@ -397,7 +397,7 @@ def sym_all(iterable):
     return result if result is not None else True
 
 def sym_index(container, start, stop=None, step=None):
-    tracer = first_tracer(container, start, stop, step)
+    tracer = first_tracer([container, start, stop, step])
     
     if tracer is None:
         if stop is None:
