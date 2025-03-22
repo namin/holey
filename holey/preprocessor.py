@@ -227,11 +227,20 @@ def sym_zip(*iterables):
 
 def sym_ord(x):
     if isinstance(x, SymbolicStr):
+        if x.concrete is not None:
+            return SymbolicInt(ord(x.concrete), tracer=x.tracer)
         return SymbolicInt(x.tracer.backend.StrToCode(x.z3_expr), tracer=x.tracer)
     if isinstance(x, SymbolicSlice):
         return sym_ord(x.get_slice())
 
     return ord(x)
+
+def sym_chr(x):
+    if isinstance(x, SymbolicInt):
+        if x.concrete is not None:
+            return SymbolicStr(chr(x.concrete), tracer=x.tracer)
+        return SymbolicStr(x.tracer.backend.CodeToStr(x.z3_expr), tracer=x.tracer)
+    return chr(x)
 
 def sym_bin(x):
     if isinstance(x, SymbolicInt):
@@ -387,6 +396,20 @@ def sym_all(iterable):
             result = result.__and__(item)
     return result if result is not None else True
 
+def sym_index(container, start, stop=None, step=None):
+    tracer = first_tracer(container, start, stop, step)
+    
+    if tracer is None:
+        if stop is None:
+            assert step is None
+            return container[start]
+        if step is None:
+            return container[start:stop]
+        return container[start:stop:step]
+    
+    slice_obj = slice(start, stop, step)
+    return container[slice_obj]
+
 class HoleyWrapper(ast.NodeTransformer):
     def __init__(self):
         self.path = []
@@ -396,6 +419,25 @@ class HoleyWrapper(ast.NodeTransformer):
         result = super().visit(node)
         self.path.pop()
         return result
+
+    def visit_Subscript(self, node):
+        node = self.generic_visit(node)
+        if isinstance(node.slice, ast.Slice):
+            lower = node.slice.lower or ast.Constant(value=None)
+            upper = node.slice.upper or ast.Constant(value=None)
+            step = node.slice.step or ast.Constant(value=None)
+
+            return ast.Call(
+                func=ast.Name(id='sym_index', ctx=ast.Load()),
+                args=[node.value, lower, upper, step],
+                keywords=[]
+            )
+        else:
+            return ast.Call(
+                func=ast.Name(id='sym_index', ctx=ast.Load()),
+                args=[node.value, node.slice],
+                keywords=[]
+            )
 
     def visit_Assert(self, node):
         node = self.generic_visit(node)
@@ -514,7 +556,7 @@ class HoleyWrapper(ast.NodeTransformer):
     def visit_Call(self, node):
         node = self.generic_visit(node)
         if isinstance(node.func, ast.Name):
-            if node.func.id in ['int', 'float', 'str', 'len', 'range', 'bin', 'ord', 'sum', 'zip', 'sorted']:
+            if node.func.id in ['int', 'float', 'str', 'len', 'range', 'bin', 'ord', 'chr', 'sum', 'zip', 'sorted']:
                 return ast.Call(
                     func=ast.Name(id='sym_'+node.func.id, ctx=ast.Load()),
                     args=node.args,
@@ -586,10 +628,12 @@ def create_namespace(tracer):
         'sym_range': sym_range,
         'sym_bin': sym_bin,
         'sym_ord': sym_ord,
+        'sym_chr': sym_chr,
         "sym_sum": sym_sum,
         'sym_zip': sym_zip,
         'sym_generator': sym_generator,
-        'sym_sorted': sym_sorted
+        'sym_sorted': sym_sorted,
+        'sym_index': sym_index
     }
 
 def driver(sat_func, typ, cmds=None, llm_solver=None):
