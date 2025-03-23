@@ -373,6 +373,11 @@ class SymbolicInt:
             return self.concrete
         raise ValueError("Cannot convert symbolic integer to index")
 
+    def __not__(self):
+        if self.concrete is not None:
+            return SymbolicBool(not self.concrete, tracer=self.tracer)
+        return self != 0
+
 class SymbolicFloat:
     def __init__(self, value: Optional[Any] = None, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
         self.tracer = tracer or SymbolicTracer()
@@ -697,6 +702,11 @@ class SymbolicList:
         item = self.tracer.ensure_symbolic(item)
         return SymbolicInt(self.tracer.backend.ListCount(self.z3_expr, item.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
 
+    def __not__(self):
+        if self.concrete is not None:
+            return SymbolicBool(not self.concrete, tracer=self.tracer)
+        return self != []
+
 class SymbolicStrIterator:
     _counter = 0
     
@@ -1000,6 +1010,11 @@ class SymbolicStr:
         if self.concrete is not None and a.concrete is not None and b.concrete is not None:
             return SymbolicStr(self.concrete.replace(a.concrete, b.concrete), tracer=self.tracer)
         return SymbolicStr(self.tracer.backend.StrReplace(self.z3_expr, a.z3_expr, b.z3_expr), tracer=self.tracer)
+
+    def __not__(self):
+        if self.concrete is not None:
+            return SymbolicBool(not self.concrete, tracer=self.tracer)
+        return self != ""
 
 class SymbolicSlice:
     def __init__(self, concrete_seq, start, end, step=None, tracer: Optional[SymbolicTracer] = None):
