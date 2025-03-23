@@ -341,8 +341,7 @@ library = {
   (forall ((i Int))
     (=> (and (<= 0 i) (< i (str.len s)))
         (let ((c (str.at s i)))
-          (or (= c "0") (= c "1") (= c "2") (= c "3") (= c "4")
-              (= c "5") (= c "6") (= c "7") (= c "8") (= c "9"))))))
+          (str.is_digit c)))))
 """
 ,
 'list':
@@ -953,6 +952,9 @@ class Backend():
 
     def StrToCode(self, x) -> MockExpr:
         return self._record("str.to_code", x)
+
+    def CodeToStr(self, x) -> MockExpr:
+        return self._record("str.from_code", x)
 
     def StrToInt(self, x, base=None) -> MockExpr:
         return self._record("python.int", x, base if base else self.IntVal(10))
