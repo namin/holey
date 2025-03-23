@@ -537,6 +537,25 @@ class SymbolicList:
             self.z3_expr = value
         self.name = name
 
+    def __eq__(self, other):
+        if isinstance(other, (str, SymbolicList)):
+            other = self.tracer.ensure_symbolic(other)
+            if self.concrete is not None and other.concrete is not None:
+                result = self.concrete == other.concrete
+            else:
+                result = self.tracer.backend.Eq(self.z3_expr, other.z3_expr)
+            return SymbolicBool(result, tracer=self.tracer)
+        else:
+            return SymbolicBool(self.tracer.backend.BoolVal(False), tracer=self.tracer)
+
+    def __ne__(self, other):
+        eq = self.__eq__(other)
+        if isinstance(eq, SymbolicBool):
+            if eq.concrete is not None:
+                return SymbolicBool(not eq.concrete, tracer=self.tracer)
+            return SymbolicBool(self.tracer.backend.Not(eq.z3_expr), tracer=self.tracer)
+        return not eq
+
     def __contains__(self, item):
         item = self.tracer.ensure_symbolic(item)
         if self.concrete is not None:
@@ -794,9 +813,13 @@ class SymbolicStr:
     def split(self, sep=None):
         """Split string into list of strings"""
         if self.concrete is not None:
-            # If we have a concrete string, use Python's split
-            parts = self.concrete.split(sep)
-            return SymbolicList([SymbolicStr(p, tracer=self.tracer) for p in parts], str, tracer=self.tracer)
+            sep_c = sep
+            if isinstance(sep, SymbolicStr):
+                if sep.concrete is not None:
+                    sep_c = sep.concrete
+            if sep_c is None or isinstance(sep_c, str):
+                parts = self.concrete.split(sep_c)
+                return SymbolicList([SymbolicStr(p, tracer=self.tracer) for p in parts], str, tracer=self.tracer)
         
         # For symbolic strings, we need to use Z3's string operations
         if sep is None:
