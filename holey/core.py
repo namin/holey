@@ -608,8 +608,14 @@ class SymbolicList:
                         )
                 return result
             return self.concrete[key]
-        key = self.tracer.ensure_symbolic(key)
-        return make_symbolic_value(self.elementTyp, self.tracer.backend.ListGet(self.z3_expr, key.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
+        if isinstance(key, slice):
+            start = self.tracer.ensure_symbolic(key.start or 0)
+            stop = self.tracer.ensure_symbolic(key.stop or -1)
+            step = self.tracer.ensure_symbolic(key.step or 1)
+            return SymbolicList(self.tracer.backend.ListSlice(self.z3_expr, start.z3_expr, stop.z3_expr, step.z3_expr, self.tracer.backend.Type(self.elementTyp)), self.elementTyp, tracer=self.tracer)
+        else:
+            key = self.tracer.ensure_symbolic(key)
+            return make_symbolic_value(self.elementTyp, self.tracer.backend.ListGet(self.z3_expr, key.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
 
     def __iter__(self):
         if self.concrete is not None:
@@ -831,11 +837,9 @@ class SymbolicStr:
                 parts = self.concrete.split(sep_c)
                 return SymbolicList([SymbolicStr(p, tracer=self.tracer) for p in parts], str, tracer=self.tracer)
         
-        # For symbolic strings, we need to use Z3's string operations
         if sep is None:
             sep = " "  # Default separator is whitespace
         sep = self.tracer.ensure_symbolic(sep)
-        # Use Z3's string operations to split
         result = self.tracer.backend.StrSplit(self.z3_expr, sep.z3_expr)
         return SymbolicList(result, str, tracer=self.tracer)
 
