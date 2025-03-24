@@ -227,11 +227,20 @@ def sym_zip(*iterables):
 
 def sym_ord(x):
     if isinstance(x, SymbolicStr):
+        if x.concrete is not None:
+            return SymbolicInt(ord(x.concrete), tracer=x.tracer)
         return SymbolicInt(x.tracer.backend.StrToCode(x.z3_expr), tracer=x.tracer)
     if isinstance(x, SymbolicSlice):
         return sym_ord(x.get_slice())
 
     return ord(x)
+
+def sym_chr(x):
+    if isinstance(x, SymbolicInt):
+        if x.concrete is not None:
+            return SymbolicStr(ord(x.concrete), tracer=x.tracer)
+        return SymbolicStr(x.tracer.backend.CodeToStr(x.z3_expr), tracer=x.tracer)
+    return chr(x)
 
 def sym_bin(x):
     if isinstance(x, SymbolicInt):
@@ -346,7 +355,9 @@ def sym_range(*args):
     return [i]
 
 def sym_not(x):
-    return x.__not__()
+    if hasattr(x, 'tracer'):
+        return x.__not__()
+    return not x
 
 def sym_in(x, container):
     return container.contains(x)
@@ -514,7 +525,7 @@ class HoleyWrapper(ast.NodeTransformer):
     def visit_Call(self, node):
         node = self.generic_visit(node)
         if isinstance(node.func, ast.Name):
-            if node.func.id in ['int', 'float', 'str', 'len', 'range', 'bin', 'ord', 'sum', 'zip', 'sorted']:
+            if node.func.id in ['int', 'float', 'str', 'len', 'range', 'bin', 'ord', 'chr', 'sum', 'zip', 'sorted']:
                 return ast.Call(
                     func=ast.Name(id='sym_'+node.func.id, ctx=ast.Load()),
                     args=node.args,
@@ -586,6 +597,7 @@ def create_namespace(tracer):
         'sym_range': sym_range,
         'sym_bin': sym_bin,
         'sym_ord': sym_ord,
+        'sym_chr': sym_chr,
         "sym_sum": sym_sum,
         'sym_zip': sym_zip,
         'sym_generator': sym_generator,

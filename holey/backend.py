@@ -331,7 +331,7 @@ class MockExpr:
 
 # from lib to users
 library_deps = {
-'list': ['str.split', 'python.join']
+'list': ['str.split', 'python.join', 'list.slice']
 }
 
 library = {
@@ -341,8 +341,7 @@ library = {
   (forall ((i Int))
     (=> (and (<= 0 i) (< i (str.len s)))
         (let ((c (str.at s i)))
-          (or (= c "0") (= c "1") (= c "2") (= c "3") (= c "4")
-              (= c "5") (= c "6") (= c "7") (= c "8") (= c "9"))))))
+          (str.is_digit c)))))
 """
 ,
 'list':
@@ -438,6 +437,61 @@ library = {
        0
        (+ (ite (= (head l) val) 1 0)
           (list.count.real (tail l) val))))
+"""
+,
+'list.slice':
+"""
+; Helper max function
+(define-fun list.max ((a Int) (b Int)) Int
+  (ite (>= a b) a b))
+
+;; Helper min function
+(define-fun list.min ((a Int) (b Int)) Int
+  (ite (<= a b) a b))
+
+;; Helper to handle negative indices
+(define-fun list.adjust_index ((idx Int) (len Int)) Int
+  (ite (< idx 0)
+       (list.max 0 (+ len idx))  ;; Convert negative index but ensure not below 0
+       (list.min idx len)))      ;; Ensure not beyond length
+
+;; Helper to check if an index is valid
+(define-fun list.valid_index.int ((l (List Int)) (idx Int)) Bool
+  (and (>= idx 0) (< idx (list.length.int l))))
+
+;; Recursive function to build a sliced list
+(define-fun-rec list.slice.int.helper ((l (List Int)) (curr Int) (stop Int) (step Int) (result (List Int))) (List Int)
+  (ite (or (and (> step 0) (>= curr stop))     ;; Positive step and reached/passed stop
+           (and (< step 0) (<= curr stop))     ;; Negative step and reached/passed stop
+           (not (list.valid_index.int l curr))) ;; Index out of bounds
+       result
+       (let ((new_result (cons (list.get.int l curr) result)))
+         (list.slice.int.helper l (+ curr step) stop step new_result))))
+
+;; Helper to reverse a list
+(define-fun-rec list.reverse.int ((l (List Int)) (acc (List Int))) (List Int)
+  (ite (= l (as nil (List Int)))
+       acc
+       (list.reverse.int (tail l) (cons (head l) acc))))
+
+;; Main slice function
+(define-fun list.slice.int ((l (List Int)) (start Int) (stop Int) (step Int)) (List Int)
+  (let ((len (list.length.int l)))
+    (ite (= step 0)
+         (as nil (List Int))  ;; Invalid step, return empty list
+         (let ((adj_start (list.adjust_index start len))
+               (adj_stop (list.adjust_index stop len)))
+           (ite (> step 0)
+                ;; For positive step
+                (list.reverse.int 
+                  (list.slice.int.helper l adj_start adj_stop step (as nil (List Int)))
+                  (as nil (List Int)))
+                ;; For negative step, reverse parameters
+                (let ((real_start (- len 1 adj_start))
+                      (real_stop (- len 1 adj_stop)))
+                  (list.reverse.int 
+                    (list.slice.int.helper l real_start real_stop (ite (< step 0) (- 0 step) step) (as nil (List Int)))
+                    (as nil (List Int)))))))))
 """
 ,
 'str.split':
@@ -954,6 +1008,9 @@ class Backend():
     def StrToCode(self, x) -> MockExpr:
         return self._record("str.to_code", x)
 
+    def CodeToStr(self, x) -> MockExpr:
+        return self._record("str.from_code", x)
+
     def StrToInt(self, x, base=None) -> MockExpr:
         return self._record("python.int", x, base if base else self.IntVal(10))
 
@@ -1091,6 +1148,9 @@ class Backend():
     def ListGet(self, lst, idx, element_type) -> MockExpr:
         """Get an element from a list at the given index"""
         return self._record("list.get."+element_type.lower(), lst, idx)
+
+    def ListSlice(self, lst, start, stop, step, element_type) -> MockExpr:
+        return self._record("list.slice."+element_type.lower(), lst, start, stop, step)
 
     def ListContains(self, lst, val, element_type) -> MockExpr:
         """Check if a list contains a value"""

@@ -131,11 +131,11 @@ class SymbolicBool:
 
     def __and__(self, other):
         other = self.tracer.ensure_symbolic(other)
-        return SymbolicBool(self.tracer.backend.And(self.z3_expr, other.z3_expr), tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.And(self.z3_expr, truthy(other).z3_expr), tracer=self.tracer)
     
     def __or__(self, other):
         other = self.tracer.ensure_symbolic(other)
-        return SymbolicBool(self.tracer.backend.Or(self.z3_expr, other.z3_expr), tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.Or(self.z3_expr, truthy(other).z3_expr), tracer=self.tracer)
     
     def __not__(self):
         if self.concrete is not None:
@@ -373,6 +373,11 @@ class SymbolicInt:
             return self.concrete
         raise ValueError("Cannot convert symbolic integer to index")
 
+    def __not__(self):
+        if self.concrete is not None:
+            return SymbolicBool(not self.concrete, tracer=self.tracer)
+        return self != 0
+
 class SymbolicFloat:
     def __init__(self, value: Optional[Any] = None, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
         self.tracer = tracer or SymbolicTracer()
@@ -537,6 +542,25 @@ class SymbolicList:
             self.z3_expr = value
         self.name = name
 
+    def __eq__(self, other):
+        if isinstance(other, (str, SymbolicList)):
+            other = self.tracer.ensure_symbolic(other)
+            if self.concrete is not None and other.concrete is not None:
+                result = self.concrete == other.concrete
+            else:
+                result = self.tracer.backend.Eq(self.z3_expr, other.z3_expr)
+            return SymbolicBool(result, tracer=self.tracer)
+        else:
+            return SymbolicBool(self.tracer.backend.BoolVal(False), tracer=self.tracer)
+
+    def __ne__(self, other):
+        eq = self.__eq__(other)
+        if isinstance(eq, SymbolicBool):
+            if eq.concrete is not None:
+                return SymbolicBool(not eq.concrete, tracer=self.tracer)
+            return SymbolicBool(self.tracer.backend.Not(eq.z3_expr), tracer=self.tracer)
+        return not eq
+
     def __contains__(self, item):
         item = self.tracer.ensure_symbolic(item)
         if self.concrete is not None:
@@ -584,8 +608,14 @@ class SymbolicList:
                         )
                 return result
             return self.concrete[key]
-        key = self.tracer.ensure_symbolic(key)
-        return make_symbolic_value(self.elementTyp, self.tracer.backend.ListGet(self.z3_expr, key.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
+        if isinstance(key, slice):
+            start = self.tracer.ensure_symbolic(key.start or 0)
+            stop = self.tracer.ensure_symbolic(key.stop or -1)
+            step = self.tracer.ensure_symbolic(key.step or 1)
+            return SymbolicList(self.tracer.backend.ListSlice(self.z3_expr, start.z3_expr, stop.z3_expr, step.z3_expr, self.tracer.backend.Type(self.elementTyp)), self.elementTyp, tracer=self.tracer)
+        else:
+            key = self.tracer.ensure_symbolic(key)
+            return make_symbolic_value(self.elementTyp, self.tracer.backend.ListGet(self.z3_expr, key.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
 
     def __iter__(self):
         if self.concrete is not None:
@@ -677,6 +707,11 @@ class SymbolicList:
             return SymbolicInt(count, tracer=self.tracer)
         item = self.tracer.ensure_symbolic(item)
         return SymbolicInt(self.tracer.backend.ListCount(self.z3_expr, item.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
+
+    def __not__(self):
+        if self.concrete is not None:
+            return SymbolicBool(not self.concrete, tracer=self.tracer)
+        return self != []
 
 class SymbolicStrIterator:
     _counter = 0
@@ -794,15 +829,17 @@ class SymbolicStr:
     def split(self, sep=None):
         """Split string into list of strings"""
         if self.concrete is not None:
-            # If we have a concrete string, use Python's split
-            parts = self.concrete.split(sep)
-            return SymbolicList([SymbolicStr(p, tracer=self.tracer) for p in parts], str, tracer=self.tracer)
+            sep_c = sep
+            if isinstance(sep, SymbolicStr):
+                if sep.concrete is not None:
+                    sep_c = sep.concrete
+            if sep_c is None or isinstance(sep_c, str):
+                parts = self.concrete.split(sep_c)
+                return SymbolicList([SymbolicStr(p, tracer=self.tracer) for p in parts], str, tracer=self.tracer)
         
-        # For symbolic strings, we need to use Z3's string operations
         if sep is None:
             sep = " "  # Default separator is whitespace
         sep = self.tracer.ensure_symbolic(sep)
-        # Use Z3's string operations to split
         result = self.tracer.backend.StrSplit(self.z3_expr, sep.z3_expr)
         return SymbolicList(result, str, tracer=self.tracer)
 
@@ -977,6 +1014,11 @@ class SymbolicStr:
         if self.concrete is not None and a.concrete is not None and b.concrete is not None:
             return SymbolicStr(self.concrete.replace(a.concrete, b.concrete), tracer=self.tracer)
         return SymbolicStr(self.tracer.backend.StrReplace(self.z3_expr, a.z3_expr, b.z3_expr), tracer=self.tracer)
+
+    def __not__(self):
+        if self.concrete is not None:
+            return SymbolicBool(not self.concrete, tracer=self.tracer)
+        return self != ""
 
 class SymbolicSlice:
     def __init__(self, concrete_seq, start, end, step=None, tracer: Optional[SymbolicTracer] = None):
