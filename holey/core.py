@@ -135,7 +135,7 @@ class SymbolicBool:
     
     def __or__(self, other):
         other = self.tracer.ensure_symbolic(other)
-        return SymbolicBool(self.tracer.backend.Or(self.z3_expr, other.z3_expr), tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.Or(self.z3_expr, truthy(other).z3_expr), tracer=self.tracer)
     
     def __not__(self):
         if self.concrete is not None:
