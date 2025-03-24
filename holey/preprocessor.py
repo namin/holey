@@ -355,7 +355,9 @@ def sym_range(*args):
     return [i]
 
 def sym_not(x):
-    return x.__not__()
+    if hasattr(x, 'tracer'):
+        return x.__not__()
+    return not x
 
 def sym_in(x, container):
     return container.contains(x)
