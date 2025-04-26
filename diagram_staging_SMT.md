@@ -4,10 +4,13 @@
 flowchart TB
     PythonCode["<b>Python Code</b><br><tt>def sat(x): return x > 5</tt>"] --> SymbolicExecution
     
-    SymbolicExecution["<b>Symbolic Execution</b><br>Overloaded Operations<br>Symbolic Variables"] --> SMTGeneration
-    SymbolicExecution --- SMTSolver
-    
+    subgraph HorizontalAlignment
+        direction LR
+        SymbolicExecution["<b>Symbolic Execution</b><br>Overloaded Operations<br>Symbolic Variables"] --> SMTGeneration
+    end
+
     SMTGeneration["<b>SMT Constraint Generation</b><br>Constraints Built as Side Effect<br><tt>(x > 5)</tt>"] --> SMTSolver
+    SymbolicExecution --- SMTSolver
     
     SMTSolver["<b>SMT Solver</b><br>Z3 or other SMT solver<br>Find Values: <tt>x = 6</tt>"] --> |Return solution| PythonCode
     
