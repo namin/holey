@@ -7,7 +7,7 @@ flowchart TB
     SymbolicExecution["<b>Symbolic Execution</b><br>Overloaded Operations<br>Symbolic Variables"] --> SMTGeneration
     SymbolicExecution --- SMTSolver
     
-    SMTGeneration["<b>SMT Constraint Generation</b><br>Constraints Built as Side Effect<br><tt>(x > 5)</tt>"] --> SMTSolver
+    SMTGeneration["<b>SMT Constraint Generation</b><br>as a Side Effect<br><tt>(x > 5)</tt>"] --> SMTSolver
     
     SMTSolver["<b>SMT Solver</b><br>Z3 or other SMT solver<br>Find Values: <tt>x = 6</tt>"] --> |Return solution| PythonCode
     
