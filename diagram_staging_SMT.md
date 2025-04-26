@@ -2,14 +2,14 @@
 
 ```mermaid
 flowchart TB
-    PythonCode["<b>Python Code</b><br>def sat(x): return x > 5"] --> SymbolicExecution
+    PythonCode["<b>Python Code</b><br><tt>def sat(x): return x > 5</tt>"] --> SymbolicExecution
     
     SymbolicExecution["<b>Symbolic Execution</b><br>Overloaded Operations<br>Symbolic Variables"] --> SMTGeneration
     SymbolicExecution --- SMTSolver
     
-    SMTGeneration["<b>SMT Constraint Generation</b><br>Constraints Built as Side Effect<br>(x > 5)"] --> SMTSolver
+    SMTGeneration["<b>SMT Constraint Generation</b><br>Constraints Built as Side Effect<br><tt>(x > 5)</tt>"] --> SMTSolver
     
-    SMTSolver["<b>SMT Solver</b><br>Z3 or other SMT solver<br>Find Values: x = 6"] --> |Return solution| PythonCode
+    SMTSolver["<b>SMT Solver</b><br>Z3 or other SMT solver<br>Find Values: <tt>x = 6</tt>"] --> |Return solution| PythonCode
     
     classDef python fill:#e3f2fd,stroke:#2196f3,stroke-width:2px,color:black;
     classDef execution fill:#fff8e1,stroke:#ffc107,stroke-width:2px,color:black;
