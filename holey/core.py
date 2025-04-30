@@ -481,33 +481,27 @@ class SymbolicList:
         return SymbolicList(other.concrete + self.concrete, tracer=self.tracer)
 
     def index(self, item):
+        if self.concrete is None:
+            item = self.tracer.ensure_symbolic(item)
+            return SymbolicInt(self.tracer.backend.ListIndex(self.z3_expr, item.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
         # Return first index where item appears as SymbolicInt
-        result = None
+        
+        conditions = []
         for i, x in enumerate(self.concrete):
             eq = (x == item)  # This gives us a SymbolicBool
-            if result is None:
-                result = SymbolicInt(
-                    self.tracer.backend.If(
-                        eq.z3_expr,  # condition
-                        self.tracer.backend.IntVal(i),  # then
-                        self.tracer.backend.IntVal(-1)  # else
-                    ),
-                    tracer=self.tracer
-                )
-            else:
-                result = SymbolicInt(
-                    self.tracer.backend.If(
-                        eq.z3_expr,  # condition
-                        self.tracer.backend.If(
-                            result.z3_expr == -1,  # if not found yet
-                            self.tracer.backend.IntVal(i),  # use this index
-                            result.z3_expr  # keep previous index
-                        ),
-                        result.z3_expr  # else keep previous result
-                    ),
-                    tracer=self.tracer
-                )
-        return result
+            conditions.append((eq.z3_expr, i))
+        
+        # Default result is -1 (not found)
+        result_expr = self.tracer.backend.IntVal(-1)
+        
+        for condition, index in reversed(conditions):
+            result_expr = self.tracer.backend.If(
+                condition,
+                self.tracer.backend.IntVal(index),
+                result_expr
+            )
+        
+        return SymbolicInt(result_expr, tracer=self.tracer)
 
     def count(self, item):
         """Count occurrences of item in list"""
