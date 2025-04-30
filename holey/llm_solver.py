@@ -57,10 +57,10 @@ Return only the new SMTLIB program without any context.
 
     def solve_end2end(self, sat_func: str, ans_type: str, name: str, check_result) -> Optional[str]:
         print('Asking LLM for whole answer')
-        prompt = f"""Return a Python expression of type {ans_type} to solve puzzle {name}, where your goal is to synthesize the first argument that makes this `sat` function return `True`:
+        prompt = f"""Guess some Python expressions of type {ans_type} to solve puzzle {name}, where your goal is to synthesize the first argument that makes this `sat` function return `True`:
 {sat_func}
 
-Return only the executable Python expression without any context.
+Answer with a few possibilities/guesses, each time just an executable Python expression that evaluates to the bigger result. Do not use `sat`, just an expression that should be used as its argument.
 """
         return self.result_from_prompt(prompt, sat_func, ans_type, name, check_result)
 
