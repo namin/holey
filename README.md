@@ -70,16 +70,16 @@ python puzzle_solver.py --name-prefix ListIn:1  --llm
 ## Current status
 
 The symbolic execution currently solves:
-- 61% (221 out of 360) of `int` puzzles,
-- 33% (119 out of 363) of `str` puzzles,
+- 62% (222 out of 360) of `int` puzzles,
+- 33% (118 out of 363) of `str` puzzles,
 - 18% (9 out of 51) of `float` puzzles,
 - 45% (349 out of 774) overall.
 
 with the following errors:
-- 10 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
+- 9 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
 - 118 errors at at staging time
 - 175 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- 180 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
+- 181 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
 - 941 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 
@@ -91,17 +91,17 @@ timeouts after staging (while building the SMTLIB program), errors during stagin
 #### Extrapolated puzzles
 Study_1:0 PandigitalSquare:0 CircularShiftNum:2 WeirdDecodeVowels:0 TripleDouble:0 MaxDelta:0 MinConsecutiveSum:2 MaxConsecutiveSum:0 BirthdayParadox:0 BirthdayParadox:1 Tutorial5:0
 #### Successfully extrapolated puzzles
-Study_1:0 PandigitalSquare:0 CircularShiftNum:2 TripleDouble:0 MaxDelta:0 MaxConsecutiveSum:0 BirthdayParadox:0 BirthdayParadox:1 Tutorial5:0
+Study_1:0 PandigitalSquare:0 WeirdDecodeVowels:0 TripleDouble:0 MaxDelta:0 MinConsecutiveSum:2 MaxConsecutiveSum:0 BirthdayParadox:0 Tutorial5:0
 
 #### Matrix
-- claude      (extrapolate) _7_ 1 1 1 0 1 0 0 0 1 1 1
-- claude       (end-to-end) _1_ 0 0 0 0 0 0 0 0 1 0 0
+- claude      (extrapolate) _8_ 1 1 0 1 1 0 1 1 1 0 1
+- claude       (end-to-end) _5_ 1 1 0 1 0 0 0 0 1 1 0
 - claude           (SMTLIB) _0_ 0 0 0 0 0 0 0 0 0 0 0
-- gemini      (extrapolate) _5_ 1 1 1 0 1 1 0 0 0 0 0
-- gemini       (end-to-end) _3_ 0 0 0 0 0 0 0 1 1 0 1
+- gemini      (extrapolate) _5_ 0 1 0 1 1 1 1 0 0 0 0
+- gemini       (end-to-end) _5_ 0 0 0 0 1 1 0 1 1 0 1
 - gemini           (SMTLIB) _0_ 0 0 0 0 0 0 0 0 0 0 0
-- ollama      (extrapolate) _3_ 0 0 0 0 0 1 0 1 0 0 1
-- ollama       (end-to-end) _4_ 0 0 0 0 1 1 0 0 1 0 1
+- ollama      (extrapolate) _2_ 0 0 0 0 0 0 1 0 0 0 1
+- ollama       (end-to-end) _2_ 0 0 0 0 0 0 0 0 1 0 1
 - ollama           (SMTLIB) _0_ 0 0 0 0 0 0 0 0 0 0 0
 
 ## Source map
