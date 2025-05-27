@@ -92,7 +92,20 @@ class SymbolicTracer:
         return None
 
     def solution_var(self, model, var):
-        return  model[var.name]
+        # Check if this is a bounded list
+        if hasattr(self.backend, 'bounded_lists') and var.name in self.backend.bounded_lists:
+            # Extract from bounded representation
+            bounded = self.backend.bounded_lists[var.name]
+            length = model.get(f'{var.name}_length', 0)
+            elements = []
+            for i in range(min(length, bounded.max_length)):
+                elem_name = f'{var.name}_elem_{i}'
+                if elem_name in model:
+                    elements.append(model[elem_name])
+            return elements
+        else:
+            # Regular extraction
+            return model.get(var.name)
     
     def ensure_symbolic(self, other):
         if isinstance(other, bool):

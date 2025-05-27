@@ -165,6 +165,32 @@ def _parse_model(output):
 
 def _parse_list_value(list_sexp):
     """Parse a list value from SMT-LIB output using a simple recursive approach"""
+    # Handle let expressions: (let ((var val) ...) body)
+    if isinstance(list_sexp, list) and len(list_sexp) >= 3 and isinstance(list_sexp[0], sexpdata.Symbol) and list_sexp[0].value() == 'let':
+        # Parse let bindings
+        bindings = list_sexp[1]
+        body = list_sexp[2]
+        
+        # Create a substitution map
+        subs = {}
+        for binding in bindings:
+            if isinstance(binding, list) and len(binding) == 2:
+                var_name = binding[0].value() if isinstance(binding[0], sexpdata.Symbol) else str(binding[0])
+                var_value = binding[1]
+                subs[var_name] = var_value
+        
+        # Substitute variables in body
+        def substitute(expr):
+            if isinstance(expr, sexpdata.Symbol) and expr.value() in subs:
+                return subs[expr.value()]
+            elif isinstance(expr, list):
+                return [substitute(e) for e in expr]
+            else:
+                return expr
+        
+        substituted_body = substitute(body)
+        return _parse_list_value(substituted_body)
+    
     # Handle 'as' expressions: (as expr type) -> parse expr
     if isinstance(list_sexp, list) and len(list_sexp) >= 2 and isinstance(list_sexp[0], sexpdata.Symbol) and list_sexp[0].value() == 'as':
         # Recursively parse the expression part, ignoring the type annotation
@@ -333,6 +359,7 @@ class MockExpr:
 library_deps = {
 'list': ['str.split', 'python.join', 'list.slice']
 }
+
 
 library = {
 'str.isdigit':
@@ -838,6 +865,7 @@ class MockSolver:
         # Generate SMT-LIB2 file
         smt2 = ""
 
+        # Regular SMT2 generation
         # Declare variables
         for decl,sort in self.declarations:
             smt2 += f"(declare-const {decl} {sort})\n"
@@ -867,12 +895,15 @@ class MockSolver:
         return flag
 
 class Backend():
-    def __init__(self, cmds=None):
+    def __init__(self, cmds=None, use_bounded_lists=False, max_list_length=100):
         self.cmds = cmds
         self.operations = []
         self.solver = MockSolver()
         self.stack = []
         self.quantified_vars = set()
+        self.use_bounded_lists = use_bounded_lists
+        self.max_list_length = max_list_length
+        self.bounded_lists = {}  # Track bounded list encodings
 
     def _record(self, op: str, *args) -> Any:
         """Record operation and return a MockExpr"""
@@ -961,6 +992,9 @@ class Backend():
         return self._record("^", a, b)
 
     def Solver(self) -> MockSolver:
+        if not hasattr(self, '_solver_initialized'):
+            self.solver = MockSolver()
+            self._solver_initialized = True
         return self.solver
 
     def is_sat(self, result) -> bool:
@@ -1113,10 +1147,23 @@ class Backend():
 
     def List(self, name: str, element_type: str) -> MockExpr:
         """Declare a list variable with elements of the given type"""
-        full_type = f"(List {element_type})"
-        if name not in self.quantified_vars:
-            self.solver.declarations.append((name, full_type))
-        return self._record("List", name, element_type)
+        if self.use_bounded_lists:
+            # Import here to avoid circular dependency
+            from .backend_bounded import create_bounded_list
+            
+            # Create bounded encoding
+            bounded = create_bounded_list(self, name, element_type, self.max_list_length)
+            self.bounded_lists[name] = bounded
+            
+            # Return a mock expression that tracks this is a bounded list
+            expr = self._record("BoundedList", name, element_type)
+            expr._bounded_encoding = bounded
+            return expr
+        else:
+            full_type = f"(List {element_type})"
+            if name not in self.quantified_vars:
+                self.solver.declarations.append((name, full_type))
+            return self._record("List", name, element_type)
 
     def ListVal(self, elements: list, element_type: str) -> MockExpr:
         """Create a list value with the given elements"""
@@ -1143,11 +1190,17 @@ class Backend():
 
     def ListLength(self, lst, element_type) -> MockExpr:
         """Get the length of a list"""
-        return self._record("list.length."+element_type.lower(), lst)
+        if hasattr(lst, '_bounded_encoding'):
+            return lst._bounded_encoding.length()
+        else:
+            return self._record("list.length."+element_type.lower(), lst)
 
     def ListGet(self, lst, idx, element_type) -> MockExpr:
         """Get an element from a list at the given index"""
-        return self._record("list.get."+element_type.lower(), lst, idx)
+        if hasattr(lst, '_bounded_encoding'):
+            return lst._bounded_encoding.get(idx)
+        else:
+            return self._record("list.get."+element_type.lower(), lst, idx)
 
     def ListSlice(self, lst, start, stop, step, element_type) -> MockExpr:
         return self._record("list.slice."+element_type.lower(), lst, start, stop, step)
@@ -1181,6 +1234,20 @@ class Backend():
 
     def ListCount(self, lst, val, element_type: str) -> MockExpr:
         """Count occurrences of a value in a list"""
-        return self._record("list.count."+element_type.lower(), lst, val)
+        if hasattr(lst, '_bounded_encoding'):
+            # Use bounded encoding
+            return lst._bounded_encoding.count(val)
+        else:
+            return self._record("list.count."+element_type.lower(), lst, val)
+    
+    def _get_expr_name(self, expr):
+        """Get a name for an expression"""
+        if isinstance(expr, MockExpr) and expr._name:
+            return expr._name
+        elif isinstance(expr, MockExpr) and expr.op in ["Int", "String", "Real", "Bool", "List"]:
+            return expr.args[0]
+        else:
+            return str(expr).replace(" ", "_")
+
 
 default_backend = Backend

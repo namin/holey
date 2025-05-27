@@ -606,7 +606,33 @@ def create_namespace(tracer):
 
 def driver(sat_func, typ, cmds=None, llm_solver=None):
     reset()
-    backend = default_backend(cmds)
+    
+    # Analyze if we should use bounded lists
+    use_bounded = False
+    max_list_length = 100
+    
+    if str(typ).startswith("<class 'list") or (hasattr(typ, '__origin__') and typ.__origin__ == list):
+        try:
+            from .list_analysis import analyze_list_puzzle, should_use_bounded_encoding
+            analysis = analyze_list_puzzle(sat_func)
+            decision = should_use_bounded_encoding(analysis)
+            
+            if decision['use_bounded']:
+                use_bounded = True
+                max_list_length = decision['suggested_max_length']
+                print(f"Using bounded list encoding (max_length={max_list_length}) because: {decision['reasons']}")
+        except Exception as e:
+            print(f"List analysis failed: {e}, using default encoding")
+    
+    # Import Backend here to avoid circular imports
+    from .backend import Backend
+    
+    backend = default_backend(cmds) if not use_bounded else Backend(
+        cmds=cmds, 
+        use_bounded_lists=use_bounded,
+        max_list_length=max_list_length
+    )
+    
     tracer = SymbolicTracer(backend=backend, llm_solver=llm_solver)
     namespace = create_namespace(tracer)
     sym_var = make_symbolic(typ, 'x', tracer)
