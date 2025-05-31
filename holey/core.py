@@ -52,8 +52,9 @@ class SymbolicTracer:
 
     def add_constraint(self, constraint):
         """Add constraint with optional LLM refinement"""
-        if isinstance(constraint, (SymbolicInt, SymbolicBool)):
-            constraint = truthy(constraint).z3_expr
+        constraint = truthy(constraint)
+        if hasattr(constraint, 'z3_expr'):
+            constraint = constraint.z3_expr
             
         if self.llm_solver:
             self.llm_solver.add_constraint_refinements(constraint, self.backend)
@@ -572,7 +573,7 @@ class SymbolicList:
 
 
     def contains(self, item):
-        return SymbolicBool(self.__contains__(item), tracer=self.tracer)
+        return self.tracer.ensure_symbolic(self.__contains__(item))
 
     def __getitem__(self, key):
         if self.concrete is not None:
