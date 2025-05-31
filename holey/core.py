@@ -568,7 +568,7 @@ class SymbolicList:
             if item.concrete is not None:
                 return item.concrete in self.concrete
             else:
-                return self.tracer.backend.Or(*[(item == x).z3_expr for x in self.concrete])
+                return SymbolicBool(self.tracer.backend.Or(*[(item == x).z3_expr for x in self.concrete]), tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.ListContains(self.z3_expr, item.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
 
 
