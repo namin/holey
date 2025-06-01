@@ -16,9 +16,6 @@ if is_docker():
 
 
 def dummy_generate(pkg, extra=""):
-    # def generate(*args):
-    #     raise ValueError(f"Need to install pip package '{pkg}'"+extra)
-    # return generate
     raise ValueError(f"Need to install pip package '{pkg}'"+extra)
 
 generators = {}
