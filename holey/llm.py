@@ -5,6 +5,7 @@ ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 OLLAMA_API_KEY = os.environ.get('OLLAMA_API_KEY')
+PROJECT_ID = os.environ.get('PROJECT_ID') # for Google Cloud
 
 def is_docker():
     path = '/proc/self/cgroup'
@@ -24,6 +25,43 @@ def generate(prompt, max_tokens=1000, temperature=1.0, model=None):
     print(f"Prompt:\n{prompt}")
     return None
 generators[None] = generate
+
+if PROJECT_ID:
+    generate = None
+    try:
+        from anthropic import AnthropicVertex
+    except ModuleNotFoundError:
+        generate = dummy_generate('anthropic[vertex]')
+
+    if generate is None:
+        LOCATION="us-east5"
+        def generate(prompt, max_tokens=1000, temperature=1.0, model="claude-sonnet-4@20250514"):
+            print(f"Sending request to Anthropic Vertex (model={model}, max_tokens={max_tokens}, temp={temperature})")
+
+            client = AnthropicVertex(region=LOCATION, project_id=PROJECT_ID)
+
+            message = client.messages.create(
+                model=model,
+                max_tokens=max_tokens,
+                temperature=temperature,
+                system="You are an SMTLIB expert.",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": prompt
+                            }
+                        ]
+                    }
+                ]
+            )
+            print("Received response from Anthropic Vertex")
+            print(f"Response:\n{message}")
+            return message.content[0].text
+
+    generators['claude_vertex'] = generate
 
 if OPENAI_API_KEY:
     generate = None
