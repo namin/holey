@@ -584,7 +584,7 @@ def create_namespace(tracer):
         'SymbolicInt': SymbolicInt,
         'wrap_str': lambda s: SymbolicStr(s, tracer=tracer),
         'wrap_int': lambda n: SymbolicInt(n, tracer=tracer),
-        'wrap_list': wrap_list,
+        'wrap_list': lambda xs: wrap_list(xs, tracer=tracer),
         '_assert': lambda x, msg=None: tracer.add_constraint(x),
         'any': sym_any,
         'all': sym_all,
