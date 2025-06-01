@@ -1,5 +1,5 @@
 import os
-import socket
+from typing import List
 
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
@@ -42,7 +42,7 @@ if OPENAI_API_KEY:
             print(f"Sending request to OpenAI (model={model}, max_tokens={max_tokens}, temp={temperature})")
 
             completion = openai.chat.completions.create(
-                model="gpt-4o",
+                model=model,
                 messages=[
                     {
                         "role": "user",
@@ -141,7 +141,7 @@ if OLLAMA_API_KEY:
 
     generators['ollama'] = generate
 
-def extract_code_blocks(response: str) -> str:
+def extract_code_blocks(response: str) -> List[str]:
     """Extract code blocks from LLM response, removing markdown and explanations."""
     if not response:
         return []
