@@ -10,6 +10,7 @@ The solver incorporates heuristics from LLMs in addition to symbolic execution.
 
 - [Diagram: multi-stage programming SMT: overloaded execution generates constraints](https://github.com/namin/holey/blob/main/diagram_staging_SMT.md)
 - [Diagram: overview](https://github.com/namin/holey/blob/main/diagram.md)
+- - [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/namin/namin)
 
 ## Setup
 
