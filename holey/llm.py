@@ -7,7 +7,7 @@ GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 OLLAMA_API_KEY = os.environ.get('OLLAMA_API_KEY')
 PROJECT_ID = os.environ.get('PROJECT_ID') # for Google Cloud
 
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash-preview-04-17")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 
 def is_docker():
     path = '/proc/self/cgroup'
