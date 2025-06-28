@@ -163,16 +163,42 @@ def _parse_model(output):
 
     return _model
 
-def _parse_list_value(list_sexp):
+def _parse_list_value(list_sexp, bindings=None):
     """Parse a list value from SMT-LIB output using a simple recursive approach"""
+    if bindings is None:
+        bindings = {}
+    
+    # Handle 'let' expressions: (let ((var val)...) body) -> parse body with substitutions
+    if isinstance(list_sexp, list) and len(list_sexp) >= 3 and isinstance(list_sexp[0], sexpdata.Symbol) and list_sexp[0].value() == 'let':
+        # Parse let bindings
+        let_bindings = list_sexp[1]
+        body = list_sexp[2]
+        
+        # Create new bindings dict with let-bound variables
+        new_bindings = bindings.copy()
+        for binding in let_bindings:
+            if len(binding) >= 2:
+                var_name = binding[0].value() if isinstance(binding[0], sexpdata.Symbol) else str(binding[0])
+                var_value = _parse_sexp_value(binding[1], bindings)
+                new_bindings[var_name] = var_value
+        
+        # Parse body with new bindings
+        return _parse_list_value(body, new_bindings)
+    
+    # Handle variable references
+    if isinstance(list_sexp, sexpdata.Symbol):
+        sym_val = list_sexp.value()
+        if sym_val in bindings:
+            return bindings[sym_val]
+        elif sym_val == 'nil':
+            return []
+        else:
+            return list_sexp
+    
     # Handle 'as' expressions: (as expr type) -> parse expr
     if isinstance(list_sexp, list) and len(list_sexp) >= 2 and isinstance(list_sexp[0], sexpdata.Symbol) and list_sexp[0].value() == 'as':
         # Recursively parse the expression part, ignoring the type annotation
-        return _parse_list_value(list_sexp[1])
-    
-    # Handle nil symbol (empty list)
-    if isinstance(list_sexp, sexpdata.Symbol) and list_sexp.value() == 'nil':
-        return []
+        return _parse_list_value(list_sexp[1], bindings)
     
     # Handle empty list represented as []
     if list_sexp == []:
@@ -184,10 +210,10 @@ def _parse_list_value(list_sexp):
         tail = list_sexp[2]
         
         # Parse head value
-        parsed_head = _parse_sexp_value(head)
+        parsed_head = _parse_sexp_value(head, bindings)
         
         # Recursively parse the tail
-        parsed_tail = _parse_list_value(tail)
+        parsed_tail = _parse_list_value(tail, bindings)
         
         # Combine head and tail into a new list
         return [parsed_head] + parsed_tail
@@ -196,8 +222,11 @@ def _parse_list_value(list_sexp):
     print(f"Warning: Unexpected list format in SMT output: {list_sexp}")
     return []
 
-def _parse_sexp_value(sexp):
+def _parse_sexp_value(sexp, bindings=None):
     """Parse any S-expression value to an appropriate Python value"""
+    if bindings is None:
+        bindings = {}
+    
     # Handle simple values
     if isinstance(sexp, (int, float, bool)):
         return sexp
@@ -205,7 +234,10 @@ def _parse_sexp_value(sexp):
     # Handle symbols
     if isinstance(sexp, sexpdata.Symbol):
         sym_val = sexp.value()
-        if sym_val == 'true':
+        # Check if it's a variable reference
+        if sym_val in bindings:
+            return bindings[sym_val]
+        elif sym_val == 'true':
             return True
         elif sym_val == 'false':
             return False
@@ -221,26 +253,43 @@ def _parse_sexp_value(sexp):
                 except ValueError:
                     return sym_val  # Return as string
     
+    # Handle 'let' expressions
+    if isinstance(sexp, list) and len(sexp) >= 3 and isinstance(sexp[0], sexpdata.Symbol) and sexp[0].value() == 'let':
+        # Parse let bindings
+        let_bindings = sexp[1]
+        body = sexp[2]
+        
+        # Create new bindings dict with let-bound variables
+        new_bindings = bindings.copy()
+        for binding in let_bindings:
+            if len(binding) >= 2:
+                var_name = binding[0].value() if isinstance(binding[0], sexpdata.Symbol) else str(binding[0])
+                var_value = _parse_sexp_value(binding[1], bindings)
+                new_bindings[var_name] = var_value
+        
+        # Parse body with new bindings
+        return _parse_sexp_value(body, new_bindings)
+    
     # Handle 'as' expressions
     if isinstance(sexp, list) and len(sexp) >= 2 and isinstance(sexp[0], sexpdata.Symbol) and sexp[0].value() == 'as':
-        return _parse_sexp_value(sexp[1])
+        return _parse_sexp_value(sexp[1], bindings)
     
     # Handle lists
     if isinstance(sexp, list):
         if len(sexp) >= 3 and isinstance(sexp[0], sexpdata.Symbol) and sexp[0].value() == 'cons':
-            return _parse_list_value(sexp)
+            return _parse_list_value(sexp, bindings)
         elif len(sexp) >= 1 and isinstance(sexp[0], sexpdata.Symbol):
             # Handle other SMT-LIB expressions
             op = sexp[0].value()
             if op == '-' and len(sexp) == 2:
                 # Unary minus
-                return -_parse_sexp_value(sexp[1])
+                return -_parse_sexp_value(sexp[1], bindings)
             elif op == '/' and len(sexp) == 3:
                 # Division expression
-                return _parse_sexp_value(sexp[1]) / _parse_sexp_value(sexp[2])
+                return _parse_sexp_value(sexp[1], bindings) / _parse_sexp_value(sexp[2], bindings)
         
         # Otherwise parse each element recursively
-        return [_parse_sexp_value(elem) for elem in sexp]
+        return [_parse_sexp_value(elem, bindings) for elem in sexp]
     
     # String or other primitive
     return sexp
