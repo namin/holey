@@ -49,7 +49,7 @@ def from_stmlib_float(value):
 
 cmd_prefixes = {
     'z3': ['z3', '-T:2'],
-    'cvc5': ['cvc5', '--tlimit=2000', '--produce-model']
+    'cvc5': ['cvc5', '--tlimit=2000', '--produce-model', '--fmf-fun']
 }
 def smtlib_cmd(smt2_file, cmd=None):
     cmd = cmd or next(iter(cmd_prefixes.keys()))
