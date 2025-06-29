@@ -157,10 +157,6 @@ def _parse_model(output):
             
             _model[var_name] = value
 
-    # Add debugging
-    # for var_name, value in _model.items():
-    #     print(f"DEBUG: Parsed variable {var_name} = {value!r} (type: {type(value).__name__})")
-
     return _model
 
 def _parse_list_value(list_sexp, bindings=None):
@@ -195,10 +191,17 @@ def _parse_list_value(list_sexp, bindings=None):
         else:
             return list_sexp
     
-    # Handle 'as' expressions: (as expr type) -> parse expr
+    # Handle 'as' expressions for nil cases
     if isinstance(list_sexp, list) and len(list_sexp) >= 2 and isinstance(list_sexp[0], sexpdata.Symbol) and list_sexp[0].value() == 'as':
-        # Recursively parse the expression part, ignoring the type annotation
-        return _parse_list_value(list_sexp[1], bindings)
+        # CVC5 format: (as nil (List Int)) with empty list as second element
+        if len(list_sexp) >= 3 and list_sexp[1] == []:
+            return []
+        # Z3 format: (as nil (List Int)) -> extract nil
+        elif len(list_sexp) >= 3 and isinstance(list_sexp[1], sexpdata.Symbol) and list_sexp[1].value() == 'nil':
+            return []
+        # Other as expressions - shouldn't happen for lists but handle gracefully
+        else:
+            return _parse_list_value(list_sexp[1], bindings)
     
     # Handle empty list represented as []
     if list_sexp == []:
@@ -217,6 +220,25 @@ def _parse_list_value(list_sexp, bindings=None):
         
         # Combine head and tail into a new list
         return [parsed_head] + parsed_tail
+    
+    # Handle CVC5 format: ((as cons (List Int)) head tail)
+    if isinstance(list_sexp, list) and len(list_sexp) >= 3:
+        # Check if first element is (as cons (List Int))
+        first = list_sexp[0]
+        if isinstance(first, list) and len(first) >= 3 and isinstance(first[0], sexpdata.Symbol) and first[0].value() == 'as':
+            if isinstance(first[1], sexpdata.Symbol) and first[1].value() == 'cons':
+                # This is a CVC5 cons cell
+                head = list_sexp[1]
+                tail = list_sexp[2]
+                
+                # Parse head value
+                parsed_head = _parse_sexp_value(head, bindings)
+                
+                # Recursively parse the tail
+                parsed_tail = _parse_list_value(tail, bindings)
+                
+                # Combine head and tail into a new list
+                return [parsed_head] + parsed_tail
     
     # If we get here, it's an unexpected format
     print(f"Warning: Unexpected list format in SMT output: {list_sexp}")
@@ -272,7 +294,9 @@ def _parse_sexp_value(sexp, bindings=None):
     
     # Handle 'as' expressions
     if isinstance(sexp, list) and len(sexp) >= 2 and isinstance(sexp[0], sexpdata.Symbol) and sexp[0].value() == 'as':
-        return _parse_sexp_value(sexp[1], bindings)
+        # For list-related 'as' expressions, delegate to _parse_list_value
+        # which already handles all the special cases
+        return _parse_list_value(sexp, bindings)
     
     # Handle lists
     if isinstance(sexp, list):
