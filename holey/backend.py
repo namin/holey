@@ -7,6 +7,7 @@ import tempfile
 import subprocess
 import os
 import sexpdata
+import sys
 
 def to_smtlib_string(s):
     return '"' + ''.join(
@@ -48,17 +49,25 @@ def from_stmlib_float(value):
     return value
 
 cmd_prefixes = {
-    'z3': ['z3', '-T:2'],
-    'cvc5': ['cvc5', '--tlimit=2000', '--produce-model', '--fmf-fun']
+    'z3': ['z3', '-T:10'],
+    'cvc5': ['cvc5', '--tlimit=10000', '--produce-model', '--fmf-fun']
 }
 def smtlib_cmd(smt2_file, cmd=None):
     cmd = cmd or next(iter(cmd_prefixes.keys()))
     print('running backend', cmd)
     return cmd_prefixes[cmd] + [smt2_file]
 
+def print_smt(smt2):
+    lines = smt2.split('\n')
+    truncated_lines = [line if len(line) < 1005 else line[0:1000] + "..." for line in lines]
+    r = '\n'.join(truncated_lines)
+    print(r)
+    sys.stdout.flush()
+    return r
+
 def run_smt(smt2, cmds=None):
     print('### smt2')
-    print(smt2)
+    print_smt(smt2)
 
     # Write to temporary file
     with tempfile.NamedTemporaryFile(mode='w', suffix='.smt2', delete=False) as f:
