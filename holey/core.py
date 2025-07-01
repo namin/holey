@@ -591,7 +591,7 @@ class SymbolicList:
                 # Add bounds check
                 n = len(self)
                 self.tracer.add_constraint(key < n)
-                self.tracer.add_constraint(key > -n)
+                self.tracer.add_constraint(key >= -n)
 
                 # Build an If expression to select the right value
                 result = None

@@ -431,16 +431,17 @@ library = {
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -465,9 +466,11 @@ library = {
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -523,25 +526,13 @@ library = {
 ,
 'list.slice':
 """
-; Helper max function
-(define-fun list.max ((a Int) (b Int)) Int
-  (ite (>= a b) a b))
-
-;; Helper min function
-(define-fun list.min ((a Int) (b Int)) Int
-  (ite (<= a b) a b))
-
-;; Helper to handle negative indices
 (define-fun list.adjust_index ((idx Int) (len Int)) Int
   (ite (< idx 0)
-       (list.max 0 (+ len idx))  ;; Convert negative index but ensure not below 0
-       (list.min idx len)))      ;; Ensure not beyond length
-
-;; Helper to check if an index is valid
+       (+ len idx)
+       idx))
 (define-fun list.valid_index.int ((l (List Int)) (idx Int)) Bool
   (and (>= idx 0) (< idx (list.length.int l))))
 
-;; Recursive function to build a sliced list
 (define-fun-rec list.slice.int.helper ((l (List Int)) (curr Int) (stop Int) (step Int) (result (List Int))) (List Int)
   (ite (or (and (> step 0) (>= curr stop))     ;; Positive step and reached/passed stop
            (and (< step 0) (<= curr stop))     ;; Negative step and reached/passed stop
@@ -550,13 +541,11 @@ library = {
        (let ((new_result (cons (list.get.int l curr) result)))
          (list.slice.int.helper l (+ curr step) stop step new_result))))
 
-;; Helper to reverse a list
 (define-fun-rec list.reverse.int ((l (List Int)) (acc (List Int))) (List Int)
   (ite (= l (as nil (List Int)))
        acc
        (list.reverse.int (tail l) (cons (head l) acc))))
 
-;; Main slice function
 (define-fun list.slice.int ((l (List Int)) (start Int) (stop Int) (step Int)) (List Int)
   (let ((len (list.length.int l)))
     (ite (= step 0)
