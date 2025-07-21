@@ -66,14 +66,18 @@ modified_func def sat(s: str):
 running backend z3
 running backend cvc5
 ### output for z3
-timeout
+sat
+(
+  (define-fun x () String
+    "oCoDo")
+)
 ### output for cvc5
 sat
 (
 (define-fun x () String "oBoAo")
 )
 
-Found solution oBoAo
+Found solution oCoDo
 
 Solving puzzle 2/774: Study_2:0
 sat_func def sat(s: str):
@@ -340,18 +344,13 @@ modified_func def sat(s: str):
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "1.5")
-  (define-fun /0 ((x!0 Real) (x!1 Real)) Real
-    (/ 1.0 2.0))
-)
+unknown
+(error "line 18 column 10: model is not available")
 ### output for cvc5
 (error "Parse Error: tmp.smt2:13.52: expecting same arithmetic types to POW")
 
-Found solution 1.5
-Yes! Solved for puzzle  Study_16:0
+Could not find any solution for puzzle Study_16:0
+Too many constants for extrapolation
 
 Solving puzzle 8/774: Study_17:0
 sat_func def sat(i: int):
@@ -504,10 +503,7 @@ sat
     15621)
 )
 ### output for cvc5
-sat
-(
-(define-fun x () Int 15621)
-)
+cvc5 interrupted by timeout.
 
 Found solution 15621
 Yes! Solved for puzzle  MonkeyAndCoconuts:0
@@ -1373,15 +1369,12 @@ running backend cvc5
 sat
 (
   (define-fun x () String
-    "ysae osABCCBAso easy")
+    "so easyJKLLKJysae os")
 )
 ### output for cvc5
-sat
-(
-(define-fun x () String "ysae osBACCABso easy")
-)
+cvc5 interrupted by timeout.
 
-Found solution ysae osABCCBAso easy
+Found solution so easyJKLLKJysae os
 Yes! Solved for puzzle  PalindromeContaining:0
 
 Solving puzzle 43/774: PalindromeContaining:1
@@ -1445,12 +1438,12 @@ running backend cvc5
 sat
 (
   (define-fun x () String
-    "bbbLBCDEFGHIJKJIHGFEDCBLbbb")
+    "AKBCJbbbIHGFEDEFGHIbbbJCBKA")
 )
 ### output for cvc5
 cvc5 interrupted by timeout.
 
-Found solution bbbLBCDEFGHIJKJIHGFEDCBLbbb
+Found solution AKBCJbbbIHGFEDEFGHIbbbJCBKA
 Yes! Solved for puzzle  PalindromeContaining:2
 
 Solving puzzle 45/774: PalindromeContaining:3
@@ -1475,12 +1468,16 @@ modified_func def sat(ans: str, s=wrap_str('bb'), length=wrap_int(38)):
 running backend z3
 running backend cvc5
 ### output for z3
-timeout
+sat
+(
+  (define-fun x () String
+    "AQPONMLKJIBCDHGEbbFFbbEGHDCBIJKLMNOPQA")
+)
 ### output for cvc5
 cvc5 interrupted by timeout.
 
-Could not find any solution for puzzle PalindromeContaining:3
-Too many constants for extrapolation
+Found solution AQPONMLKJIBCDHGEbbFFbbEGHDCBIJKLMNOPQA
+Yes! Solved for puzzle  PalindromeContaining:3
 
 Solving puzzle 46/774: PalindromeContaining:4
 sat_func def sat(ans: str, s="", length=0):
@@ -1570,18 +1567,13 @@ modified_func def sat(str_num: str, nums=wrap_list([wrap_str('100011101100001'),
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "A")
-)
+unknown
+(error "line 40 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @ground_term_29)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @ground_term_29)))))")
 
-Found solution A
-Exception in checking result: invalid literal for int() with base 2: 'A'
-WARNING: Solution verification failed for puzzle BinaryStrXOR:0
+Could not find any solution for puzzle BinaryStrXOR:0
 Two large constants for extrapolation
 Solving simpler variation replaced 100011101100001 with 3 and 100101100101110 with 5
 sat_func def sat(str_num: str, nums=['3', '5']):
@@ -1635,18 +1627,13 @@ modified_func def sat(str_num: str, nums=wrap_list([wrap_str('3'), wrap_str('5')
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "A")
-)
+unknown
+(error "line 40 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @ground_term_29)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @ground_term_29)))))")
 
-Found solution A
-Exception in checking result: invalid literal for int() with base 2: 'A'
-WARNING: Solution verification failed for puzzle BinaryStrXOR:0
+Could not find any solution for puzzle BinaryStrXOR:0
 
 Solving puzzle 48/774: BinaryStrXOR:1
 sat_func def sat(str_num: str, nums=['1101101111', '11001100']):
@@ -1700,18 +1687,13 @@ modified_func def sat(str_num: str, nums=wrap_list([wrap_str('1101101111'), wrap
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "A")
-)
+unknown
+(error "line 40 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @ground_term_29)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @ground_term_29)))))")
 
-Found solution A
-Exception in checking result: invalid literal for int() with base 2: 'A'
-WARNING: Solution verification failed for puzzle BinaryStrXOR:1
+Could not find any solution for puzzle BinaryStrXOR:1
 Two large constants for extrapolation
 Solving simpler variation replaced 11001100 with 3 and 1101101111 with 5
 sat_func def sat(str_num: str, nums=['5', '3']):
@@ -1765,18 +1747,13 @@ modified_func def sat(str_num: str, nums=wrap_list([wrap_str('5'), wrap_str('3')
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "A")
-)
+unknown
+(error "line 40 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @ground_term_29)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @ground_term_29)))))")
 
-Found solution A
-Exception in checking result: invalid literal for int() with base 2: 'A'
-WARNING: Solution verification failed for puzzle BinaryStrXOR:1
+Could not find any solution for puzzle BinaryStrXOR:1
 
 Solving puzzle 49/774: BinaryStrXOR:2
 sat_func def sat(str_num: str, nums=['11011111', '1101001110']):
@@ -1830,18 +1807,13 @@ modified_func def sat(str_num: str, nums=wrap_list([wrap_str('11011111'), wrap_s
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "A")
-)
+unknown
+(error "line 40 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @ground_term_29)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @ground_term_29)))))")
 
-Found solution A
-Exception in checking result: invalid literal for int() with base 2: 'A'
-WARNING: Solution verification failed for puzzle BinaryStrXOR:2
+Could not find any solution for puzzle BinaryStrXOR:2
 Two large constants for extrapolation
 Solving simpler variation replaced 1101001110 with 3 and 11011111 with 5
 sat_func def sat(str_num: str, nums=['5', '3']):
@@ -1895,18 +1867,13 @@ modified_func def sat(str_num: str, nums=wrap_list([wrap_str('5'), wrap_str('3')
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "A")
-)
+unknown
+(error "line 40 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @ground_term_29)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @ground_term_29)))))")
 
-Found solution A
-Exception in checking result: invalid literal for int() with base 2: 'A'
-WARNING: Solution verification failed for puzzle BinaryStrXOR:2
+Could not find any solution for puzzle BinaryStrXOR:2
 
 Solving puzzle 50/774: BinaryStrXOR:3
 sat_func def sat(str_num: str, nums=['100000001', '1010001001']):
@@ -1960,18 +1927,13 @@ modified_func def sat(str_num: str, nums=wrap_list([wrap_str('100000001'), wrap_
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "A")
-)
+unknown
+(error "line 40 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @ground_term_29)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @ground_term_29)))))")
 
-Found solution A
-Exception in checking result: invalid literal for int() with base 2: 'A'
-WARNING: Solution verification failed for puzzle BinaryStrXOR:3
+Could not find any solution for puzzle BinaryStrXOR:3
 Two large constants for extrapolation
 Solving simpler variation replaced 100000001 with 3 and 1010001001 with 5
 sat_func def sat(str_num: str, nums=['3', '5']):
@@ -2025,18 +1987,13 @@ modified_func def sat(str_num: str, nums=wrap_list([wrap_str('3'), wrap_str('5')
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "A")
-)
+unknown
+(error "line 40 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @ground_term_29)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @ground_term_29)))))")
 
-Found solution A
-Exception in checking result: invalid literal for int() with base 2: 'A'
-WARNING: Solution verification failed for puzzle BinaryStrXOR:3
+Could not find any solution for puzzle BinaryStrXOR:3
 
 Solving puzzle 51/774: BinaryStrXOR:4
 sat_func def sat(str_num: str, nums=['10010110', '10000']):
@@ -2090,18 +2047,13 @@ modified_func def sat(str_num: str, nums=wrap_list([wrap_str('10010110'), wrap_s
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "A")
-)
+unknown
+(error "line 40 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @ground_term_29)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @ground_term_29)))))")
 
-Found solution A
-Exception in checking result: invalid literal for int() with base 2: 'A'
-WARNING: Solution verification failed for puzzle BinaryStrXOR:4
+Could not find any solution for puzzle BinaryStrXOR:4
 Two large constants for extrapolation
 Solving simpler variation replaced 10000 with 3 and 10010110 with 5
 sat_func def sat(str_num: str, nums=['5', '3']):
@@ -2155,18 +2107,13 @@ modified_func def sat(str_num: str, nums=wrap_list([wrap_str('5'), wrap_str('3')
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "A")
-)
+unknown
+(error "line 40 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @ground_term_29)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @ground_term_29)))))")
 
-Found solution A
-Exception in checking result: invalid literal for int() with base 2: 'A'
-WARNING: Solution verification failed for puzzle BinaryStrXOR:4
+Could not find any solution for puzzle BinaryStrXOR:4
 
 Solving puzzle 52/774: LongestStr:0
 sat_func def sat(ans: str, words=['these', 'are', 'some', 'pretty', 'long', 'words']):
@@ -2324,16 +2271,17 @@ modified_func def sat(ans: str, n=wrap_int(15)):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -2358,9 +2306,11 @@ modified_func def sat(ans: str, n=wrap_int(15)):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -2480,16 +2430,17 @@ modified_func def sat(ans: str, n=wrap_int(54635)):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -2514,9 +2465,11 @@ modified_func def sat(ans: str, n=wrap_int(54635)):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -2635,16 +2588,17 @@ modified_func def sat(ans: str, n=wrap_int(3)):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -2669,9 +2623,11 @@ modified_func def sat(ans: str, n=wrap_int(3)):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -2790,16 +2746,17 @@ modified_func def sat(ans: str, n=wrap_int(83)):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -2824,9 +2781,11 @@ modified_func def sat(ans: str, n=wrap_int(83)):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -2946,16 +2905,17 @@ modified_func def sat(ans: str, n=wrap_int(99847)):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -2980,9 +2940,11 @@ modified_func def sat(ans: str, n=wrap_int(99847)):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -3101,16 +3063,17 @@ modified_func def sat(ans: str, n=wrap_int(3)):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -3135,9 +3098,11 @@ modified_func def sat(ans: str, n=wrap_int(3)):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -3256,16 +3221,17 @@ modified_func def sat(ans: str, n=wrap_int(18215)):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -3290,9 +3256,11 @@ modified_func def sat(ans: str, n=wrap_int(18215)):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -3411,16 +3379,17 @@ modified_func def sat(ans: str, n=wrap_int(3)):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -3445,9 +3414,11 @@ modified_func def sat(ans: str, n=wrap_int(3)):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -3568,16 +3539,17 @@ modified_func def sat(ans: str, s=wrap_str('six one four three two nine eight'))
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -3602,9 +3574,11 @@ modified_func def sat(ans: str, s=wrap_str('six one four three two nine eight'))
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -3735,16 +3709,17 @@ modified_func def sat(ans: str, s=wrap_str('nine two four nine zero six six eigh
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -3769,9 +3744,11 @@ modified_func def sat(ans: str, s=wrap_str('nine two four nine zero six six eigh
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -3902,16 +3879,17 @@ modified_func def sat(ans: str, s=wrap_str('nine six two')):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -3936,9 +3914,11 @@ modified_func def sat(ans: str, s=wrap_str('nine six two')):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -4060,16 +4040,17 @@ modified_func def sat(ans: str, s=wrap_str('five nine four eight')):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -4094,9 +4075,11 @@ modified_func def sat(ans: str, s=wrap_str('five nine four eight')):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -4227,16 +4210,17 @@ modified_func def sat(ans: str, s=wrap_str('seven eight seven zero zero five one
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -4261,9 +4245,11 @@ modified_func def sat(ans: str, s=wrap_str('seven eight seven zero zero five one
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -4518,10 +4504,7 @@ sat
     71793)
 )
 ### output for cvc5
-sat
-(
-(define-fun x () Int 23931)
-)
+cvc5 interrupted by timeout.
 
 Found solution 71793
 WARNING: Solution verification failed for puzzle LargestDivisor:2
@@ -5380,16 +5363,17 @@ modified_func def sat(s: str, target=wrap_str('Hello world')):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -5414,9 +5398,11 @@ modified_func def sat(s: str, target=wrap_str('Hello world')):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -5506,9 +5492,9 @@ sat
   (define-fun x () String
     "D")
   (define-fun k_1 () Int
-    (- 1))
+    (- 2))
   (define-fun k_3 () Int
-    23975)
+    12831)
 )
 ### output for cvc5
 sat
@@ -5540,16 +5526,17 @@ modified_func def sat(s: str, target=wrap_str('rugetytextirocuterup')):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -5574,9 +5561,11 @@ modified_func def sat(s: str, target=wrap_str('rugetytextirocuterup')):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -5700,16 +5689,17 @@ modified_func def sat(s: str, target=wrap_str('torusajidapaficiretoh')):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -5734,9 +5724,11 @@ modified_func def sat(s: str, target=wrap_str('torusajidapaficiretoh')):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -5828,7 +5820,7 @@ sat
   (define-fun k_1 () Int
     (- 2))
   (define-fun k_3 () Int
-    5744)
+    3566)
 )
 ### output for cvc5
 sat
@@ -5860,16 +5852,17 @@ modified_func def sat(s: str, target=wrap_str('quitextaf')):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -5894,9 +5887,11 @@ modified_func def sat(s: str, target=wrap_str('quitextaf')):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -5986,9 +5981,9 @@ sat
   (define-fun x () String
     "D")
   (define-fun k_1 () Int
-    (- 1))
+    (- 2))
   (define-fun k_3 () Int
-    23975)
+    12831)
 )
 ### output for cvc5
 sat
@@ -6020,16 +6015,17 @@ modified_func def sat(s: str, target=wrap_str('thoqui')):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -6054,9 +6050,11 @@ modified_func def sat(s: str, target=wrap_str('thoqui')):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -6146,9 +6144,9 @@ sat
   (define-fun x () String
     "D")
   (define-fun k_1 () Int
-    (- 2))
+    0)
   (define-fun k_3 () Int
-    23975)
+    3566)
 )
 ### output for cvc5
 sat
@@ -6490,18 +6488,13 @@ modified_func def sat(s: str, n=wrap_int(142), base=wrap_int(7)):
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "\u{be}")
-)
+unknown
+(error "line 27 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @quantifiers_skolemize_6)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @quantifiers_skolemize_6)))))")
 
-Found solution ¾
-Exception in checking result: invalid literal for int() with base 7: '¾'
-WARNING: Solution verification failed for puzzle ChangeBase:0
+Could not find any solution for puzzle ChangeBase:0
 One large constant for extrapolation
 Solving simpler variation replaced 142 with 3
 sat_func def sat(s: str, n=3, base=7):
@@ -6540,16 +6533,13 @@ modified_func def sat(s: str, n=wrap_int(3), base=wrap_int(7)):
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "3")
-)
+unknown
+(error "line 27 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @quantifiers_skolemize_6)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @quantifiers_skolemize_6)))))")
 
-Found solution 3
+Could not find any solution for puzzle ChangeBase:0
 
 Solving puzzle 108/774: ChangeBase:1
 sat_func def sat(s: str, n=85328, base=2):
@@ -6588,7 +6578,8 @@ modified_func def sat(s: str, n=wrap_int(85328), base=wrap_int(2)):
 running backend z3
 running backend cvc5
 ### output for z3
-timeout
+unknown
+(error "line 27 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ 2.0 (to_real (+ (- 1) (str.len (bin-to-int_arg_0_4 @quantifiers_skolemize_6)))))")
@@ -6632,16 +6623,13 @@ modified_func def sat(s: str, n=wrap_int(3), base=wrap_int(2)):
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "11")
-)
+unknown
+(error "line 27 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ 2.0 (to_real (+ (- 1) (str.len (bin-to-int_arg_0_4 @quantifiers_skolemize_6)))))")
 
-Found solution 11
+Could not find any solution for puzzle ChangeBase:1
 
 Solving puzzle 109/774: ChangeBase:2
 sat_func def sat(s: str, n=9576751, base=10):
@@ -6731,7 +6719,8 @@ modified_func def sat(s: str, n=wrap_int(5160280), base=wrap_int(5)):
 running backend z3
 running backend cvc5
 ### output for z3
-timeout
+unknown
+(error "line 27 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @quantifiers_skolemize_6)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @quantifiers_skolemize_6)))))")
@@ -6775,16 +6764,13 @@ modified_func def sat(s: str, n=wrap_int(3), base=wrap_int(5)):
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "3")
-)
+unknown
+(error "line 27 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @quantifiers_skolemize_6)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @quantifiers_skolemize_6)))))")
 
-Found solution 3
+Could not find any solution for puzzle ChangeBase:3
 
 Solving puzzle 111/774: ChangeBase:4
 sat_func def sat(s: str, n=4884658, base=6):
@@ -6823,7 +6809,8 @@ modified_func def sat(s: str, n=wrap_int(4884658), base=wrap_int(6)):
 running backend z3
 running backend cvc5
 ### output for z3
-timeout
+unknown
+(error "line 27 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @quantifiers_skolemize_6)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @quantifiers_skolemize_6)))))")
@@ -6867,16 +6854,13 @@ modified_func def sat(s: str, n=wrap_int(3), base=wrap_int(6)):
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "3")
-)
+unknown
+(error "line 27 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ (to_real (str-to-int_arg_1_3 @quantifiers_skolemize_6)) (to_real (+ (- 1) (str.len (str-to-int_arg_0_2 @quantifiers_skolemize_6)))))")
 
-Found solution 3
+Could not find any solution for puzzle ChangeBase:4
 
 Solving puzzle 112/774: TriangleArea:0
 sat_func def sat(height: int, area=1319098728582, base=45126):
@@ -8383,7 +8367,7 @@ running backend cvc5
 sat
 (
   (define-fun x () String
-    "582369835124")
+    "0124582369835000")
 )
 ### output for cvc5
 sat
@@ -8391,7 +8375,7 @@ sat
 (define-fun x () String "582369835124")
 )
 
-Found solution 582369835124
+Found solution 0124582369835000
 Yes! Solved for puzzle  CircularShiftNum:0
 
 Solving puzzle 153/774: CircularShiftNum:1
@@ -8445,15 +8429,12 @@ running backend cvc5
 sat
 (
   (define-fun x () String
-    "2948192586")
+    "29481925860")
 )
 ### output for cvc5
-sat
-(
-(define-fun x () String "2948192586")
-)
+cvc5 interrupted by timeout.
 
-Found solution 2948192586
+Found solution 29481925860
 Yes! Solved for puzzle  CircularShiftNum:1
 
 Solving puzzle 154/774: CircularShiftNum:2
@@ -8890,16 +8871,17 @@ modified_func def sat(bananas: int, bowl=wrap_str('5024 apples and 12189 oranges
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -8924,9 +8906,11 @@ modified_func def sat(bananas: int, bowl=wrap_str('5024 apples and 12189 oranges
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -9077,16 +9061,17 @@ modified_func def sat(bananas: int, bowl=wrap_str('7 apples and 9 oranges'), tot
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -9111,9 +9096,11 @@ modified_func def sat(bananas: int, bowl=wrap_str('7 apples and 9 oranges'), tot
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -9264,16 +9251,17 @@ modified_func def sat(bananas: int, bowl=wrap_str('508738582 apples and 34641009
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -9298,9 +9286,11 @@ modified_func def sat(bananas: int, bowl=wrap_str('508738582 apples and 34641009
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -9451,16 +9441,17 @@ modified_func def sat(bananas: int, bowl=wrap_str('28767 apples and 49488 orange
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -9485,9 +9476,11 @@ modified_func def sat(bananas: int, bowl=wrap_str('28767 apples and 49488 orange
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -9638,16 +9631,17 @@ modified_func def sat(bananas: int, bowl=wrap_str('29991 apples and 99737 orange
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -9672,9 +9666,11 @@ modified_func def sat(bananas: int, bowl=wrap_str('29991 apples and 99737 orange
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -10187,9 +10183,9 @@ modified_func def sat(problem: int, weights=wrap_list([wrap_int(1), wrap_int(2),
 (declare-const x Int)
 (assert (=> (= x -1) false))
 (assert (=> (not (= x -1)) (< x 6)))
-(assert (=> (not (= x -1)) (> x -6)))
+(assert (=> (not (= x -1)) (>= x -6)))
 (assert (=> (not (= x -1)) (< (- -1 x) 6)))
-(assert (=> (not (= x -1)) (> (- -1 x) -6)))
+(assert (=> (not (= x -1)) (>= (- -1 x) -6)))
 (assert (=> (not (= x -1)) (not (= (ite (or (= x 5) (= x -1)) 17 (ite (or (= x 4) (= x -2)) 1 (ite (or (= x 3) (= x -3)) 2 (ite (or (= x 2) (= x -4)) 5 (ite (or (= x 1) (= x -5)) 2 1))))) (ite (or (= (- -1 x) 5) (= (- -1 x) -1)) 17 (ite (or (= (- -1 x) 4) (= (- -1 x) -2)) 1 (ite (or (= (- -1 x) 3) (= (- -1 x) -3)) 2 (ite (or (= (- -1 x) 2) (= (- -1 x) -4)) 5 (ite (or (= (- -1 x) 1) (= (- -1 x) -5)) 2 1)))))))))
 (check-sat)
 (get-model)
@@ -10200,15 +10196,15 @@ running backend cvc5
 sat
 (
   (define-fun x () Int
-    (- 4))
+    1)
 )
 ### output for cvc5
 sat
 (
-(define-fun x () Int 0)
+(define-fun x () Int (- 6))
 )
 
-Found solution -4
+Found solution 1
 Yes! Solved for puzzle  InvestigateCrash:0
 
 Solving puzzle 173/774: InvestigateCrash:1
@@ -10225,9 +10221,9 @@ modified_func def sat(problem: int, weights=wrap_list([wrap_int(17), wrap_int(97
 (declare-const x Int)
 (assert (=> (= x -1) true))
 (assert (=> (not (= x -1)) (< x 8)))
-(assert (=> (not (= x -1)) (> x -8)))
+(assert (=> (not (= x -1)) (>= x -8)))
 (assert (=> (not (= x -1)) (< (- -1 x) 8)))
-(assert (=> (not (= x -1)) (> (- -1 x) -8)))
+(assert (=> (not (= x -1)) (>= (- -1 x) -8)))
 (assert (=> (not (= x -1)) (not (= (ite (or (= x 7) (= x -1)) 17 (ite (or (= x 6) (= x -2)) 13 (ite (or (= x 5) (= x -3)) 77 (ite (or (= x 4) (= x -4)) 13 (ite (or (= x 3) (= x -5)) 13 (ite (or (= x 2) (= x -6)) 77 (ite (or (= x 1) (= x -7)) 97 17))))))) (ite (or (= (- -1 x) 7) (= (- -1 x) -1)) 17 (ite (or (= (- -1 x) 6) (= (- -1 x) -2)) 13 (ite (or (= (- -1 x) 5) (= (- -1 x) -3)) 77 (ite (or (= (- -1 x) 4) (= (- -1 x) -4)) 13 (ite (or (= (- -1 x) 3) (= (- -1 x) -5)) 13 (ite (or (= (- -1 x) 2) (= (- -1 x) -6)) 77 (ite (or (= (- -1 x) 1) (= (- -1 x) -7)) 97 17)))))))))))
 (check-sat)
 (get-model)
@@ -10238,7 +10234,7 @@ running backend cvc5
 sat
 (
   (define-fun x () Int
-    1)
+    (- 1))
 )
 ### output for cvc5
 sat
@@ -10246,7 +10242,7 @@ sat
 (define-fun x () Int (- 2))
 )
 
-Found solution 1
+Found solution -1
 Yes! Solved for puzzle  InvestigateCrash:1
 
 Solving puzzle 174/774: InvestigateCrash:2
@@ -10263,10 +10259,86 @@ modified_func def sat(problem: int, weights=wrap_list([wrap_int(51), wrap_int(23
 (declare-const x Int)
 (assert (=> (= x -1) false))
 (assert (=> (not (= x -1)) (< x 11)))
-(assert (=> (not (= x -1)) (> x -11)))
+(assert (=> (not (= x -1)) (>= x -11)))
 (assert (=> (not (= x -1)) (< (- -1 x) 11)))
-(assert (=> (not (= x -1)) (> (- -1 x) -11)))
+(assert (=> (not (= x -1)) (>= (- -1 x) -11)))
 (assert (=> (not (= x -1)) (not (= (ite (or (= x 10) (= x -1)) 51 (ite (or (= x 9) (= x -2)) 23 (ite (or (= x 8) (= x -3)) 10 (ite (or (= x 7) (= x -4)) 4 (ite (or (= x 6) (= x -5)) 12 (ite (or (= x 5) (= x -6)) 56 (ite (or (= x 4) (= x -7)) 7 (ite (or (= x 3) (= x -8)) 4 (ite (or (= x 2) (= x -9)) 10 (ite (or (= x 1) (= x -10)) 23 51)))))))))) (ite (or (= (- -1 x) 10) (= (- -1 x) -1)) 51 (ite (or (= (- -1 x) 9) (= (- -1 x) -2)) 23 (ite (or (= (- -1 x) 8) (= (- -1 x) -3)) 10 (ite (or (= (- -1 x) 7) (= (- -1 x) -4)) 4 (ite (or (= (- -1 x) 6) (= (- -1 x) -5)) 12 (ite (or (= (- -1 x) 5) (= (- -1 x) -6)) 56 (ite (or (= (- -1 x) 4) (= (- -1 x) -7)) 7 (ite (or (= (- -1 x) 3) (= (- -1 x) -8)) 4 (ite (or (= (- -1 x) 2) (= (- -1 x) -9)) 10 (ite (or (= (- -1 x) 1) (= (- -1 x) -10)) 23 51))))))))))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () Int
+    6)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int (- 5))
+)
+
+Found solution 6
+Yes! Solved for puzzle  InvestigateCrash:2
+
+Solving puzzle 175/774: InvestigateCrash:3
+sat_func def sat(problem: int, weights=[22, 81, 93, 22], max_weight=222):
+    if problem == -1:
+        return sum(weights) > max_weight
+    return weights[problem] != weights[- 1 - problem]
+modified_func def sat(problem: int, weights=wrap_list([wrap_int(22), wrap_int(81), wrap_int(93), wrap_int(22)]), max_weight=wrap_int(222)):
+    if problem == -wrap_int(1):
+        return sym_sum(weights) > max_weight
+    return weights[problem] != weights[-wrap_int(1) - problem]
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (=> (= x -1) false))
+(assert (=> (not (= x -1)) (< x 4)))
+(assert (=> (not (= x -1)) (>= x -4)))
+(assert (=> (not (= x -1)) (< (- -1 x) 4)))
+(assert (=> (not (= x -1)) (>= (- -1 x) -4)))
+(assert (=> (not (= x -1)) (not (= (ite (or (= x 3) (= x -1)) 22 (ite (or (= x 2) (= x -2)) 93 (ite (or (= x 1) (= x -3)) 81 22))) (ite (or (= (- -1 x) 3) (= (- -1 x) -1)) 22 (ite (or (= (- -1 x) 2) (= (- -1 x) -2)) 93 (ite (or (= (- -1 x) 1) (= (- -1 x) -3)) 81 22)))))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () Int
+    (- 2))
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int (- 2))
+)
+
+Found solution -2
+Yes! Solved for puzzle  InvestigateCrash:3
+
+Solving puzzle 176/774: InvestigateCrash:4
+sat_func def sat(problem: int, weights=[43, 37, 79, 37, 20], max_weight=222):
+    if problem == -1:
+        return sum(weights) > max_weight
+    return weights[problem] != weights[- 1 - problem]
+modified_func def sat(problem: int, weights=wrap_list([wrap_int(43), wrap_int(37), wrap_int(79), wrap_int(37), wrap_int(20)]), max_weight=wrap_int(222)):
+    if problem == -wrap_int(1):
+        return sym_sum(weights) > max_weight
+    return weights[problem] != weights[-wrap_int(1) - problem]
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (=> (= x -1) false))
+(assert (=> (not (= x -1)) (< x 5)))
+(assert (=> (not (= x -1)) (>= x -5)))
+(assert (=> (not (= x -1)) (< (- -1 x) 5)))
+(assert (=> (not (= x -1)) (>= (- -1 x) -5)))
+(assert (=> (not (= x -1)) (not (= (ite (or (= x 4) (= x -1)) 20 (ite (or (= x 3) (= x -2)) 37 (ite (or (= x 2) (= x -3)) 79 (ite (or (= x 1) (= x -4)) 37 43)))) (ite (or (= (- -1 x) 4) (= (- -1 x) -1)) 20 (ite (or (= (- -1 x) 3) (= (- -1 x) -2)) 37 (ite (or (= (- -1 x) 2) (= (- -1 x) -3)) 79 (ite (or (= (- -1 x) 1) (= (- -1 x) -4)) 37 43))))))))
 (check-sat)
 (get-model)
 
@@ -10285,82 +10357,6 @@ sat
 )
 
 Found solution -5
-Yes! Solved for puzzle  InvestigateCrash:2
-
-Solving puzzle 175/774: InvestigateCrash:3
-sat_func def sat(problem: int, weights=[22, 81, 93, 22], max_weight=222):
-    if problem == -1:
-        return sum(weights) > max_weight
-    return weights[problem] != weights[- 1 - problem]
-modified_func def sat(problem: int, weights=wrap_list([wrap_int(22), wrap_int(81), wrap_int(93), wrap_int(22)]), max_weight=wrap_int(222)):
-    if problem == -wrap_int(1):
-        return sym_sum(weights) > max_weight
-    return weights[problem] != weights[-wrap_int(1) - problem]
-### smt2
-(set-logic ALL)
-(declare-const x Int)
-(assert (=> (= x -1) false))
-(assert (=> (not (= x -1)) (< x 4)))
-(assert (=> (not (= x -1)) (> x -4)))
-(assert (=> (not (= x -1)) (< (- -1 x) 4)))
-(assert (=> (not (= x -1)) (> (- -1 x) -4)))
-(assert (=> (not (= x -1)) (not (= (ite (or (= x 3) (= x -1)) 22 (ite (or (= x 2) (= x -2)) 93 (ite (or (= x 1) (= x -3)) 81 22))) (ite (or (= (- -1 x) 3) (= (- -1 x) -1)) 22 (ite (or (= (- -1 x) 2) (= (- -1 x) -2)) 93 (ite (or (= (- -1 x) 1) (= (- -1 x) -3)) 81 22)))))))
-(check-sat)
-(get-model)
-
-running backend z3
-running backend cvc5
-### output for z3
-sat
-(
-  (define-fun x () Int
-    2)
-)
-### output for cvc5
-sat
-(
-(define-fun x () Int (- 2))
-)
-
-Found solution 2
-Yes! Solved for puzzle  InvestigateCrash:3
-
-Solving puzzle 176/774: InvestigateCrash:4
-sat_func def sat(problem: int, weights=[43, 37, 79, 37, 20], max_weight=222):
-    if problem == -1:
-        return sum(weights) > max_weight
-    return weights[problem] != weights[- 1 - problem]
-modified_func def sat(problem: int, weights=wrap_list([wrap_int(43), wrap_int(37), wrap_int(79), wrap_int(37), wrap_int(20)]), max_weight=wrap_int(222)):
-    if problem == -wrap_int(1):
-        return sym_sum(weights) > max_weight
-    return weights[problem] != weights[-wrap_int(1) - problem]
-### smt2
-(set-logic ALL)
-(declare-const x Int)
-(assert (=> (= x -1) false))
-(assert (=> (not (= x -1)) (< x 5)))
-(assert (=> (not (= x -1)) (> x -5)))
-(assert (=> (not (= x -1)) (< (- -1 x) 5)))
-(assert (=> (not (= x -1)) (> (- -1 x) -5)))
-(assert (=> (not (= x -1)) (not (= (ite (or (= x 4) (= x -1)) 20 (ite (or (= x 3) (= x -2)) 37 (ite (or (= x 2) (= x -3)) 79 (ite (or (= x 1) (= x -4)) 37 43)))) (ite (or (= (- -1 x) 4) (= (- -1 x) -1)) 20 (ite (or (= (- -1 x) 3) (= (- -1 x) -2)) 37 (ite (or (= (- -1 x) 2) (= (- -1 x) -3)) 79 (ite (or (= (- -1 x) 1) (= (- -1 x) -4)) 37 43))))))))
-(check-sat)
-(get-model)
-
-running backend z3
-running backend cvc5
-### output for z3
-sat
-(
-  (define-fun x () Int
-    0)
-)
-### output for cvc5
-sat
-(
-(define-fun x () Int 0)
-)
-
-Found solution 0
 Yes! Solved for puzzle  InvestigateCrash:4
 
 Solving puzzle 177/774: ClosestPalindrome:0
@@ -10397,15 +10393,15 @@ running backend cvc5
 ### output for z3
 sat
 (
+  (define-fun x () String
+    "saliidromordiilas")
   (define-fun sum_1 () Int
     5)
-  (define-fun x () String
-    "planndromordnnalp")
 )
 ### output for cvc5
 cvc5 interrupted by timeout.
 
-Found solution planndromordnnalp
+Found solution saliidromordiilas
 Yes! Solved for puzzle  ClosestPalindrome:0
 
 Solving puzzle 178/774: ClosestPalindrome:1
@@ -10541,14 +10537,14 @@ running backend cvc5
 sat
 (
   (define-fun x () String
-    "1haXhatexxetahXah1")
+    "1e)chcveccevchc)e1")
   (define-fun sum_1 () Int
     8)
 )
 ### output for cvc5
 cvc5 interrupted by timeout.
 
-Found solution 1haXhatexxetahXah1
+Found solution 1e)chcveccevchc)e1
 Yes! Solved for puzzle  ClosestPalindrome:3
 
 Solving puzzle 181/774: ClosestPalindrome:4
@@ -12692,16 +12688,17 @@ modified_func def sat(s: str, orig=wrap_str('Hello world!!!')):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -12726,9 +12723,11 @@ modified_func def sat(s: str, orig=wrap_str('Hello world!!!')):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -12840,7 +12839,7 @@ modified_func def sat(s: str, orig=wrap_str('Hello world!!!')):
 
 (declare-const x String)
 (assert (< zip_pos_0 2))
-(assert (> zip_pos_0 -2))
+(assert (>= zip_pos_0 -2))
 (assert (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 (- (str.len (list.get.string (str.split x " ") zip_pos_0)) 1))) (or (str.< (python.str.at (list.get.string (str.split x " ") zip_pos_0) i_1) (python.str.at (list.get.string (str.split x " ") zip_pos_0) (+ i_1 1))) (= (python.str.at (list.get.string (str.split x " ") zip_pos_0) i_1) (python.str.at (list.get.string (str.split x " ") zip_pos_0) (+ i_1 1)))))))
 (assert (forall ((str_pos_29 Int)) (=> (and (>= str_pos_29 0) (< str_pos_29 (str.len (ite (or (= zip_pos_0 1) (= zip_pos_0 -1)) "world!!!" "Hello")))) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 (- (str.len (list.get.string (str.split x " ") zip_pos_0)) 1))) (>= (str.count (list.get.string (str.split x " ") zip_pos_0) (python.str.at (ite (or (= zip_pos_0 1) (= zip_pos_0 -1)) "world!!!" "Hello") str_pos_29)) 0))))))
 (assert (forall ((str_pos_29 Int)) (=> (and (>= str_pos_29 0) (< str_pos_29 (str.len (ite (or (= zip_pos_0 1) (= zip_pos_0 -1)) "world!!!" "Hello")))) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 (- (str.len (list.get.string (str.split x " ") zip_pos_0)) 1))) (>= (str.count (ite (or (= zip_pos_0 1) (= zip_pos_0 -1)) "world!!!" "Hello") (python.str.at (ite (or (= zip_pos_0 1) (= zip_pos_0 -1)) "world!!!" "Hello") str_pos_29)) 0))))))
@@ -12852,20 +12851,20 @@ modified_func def sat(s: str, orig=wrap_str('Hello world!!!')):
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 153 column 11: unknown constant zip_pos_0")
-(error "line 154 column 11: unknown constant zip_pos_0")
-(error "line 155 column 102: unknown constant zip_pos_0")
-(error "line 156 column 97: unknown constant zip_pos_0")
-(error "line 157 column 97: unknown constant zip_pos_0")
-(error "line 158 column 97: unknown constant zip_pos_0")
+(error "line 156 column 11: unknown constant zip_pos_0")
+(error "line 157 column 12: unknown constant zip_pos_0")
+(error "line 158 column 102: unknown constant zip_pos_0")
 (error "line 159 column 97: unknown constant zip_pos_0")
+(error "line 160 column 97: unknown constant zip_pos_0")
+(error "line 161 column 97: unknown constant zip_pos_0")
+(error "line 162 column 97: unknown constant zip_pos_0")
 sat
 (
   (define-fun x () String
     "")
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:153.12: Symbol 'zip_pos_0' not declared as a variable")
+(error "Parse Error: tmp.smt2:156.12: Symbol 'zip_pos_0' not declared as a variable")
 
 Could not find any solution for puzzle AntiShuffle:0
 Too many constants for extrapolation
@@ -12889,16 +12888,17 @@ modified_func def sat(s: str, orig=wrap_str('YOU CAN rearrange my letters, yes y
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -12923,9 +12923,11 @@ modified_func def sat(s: str, orig=wrap_str('YOU CAN rearrange my letters, yes y
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -13037,7 +13039,7 @@ modified_func def sat(s: str, orig=wrap_str('YOU CAN rearrange my letters, yes y
 
 (declare-const x String)
 (assert (< zip_pos_0 8))
-(assert (> zip_pos_0 -8))
+(assert (>= zip_pos_0 -8))
 (assert (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 (- (str.len (list.get.string (str.split x " ") zip_pos_0)) 1))) (or (str.< (python.str.at (list.get.string (str.split x " ") zip_pos_0) i_1) (python.str.at (list.get.string (str.split x " ") zip_pos_0) (+ i_1 1))) (= (python.str.at (list.get.string (str.split x " ") zip_pos_0) i_1) (python.str.at (list.get.string (str.split x " ") zip_pos_0) (+ i_1 1)))))))
 (assert (forall ((str_pos_30 Int)) (=> (and (>= str_pos_30 0) (< str_pos_30 (str.len (ite (or (= zip_pos_0 7) (= zip_pos_0 -1)) "can!" (ite (or (= zip_pos_0 6) (= zip_pos_0 -2)) "you" (ite (or (= zip_pos_0 5) (= zip_pos_0 -3)) "yes" (ite (or (= zip_pos_0 4) (= zip_pos_0 -4)) "letters," (ite (or (= zip_pos_0 3) (= zip_pos_0 -5)) "my" (ite (or (= zip_pos_0 2) (= zip_pos_0 -6)) "rearrange" (ite (or (= zip_pos_0 1) (= zip_pos_0 -7)) "CAN" "YOU")))))))))) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 (- (str.len (list.get.string (str.split x " ") zip_pos_0)) 1))) (>= (str.count (list.get.string (str.split x " ") zip_pos_0) (python.str.at (ite (or (= zip_pos_0 7) (= zip_pos_0 -1)) "can!" (ite (or (= zip_pos_0 6) (= zip_pos_0 -2)) "you" (ite (or (= zip_pos_0 5) (= zip_pos_0 -3)) "yes" (ite (or (= zip_pos_0 4) (= zip_pos_0 -4)) "letters," (ite (or (= zip_pos_0 3) (= zip_pos_0 -5)) "my" (ite (or (= zip_pos_0 2) (= zip_pos_0 -6)) "rearrange" (ite (or (= zip_pos_0 1) (= zip_pos_0 -7)) "CAN" "YOU...
 (assert (forall ((str_pos_30 Int)) (=> (and (>= str_pos_30 0) (< str_pos_30 (str.len (ite (or (= zip_pos_0 7) (= zip_pos_0 -1)) "can!" (ite (or (= zip_pos_0 6) (= zip_pos_0 -2)) "you" (ite (or (= zip_pos_0 5) (= zip_pos_0 -3)) "yes" (ite (or (= zip_pos_0 4) (= zip_pos_0 -4)) "letters," (ite (or (= zip_pos_0 3) (= zip_pos_0 -5)) "my" (ite (or (= zip_pos_0 2) (= zip_pos_0 -6)) "rearrange" (ite (or (= zip_pos_0 1) (= zip_pos_0 -7)) "CAN" "YOU")))))))))) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 (- (str.len (list.get.string (str.split x " ") zip_pos_0)) 1))) (>= (str.count (ite (or (= zip_pos_0 7) (= zip_pos_0 -1)) "can!" (ite (or (= zip_pos_0 6) (= zip_pos_0 -2)) "you" (ite (or (= zip_pos_0 5) (= zip_pos_0 -3)) "yes" (ite (or (= zip_pos_0 4) (= zip_pos_0 -4)) "letters," (ite (or (= zip_pos_0 3) (= zip_pos_0 -5)) "my" (ite (or (= zip_pos_0 2) (= zip_pos_0 -6)) "rearrange" (ite (or (= zip_pos_0 1) (= zip_pos_0 -7)) "CAN" "YOU"))))))) (python.str.at (ite (or (= zip_pos_0 7) (= zip_pos_0...
@@ -13049,20 +13051,20 @@ modified_func def sat(s: str, orig=wrap_str('YOU CAN rearrange my letters, yes y
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 153 column 11: unknown constant zip_pos_0")
-(error "line 154 column 11: unknown constant zip_pos_0")
-(error "line 155 column 102: unknown constant zip_pos_0")
-(error "line 156 column 97: unknown constant zip_pos_0")
-(error "line 157 column 97: unknown constant zip_pos_0")
-(error "line 158 column 97: unknown constant zip_pos_0")
+(error "line 156 column 11: unknown constant zip_pos_0")
+(error "line 157 column 12: unknown constant zip_pos_0")
+(error "line 158 column 102: unknown constant zip_pos_0")
 (error "line 159 column 97: unknown constant zip_pos_0")
+(error "line 160 column 97: unknown constant zip_pos_0")
+(error "line 161 column 97: unknown constant zip_pos_0")
+(error "line 162 column 97: unknown constant zip_pos_0")
 sat
 (
   (define-fun x () String
     "")
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:153.12: Symbol 'zip_pos_0' not declared as a variable")
+(error "Parse Error: tmp.smt2:156.12: Symbol 'zip_pos_0' not declared as a variable")
 
 Could not find any solution for puzzle AntiShuffle:1
 Too many constants for extrapolation
@@ -13086,16 +13088,17 @@ modified_func def sat(s: str, orig=wrap_str('caN you handlE LONGGGGGGGGGGGG stri
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -13120,9 +13123,11 @@ modified_func def sat(s: str, orig=wrap_str('caN you handlE LONGGGGGGGGGGGG stri
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -13234,7 +13239,7 @@ modified_func def sat(s: str, orig=wrap_str('caN you handlE LONGGGGGGGGGGGG stri
 
 (declare-const x String)
 (assert (< zip_pos_0 5))
-(assert (> zip_pos_0 -5))
+(assert (>= zip_pos_0 -5))
 (assert (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 (- (str.len (list.get.string (str.split x " ") zip_pos_0)) 1))) (or (str.< (python.str.at (list.get.string (str.split x " ") zip_pos_0) i_1) (python.str.at (list.get.string (str.split x " ") zip_pos_0) (+ i_1 1))) (= (python.str.at (list.get.string (str.split x " ") zip_pos_0) i_1) (python.str.at (list.get.string (str.split x " ") zip_pos_0) (+ i_1 1)))))))
 (assert (forall ((str_pos_31 Int)) (=> (and (>= str_pos_31 0) (< str_pos_31 (str.len (ite (or (= zip_pos_0 4) (= zip_pos_0 -1)) "strings?" (ite (or (= zip_pos_0 3) (= zip_pos_0 -2)) "LONGGGGGGGGGGGG" (ite (or (= zip_pos_0 2) (= zip_pos_0 -3)) "handlE" (ite (or (= zip_pos_0 1) (= zip_pos_0 -4)) "you" "caN"))))))) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 (- (str.len (list.get.string (str.split x " ") zip_pos_0)) 1))) (>= (str.count (list.get.string (str.split x " ") zip_pos_0) (python.str.at (ite (or (= zip_pos_0 4) (= zip_pos_0 -1)) "strings?" (ite (or (= zip_pos_0 3) (= zip_pos_0 -2)) "LONGGGGGGGGGGGG" (ite (or (= zip_pos_0 2) (= zip_pos_0 -3)) "handlE" (ite (or (= zip_pos_0 1) (= zip_pos_0 -4)) "you" "caN")))) str_pos_31)) 0))))))
 (assert (forall ((str_pos_31 Int)) (=> (and (>= str_pos_31 0) (< str_pos_31 (str.len (ite (or (= zip_pos_0 4) (= zip_pos_0 -1)) "strings?" (ite (or (= zip_pos_0 3) (= zip_pos_0 -2)) "LONGGGGGGGGGGGG" (ite (or (= zip_pos_0 2) (= zip_pos_0 -3)) "handlE" (ite (or (= zip_pos_0 1) (= zip_pos_0 -4)) "you" "caN"))))))) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 (- (str.len (list.get.string (str.split x " ") zip_pos_0)) 1))) (>= (str.count (ite (or (= zip_pos_0 4) (= zip_pos_0 -1)) "strings?" (ite (or (= zip_pos_0 3) (= zip_pos_0 -2)) "LONGGGGGGGGGGGG" (ite (or (= zip_pos_0 2) (= zip_pos_0 -3)) "handlE" (ite (or (= zip_pos_0 1) (= zip_pos_0 -4)) "you" "caN")))) (python.str.at (ite (or (= zip_pos_0 4) (= zip_pos_0 -1)) "strings?" (ite (or (= zip_pos_0 3) (= zip_pos_0 -2)) "LONGGGGGGGGGGGG" (ite (or (= zip_pos_0 2) (= zip_pos_0 -3)) "handlE" (ite (or (= zip_pos_0 1) (= zip_pos_0 -4)) "you" "caN")))) str_pos_31)) 0))))))
@@ -13246,20 +13251,20 @@ modified_func def sat(s: str, orig=wrap_str('caN you handlE LONGGGGGGGGGGGG stri
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 153 column 11: unknown constant zip_pos_0")
-(error "line 154 column 11: unknown constant zip_pos_0")
-(error "line 155 column 102: unknown constant zip_pos_0")
-(error "line 156 column 97: unknown constant zip_pos_0")
-(error "line 157 column 97: unknown constant zip_pos_0")
-(error "line 158 column 97: unknown constant zip_pos_0")
+(error "line 156 column 11: unknown constant zip_pos_0")
+(error "line 157 column 12: unknown constant zip_pos_0")
+(error "line 158 column 102: unknown constant zip_pos_0")
 (error "line 159 column 97: unknown constant zip_pos_0")
+(error "line 160 column 97: unknown constant zip_pos_0")
+(error "line 161 column 97: unknown constant zip_pos_0")
+(error "line 162 column 97: unknown constant zip_pos_0")
 sat
 (
   (define-fun x () String
     "")
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:153.12: Symbol 'zip_pos_0' not declared as a variable")
+(error "Parse Error: tmp.smt2:156.12: Symbol 'zip_pos_0' not declared as a variable")
 
 Could not find any solution for puzzle AntiShuffle:2
 Too many constants for extrapolation
@@ -13283,16 +13288,17 @@ modified_func def sat(s: str, orig=wrap_str('how bout    spaces and weird punctu
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -13317,9 +13323,11 @@ modified_func def sat(s: str, orig=wrap_str('how bout    spaces and weird punctu
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -13431,7 +13439,7 @@ modified_func def sat(s: str, orig=wrap_str('how bout    spaces and weird punctu
 
 (declare-const x String)
 (assert (< zip_pos_0 9))
-(assert (> zip_pos_0 -9))
+(assert (>= zip_pos_0 -9))
 (assert (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 (- (str.len (list.get.string (str.split x " ") zip_pos_0)) 1))) (or (str.< (python.str.at (list.get.string (str.split x " ") zip_pos_0) i_1) (python.str.at (list.get.string (str.split x " ") zip_pos_0) (+ i_1 1))) (= (python.str.at (list.get.string (str.split x " ") zip_pos_0) i_1) (python.str.at (list.get.string (str.split x " ") zip_pos_0) (+ i_1 1)))))))
 (assert (forall ((str_pos_32 Int)) (=> (and (>= str_pos_32 0) (< str_pos_32 (str.len (ite (or (= zip_pos_0 8) (= zip_pos_0 -1)) "punctuation!?$%@#%" (ite (or (= zip_pos_0 7) (= zip_pos_0 -2)) "weird" (ite (or (= zip_pos_0 6) (= zip_pos_0 -3)) "and" (ite (or (= zip_pos_0 5) (= zip_pos_0 -4)) "spaces" (ite (or (= zip_pos_0 4) (= zip_pos_0 -5)) "" (ite (or (= zip_pos_0 3) (= zip_pos_0 -6)) "" (ite (or (= zip_pos_0 2) (= zip_pos_0 -7)) "" (ite (or (= zip_pos_0 1) (= zip_pos_0 -8)) "bout" "how"))))))))))) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 (- (str.len (list.get.string (str.split x " ") zip_pos_0)) 1))) (>= (str.count (list.get.string (str.split x " ") zip_pos_0) (python.str.at (ite (or (= zip_pos_0 8) (= zip_pos_0 -1)) "punctuation!?$%@#%" (ite (or (= zip_pos_0 7) (= zip_pos_0 -2)) "weird" (ite (or (= zip_pos_0 6) (= zip_pos_0 -3)) "and" (ite (or (= zip_pos_0 5) (= zip_pos_0 -4)) "spaces" (ite (or (= zip_pos_0 4) (= zip_pos_0 -5)) "" (ite (or (= zip_pos_0 3) (= zip_pos_0 -6)) ""...
 (assert (forall ((str_pos_32 Int)) (=> (and (>= str_pos_32 0) (< str_pos_32 (str.len (ite (or (= zip_pos_0 8) (= zip_pos_0 -1)) "punctuation!?$%@#%" (ite (or (= zip_pos_0 7) (= zip_pos_0 -2)) "weird" (ite (or (= zip_pos_0 6) (= zip_pos_0 -3)) "and" (ite (or (= zip_pos_0 5) (= zip_pos_0 -4)) "spaces" (ite (or (= zip_pos_0 4) (= zip_pos_0 -5)) "" (ite (or (= zip_pos_0 3) (= zip_pos_0 -6)) "" (ite (or (= zip_pos_0 2) (= zip_pos_0 -7)) "" (ite (or (= zip_pos_0 1) (= zip_pos_0 -8)) "bout" "how"))))))))))) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 (- (str.len (list.get.string (str.split x " ") zip_pos_0)) 1))) (>= (str.count (ite (or (= zip_pos_0 8) (= zip_pos_0 -1)) "punctuation!?$%@#%" (ite (or (= zip_pos_0 7) (= zip_pos_0 -2)) "weird" (ite (or (= zip_pos_0 6) (= zip_pos_0 -3)) "and" (ite (or (= zip_pos_0 5) (= zip_pos_0 -4)) "spaces" (ite (or (= zip_pos_0 4) (= zip_pos_0 -5)) "" (ite (or (= zip_pos_0 3) (= zip_pos_0 -6)) "" (ite (or (= zip_pos_0 2) (= zip_pos_0 -7)) "" (ite (or (= zi...
@@ -13443,20 +13451,20 @@ modified_func def sat(s: str, orig=wrap_str('how bout    spaces and weird punctu
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 153 column 11: unknown constant zip_pos_0")
-(error "line 154 column 11: unknown constant zip_pos_0")
-(error "line 155 column 102: unknown constant zip_pos_0")
-(error "line 156 column 97: unknown constant zip_pos_0")
-(error "line 157 column 97: unknown constant zip_pos_0")
-(error "line 158 column 97: unknown constant zip_pos_0")
+(error "line 156 column 11: unknown constant zip_pos_0")
+(error "line 157 column 12: unknown constant zip_pos_0")
+(error "line 158 column 102: unknown constant zip_pos_0")
 (error "line 159 column 97: unknown constant zip_pos_0")
+(error "line 160 column 97: unknown constant zip_pos_0")
+(error "line 161 column 97: unknown constant zip_pos_0")
+(error "line 162 column 97: unknown constant zip_pos_0")
 sat
 (
   (define-fun x () String
     "")
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:153.12: Symbol 'zip_pos_0' not declared as a variable")
+(error "Parse Error: tmp.smt2:156.12: Symbol 'zip_pos_0' not declared as a variable")
 
 Could not find any solution for puzzle AntiShuffle:3
 Too many constants for extrapolation
@@ -13480,16 +13488,17 @@ modified_func def sat(s: str, orig=wrap_str('ruhixuthuciji kebelobawitextythuch 
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -13514,9 +13523,11 @@ modified_func def sat(s: str, orig=wrap_str('ruhixuthuciji kebelobawitextythuch 
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -13628,7 +13639,7 @@ modified_func def sat(s: str, orig=wrap_str('ruhixuthuciji kebelobawitextythuch 
 
 (declare-const x String)
 (assert (< zip_pos_0 3))
-(assert (> zip_pos_0 -3))
+(assert (>= zip_pos_0 -3))
 (assert (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 (- (str.len (list.get.string (str.split x " ") zip_pos_0)) 1))) (or (str.< (python.str.at (list.get.string (str.split x " ") zip_pos_0) i_1) (python.str.at (list.get.string (str.split x " ") zip_pos_0) (+ i_1 1))) (= (python.str.at (list.get.string (str.split x " ") zip_pos_0) i_1) (python.str.at (list.get.string (str.split x " ") zip_pos_0) (+ i_1 1)))))))
 (assert (forall ((str_pos_33 Int)) (=> (and (>= str_pos_33 0) (< str_pos_33 (str.len (ite (or (= zip_pos_0 2) (= zip_pos_0 -1)) "quozo" (ite (or (= zip_pos_0 1) (= zip_pos_0 -2)) "kebelobawitextythuch" "ruhixuthuciji"))))) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 (- (str.len (list.get.string (str.split x " ") zip_pos_0)) 1))) (>= (str.count (list.get.string (str.split x " ") zip_pos_0) (python.str.at (ite (or (= zip_pos_0 2) (= zip_pos_0 -1)) "quozo" (ite (or (= zip_pos_0 1) (= zip_pos_0 -2)) "kebelobawitextythuch" "ruhixuthuciji")) str_pos_33)) 0))))))
 (assert (forall ((str_pos_33 Int)) (=> (and (>= str_pos_33 0) (< str_pos_33 (str.len (ite (or (= zip_pos_0 2) (= zip_pos_0 -1)) "quozo" (ite (or (= zip_pos_0 1) (= zip_pos_0 -2)) "kebelobawitextythuch" "ruhixuthuciji"))))) (forall ((i_1 Int)) (=> (and (>= i_1 0) (< i_1 (- (str.len (list.get.string (str.split x " ") zip_pos_0)) 1))) (>= (str.count (ite (or (= zip_pos_0 2) (= zip_pos_0 -1)) "quozo" (ite (or (= zip_pos_0 1) (= zip_pos_0 -2)) "kebelobawitextythuch" "ruhixuthuciji")) (python.str.at (ite (or (= zip_pos_0 2) (= zip_pos_0 -1)) "quozo" (ite (or (= zip_pos_0 1) (= zip_pos_0 -2)) "kebelobawitextythuch" "ruhixuthuciji")) str_pos_33)) 0))))))
@@ -13640,20 +13651,20 @@ modified_func def sat(s: str, orig=wrap_str('ruhixuthuciji kebelobawitextythuch 
 running backend z3
 running backend cvc5
 ### output for z3
-(error "line 153 column 11: unknown constant zip_pos_0")
-(error "line 154 column 11: unknown constant zip_pos_0")
-(error "line 155 column 102: unknown constant zip_pos_0")
-(error "line 156 column 97: unknown constant zip_pos_0")
-(error "line 157 column 97: unknown constant zip_pos_0")
-(error "line 158 column 97: unknown constant zip_pos_0")
+(error "line 156 column 11: unknown constant zip_pos_0")
+(error "line 157 column 12: unknown constant zip_pos_0")
+(error "line 158 column 102: unknown constant zip_pos_0")
 (error "line 159 column 97: unknown constant zip_pos_0")
+(error "line 160 column 97: unknown constant zip_pos_0")
+(error "line 161 column 97: unknown constant zip_pos_0")
+(error "line 162 column 97: unknown constant zip_pos_0")
 sat
 (
   (define-fun x () String
     "")
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:153.12: Symbol 'zip_pos_0' not declared as a variable")
+(error "Parse Error: tmp.smt2:156.12: Symbol 'zip_pos_0' not declared as a variable")
 
 Could not find any solution for puzzle AntiShuffle:4
 Too many constants for extrapolation
@@ -15092,11 +15103,8 @@ modified_func def sat(s: str, a=-wrap_int(3), b=wrap_int(5)):
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "A")
-)
+unknown
+(error "line 29 column 10: model is not available")
 ### output for cvc5
 sat
 (
@@ -15372,18 +15380,13 @@ modified_func def sat(s: str, a=wrap_int(0), b=wrap_int(52)):
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "1AB11")
-)
+unknown
+(error "line 29 column 10: model is not available")
 ### output for cvc5
 (error "The exponent of the POW(^) operator can only be a positive integral constant below 67108864. Exception occurred in:
   (^ 2.0 (to_real (+ (- 1) (str.len (bin-to-int_arg_0_4 @quantifiers_skolemize_9)))))")
 
-Found solution 1AB11
-Exception in checking result: invalid literal for int() with base 2: '1AB11'
-WARNING: Solution verification failed for puzzle BinaryAverage:3
+Could not find any solution for puzzle BinaryAverage:3
 Too many constants for extrapolation
 
 Solving puzzle 256/774: BinaryAverage:4
@@ -17405,16 +17408,17 @@ modified_func def sat(primes: str, s=wrap_str('This is a test of whether you wou
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -17439,9 +17443,11 @@ modified_func def sat(primes: str, s=wrap_str('This is a test of whether you wou
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -17563,7 +17569,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:136.75: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:139.75: expecting same arithmetic types to POW")
 
 Found solution 
 Exception in checking result: list index out of range
@@ -17601,16 +17607,17 @@ modified_func def sat(primes: str, s=wrap_str('t quiquitutohetextyvod thacycotex
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -17635,9 +17642,11 @@ modified_func def sat(primes: str, s=wrap_str('t quiquitutohetextyvod thacycotex
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -17754,7 +17763,7 @@ sat
     "")
 )
 ### output for cvc5
-(error "Parse Error: tmp.smt2:136.75: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:139.75: expecting same arithmetic types to POW")
 
 Found solution 
 Exception in checking result: list index out of range
@@ -17792,16 +17801,17 @@ modified_func def sat(primes: str, s=wrap_str('caquovovich keguqu tatextuhok jaj
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -17826,9 +17836,11 @@ modified_func def sat(primes: str, s=wrap_str('caquovovich keguqu tatextuhok jaj
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -17940,9 +17952,9 @@ running backend z3
 running backend cvc5
 ### output for z3
 unknown
-(error "line 148 column 10: model is not available")
+(error "line 151 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: tmp.smt2:136.76: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:139.76: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeWords:2
 Too many constants for extrapolation
@@ -17978,16 +17990,17 @@ modified_func def sat(primes: str, s=wrap_str('')):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -18012,9 +18025,11 @@ modified_func def sat(primes: str, s=wrap_str('')):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -18153,16 +18168,17 @@ modified_func def sat(primes: str, s=wrap_str('sidathochocek qualodu thugolo wyw
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -18187,9 +18203,11 @@ modified_func def sat(primes: str, s=wrap_str('sidathochocek qualodu thugolo wyw
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -18300,9 +18318,9 @@ running backend z3
 running backend cvc5
 ### output for z3
 unknown
-(error "line 147 column 10: model is not available")
+(error "line 150 column 10: model is not available")
 ### output for cvc5
-(error "Parse Error: tmp.smt2:136.76: expecting same arithmetic types to POW")
+(error "Parse Error: tmp.smt2:139.76: expecting same arithmetic types to POW")
 
 Could not find any solution for puzzle PrimeWords:4
 Too many constants for extrapolation
@@ -20749,10 +20767,7 @@ sat
     ".m.k.w.n.m.n.q.p.c.v")
 )
 ### output for cvc5
-sat
-(
-(define-fun x () String ".m.k.w.n.m.n.q.p.c.v")
-)
+cvc5 interrupted by timeout.
 
 Found solution .m.k.w.n.m.n.q.p.c.v
 Yes! Solved for puzzle  VowelDrop:4
@@ -21633,11 +21648,7 @@ sat
     (- 1))
 )
 ### output for cvc5
-unknown
-(
-(define-fun x () String "1+1+3+1+3+2+2+1+3+1+2")
-(define-fun k_1 () Int 10)
-)
+cvc5 interrupted by timeout.
 
 Found solution !0!
 WARNING: Solution verification failed for puzzle SortPlusPlus:0
@@ -21788,11 +21799,7 @@ sat
     (- 1))
 )
 ### output for cvc5
-unknown
-(
-(define-fun x () String "3+2+1+1+3+3+2+2+2+3+2+3+3+1+1")
-(define-fun k_1 () Int 14)
-)
+cvc5 interrupted by timeout.
 
 Found solution !0!
 WARNING: Solution verification failed for puzzle SortPlusPlus:3
@@ -24437,10 +24444,7 @@ running backend cvc5
 ### output for z3
 timeout
 ### output for cvc5
-unknown
-(
-(define-fun x () Int 7777)
-)
+cvc5 interrupted by timeout.
 
 Could not find any solution for puzzle Count47:4
 One large constant for extrapolation
@@ -24653,18 +24657,11 @@ modified_func def sat(s: str, a=wrap_int(5), d=wrap_int(3)):
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "adaadaad")
-)
+timeout
 ### output for cvc5
-sat
-(
-(define-fun x () String "aaaddaad")
-)
+cvc5 interrupted by timeout.
 
-Found solution adaadaad
+Could not find any solution for puzzle Dada:1
 
 Solving puzzle 443/774: Dada:2
 sat_func def sat(s: str, a=2645, d=1270):
@@ -24730,18 +24727,11 @@ modified_func def sat(s: str, a=wrap_int(5), d=wrap_int(3)):
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "adaadaad")
-)
+timeout
 ### output for cvc5
-sat
-(
-(define-fun x () String "aaaddaad")
-)
+cvc5 interrupted by timeout.
 
-Found solution adaadaad
+Could not find any solution for puzzle Dada:2
 
 Solving puzzle 444/774: Dada:3
 sat_func def sat(s: str, a=2996, d=6808):
@@ -24882,12 +24872,9 @@ running backend cvc5
 ### output for z3
 timeout
 ### output for cvc5
-sat
-(
-(define-fun x () String "aaaddddd")
-)
+cvc5 interrupted by timeout.
 
-Found solution aaaddddd
+Could not find any solution for puzzle Dada:4
 
 Solving puzzle 446/774: EasySum:0
 sat_func def sat(tot: int, nums=[2, 8, 25, 18, 99, 11, 17, 16], thresh=17):
@@ -25536,16 +25523,17 @@ modified_func def sat(s: str, perm=wrap_str('qwertyuiopasdfghjklzxcvbnm'), targe
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -25570,9 +25558,11 @@ modified_func def sat(s: str, perm=wrap_str('qwertyuiopasdfghjklzxcvbnm'), targe
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -25670,16 +25660,17 @@ modified_func def sat(s: str, perm=wrap_str('qwertyuiopasdfghjklzxcvbnm'), targe
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -25704,9 +25695,11 @@ modified_func def sat(s: str, perm=wrap_str('qwertyuiopasdfghjklzxcvbnm'), targe
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -25816,16 +25809,17 @@ modified_func def sat(s: str, perm=wrap_str('qwertyuiopasdfghjklzxcvbnm'), targe
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -25850,9 +25844,11 @@ modified_func def sat(s: str, perm=wrap_str('qwertyuiopasdfghjklzxcvbnm'), targe
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -25950,16 +25946,17 @@ modified_func def sat(s: str, perm=wrap_str('qwertyuiopasdfghjklzxcvbnm'), targe
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -25984,9 +25981,11 @@ modified_func def sat(s: str, perm=wrap_str('qwertyuiopasdfghjklzxcvbnm'), targe
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -26084,16 +26083,17 @@ modified_func def sat(s: str, perm=wrap_str('qwertyuiopasdfghjklzxcvbnm'), targe
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -26118,9 +26118,11 @@ modified_func def sat(s: str, perm=wrap_str('qwertyuiopasdfghjklzxcvbnm'), targe
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -26594,7 +26596,7 @@ modified_func def sat(start: int, k=wrap_int(3), lower=wrap_int(100000), seq=wra
 (set-logic ALL)
 (declare-const x Int)
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 3))) (< i_0 11))))
-(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 3))) (> i_0 -11))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 3))) (>= i_0 -11))))
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 3))) (>= (* 1 (ite (or (= i_0 10) (= i_0 -1)) 18 (ite (or (= i_0 9) (= i_0 -2)) 65 (ite (or (= i_0 8) (= i_0 -3)) 3 (ite (or (= i_0 7) (= i_0 -4)) 100 (ite (or (= i_0 6) (= i_0 -5)) -30 (ite (or (= i_0 5) (= i_0 -6)) 91 (ite (or (= i_0 4) (= i_0 -7)) 18 (ite (or (= i_0 3) (= i_0 -8)) 64 (ite (or (= i_0 2) (= i_0 -9)) 2 (ite (or (= i_0 1) (= i_0 -10)) 1 91))))))))))) 100000))))
 (check-sat)
 (get-model)
@@ -26625,7 +26627,7 @@ modified_func def sat(start: int, k=wrap_int(3), lower=wrap_int(5), seq=wrap_lis
 (set-logic ALL)
 (declare-const x Int)
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 3))) (< i_0 11))))
-(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 3))) (> i_0 -11))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 3))) (>= i_0 -11))))
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 3))) (>= (* 1 (ite (or (= i_0 10) (= i_0 -1)) 18 (ite (or (= i_0 9) (= i_0 -2)) 65 (ite (or (= i_0 8) (= i_0 -3)) 3 (ite (or (= i_0 7) (= i_0 -4)) 3 (ite (or (= i_0 6) (= i_0 -5)) -30 (ite (or (= i_0 5) (= i_0 -6)) 91 (ite (or (= i_0 4) (= i_0 -7)) 18 (ite (or (= i_0 3) (= i_0 -8)) 64 (ite (or (= i_0 2) (= i_0 -9)) 2 (ite (or (= i_0 1) (= i_0 -10)) 1 91))))))))))) 5))))
 (check-sat)
 (get-model)
@@ -26661,7 +26663,7 @@ modified_func def sat(start: int, k=wrap_int(8), lower=wrap_int(774420991987500)
 (set-logic ALL)
 (declare-const x Int)
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 8))) (< i_0 8))))
-(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 8))) (> i_0 -8))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 8))) (>= i_0 -8))))
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 8))) (>= (* 1 (ite (or (= i_0 7) (= i_0 -1)) 45 (ite (or (= i_0 6) (= i_0 -2)) 90 (ite (or (= i_0 5) (= i_0 -3)) -87 (ite (or (= i_0 4) (= i_0 -4)) -69 (ite (or (= i_0 3) (= i_0 -5)) -65 (ite (or (= i_0 2) (= i_0 -6)) -99 (ite (or (= i_0 1) (= i_0 -7)) -99 -50)))))))) 774420991987500))))
 (check-sat)
 (get-model)
@@ -26692,7 +26694,7 @@ modified_func def sat(start: int, k=wrap_int(8), lower=wrap_int(3), seq=wrap_lis
 (set-logic ALL)
 (declare-const x Int)
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 8))) (< i_0 8))))
-(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 8))) (> i_0 -8))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 8))) (>= i_0 -8))))
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 8))) (>= (* 1 (ite (or (= i_0 7) (= i_0 -1)) 45 (ite (or (= i_0 6) (= i_0 -2)) 90 (ite (or (= i_0 5) (= i_0 -3)) -87 (ite (or (= i_0 4) (= i_0 -4)) -69 (ite (or (= i_0 3) (= i_0 -5)) -65 (ite (or (= i_0 2) (= i_0 -6)) -99 (ite (or (= i_0 1) (= i_0 -7)) -99 -50)))))))) 3))))
 (check-sat)
 (get-model)
@@ -26723,7 +26725,7 @@ modified_func def sat(start: int, k=wrap_int(6), lower=wrap_int(188917681120), s
 (set-logic ALL)
 (declare-const x Int)
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 6))) (< i_0 103))))
-(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 6))) (> i_0 -103))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 6))) (>= i_0 -103))))
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 6))) (>= (* 1 (ite (or (= i_0 102) (= i_0 -1)) 70 (ite (or (= i_0 101) (= i_0 -2)) 97 (ite (or (= i_0 100) (= i_0 -3)) 82 (ite (or (= i_0 99) (= i_0 -4)) -83 (ite (or (= i_0 98) (= i_0 -5)) -56 (ite (or (= i_0 97) (= i_0 -6)) 58 (ite (or (= i_0 96) (= i_0 -7)) 32 (ite (or (= i_0 95) (= i_0 -8)) 43 (ite (or (= i_0 94) (= i_0 -9)) -99 (ite (or (= i_0 93) (= i_0 -10)) -39 (ite (or (= i_0 92) (= i_0 -11)) 81 (ite (or (= i_0 91) (= i_0 -12)) 9 (ite (or (= i_0 90) (= i_0 -13)) 73 (ite (or (= i_0 89) (= i_0 -14)) 78 (ite (or (= i_0 88) (= i_0 -15)) 58 (ite (or (= i_0 87) (= i_0 -16)) -30 (ite (or (= i_0 86) (= i_0 -17)) -89 (ite (or (= i_0 85) (= i_0 -18)) -56 (ite (or (= i_0 84) (= i_0 -19)) -65 (ite (or (= i_0 83) (= i_0 -20)) -21 (ite (or (= i_0 82) (= i_0 -21)) 24 (ite (or (= i_0 81) (= i_0 -22)) -28 (ite (or (= i_0 80) (= i_0 -23)) 59 (ite (or (= i_0 79) (= i_0 -24)) 45 (ite (or (= i_0 78) (= i_0 -25)) -89 (ite (or (= i_0 77) (=...
 (check-sat)
 (get-model)
@@ -26754,7 +26756,7 @@ modified_func def sat(start: int, k=wrap_int(6), lower=wrap_int(3), seq=wrap_lis
 (set-logic ALL)
 (declare-const x Int)
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 6))) (< i_0 103))))
-(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 6))) (> i_0 -103))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 6))) (>= i_0 -103))))
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 6))) (>= (* 1 (ite (or (= i_0 102) (= i_0 -1)) 70 (ite (or (= i_0 101) (= i_0 -2)) 97 (ite (or (= i_0 100) (= i_0 -3)) 82 (ite (or (= i_0 99) (= i_0 -4)) -83 (ite (or (= i_0 98) (= i_0 -5)) -56 (ite (or (= i_0 97) (= i_0 -6)) 58 (ite (or (= i_0 96) (= i_0 -7)) 32 (ite (or (= i_0 95) (= i_0 -8)) 43 (ite (or (= i_0 94) (= i_0 -9)) -99 (ite (or (= i_0 93) (= i_0 -10)) -39 (ite (or (= i_0 92) (= i_0 -11)) 81 (ite (or (= i_0 91) (= i_0 -12)) 9 (ite (or (= i_0 90) (= i_0 -13)) 73 (ite (or (= i_0 89) (= i_0 -14)) 78 (ite (or (= i_0 88) (= i_0 -15)) 58 (ite (or (= i_0 87) (= i_0 -16)) -30 (ite (or (= i_0 86) (= i_0 -17)) -89 (ite (or (= i_0 85) (= i_0 -18)) -56 (ite (or (= i_0 84) (= i_0 -19)) -65 (ite (or (= i_0 83) (= i_0 -20)) -21 (ite (or (= i_0 82) (= i_0 -21)) 24 (ite (or (= i_0 81) (= i_0 -22)) -28 (ite (or (= i_0 80) (= i_0 -23)) 59 (ite (or (= i_0 79) (= i_0 -24)) 45 (ite (or (= i_0 78) (= i_0 -25)) -89 (ite (or (= i_0 77) (=...
 (check-sat)
 (get-model)
@@ -26790,7 +26792,7 @@ modified_func def sat(start: int, k=wrap_int(2), lower=wrap_int(5589), seq=wrap_
 (set-logic ALL)
 (declare-const x Int)
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 2))) (< i_0 11))))
-(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 2))) (> i_0 -11))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 2))) (>= i_0 -11))))
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 2))) (>= (* 1 (ite (or (= i_0 10) (= i_0 -1)) -18 (ite (or (= i_0 9) (= i_0 -2)) 27 (ite (or (= i_0 8) (= i_0 -3)) 99 (ite (or (= i_0 7) (= i_0 -4)) -69 (ite (or (= i_0 6) (= i_0 -5)) -81 (ite (or (= i_0 5) (= i_0 -6)) 14 (ite (or (= i_0 4) (= i_0 -7)) 40 (ite (or (= i_0 3) (= i_0 -8)) 74 (ite (or (= i_0 2) (= i_0 -9)) 75 (ite (or (= i_0 1) (= i_0 -10)) -66 8))))))))))) 5589))))
 (check-sat)
 (get-model)
@@ -26821,7 +26823,7 @@ modified_func def sat(start: int, k=wrap_int(2), lower=wrap_int(3), seq=wrap_lis
 (set-logic ALL)
 (declare-const x Int)
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 2))) (< i_0 11))))
-(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 2))) (> i_0 -11))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 2))) (>= i_0 -11))))
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 2))) (>= (* 1 (ite (or (= i_0 10) (= i_0 -1)) -18 (ite (or (= i_0 9) (= i_0 -2)) 27 (ite (or (= i_0 8) (= i_0 -3)) 99 (ite (or (= i_0 7) (= i_0 -4)) -69 (ite (or (= i_0 6) (= i_0 -5)) -81 (ite (or (= i_0 5) (= i_0 -6)) 14 (ite (or (= i_0 4) (= i_0 -7)) 40 (ite (or (= i_0 3) (= i_0 -8)) 74 (ite (or (= i_0 2) (= i_0 -9)) 75 (ite (or (= i_0 1) (= i_0 -10)) -66 8))))))))))) 3))))
 (check-sat)
 (get-model)
@@ -26857,7 +26859,7 @@ modified_func def sat(start: int, k=wrap_int(10), lower=-wrap_int(83267974331942
 (set-logic ALL)
 (declare-const x Int)
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 10))) (< i_0 10))))
-(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 10))) (> i_0 -10))))
+(assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 10))) (>= i_0 -10))))
 (assert (forall ((i_0 Int)) (=> (and (>= i_0 x) (< i_0 (+ x 10))) (>= (* 1 (ite (or (= i_0 9) (= i_0 -1)) -47 (ite (or (= i_0 8) (= i_0 -2)) -52 (ite (or (= i_0 7) (= i_0 -3)) 13 (ite (or (= i_0 6) (= i_0 -4)) 37 (ite (or (= i_0 5) (= i_0 -5)) 13 (ite (or (= i_0 4) (= i_0 -6)) 54 (ite (or (= i_0 3) (= i_0 -7)) 26 (ite (or (= i_0 2) (= i_0 -8)) 80 (ite (or (= i_0 1) (= i_0 -9)) -99 49)))))))))) -8326797433194240))))
 (check-sat)
 (get-model)
@@ -29013,14 +29015,18 @@ modified_func def sat(s: str, substrings=wrap_list([wrap_str('foo'), wrap_str('b
 running backend z3
 running backend cvc5
 ### output for z3
-timeout
+sat
+(
+  (define-fun x () String
+    "barbazabraboofoo")
+)
 ### output for cvc5
 sat
 (
 (define-fun x () String "oofbarabazabfoo")
 )
 
-Found solution oofbarabazabfoo
+Found solution barbazabraboofoo
 Yes! Solved for puzzle  ReverseCat:0
 
 Solving puzzle 537/774: ReverseCat:1
@@ -29167,11 +29173,7 @@ modified_func def sat(s: str, strings=wrap_list([wrap_str('ryzapychybykydege'), 
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "sovywos")
-)
+timeout
 ### output for cvc5
 sat
 (
@@ -29278,11 +29280,7 @@ modified_func def sat(s: str, strings=wrap_list([wrap_str('cat'), wrap_str('dog'
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () String
-    "tac")
-)
+timeout
 ### output for cvc5
 sat
 (
@@ -29348,13 +29346,10 @@ running backend cvc5
 ### output for z3
 timeout
 ### output for cvc5
-sat
-(
-(define-fun x () String "yhahahimynojytyhtag")
-)
+cvc5 interrupted by timeout.
 
-Found solution yhahahimynojytyhtag
-Yes! Solved for puzzle  PenultimateRevString:2
+Could not find any solution for puzzle PenultimateRevString:2
+Too many constants for extrapolation
 
 Solving puzzle 549/774: PenultimateRevString:3
 sat_func def sat(s: str, strings=['habicynanikadifovac', 'bozehathyfoz', 'hud', 'textudunachuxarise', 'hewohahatazabab', 'lutumelimevabutha', 'wocher', 'wacifufixudizon', 'tazibedo', 'xytu']):
@@ -29380,13 +29375,10 @@ running backend cvc5
 ### output for z3
 timeout
 ### output for cvc5
-sat
-(
-(define-fun x () String "cavofidakinanycibah")
-)
+cvc5 interrupted by timeout.
 
-Found solution cavofidakinanycibah
-Yes! Solved for puzzle  PenultimateRevString:3
+Could not find any solution for puzzle PenultimateRevString:3
+Too many constants for extrapolation
 
 Solving puzzle 550/774: PenultimateRevString:4
 sat_func def sat(s: str, strings=['vekykothumygochuth', 'xujatajazisiqu', 'vapyvymobymethotexto', 'tygope', 'g', 'ripalotextaj', 'tecehuthojodogucivaj', 'xyjulecometihesej', 'ribo', 'gutachowagexatoset']):
@@ -30396,26 +30388,26 @@ running backend cvc5
 sat
 (
   (define-fun x () Int
-    2002)
+    1001)
   (define-fun div0 ((x!0 Int) (x!1 Int)) Int
-    (ite (and (= x!0 111673658096) (= x!1 2002)) 55781048
-    (ite (and (= x!0 83221402264) (= x!1 2002)) 41569132
-    (ite (and (= x!0 5027670648) (= x!1 2002)) 2511324
-    (ite (and (= x!0 61177116) (= x!1 2002)) 30558
-    (ite (and (= x!0 154154) (= x!1 2002)) 77
-    (ite (and (= x!0 116116) (= x!1 2002)) 58
-    (ite (and (= x!0 1508784124848) (= x!1 2002)) 753638424
-    (ite (and (= x!0 17036343324) (= x!1 2002)) 8509662
-    (ite (and (= x!0 29091062) (= x!1 2002)) 14531
-    (ite (and (= x!0 100726626) (= x!1 2002)) 50313
-      226)))))))))))
+    (ite (and (= x!0 111673658096) (= x!1 1001)) 111562096
+    (ite (and (= x!0 83221402264) (= x!1 1001)) 83138264
+    (ite (and (= x!0 5027670648) (= x!1 1001)) 5022648
+    (ite (and (= x!0 61177116) (= x!1 1001)) 61116
+    (ite (and (= x!0 154154) (= x!1 1001)) 154
+    (ite (and (= x!0 116116) (= x!1 1001)) 116
+    (ite (and (= x!0 1508784124848) (= x!1 1001)) 1507276848
+    (ite (and (= x!0 17036343324) (= x!1 1001)) 17019324
+    (ite (and (= x!0 29091062) (= x!1 1001)) 29062
+    (ite (and (= x!0 100726626) (= x!1 1001)) 100626
+      452)))))))))))
   (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
     0)
 )
 ### output for cvc5
 cvc5 interrupted by timeout.
 
-Found solution 2002
+Found solution 1001
 Yes! Solved for puzzle  GCD_multi:3
 
 Solving puzzle 580/774: GCD_multi:4
@@ -30641,16 +30633,12 @@ modified_func def sat(n: int, nums=wrap_list([wrap_int(46477686772963437), wrap_
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () Int
-    50042020463197425387002406480)
-)
+timeout
 ### output for cvc5
 cvc5 interrupted by timeout.
 
-Found solution 50042020463197425387002406480
-Yes! Solved for puzzle  LCM_multi:1
+Could not find any solution for puzzle LCM_multi:1
+Too many constants for extrapolation
 
 Solving puzzle 588/774: LCM_multi:2
 sat_func def sat(n: int, nums=[55040126016, 4373970014334], upper_bound=219074883886936):
@@ -30696,16 +30684,12 @@ modified_func def sat(n: int, nums=wrap_list([wrap_int(9140), wrap_int(488249660
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () Int
-    121155327663293093558667262542122448691120854355200)
-)
+timeout
 ### output for cvc5
 cvc5 interrupted by timeout.
 
-Found solution 121155327663293093558667262542122448691120854355200
-Yes! Solved for puzzle  LCM_multi:3
+Could not find any solution for puzzle LCM_multi:3
+Too many constants for extrapolation
 
 Solving puzzle 590/774: LCM_multi:4
 sat_func def sat(n: int, nums=[173261568, 4270662976], upper_bound=17025943527197098):
@@ -30883,20 +30867,34 @@ modified_func def sat(i: int, n=wrap_int(241864633)):
 running backend z3
 running backend cvc5
 ### output for z3
-sat
-(
-  (define-fun x () Int
-    14543)
-  (define-fun div0 ((x!0 Int) (x!1 Int)) Int
-    16631)
-  (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
-    0)
-)
+timeout
 ### output for cvc5
 cvc5 interrupted by timeout.
 
-Found solution 14543
-Yes! Solved for puzzle  Factoring:0
+Could not find any solution for puzzle Factoring:0
+One large constant for extrapolation
+Solving simpler variation replaced 241864633 with 3
+sat_func def sat(i: int, n=3):
+    return 1 < i < n and n % i == 0
+modified_func def sat(i: int, n=wrap_int(3)):
+    return (wrap_int(1) < i).__and__(i < n).__and__(n % i == wrap_int(0))
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (and (and (< 1 x) (< x 3)) (= (mod 3 x) 0)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unsat
+(error "line 5 column 10: model is not available")
+### output for cvc5
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
+
+Could not find any solution for puzzle Factoring:0
 
 Solving puzzle 596/774: Factoring:1
 sat_func def sat(i: int, n=16):
@@ -32964,7 +32962,7 @@ running backend cvc5
 sat
 (
   (define-fun x () String
-    "fffoobar")
+    "DBfoobar")
 )
 ### output for cvc5
 sat
@@ -32972,7 +32970,7 @@ sat
 (define-fun x () String "AAfoobar")
 )
 
-Found solution fffoobar
+Found solution DBfoobar
 Yes! Solved for puzzle  StrIndex2:0
 
 Solving puzzle 668/774: StrIndex2:1
@@ -33216,10 +33214,7 @@ sat
     "vyhuquuthexitacavoby")
 )
 ### output for cvc5
-sat
-(
-(define-fun x () String "vyhuquuthexitacavoby")
-)
+cvc5 interrupted by timeout.
 
 Found solution vyhuquuthexitacavoby
 Yes! Solved for puzzle  StrIn:4
@@ -33254,13 +33249,45 @@ running backend cvc5
 ### output for z3
 timeout
 ### output for cvc5
-sat
-(
-(define-fun x () String "aaaaaaaaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
-)
+cvc5 interrupted by timeout.
 
-Found solution aaaaaaaaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa
-Yes! Solved for puzzle  StrCount:0
+Could not find any solution for puzzle StrCount:0
+One large constant for extrapolation
+Solving simpler variation replaced 100 with 3
+sat_func def sat(string: str, substring="a", count=10, length=3):
+    return string.count(substring) == count and len(string) == length
+modified_func def sat(string: str, substring=wrap_str('a'), count=wrap_int(10), length=wrap_int(3)):
+    return (string.count(substring) == count).__and__(sym_len(string) == length)
+### smt2
+(set-logic ALL)
+
+(define-fun-rec str.count.rec ((s String) (sub String) (start Int)) Int
+  (let ((idx (str.indexof s sub start)))
+    (ite (or (= idx (- 1)) (> start (str.len s)))
+         0
+         (+ 1 (str.count.rec s sub (+ idx (str.len sub)))))))
+
+(define-fun str.count ((s String) (sub String)) Int
+  (ite (= (str.len sub) 0)
+       (+ 1 (str.len s))
+       (str.count.rec s sub 0)))
+
+(declare-const x String)
+(assert (>= (str.count x "a") 0))
+(assert (and (= (str.count x "a") 10) (= (str.len x) 3)))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+unsat
+(error "line 18 column 10: model is not available")
+### output for cvc5
+unsat
+(error "cannot get model unless after a SAT or UNKNOWN response.")
+
+Could not find any solution for puzzle StrCount:0
 
 Solving puzzle 678/774: StrCount:1
 sat_func def sat(string: str, substring="ky", count=66, length=133):
@@ -33521,16 +33548,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('I'), wrap_str('love'), 
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -33555,9 +33583,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('I'), wrap_str('love'), 
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -33675,16 +33705,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('I'), wrap_str('love'), 
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -33709,9 +33740,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('I'), wrap_str('love'), 
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -33813,7 +33846,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 138 column 10: model is not available")
+(error "line 141 column 10: model is not available")
 ### output for cvc5
 cvc5 interrupted by timeout.
 
@@ -33830,16 +33863,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('thala'), wrap_str('chal
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -33864,9 +33898,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('thala'), wrap_str('chal
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -33984,16 +34020,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('thala'), wrap_str('chal
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -34018,9 +34055,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('thala'), wrap_str('chal
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -34122,7 +34161,7 @@ running backend z3
 running backend cvc5
 ### output for z3
 unsat
-(error "line 138 column 10: model is not available")
+(error "line 141 column 10: model is not available")
 ### output for cvc5
 cvc5 interrupted by timeout.
 
@@ -34139,16 +34178,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('lepytextati'), wrap_str
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -34173,9 +34213,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('lepytextati'), wrap_str
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -34294,16 +34336,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('quyhigechyhy')]), lengt
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -34328,9 +34371,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('quyhigechyhy')]), lengt
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -34449,16 +34494,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('je'), wrap_str('pojacyd
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -34483,9 +34529,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('je'), wrap_str('pojacyd
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -34604,16 +34652,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('I'), wrap_str('love'), 
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -34638,9 +34687,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('I'), wrap_str('love'), 
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -34759,16 +34810,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('kowot'), wrap_str('quim
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -34793,9 +34845,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('kowot'), wrap_str('quim
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -34914,16 +34968,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('f'), wrap_str('thixares
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -34948,9 +35003,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('f'), wrap_str('thixares
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -35069,16 +35126,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('tibuzumurun'), wrap_str
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -35103,9 +35161,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('tibuzumurun'), wrap_str
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -35224,16 +35284,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('fitextu'), wrap_str('ch
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -35258,9 +35319,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('fitextu'), wrap_str('ch
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -35379,16 +35442,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('I!!'), wrap_str('!love'
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -35413,9 +35477,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('I!!'), wrap_str('!love'
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -35511,16 +35577,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('tatext')]), string=wrap
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -35545,9 +35612,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('tatext')]), string=wrap
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -35643,16 +35712,17 @@ modified_func def sat(x: str, parts=wrap_list([]), string=wrap_str('')):
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -35677,9 +35747,11 @@ modified_func def sat(x: str, parts=wrap_list([]), string=wrap_str('')):
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -35775,16 +35847,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('ruquug')]), string=wrap
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -35809,9 +35882,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('ruquug')]), string=wrap
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -35907,16 +35982,17 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('numegixuly'), wrap_str(
 (declare-datatypes ((List 1)) 
     ((par (T) ((cons (head T) (tail (List T))) (nil)))))
 
-;; List utility functions
 (define-fun-rec list.length.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
        0
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1))))
+       (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
   (ite (= l (as nil (List Int)))
@@ -35941,9 +36017,11 @@ modified_func def sat(x: str, parts=wrap_list([wrap_str('numegixuly'), wrap_str(
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
   (ite (= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1))))
+       (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
   (ite (= l (as nil (List String)))
@@ -36037,7 +36115,7 @@ modified_func def sat(i: int, li=wrap_list([wrap_int(17), wrap_int(31), wrap_int
 (set-logic ALL)
 (declare-const x Int)
 (assert (< x 7))
-(assert (> x -7))
+(assert (>= x -7))
 (assert (= (ite (or (= x 6) (= x -1)) 9 (ite (or (= x 5) (= x -2)) 1 (ite (or (= x 4) (= x -3)) 42 (ite (or (= x 3) (= x -4)) 18 (ite (or (= x 2) (= x -5)) 91 (ite (or (= x 1) (= x -6)) 31 17)))))) 18))
 (check-sat)
 (get-model)
@@ -36068,7 +36146,7 @@ modified_func def sat(i: int, li=wrap_list([-wrap_int(62), -wrap_int(29), wrap_i
 (set-logic ALL)
 (declare-const x Int)
 (assert (< x 18))
-(assert (> x -18))
+(assert (>= x -18))
 (assert (= (ite (or (= x 17) (= x -1)) 86 (ite (or (= x 16) (= x -2)) 68 (ite (or (= x 15) (= x -3)) 75 (ite (or (= x 14) (= x -4)) -20 (ite (or (= x 13) (= x -5)) 93 (ite (or (= x 12) (= x -6)) -31 (ite (or (= x 11) (= x -7)) 82 (ite (or (= x 10) (= x -8)) 16 (ite (or (= x 9) (= x -9)) -25 (ite (or (= x 8) (= x -10)) 30 (ite (or (= x 7) (= x -11)) -69 (ite (or (= x 6) (= x -12)) -74 (ite (or (= x 5) (= x -13)) -20 (ite (or (= x 4) (= x -14)) -45 (ite (or (= x 3) (= x -15)) -21 (ite (or (= x 2) (= x -16)) 73 (ite (or (= x 1) (= x -17)) -29 -62))))))))))))))))) 73))
 (check-sat)
 (get-model)
@@ -36099,7 +36177,7 @@ modified_func def sat(i: int, li=wrap_list([wrap_int(99), wrap_int(51), -wrap_in
 (set-logic ALL)
 (declare-const x Int)
 (assert (< x 8))
-(assert (> x -8))
+(assert (>= x -8))
 (assert (= (ite (or (= x 7) (= x -1)) -67 (ite (or (= x 6) (= x -2)) 7 (ite (or (= x 5) (= x -3)) -15 (ite (or (= x 4) (= x -4)) -90 (ite (or (= x 3) (= x -5)) -69 (ite (or (= x 2) (= x -6)) -28 (ite (or (= x 1) (= x -7)) 51 99))))))) 51))
 (check-sat)
 (get-model)
@@ -36130,7 +36208,7 @@ modified_func def sat(i: int, li=wrap_list([-wrap_int(68), wrap_int(81), wrap_in
 (set-logic ALL)
 (declare-const x Int)
 (assert (< x 10))
-(assert (> x -10))
+(assert (>= x -10))
 (assert (= (ite (or (= x 9) (= x -1)) 72 (ite (or (= x 8) (= x -2)) -89 (ite (or (= x 7) (= x -3)) -73 (ite (or (= x 6) (= x -4)) -3 (ite (or (= x 5) (= x -5)) 75 (ite (or (= x 4) (= x -6)) 81 (ite (or (= x 3) (= x -7)) -5 (ite (or (= x 2) (= x -8)) 13 (ite (or (= x 1) (= x -9)) 81 -68))))))))) 13))
 (check-sat)
 (get-model)
@@ -36161,7 +36239,7 @@ modified_func def sat(i: int, li=wrap_list([wrap_int(51), -wrap_int(68), -wrap_i
 (set-logic ALL)
 (declare-const x Int)
 (assert (< x 13))
-(assert (> x -13))
+(assert (>= x -13))
 (assert (= (ite (or (= x 12) (= x -1)) 53 (ite (or (= x 11) (= x -2)) 60 (ite (or (= x 10) (= x -3)) 57 (ite (or (= x 9) (= x -4)) 40 (ite (or (= x 8) (= x -5)) 11 (ite (or (= x 7) (= x -6)) -24 (ite (or (= x 6) (= x -7)) -28 (ite (or (= x 5) (= x -8)) -80 (ite (or (= x 4) (= x -9)) 77 (ite (or (= x 3) (= x -10)) 8 (ite (or (= x 2) (= x -11)) -57 (ite (or (= x 1) (= x -12)) -68 51)))))))))))) 11))
 (check-sat)
 (get-model)
@@ -36192,7 +36270,7 @@ modified_func def sat(i: int, li=wrap_list([wrap_int(17), wrap_int(31), wrap_int
 (set-logic ALL)
 (declare-const x Int)
 (assert (< x 7))
-(assert (> x -7))
+(assert (>= x -7))
 (assert (and (= (ite (or (= x 6) (= x -1)) 9 (ite (or (= x 5) (= x -2)) 1 (ite (or (= x 4) (= x -3)) 42 (ite (or (= x 3) (= x -4)) 18 (ite (or (= x 2) (= x -5)) 91 (ite (or (= x 1) (= x -6)) 31 17)))))) 91) (< x 0)))
 (check-sat)
 (get-model)
@@ -36223,7 +36301,7 @@ modified_func def sat(i: int, li=wrap_list([wrap_int(78), wrap_int(91), -wrap_in
 (set-logic ALL)
 (declare-const x Int)
 (assert (< x 13))
-(assert (> x -13))
+(assert (>= x -13))
 (assert (and (= (ite (or (= x 12) (= x -1)) 90 (ite (or (= x 11) (= x -2)) -46 (ite (or (= x 10) (= x -3)) -39 (ite (or (= x 9) (= x -4)) -55 (ite (or (= x 8) (= x -5)) 96 (ite (or (= x 7) (= x -6)) 32 (ite (or (= x 6) (= x -7)) 68 (ite (or (= x 5) (= x -8)) -42 (ite (or (= x 4) (= x -9)) 30 (ite (or (= x 3) (= x -10)) -5 (ite (or (= x 2) (= x -11)) -67 (ite (or (= x 1) (= x -12)) 91 78)))))))))))) -39) (< x 0)))
 (check-sat)
 (get-model)
@@ -36254,7 +36332,7 @@ modified_func def sat(i: int, li=wrap_list([-wrap_int(60), wrap_int(9), wrap_int
 (set-logic ALL)
 (declare-const x Int)
 (assert (< x 11))
-(assert (> x -11))
+(assert (>= x -11))
 (assert (and (= (ite (or (= x 10) (= x -1)) -20 (ite (or (= x 9) (= x -2)) -90 (ite (or (= x 8) (= x -3)) 42 (ite (or (= x 7) (= x -4)) 1 (ite (or (= x 6) (= x -5)) 5 (ite (or (= x 5) (= x -6)) 70 (ite (or (= x 4) (= x -7)) 31 (ite (or (= x 3) (= x -8)) -42 (ite (or (= x 2) (= x -9)) 1 (ite (or (= x 1) (= x -10)) 9 -60)))))))))) -42) (< x 0)))
 (check-sat)
 (get-model)
@@ -36285,7 +36363,7 @@ modified_func def sat(i: int, li=wrap_list([wrap_int(41), -wrap_int(52), -wrap_i
 (set-logic ALL)
 (declare-const x Int)
 (assert (< x 15))
-(assert (> x -15))
+(assert (>= x -15))
 (assert (and (= (ite (or (= x 14) (= x -1)) 30 (ite (or (= x 13) (= x -2)) 22 (ite (or (= x 12) (= x -3)) -3 (ite (or (= x 11) (= x -4)) -93 (ite (or (= x 10) (= x -5)) -8 (ite (or (= x 9) (= x -6)) 74 (ite (or (= x 8) (= x -7)) -18 (ite (or (= x 7) (= x -8)) 63 (ite (or (= x 6) (= x -9)) 83 (ite (or (= x 5) (= x -10)) -98 (ite (or (= x 4) (= x -11)) 53 (ite (or (= x 3) (= x -12)) -35 (ite (or (= x 2) (= x -13)) -40 (ite (or (= x 1) (= x -14)) -52 41)))))))))))))) 53) (< x 0)))
 (check-sat)
 (get-model)
@@ -36316,7 +36394,7 @@ modified_func def sat(i: int, li=wrap_list([wrap_int(95), wrap_int(51), wrap_int
 (set-logic ALL)
 (declare-const x Int)
 (assert (< x 6))
-(assert (> x -6))
+(assert (>= x -6))
 (assert (and (= (ite (or (= x 5) (= x -1)) -32 (ite (or (= x 4) (= x -2)) -97 (ite (or (= x 3) (= x -3)) 63 (ite (or (= x 2) (= x -4)) 76 (ite (or (= x 1) (= x -5)) 51 95))))) -32) (< x 0)))
 (check-sat)
 (get-model)
@@ -37475,7 +37553,7 @@ running backend cvc5
 sat
 (
   (define-fun x () Int
-    (- 797200114681031))
+    (- 1594400229362061))
   (define-fun div0 ((x!0 Int) (x!1 Int)) Int
     (- 1))
   (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
@@ -37487,41 +37565,8 @@ sat
 (define-fun x () Int 0)
 )
 
-Found solution -797200114681031
-WARNING: Solution verification failed for puzzle IntDiv:1
-One large constant for extrapolation
-Solving simpler variation replaced 1594400229362061 with 3
-sat_func def sat(n: int, a=-1, b=3):
-    return b // n == a
-modified_func def sat(n: int, a=-wrap_int(1), b=wrap_int(3)):
-    return b // n == a
-### smt2
-(set-logic ALL)
-(declare-const x Int)
-(assert (= (div 3 x) -1))
-(check-sat)
-(get-model)
-
-running backend z3
-running backend cvc5
-### output for z3
-sat
-(
-  (define-fun x () Int
-    (- 2))
-  (define-fun div0 ((x!0 Int) (x!1 Int)) Int
-    (- 1))
-  (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
-    0)
-)
-### output for cvc5
-sat
-(
-(define-fun x () Int 0)
-)
-
-Found solution -2
-WARNING: Solution verification failed for puzzle IntDiv:1
+Found solution -1594400229362061
+Yes! Solved for puzzle  IntDiv:1
 
 Solving puzzle 744/774: IntDiv:2
 sat_func def sat(n: int, a=12, b=-9988218457242775):
@@ -38763,31 +38808,55 @@ running backend cvc5
 ### output for z3
 timeout
 ### output for cvc5
+cvc5 interrupted by timeout.
+
+Could not find any solution for puzzle Tutorial5:0
+One large constant for extrapolation
+Solving simpler variation replaced 123456789 with 3
+sat_func def sat(n: int):
+    return str(n * n).startswith("3")
+modified_func def sat(n: int):
+    return sym_str(n * n).startswith('3')
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (str.prefixof "3" (str.from_int (* x x))))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
 sat
 (
-(define-fun x () Int (- 111111111))
+  (define-fun x () Int
+    6)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int (- 6))
 )
 
-Found solution -111111111
-Yes! Solved for puzzle  Tutorial5:0
+Found solution 6
 
 ## Current status
 
 The symbolic execution alone currently solves:
-- 61% (218 out of 360) of `int` puzzles,
-- 34% (125 out of 363) of `str` puzzles,
+- 60% (215 out of 360) of `int` puzzles,
+- 34% (122 out of 363) of `str` puzzles,
 - 18% (9 out of 51) of `float` puzzles,
-- 45% (352 out of 774) overall.
+- 45% (346 out of 774) overall.
 
 with the following errors:
 - 9 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
 - 118 errors at at staging time
-- 187 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- 161 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
+- 173 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- 175 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
 - 941 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 
 ### Extrapolation
-- 120 smaller problems tried
-- 21 successes on smaller problem
+- 122 smaller problems tried
+- 15 successes on smaller problem
 
