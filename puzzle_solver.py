@@ -39,6 +39,7 @@ class PuzzleSolver:
         self.extrapolate_large_success_count = 0
         self.extrapolate_stats = defaultdict(list)
         self.end2end_stats = defaultdict(list)
+        self.show_llm_matrix = False
         self.names_of_extrapolated_puzzles = []
         self.names_of_successfully_extrapolated_puzzles = []
 
@@ -130,11 +131,13 @@ class PuzzleSolver:
                         self.names_of_extrapolated_puzzles.append(name)
                         if llm_solver:
                             result = call_solvers(llm_solver, self.extrapolate_stats, name, lambda x: x.extrapolate(varied_puzzle_sat_func, sat_func, reason, varied_result, ans_type, name, check_result, log))
-                            # just for the stats
-                            call_solvers(llm_solver, self.end2end_stats, name, lambda x: x.solve_end2end(sat_func, ans_type, name, check_result))
                             if result is not None:
                                 self.names_of_successfully_extrapolated_puzzles.append(name)
                                 self.extrapolate_large_success_count += 1
+                            result_end2end = call_solvers(llm_solver, self.end2end_stats, name, lambda x: x.solve_end2end(sat_func, ans_type, name, check_result))
+                            if result_end2end is not None:
+                                self.show_llm_matrix = True
+                            if result is not None or result_end2end is not None:
                                 self.success_count += 1
                                 self.success_counts[ans_type] += 1
                                 print("Yes! Solved via extrapolation for puzzle ", name)
@@ -200,6 +203,7 @@ class PuzzleSolver:
 {' '.join(self.names_of_successfully_extrapolated_puzzles)}
 """
 
+        if self.show_llm_matrix:
             extrapolation += f"""
 #### Matrix
 {self.extrapolation_matrix()}
