@@ -232,7 +232,7 @@ def check_result(result, sat_func):
         return False
     return True
 
-def run_benchmarks(puzzle_file: str, name_prefixes = None, answer_types = None, smtlib_backends = None, llm_solver = None):
+def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None):
     with open(puzzle_file) as f:
         puzzles = json.load(f)
     
@@ -242,6 +242,8 @@ def run_benchmarks(puzzle_file: str, name_prefixes = None, answer_types = None, 
     # Filter puzzles
     if name_prefixes:
         puzzles = [p for p in puzzles if any(p.get('name', '').startswith(name_prefix) for name_prefix in name_prefixes)]
+    if name_suffixes:
+        puzzles = [p for p in puzzles if any(p.get('name', '').endswith(name_suffix) for name_suffix in name_suffixes)]
     if answer_types:
         puzzles = [p for p in puzzles if p['ans_type'] in answer_types]
         
@@ -321,6 +323,10 @@ if __name__ == "__main__":
                         nargs='+',
                         default=[],
                         help='only run puzzles whose names start with this prefix')
+    parser.add_argument('--name-suffix',
+                        nargs='+',
+                        default=[],
+                        help='only run puzzles whose names ends with this suffix')
     parser.add_argument('--answer-types',
                         nargs='+',
                         choices=['int', 'str', 'float', 'bool', 'List[int]', 'List[str]'],
@@ -338,4 +344,4 @@ if __name__ == "__main__":
     if args.llm:
         from holey import llm_generators
         llm_solver = {k: LLMSolver(v) for k,v in llm_generators.items()}
-    run_benchmarks(args.puzzle_file, args.name_prefix, args.answer_types, args.smtlib_backends, llm_solver)
+    run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver)
