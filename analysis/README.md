@@ -15,3 +15,4 @@ def sat(li: List[int]):
 
 [`Study_5:0_small.smt`](Study_5.0_small.smt) succeeds with `z3`, and also with `cvc5 --produce-model --fmf-fun`.
 
+Logs: [`Study_5.0.txt`](Study_5.0.txt).
