@@ -1,14 +1,3 @@
-Starting with 1715 puzzles...
-Running benchmarks on 1 puzzles...
-Filtered to puzzles starting with '['Study_5:0']'
-Filtered to puzzles of answer types: ['List[int]', 'List[str]']
-
-Solving puzzle 1/1: Study_5:0
-sat_func def sat(li: List[int]):
-    return all([li.count(i) == i for i in range(10)])
-modified_func def sat(li: List[int]):
-    return all([li.count(i) == i for i in sym_range(10)])
-### smt2
 (set-logic ALL)
 
 (declare-datatypes ((List 1)) 
@@ -106,32 +95,7 @@ modified_func def sat(li: List[int]):
        (+ (ite (= (head l) val) 1 0)
           (list.count.real (tail l) val))))
 
-(declare-const x (List Int))
-(assert (and (and (and (and (and (and (and (and (and (= (list.count.int x 0) 0) (= (list.count.int x 1) 1)) (= (list.count.int x 2) 2)) (= (list.count.int x 3) 3)) (= (list.count.int x 4) 4)) (= (list.count.int x 5) 5)) (= (list.count.int x 6) 6)) (= (list.count.int x 7) 7)) (= (list.count.int x 8) 8)) (= (list.count.int x 9) 9)))
+(declare-const x (List String))
+(assert (and (str.contains (list.get.string x 5) (list.get.string x 3)) (not (= (list.get.string x 3) (list.get.string x 5)))))
 (check-sat)
 (get-model)
-
-running backend z3
-running backend cvc5
-### output for z3
-timeout
-### output for cvc5
-cvc5 interrupted by timeout.
-
-Could not find any solution for puzzle Study_5:0
-Too many constants for extrapolation
-
-## Current status
-
-The symbolic execution alone currently solves:
-- 0% (0 out of 1) of `List[int]` puzzles,
-- 0% (0 out of 1) overall.
-
-with the following errors:
-- 0 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
-- 0 errors at at staging time
-- 0 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- 1 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
-timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
-- 1714 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
-
