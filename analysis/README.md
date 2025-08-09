@@ -20,7 +20,7 @@ Logs: [`Study_5_0.txt`](Study_5_0.txt).
 ## Example with `in` constraints
 
 ```bash
-python puzzle_solver.py  --smtlib-backends cvc5 --answer-types "List[int]" "List[str]" --name-prefix Study_8:0
+python puzzle_solver.py  --smtlib-backends cvc5 z3 --answer-types "List[int]" "List[str]" --name-prefix Study_8:0
 ```
 
 ```python

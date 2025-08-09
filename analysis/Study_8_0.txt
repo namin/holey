@@ -111,12 +111,12 @@ modified_func def sat(ls: List[str]):
 (check-sat)
 (get-model)
 
-running backend z3
 running backend cvc5
-### output for z3
-timeout
+running backend z3
 ### output for cvc5
 cvc5 interrupted by timeout.
+### output for z3
+timeout
 
 Could not find any solution for puzzle Study_8:0
 Two large constants for extrapolation
@@ -228,23 +228,21 @@ modified_func def sat(ls: List[str]):
 (check-sat)
 (get-model)
 
-running backend z3
 running backend cvc5
+running backend z3
+### output for cvc5
+sat
+(
+(define-fun x () (List String) ((as cons (List String)) "" ((as cons (List String)) "" ((as cons (List String)) "" ((as cons (List String)) "" ((as cons (List String)) "" ((as cons (List String)) "A" (as nil (List String)))))))))
+)
 ### output for z3
 sat
 (
   (define-fun x () (List String)
     (as nil (List String)))
 )
-### output for cvc5
-sat
-(
-(define-fun x () (List String) ((as cons (List String)) "" ((as cons (List String)) "" ((as cons (List String)) "" ((as cons (List String)) "" ((as cons (List String)) "" ((as cons (List String)) "A" (as nil (List String)))))))))
-)
 
-Found solution []
-Exception in checking result: list index out of range
-WARNING: Solution verification failed for puzzle Study_8:0
+Found solution ['', '', '', '', '', 'A']
 
 ## Current status
 
@@ -255,12 +253,12 @@ The symbolic execution alone currently solves:
 with the following errors:
 - 0 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
 - 0 errors at at staging time
-- 1 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- 0 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
 - 1 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
 timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
 - 1714 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 
 ### Extrapolation
 - 1 smaller problems tried
-- 0 successes on smaller problem
+- 1 successes on smaller problem
 
