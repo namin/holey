@@ -11,8 +11,8 @@ def sat(li: List[int]):
   return all([li.count(i) == i for i in range(10)])
 ```
 
-[`Study_5:0.smt`](Study_5:0.smt) times out with `z3` and `cvc5`.
+[`Study_5_0.smt`](Study_5_0.smt) times out with `z3` and `cvc5`.
 
-[`Study_5:0_small.smt`](Study_5.0_small.smt) succeeds with `z3`, and also with `cvc5 --produce-model --fmf-fun`.
+[`Study_5_0_small.smt`](Study_5_0_small.smt) succeeds with `z3`, and also with `cvc5 --produce-model --fmf-fun`.
 
-Logs: [`Study_5.0.txt`](Study_5.0.txt).
+Logs: [`Study_5_0.txt`](Study_5_0.txt).
