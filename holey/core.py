@@ -329,13 +329,65 @@ class SymbolicInt:
         other = self.tracer.ensure_symbolic(other)
         if self.concrete is not None and other.concrete is not None:
             return SymbolicInt(self.concrete % other.concrete, tracer=self.tracer)
-        return SymbolicInt(self.tracer.backend.Mod(self.z3_expr, other.z3_expr), tracer=self.tracer)
+        
+        # Python's modulo: result has same sign as divisor
+        # r = a - b * floor(a/b)
+        # SMT-LIB's mod: result has same sign as dividend  
+        # We need to adjust when signs differ
+        backend = self.tracer.backend
+        a, b = self.z3_expr, other.z3_expr
+        
+        # Add constraint that divisor is not zero
+        self.tracer.add_constraint(backend.Not(backend.Eq(b, backend.IntVal(0))))
+        
+        # Get SMT-LIB mod result
+        smt_mod = backend.Mod(a, b)
+        
+        # Python modulo adjustment:
+        # If result is non-zero and signs of result and divisor differ, add divisor to result
+        result = backend.If(
+            backend.And(
+                backend.Not(backend.Eq(smt_mod, backend.IntVal(0))),
+                backend.Not(backend.Eq(
+                    backend.LT(smt_mod, backend.IntVal(0)),
+                    backend.LT(b, backend.IntVal(0))
+                ))
+            ),
+            backend.Add(smt_mod, b),
+            smt_mod
+        )
+        
+        return SymbolicInt(result, tracer=self.tracer)
 
     def __rmod__(self, other):
         other = self.tracer.ensure_symbolic(other)
         if self.concrete is not None and other.concrete is not None:
             return SymbolicInt(other.concrete % self.concrete, tracer=self.tracer)
-        return SymbolicInt(self.tracer.backend.Mod(other.z3_expr, self.z3_expr), tracer=self.tracer)
+        
+        # Same Python modulo logic but with operands swapped
+        backend = self.tracer.backend
+        a, b = other.z3_expr, self.z3_expr
+        
+        # Add constraint that divisor is not zero
+        self.tracer.add_constraint(backend.Not(backend.Eq(b, backend.IntVal(0))))
+        
+        # Get SMT-LIB mod result
+        smt_mod = backend.Mod(a, b)
+        
+        # Python modulo adjustment
+        result = backend.If(
+            backend.And(
+                backend.Not(backend.Eq(smt_mod, backend.IntVal(0))),
+                backend.Not(backend.Eq(
+                    backend.LT(smt_mod, backend.IntVal(0)),
+                    backend.LT(b, backend.IntVal(0))
+                ))
+            ),
+            backend.Add(smt_mod, b),
+            smt_mod
+        )
+        
+        return SymbolicInt(result, tracer=self.tracer)
 
 
     def __pow__(self, other):
