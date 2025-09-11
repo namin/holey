@@ -259,51 +259,38 @@ class SymbolicInt:
         other = self.tracer.ensure_symbolic(other)
         return SymbolicInt(other.z3_expr / self.z3_expr, tracer=self.tracer)
     
-    def __floordiv__(self, other):
-        other = self.tracer.ensure_symbolic(other)
+    def _python_floor_div(self, dividend, divisor, backend):
+        """Helper to implement Python's floor division semantics.
+        Python: rounds toward negative infinity
+        SMT-LIB div: rounds toward zero (truncating)
+        """
         # Add constraint that divisor is not zero
-        self.tracer.add_constraint(self.tracer.backend.Not(
-            self.tracer.backend.Eq(other.z3_expr, self.tracer.backend.IntVal(0))))
+        self.tracer.add_constraint(backend.Not(
+            backend.Eq(divisor, backend.IntVal(0))))
         
-        # Implement Python's floor division correctly
-        # floor_div(a,b) = div(a,b) - (1 if (a % b != 0 and (a < 0) != (b < 0)) else 0)
-        a, b = self.z3_expr, other.z3_expr
-        backend = self.tracer.backend
-        truncated = backend.UDiv(a, b)
-        remainder = backend.Mod(a, b)
+        truncated = backend.UDiv(dividend, divisor)
+        remainder = backend.Mod(dividend, divisor)
         
         # Check if signs differ and remainder is non-zero
-        signs_differ = backend.Not(backend.Eq(backend.LT(a, backend.IntVal(0)), 
-                                               backend.LT(b, backend.IntVal(0))))
+        # If so, we need to subtract 1 from truncated result
+        signs_differ = backend.Not(backend.Eq(
+            backend.LT(dividend, backend.IntVal(0)), 
+            backend.LT(divisor, backend.IntVal(0))))
         has_remainder = backend.Not(backend.Eq(remainder, backend.IntVal(0)))
         needs_adjustment = backend.And(signs_differ, has_remainder)
         
-        # Adjust result if needed
-        result = backend.If(needs_adjustment,
-                           backend.Sub(truncated, backend.IntVal(1)),
-                           truncated)
+        return backend.If(needs_adjustment,
+                         backend.Sub(truncated, backend.IntVal(1)),
+                         truncated)
+    
+    def __floordiv__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        result = self._python_floor_div(self.z3_expr, other.z3_expr, self.tracer.backend)
         return SymbolicInt(result, tracer=self.tracer)
     
     def __rfloordiv__(self, other):
         other = self.tracer.ensure_symbolic(other)
-        # Add constraint that divisor is not zero
-        self.tracer.add_constraint(self.tracer.backend.Not(
-            self.tracer.backend.Eq(self.z3_expr, self.tracer.backend.IntVal(0))))
-        
-        # Same logic but with operands swapped
-        a, b = other.z3_expr, self.z3_expr
-        backend = self.tracer.backend
-        truncated = backend.UDiv(a, b)
-        remainder = backend.Mod(a, b)
-        
-        signs_differ = backend.Not(backend.Eq(backend.LT(a, backend.IntVal(0)), 
-                                               backend.LT(b, backend.IntVal(0))))
-        has_remainder = backend.Not(backend.Eq(remainder, backend.IntVal(0)))
-        needs_adjustment = backend.And(signs_differ, has_remainder)
-        
-        result = backend.If(needs_adjustment,
-                           backend.Sub(truncated, backend.IntVal(1)),
-                           truncated)
+        result = self._python_floor_div(other.z3_expr, self.z3_expr, self.tracer.backend)
         return SymbolicInt(result, tracer=self.tracer)
     
     def __radd__(self, other):
@@ -325,23 +312,16 @@ class SymbolicInt:
                                                   -self.z3_expr), 
                            tracer=self.tracer)
 
-    def __mod__(self, other):
-        other = self.tracer.ensure_symbolic(other)
-        if self.concrete is not None and other.concrete is not None:
-            return SymbolicInt(self.concrete % other.concrete, tracer=self.tracer)
-        
-        # Python's modulo: result has same sign as divisor
-        # r = a - b * floor(a/b)
-        # SMT-LIB's mod: result has same sign as dividend  
-        # We need to adjust when signs differ
-        backend = self.tracer.backend
-        a, b = self.z3_expr, other.z3_expr
-        
+    def _python_mod(self, dividend, divisor, backend):
+        """Helper to implement Python's modulo semantics.
+        Python: result has same sign as divisor
+        SMT-LIB mod: result has same sign as dividend
+        """
         # Add constraint that divisor is not zero
-        self.tracer.add_constraint(backend.Not(backend.Eq(b, backend.IntVal(0))))
+        self.tracer.add_constraint(backend.Not(backend.Eq(divisor, backend.IntVal(0))))
         
         # Get SMT-LIB mod result
-        smt_mod = backend.Mod(a, b)
+        smt_mod = backend.Mod(dividend, divisor)
         
         # Python modulo adjustment:
         # If result is non-zero and signs of result and divisor differ, add divisor to result
@@ -350,13 +330,21 @@ class SymbolicInt:
                 backend.Not(backend.Eq(smt_mod, backend.IntVal(0))),
                 backend.Not(backend.Eq(
                     backend.LT(smt_mod, backend.IntVal(0)),
-                    backend.LT(b, backend.IntVal(0))
+                    backend.LT(divisor, backend.IntVal(0))
                 ))
             ),
-            backend.Add(smt_mod, b),
+            backend.Add(smt_mod, divisor),
             smt_mod
         )
         
+        return result
+
+    def __mod__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        if self.concrete is not None and other.concrete is not None:
+            return SymbolicInt(self.concrete % other.concrete, tracer=self.tracer)
+        
+        result = self._python_mod(self.z3_expr, other.z3_expr, self.tracer.backend)
         return SymbolicInt(result, tracer=self.tracer)
 
     def __rmod__(self, other):
@@ -364,29 +352,7 @@ class SymbolicInt:
         if self.concrete is not None and other.concrete is not None:
             return SymbolicInt(other.concrete % self.concrete, tracer=self.tracer)
         
-        # Same Python modulo logic but with operands swapped
-        backend = self.tracer.backend
-        a, b = other.z3_expr, self.z3_expr
-        
-        # Add constraint that divisor is not zero
-        self.tracer.add_constraint(backend.Not(backend.Eq(b, backend.IntVal(0))))
-        
-        # Get SMT-LIB mod result
-        smt_mod = backend.Mod(a, b)
-        
-        # Python modulo adjustment
-        result = backend.If(
-            backend.And(
-                backend.Not(backend.Eq(smt_mod, backend.IntVal(0))),
-                backend.Not(backend.Eq(
-                    backend.LT(smt_mod, backend.IntVal(0)),
-                    backend.LT(b, backend.IntVal(0))
-                ))
-            ),
-            backend.Add(smt_mod, b),
-            smt_mod
-        )
-        
+        result = self._python_mod(other.z3_expr, self.z3_expr, self.tracer.backend)
         return SymbolicInt(result, tracer=self.tracer)
 
 
