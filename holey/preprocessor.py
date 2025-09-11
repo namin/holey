@@ -69,12 +69,24 @@ class SymbolicZipIterator:
 def sym_sum(iterable):
     """Symbolic summation that maintains symbolic operations"""
     # Handle SymbolicList directly without iteration
-    from holey.core import SymbolicList, SymbolicInt
+    from holey.core import SymbolicList, SymbolicInt, SymbolicSlice
     if isinstance(iterable, SymbolicList):
         if iterable.elementTyp == int:
             return SymbolicInt(iterable.tracer.backend.ListSum(iterable.z3_expr), tracer=iterable.tracer)
         # For non-int lists, fall back to iteration
         return sum(iterable)
+    
+    # Handle SymbolicSlice - need to compute sum of slice
+    if isinstance(iterable, SymbolicSlice):
+        # Use the sum method we just added
+        if hasattr(iterable, 'sum'):
+            return iterable.sum()
+        # Fallback to get_slice
+        sliced = iterable.get_slice()
+        if isinstance(sliced, SymbolicList):
+            return sym_sum(sliced)
+        # For other types, try regular sum
+        return sum(sliced)
     
     if isinstance(iterable, SymbolicGenerator):
         iterator = iterable.iterator

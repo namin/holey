@@ -1151,6 +1151,46 @@ class SymbolicSlice:
         sliced = self.get_slice()
         # Use the appropriate count method
         return sliced.count(sub)
+    
+    def sum(self):
+        """Sum elements in sliced sequence (for numeric lists)"""
+        if isinstance(self.concrete, list):
+            # Check if all elements are numeric (int, float, or SymbolicInt)
+            all_numeric = all(isinstance(x, (int, float, SymbolicInt)) for x in self.concrete)
+            if all_numeric:
+                # Build a conditional sum over the range
+                start = self.start if self.start is not None else 0
+                end = self.end if self.end is not None else len(self.concrete)
+                
+                start_expr = start.z3_expr if isinstance(start, SymbolicInt) else self.tracer.backend.IntVal(start)
+                end_expr = end.z3_expr if isinstance(end, SymbolicInt) else self.tracer.backend.IntVal(end)
+                
+                # Build nested If expressions for the sum
+                result_sum = self.tracer.backend.IntVal(0)
+                for i in range(len(self.concrete)):
+                    in_range = self.tracer.backend.And(
+                        self.tracer.backend.LE(start_expr, self.tracer.backend.IntVal(i)),
+                        self.tracer.backend.LT(self.tracer.backend.IntVal(i), end_expr)
+                    )
+                    # Get the value at index i
+                    elem = self.concrete[i]
+                    if isinstance(elem, SymbolicInt):
+                        elem_expr = elem.z3_expr
+                    else:
+                        elem_expr = self.tracer.backend.IntVal(elem)
+                    
+                    result_sum = self.tracer.backend.Add(
+                        result_sum,
+                        self.tracer.backend.If(
+                            in_range,
+                            elem_expr,
+                            self.tracer.backend.IntVal(0)
+                        )
+                    )
+                return SymbolicInt(result_sum, tracer=self.tracer)
+        
+        # For non-numeric or non-list, just use get_slice and regular sum
+        return sum(self.get_slice())
 
     def get_slice(self):
         """Convert slice to appropriate symbolic type (SymbolicStr or SymbolicList)"""
@@ -1178,8 +1218,10 @@ class SymbolicSlice:
                 tracer=self.tracer
             )
         else:
-            # For lists, we still need to implement this
-            raise ValueError("Not implemented: symbolic list slicing")
+            # For lists with symbolic indices, we can't easily create a proper list
+            # For now, return self (the SymbolicSlice) which has methods to work with it
+            # This is a placeholder - proper symbolic list slicing would require more work
+            return self
 
 class SymbolicRangeIterator:
     def __init__(self, sym_range):
