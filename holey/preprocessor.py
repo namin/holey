@@ -333,26 +333,22 @@ def sym_range(*args):
         start, stop, step = args
     
     tracer = first_tracer(args)
-    [start, stop, step] = [tracer.ensure_symbolic(arg) for arg in [start, stop, step]]
-
-    if start.concrete is not None and stop.concrete is not None and step.concrete is not None:
-        return range(start.concrete, stop.concrete, step.concrete)
-
-    name = f"i_{next(counter)}"
-    tracer.backend.quantified_vars.add(name)
-    i = make_symbolic(int, name, tracer=tracer)
     
-    # Create bounds condition
-    bounds = (i >= start).__and__(i < stop)
-    if step != 1:
-        k = make_symbolic(int, f"k_{next(counter)}", tracer=tracer)
-        bounds = bounds.__and__(k >= 0).__and__(
-            i == start + k * step).__and__(
-            k < (stop - start) // step)
+    # If we have concrete values, return a regular range
+    if all(isinstance(arg, int) for arg in [start, stop, step]):
+        return range(start, stop, step)
     
-    # Add to forall conditions instead of direct constraints
-    tracer.forall_conditions.append((i.z3_expr, bounds.z3_expr))
-    return [i]
+    # For symbolic ranges, check if all values are concrete
+    start_val = start if isinstance(start, int) else (start.concrete if hasattr(start, 'concrete') else None)
+    stop_val = stop if isinstance(stop, int) else (stop.concrete if hasattr(stop, 'concrete') else None) 
+    step_val = step if isinstance(step, int) else (step.concrete if hasattr(step, 'concrete') else None)
+    
+    if start_val is not None and stop_val is not None and step_val is not None:
+        return range(start_val, stop_val, step_val)
+    
+    # For use with all()/any(), return a SymbolicRange that can be properly quantified
+    from holey.core import SymbolicRange
+    return SymbolicRange(start, stop, step if step != 1 else None, tracer=tracer)
 
 def sym_not(x):
     if hasattr(x, 'tracer'):
@@ -387,6 +383,19 @@ def sym_any(iterable):
 def sym_all(iterable):
     """Handle all() for symbolic values"""
     if isinstance(iterable, types.GeneratorType):
+        iterator = iter(iterable.gi_frame.f_locals['.0'])
+        if isinstance(iterator, SymbolicRangeIterator):
+            predicate = next(iterable)
+            bounds = iterator.get_bounds()
+            # For all(), we want: forall i. (bounds(i) => predicate(i))
+            # This is handled by returning a special marker that add_constraint will recognize
+            return SymbolicBool(iterator.tracer.backend.ForAll(
+                [iterator.tracer.backend.Int(iterator.var.z3_expr.decl().name())],
+                iterator.tracer.backend.Implies(
+                    bounds.z3_expr,
+                    truthy(predicate).z3_expr
+                )
+            ), tracer=iterator.tracer)
         # Convert generator to list and ensure boolean conditions
         iterable = [x for x in list(iterable)]
     result = None

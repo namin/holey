@@ -1125,8 +1125,11 @@ class SymbolicRangeIterator:
         self.tracer = sym_range.tracer
         self.sym_range = sym_range
         # Create fresh variable for the iterator
-        self.var = SymbolicInt(name=f'i_{SymbolicRange._counter}', tracer=sym_range.tracer)
+        var_name = f'i_{SymbolicRange._counter}'
         SymbolicRange._counter += 1
+        # Mark as quantified so it's not declared in the header
+        self.tracer.backend.quantified_vars.add(var_name)
+        self.var = SymbolicInt(name=var_name, tracer=sym_range.tracer)
         self.used = False
     
     def __iter__(self):
@@ -1136,8 +1139,7 @@ class SymbolicRangeIterator:
         if self.used:
             raise StopIteration
         self.used = True
-        bounds = self.get_bounds()
-        self.tracer.forall_conditions.append((self.var.z3_expr, bounds.z3_expr))
+        # Don't add to forall_conditions here - let sym_all/sym_any handle it
         return self.var
     
     def get_bounds(self):
