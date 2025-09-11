@@ -550,12 +550,16 @@ class SymbolicListIterator:
         self.elementTyp = sym_list.elementTyp
         self.length = sym_list.__len__()
         self.used = False
+        # Store the initial forall conditions count to restore later
+        self.initial_forall_count = len(self.tracer.forall_conditions)
         
     def __iter__(self):
         return self
         
     def __next__(self):
         if self.used:
+            # Clear the forall conditions we added when iteration completes
+            self.tracer.forall_conditions = self.tracer.forall_conditions[:self.initial_forall_count]
             raise StopIteration
             
         # Create position variable directly as a variable in forall
@@ -766,12 +770,16 @@ class SymbolicStrIterator:
         self.sym_str = sym_str
         self.length = sym_str.__len__()
         self.used = False
+        # Store the initial forall conditions count to restore later
+        self.initial_forall_count = len(self.tracer.forall_conditions)
         
     def __iter__(self):
         return self
         
     def __next__(self):
         if self.used:
+            # Clear the forall conditions we added when iteration completes
+            self.tracer.forall_conditions = self.tracer.forall_conditions[:self.initial_forall_count]
             raise StopIteration
             
         # Create position variable directly as a Z3 variable in forall
