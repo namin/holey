@@ -264,6 +264,20 @@ class SymbolicInt:
         Python: rounds toward negative infinity
         SMT-LIB div: rounds toward zero (truncating)
         """
+        # Only add zero-check for non-quantified variables
+        # Check if divisor is a quantified variable by looking at its name
+        is_quantified = False
+        if hasattr(divisor, 'decl') and callable(divisor.decl):
+            try:
+                var_name = str(divisor.decl().name())
+                is_quantified = var_name in backend.quantified_vars
+            except:
+                pass
+        
+        if not is_quantified:
+            # Add constraint that divisor is not zero
+            self.tracer.add_constraint(backend.Not(backend.Eq(divisor, backend.IntVal(0))))
+        
         truncated = backend.UDiv(dividend, divisor)
         remainder = backend.Mod(dividend, divisor)
         
