@@ -261,11 +261,50 @@ class SymbolicInt:
     
     def __floordiv__(self, other):
         other = self.tracer.ensure_symbolic(other)
-        return SymbolicInt(self.tracer.backend.UDiv(self.z3_expr, other.z3_expr), tracer=self.tracer)
+        # Add constraint that divisor is not zero
+        self.tracer.add_constraint(self.tracer.backend.Not(
+            self.tracer.backend.Eq(other.z3_expr, self.tracer.backend.IntVal(0))))
+        
+        # Implement Python's floor division correctly
+        # floor_div(a,b) = div(a,b) - (1 if (a % b != 0 and (a < 0) != (b < 0)) else 0)
+        a, b = self.z3_expr, other.z3_expr
+        backend = self.tracer.backend
+        truncated = backend.UDiv(a, b)
+        remainder = backend.Mod(a, b)
+        
+        # Check if signs differ and remainder is non-zero
+        signs_differ = backend.Not(backend.Eq(backend.LT(a, backend.IntVal(0)), 
+                                               backend.LT(b, backend.IntVal(0))))
+        has_remainder = backend.Not(backend.Eq(remainder, backend.IntVal(0)))
+        needs_adjustment = backend.And(signs_differ, has_remainder)
+        
+        # Adjust result if needed
+        result = backend.If(needs_adjustment,
+                           backend.Sub(truncated, backend.IntVal(1)),
+                           truncated)
+        return SymbolicInt(result, tracer=self.tracer)
     
     def __rfloordiv__(self, other):
         other = self.tracer.ensure_symbolic(other)
-        return SymbolicInt(self.tracer.backend.UDiv(other.z3_expr, self.z3_expr), tracer=self.tracer)
+        # Add constraint that divisor is not zero
+        self.tracer.add_constraint(self.tracer.backend.Not(
+            self.tracer.backend.Eq(self.z3_expr, self.tracer.backend.IntVal(0))))
+        
+        # Same logic but with operands swapped
+        a, b = other.z3_expr, self.z3_expr
+        backend = self.tracer.backend
+        truncated = backend.UDiv(a, b)
+        remainder = backend.Mod(a, b)
+        
+        signs_differ = backend.Not(backend.Eq(backend.LT(a, backend.IntVal(0)), 
+                                               backend.LT(b, backend.IntVal(0))))
+        has_remainder = backend.Not(backend.Eq(remainder, backend.IntVal(0)))
+        needs_adjustment = backend.And(signs_differ, has_remainder)
+        
+        result = backend.If(needs_adjustment,
+                           backend.Sub(truncated, backend.IntVal(1)),
+                           truncated)
+        return SymbolicInt(result, tracer=self.tracer)
     
     def __radd__(self, other):
         return self.__add__(other)

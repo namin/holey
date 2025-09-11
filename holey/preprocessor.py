@@ -577,6 +577,25 @@ class HoleyWrapper(ast.NodeTransformer):
             args=[node],
             keywords=[]
         )
+    
+    def visit_SetComp(self, node):
+        """Transform set comprehension to set(list comprehension)
+        {expr for x in iter} -> set([expr for x in iter])
+        This allows symbolic execution to track the values.
+        """
+        # Convert SetComp to ListComp
+        list_comp = ast.ListComp(
+            elt=node.elt,
+            generators=node.generators
+        )
+        # Visit the list comprehension to apply transformations
+        list_comp = self.generic_visit(list_comp)
+        # Wrap in set() call
+        return ast.Call(
+            func=ast.Name(id='set', ctx=ast.Load()),
+            args=[list_comp],
+            keywords=[]
+        )
 
 def inject(sat_func):
     tree = ast.parse(sat_func)
