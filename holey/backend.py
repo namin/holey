@@ -444,11 +444,7 @@ library = {
        (list.get.int (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
-  (ite (= l (as nil (List Int)))
-       false
-       (ite (= (head l) val)
-            true
-            (list.contains.int (tail l) val))))
+  (> (list.count.int l val) 0))
 
 (define-fun-rec list.index.rec.int ((i Int) (l (List Int)) (val Int)) Int
   (ite (= l (as nil (List Int)))
@@ -473,11 +469,7 @@ library = {
        (list.get.string (tail l) (- idx 1)))))
 
 (define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
-  (ite (= l (as nil (List String)))
-       false
-       (ite (= (head l) val)
-            true
-            (list.contains.string (tail l) val))))
+  (> (list.count.string l val) 0))
 
 (define-fun-rec list.sum.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
