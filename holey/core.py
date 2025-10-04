@@ -259,13 +259,49 @@ class SymbolicInt:
         other = self.tracer.ensure_symbolic(other)
         return SymbolicInt(other.z3_expr / self.z3_expr, tracer=self.tracer)
     
+    def _python_floor_div(self, dividend, divisor, backend):
+        """Helper to implement Python's floor division semantics.
+        Python: rounds toward negative infinity
+        SMT-LIB div: rounds toward zero (truncating)
+        """
+        # Only add zero-check for non-quantified variables
+        # Check if divisor is a quantified variable by looking at its name
+        is_quantified = False
+        if hasattr(divisor, 'decl') and callable(divisor.decl):
+            try:
+                var_name = str(divisor.decl().name())
+                is_quantified = var_name in backend.quantified_vars
+            except:
+                pass
+        
+        if not is_quantified:
+            # Add constraint that divisor is not zero
+            self.tracer.add_constraint(backend.Not(backend.Eq(divisor, backend.IntVal(0))))
+        
+        truncated = backend.UDiv(dividend, divisor)
+        remainder = backend.Mod(dividend, divisor)
+        
+        # Check if signs differ and remainder is non-zero
+        # If so, we need to subtract 1 from truncated result
+        signs_differ = backend.Not(backend.Eq(
+            backend.LT(dividend, backend.IntVal(0)), 
+            backend.LT(divisor, backend.IntVal(0))))
+        has_remainder = backend.Not(backend.Eq(remainder, backend.IntVal(0)))
+        needs_adjustment = backend.And(signs_differ, has_remainder)
+        
+        return backend.If(needs_adjustment,
+                         backend.Sub(truncated, backend.IntVal(1)),
+                         truncated)
+    
     def __floordiv__(self, other):
         other = self.tracer.ensure_symbolic(other)
-        return SymbolicInt(self.tracer.backend.UDiv(self.z3_expr, other.z3_expr), tracer=self.tracer)
+        result = self._python_floor_div(self.z3_expr, other.z3_expr, self.tracer.backend)
+        return SymbolicInt(result, tracer=self.tracer)
     
     def __rfloordiv__(self, other):
         other = self.tracer.ensure_symbolic(other)
-        return SymbolicInt(self.tracer.backend.UDiv(other.z3_expr, self.z3_expr), tracer=self.tracer)
+        result = self._python_floor_div(other.z3_expr, self.z3_expr, self.tracer.backend)
+        return SymbolicInt(result, tracer=self.tracer)
     
     def __radd__(self, other):
         return self.__add__(other)
@@ -286,17 +322,34 @@ class SymbolicInt:
                                                   -self.z3_expr), 
                            tracer=self.tracer)
 
+    def _python_mod(self, dividend, divisor, backend):
+        """Helper to implement Python's modulo semantics.
+        Python: result has same sign as divisor
+        SMT-LIB mod: result has same sign as dividend
+        
+        For now, we just use SMT-LIB's mod directly.
+        The full Python semantics would require complex logic that causes timeouts.
+        Most puzzles use positive numbers where Python and SMT-LIB agree.
+        """
+        # TODO: Add smarter logic that only applies Python semantics when needed
+        # (e.g., when we know signs might differ)
+        return backend.Mod(dividend, divisor)
+
     def __mod__(self, other):
         other = self.tracer.ensure_symbolic(other)
         if self.concrete is not None and other.concrete is not None:
             return SymbolicInt(self.concrete % other.concrete, tracer=self.tracer)
-        return SymbolicInt(self.tracer.backend.Mod(self.z3_expr, other.z3_expr), tracer=self.tracer)
+        
+        result = self._python_mod(self.z3_expr, other.z3_expr, self.tracer.backend)
+        return SymbolicInt(result, tracer=self.tracer)
 
     def __rmod__(self, other):
         other = self.tracer.ensure_symbolic(other)
         if self.concrete is not None and other.concrete is not None:
             return SymbolicInt(other.concrete % self.concrete, tracer=self.tracer)
-        return SymbolicInt(self.tracer.backend.Mod(other.z3_expr, self.z3_expr), tracer=self.tracer)
+        
+        result = self._python_mod(other.z3_expr, self.z3_expr, self.tracer.backend)
+        return SymbolicInt(result, tracer=self.tracer)
 
 
     def __pow__(self, other):
@@ -497,12 +550,16 @@ class SymbolicListIterator:
         self.elementTyp = sym_list.elementTyp
         self.length = sym_list.__len__()
         self.used = False
+        # Store the initial forall conditions count to restore later
+        self.initial_forall_count = len(self.tracer.forall_conditions)
         
     def __iter__(self):
         return self
         
     def __next__(self):
         if self.used:
+            # Clear the forall conditions we added when iteration completes
+            self.tracer.forall_conditions = self.tracer.forall_conditions[:self.initial_forall_count]
             raise StopIteration
             
         # Create position variable directly as a variable in forall
@@ -713,12 +770,16 @@ class SymbolicStrIterator:
         self.sym_str = sym_str
         self.length = sym_str.__len__()
         self.used = False
+        # Store the initial forall conditions count to restore later
+        self.initial_forall_count = len(self.tracer.forall_conditions)
         
     def __iter__(self):
         return self
         
     def __next__(self):
         if self.used:
+            # Clear the forall conditions we added when iteration completes
+            self.tracer.forall_conditions = self.tracer.forall_conditions[:self.initial_forall_count]
             raise StopIteration
             
         # Create position variable directly as a Z3 variable in forall
@@ -1090,6 +1151,46 @@ class SymbolicSlice:
         sliced = self.get_slice()
         # Use the appropriate count method
         return sliced.count(sub)
+    
+    def sum(self):
+        """Sum elements in sliced sequence (for numeric lists)"""
+        if isinstance(self.concrete, list):
+            # Check if all elements are numeric (int, float, or SymbolicInt)
+            all_numeric = all(isinstance(x, (int, float, SymbolicInt)) for x in self.concrete)
+            if all_numeric:
+                # Build a conditional sum over the range
+                start = self.start if self.start is not None else 0
+                end = self.end if self.end is not None else len(self.concrete)
+                
+                start_expr = start.z3_expr if isinstance(start, SymbolicInt) else self.tracer.backend.IntVal(start)
+                end_expr = end.z3_expr if isinstance(end, SymbolicInt) else self.tracer.backend.IntVal(end)
+                
+                # Build nested If expressions for the sum
+                result_sum = self.tracer.backend.IntVal(0)
+                for i in range(len(self.concrete)):
+                    in_range = self.tracer.backend.And(
+                        self.tracer.backend.LE(start_expr, self.tracer.backend.IntVal(i)),
+                        self.tracer.backend.LT(self.tracer.backend.IntVal(i), end_expr)
+                    )
+                    # Get the value at index i
+                    elem = self.concrete[i]
+                    if isinstance(elem, SymbolicInt):
+                        elem_expr = elem.z3_expr
+                    else:
+                        elem_expr = self.tracer.backend.IntVal(elem)
+                    
+                    result_sum = self.tracer.backend.Add(
+                        result_sum,
+                        self.tracer.backend.If(
+                            in_range,
+                            elem_expr,
+                            self.tracer.backend.IntVal(0)
+                        )
+                    )
+                return SymbolicInt(result_sum, tracer=self.tracer)
+        
+        # For non-numeric or non-list, just use get_slice and regular sum
+        return sum(self.get_slice())
 
     def get_slice(self):
         """Convert slice to appropriate symbolic type (SymbolicStr or SymbolicList)"""
@@ -1117,16 +1218,21 @@ class SymbolicSlice:
                 tracer=self.tracer
             )
         else:
-            # For lists, we still need to implement this
-            raise ValueError("Not implemented: symbolic list slicing")
+            # For lists with symbolic indices, we can't easily create a proper list
+            # For now, return self (the SymbolicSlice) which has methods to work with it
+            # This is a placeholder - proper symbolic list slicing would require more work
+            return self
 
 class SymbolicRangeIterator:
     def __init__(self, sym_range):
         self.tracer = sym_range.tracer
         self.sym_range = sym_range
         # Create fresh variable for the iterator
-        self.var = SymbolicInt(name=f'i_{SymbolicRange._counter}', tracer=sym_range.tracer)
+        var_name = f'i_{SymbolicRange._counter}'
         SymbolicRange._counter += 1
+        # Mark as quantified so it's not declared in the header
+        self.tracer.backend.quantified_vars.add(var_name)
+        self.var = SymbolicInt(name=var_name, tracer=sym_range.tracer)
         self.used = False
     
     def __iter__(self):
@@ -1136,8 +1242,7 @@ class SymbolicRangeIterator:
         if self.used:
             raise StopIteration
         self.used = True
-        bounds = self.get_bounds()
-        self.tracer.forall_conditions.append((self.var.z3_expr, bounds.z3_expr))
+        # Don't add to forall_conditions here - let sym_all/sym_any handle it
         return self.var
     
     def get_bounds(self):
