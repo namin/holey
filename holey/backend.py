@@ -50,7 +50,7 @@ def from_stmlib_float(value):
 
 cmd_prefixes = {
     'z3': ['z3', '-T:2'],
-    'cvc5': ['cvc5', '--tlimit=2000', '--produce-model', '--fmf-fun']
+    'cvc5': ['my-cvc5', '--tlimit=2000', '--produce-model', '--fmf-fun', '--fmf-fun-rlv', '--unroll=20']
 }
 def smtlib_cmd(smt2_file, cmd=None):
     cmd = cmd or next(iter(cmd_prefixes.keys()))
@@ -437,11 +437,9 @@ library = {
        (+ 1 (list.length.int (tail l)))))
 
 (define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
-  (ite (< idx 0)
-       (list.get.int l (+ (list.length.int l) idx))
-  (ite (= idx 0)
+  (ite (<= idx 0)
        (head l)
-       (list.get.int (tail l) (- idx 1)))))
+       (list.get.int (tail l) (- idx 1))))
 
 (define-fun-rec list.index.rec.int ((i Int) (l (List Int)) (val Int)) Int
   (ite (= l (as nil (List Int)))
@@ -459,11 +457,9 @@ library = {
        (+ 1 (list.length.string (tail l)))))
 
 (define-fun-rec list.get.string ((l (List String)) (idx Int)) String
-  (ite (< idx 0)
-       (list.get.string l (+ (list.length.string l) idx))
-  (ite (= idx 0)
+  (ite (<= idx 0)
        (head l)
-       (list.get.string (tail l) (- idx 1)))))
+       (list.get.string (tail l) (- idx 1))))
 
 (define-fun-rec list.sum.int ((l (List Int))) Int
   (ite (= l (as nil (List Int)))
