@@ -485,13 +485,14 @@ library = {
        (as nil (List Int))
        (cons (+ (head l) val) (list.map_add.int (tail l) val))))
 
+
 (define-fun-rec list.count.int ((l (List Int)) (val Int)) Int
   (ite (= l (as nil (List Int)))
        0
        (+ (ite (= (head l) val) 1 0)
           (list.count.int (tail l) val))))
 
-(define-fun-rec list.contains.int ((l (List Int)) (val Int)) Bool
+(define-fun list.contains.int ((l (List Int)) (val Int)) Bool
   (> (list.count.int l val) 0))
 
 (define-fun-rec list.count.string ((l (List String)) (val String)) Int
@@ -500,7 +501,7 @@ library = {
        (+ (ite (= (head l) val) 1 0)
           (list.count.string (tail l) val))))
 
-(define-fun-rec list.contains.string ((l (List String)) (val String)) Bool
+(define-fun list.contains.string ((l (List String)) (val String)) Bool
   (> (list.count.string l val) 0))
 
 (define-fun-rec list.count.bool ((l (List Bool)) (val Bool)) Int
