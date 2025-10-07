@@ -95,6 +95,25 @@ class PuzzleSolver:
         print("Found solution", result)
         return result, log
 
+    def solve_puzzle_llm(self, puzzle_data: Any, llm_solver) -> Optional[str]:
+        name = puzzle_data.get('name', '')
+        sat_func = puzzle_data.get('sat_function', puzzle_data.get('sat', ''))
+        if not sat_func:
+            print("Missing sat_func")
+            return None
+        print('sat_func', sat_func)
+        ans_type = puzzle_data.get('ans_type', None)
+        if not ans_type:
+            print("Missing ans_type")
+            return None
+        result = call_solvers(llm_solver, self.end2end_stats, name, lambda x: x.solve_end2end(sat_func, ans_type, name, check_result))
+        if result is not None:
+            self.success_count += 1
+            self.success_counts[ans_type] += 1
+        self.count += 1
+        self.counts[ans_type] += 1
+        return result
+
     def solve_puzzle(self, puzzle_data: Any, cmds, llm_solver, reason=None) -> Optional[str]:
         name = puzzle_data.get('name', '')
         sat_func = puzzle_data.get('sat_function', puzzle_data.get('sat', ''))
@@ -236,7 +255,7 @@ def check_result(result, sat_func):
         return False
     return True
 
-def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None):
+def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None, llm_all = None):
     with open(puzzle_file) as f:
         puzzles = json.load(f)
     
@@ -265,9 +284,19 @@ def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None,
         name = puzzle.get('name', 'Unknown')
         print(f"\nSolving puzzle {i+1}/{len(puzzles)}: {name}")
 
-        result = solver.solve_puzzle(puzzle, smtlib_backends, llm_solver)
+        if llm_all:
+            result = solver.solve_puzzle_llm(puzzle, llm_solver)
+        else:
+            result = solver.solve_puzzle(puzzle, smtlib_backends, llm_solver)
 
-    print(solver.pretty_stats())
+    if llm_all:
+        print(f"""## Current status
+
+LLMs currently solve:
+{solver.pretty_counts()}
+""")
+    else:
+        print(solver.pretty_stats())
 
 def vary(sat_func):
     # Find all large constants
@@ -342,10 +371,11 @@ if __name__ == "__main__":
                         default=['z3'],
                         help='the SMTLIB backend')
     parser.add_argument('--llm', action='store_true', help='fallback to LLMs')
+    parser.add_argument('--llm-all', action='store_true', help='Ask LLMs end-to-end')
     args = parser.parse_args()
     
     llm_solver = None
     if args.llm:
         from holey import llm_generators
         llm_solver = {k: LLMSolver(v) for k,v in llm_generators.items()}
-    run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver)
+    run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all)
