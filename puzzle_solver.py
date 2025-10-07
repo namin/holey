@@ -198,8 +198,8 @@ class PuzzleSolver:
             success_percentage = (100.0 * success / total) if total > 0 else 0
             r += (f"- {success_percentage:.0f}% ({success} out of {total}) of `{ans_type}` puzzles,")
             r += '\n'
-        total = sum(success_counts.values())
-        success = sum(counts.values())
+        total = sum(counts.values())
+        success = sum(success_counts.values())
         success_percentage = (100.0 * success / total) if total > 0 else 0
         r += (f"- {success_percentage:.0f}% ({success} out of {total}) overall.")
         r += '\n'
