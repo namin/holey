@@ -28,6 +28,8 @@ class PuzzleSolver:
         self.counts = defaultdict(int)
         self.success_count = 0
         self.success_counts = defaultdict(int)
+        self.success_count_llm = 0
+        self.success_counts_llm = defaultdict(int)
         self.timeout_staging_count = 0
         self.error_verify_count = 0
         self.error_staging_count = 0
@@ -114,7 +116,7 @@ class PuzzleSolver:
         self.counts[ans_type] += 1
         return result
 
-    def solve_puzzle(self, puzzle_data: Any, cmds, llm_solver, reason=None) -> Optional[str]:
+    def solve_puzzle(self, puzzle_data: Any, cmds, llm_solver, llm_end, reason=None) -> Optional[str]:
         name = puzzle_data.get('name', '')
         sat_func = puzzle_data.get('sat_function', puzzle_data.get('sat', ''))
         if not sat_func:
@@ -137,14 +139,20 @@ class PuzzleSolver:
                         self.success_count += 1
                         self.success_counts[ans_type] += 1
                         print("Yes! Solved for puzzle ", name)
-            if not reason and result is None:
+                        if llm_end is not None:
+                            result_end2end = call_solvers(llm_solver, self.end2end_stats, name, lambda x: x.solve_end2end(sat_func, ans_type, name, check_result))
+                            if result_end2end is not None:
+                                print('Solved by LLMs too')
+                                self.success_count_llm += 1
+                                self.success_counts_llm[ans_type] += 1
+            if not reason and result is None and llm_end is None:
                 varied_puzzle_sat_func, reason = vary(sat_func)
                 if varied_puzzle_sat_func is not None:
                     self.extrapolate_small_count += 1
                     print('Solving simpler variation', reason)
                     varied_puzzle = copy.deepcopy(puzzle_data)
                     varied_puzzle['sat_function'] = varied_puzzle_sat_func
-                    varied_result = self.solve_puzzle(varied_puzzle, cmds, llm_solver, reason=reason)
+                    varied_result = self.solve_puzzle(varied_puzzle, cmds, llm_solver, llm_end, reason=reason)
                     if varied_result is not None:
                         self.extrapolate_small_success_count += 1
                         self.names_of_extrapolated_puzzles.append(name)
@@ -178,15 +186,21 @@ class PuzzleSolver:
         return None
 
     def pretty_counts(self):
-        count_stats = sorted([(self.success_counts[ans_type], total, ans_type) for ans_type,total in self.counts.items()], reverse=True)
+        return self.pretty_counts_within(self.success_counts, self.counts)
+
+    def pretty_counts_llm(self):
+        return self.pretty_counts_within(self.success_counts_llm, self.success_counts)
+
+    def pretty_counts_within(self, success_counts, counts):
+        count_stats = sorted([(success_counts[ans_type], total, ans_type) for ans_type,total in counts.items()], reverse=True)
         r = ""
         for success, total, ans_type in count_stats:
-            success_percentage = 100.0 * success / total
+            success_percentage = (100.0 * success / total) if total > 0 else 0
             r += (f"- {success_percentage:.0f}% ({success} out of {total}) of `{ans_type}` puzzles,")
             r += '\n'
-        total = self.count
-        success = self.success_count
-        success_percentage = 100.0 * success / total
+        total = sum(success_counts.values())
+        success = sum(counts.values())
+        success_percentage = (100.0 * success / total) if total > 0 else 0
         r += (f"- {success_percentage:.0f}% ({success} out of {total}) overall.")
         r += '\n'
         return r
@@ -255,7 +269,7 @@ def check_result(result, sat_func):
         return False
     return True
 
-def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None, llm_all = None):
+def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None, llm_all = None, llm_end = None):
     with open(puzzle_file) as f:
         puzzles = json.load(f)
     
@@ -287,7 +301,7 @@ def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None,
         if llm_all:
             result = solver.solve_puzzle_llm(puzzle, llm_solver)
         else:
-            result = solver.solve_puzzle(puzzle, smtlib_backends, llm_solver)
+            result = solver.solve_puzzle(puzzle, smtlib_backends, llm_solver, llm_end)
 
     if llm_all:
         print(f"""## Current status
@@ -297,6 +311,9 @@ LLMs currently solve:
 """)
     else:
         print(solver.pretty_stats())
+        if llm_end is not None:
+            print(f"Within the symbolic success, the LLMs solves the following:")
+            print(solver.pretty_counts_llm())
 
 def vary(sat_func):
     # Find all large constants
@@ -372,10 +389,11 @@ if __name__ == "__main__":
                         help='the SMTLIB backend')
     parser.add_argument('--llm', action='store_true', help='fallback to LLMs')
     parser.add_argument('--llm-all', action='store_true', help='Ask LLMs end-to-end')
+    parser.add_argument('--llm-end', action='store_true', help='Ask LLMs end-to-end on success only')
     args = parser.parse_args()
     
     llm_solver = None
     if args.llm:
         from holey import llm_generators
         llm_solver = {k: LLMSolver(v) for k,v in llm_generators.items()}
-    run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all)
+    run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end)
