@@ -1,6 +1,9 @@
 import os
 from typing import List
 
+SYSTEM_PROMPT = "You are an expert." # for Anthropic only
+
+AWS_BEARER_TOKEN_BEDROCK = os.environ.get('AWS_BEARER_TOKEN_BEDROCK')
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
@@ -28,6 +31,54 @@ def generate(prompt, max_tokens=1000, temperature=1.0, model=None):
     return None
 generators[None] = generate
 
+if AWS_BEARER_TOKEN_BEDROCK:
+    generate = None
+    try:
+        from anthropic import AnthropicBedrock
+    except ModuleNotFoundError:
+        generate = dummy_generate('anthropic[bedrock]')
+    if generate is None:
+        model = os.environ.get('ANTHROPIC_AWS_MODEL')
+        if not model:
+            claude_model = os.environ.get('CLAUDE_MODEL', 'sonnet3')
+            if claude_model == 'opus':
+                model = 'us.anthropic.claude-opus-4-1-20250805-v1:0'
+            elif claude_model == 'sonnet3':
+                model = 'anthropic.claude-3-sonnet-20240229-v1:0'
+            elif claude_model == 'sonnet45':
+                model = 'global.anthropic.claude-sonnet-4-5-20250929-v1:0'
+            elif claude_model == 'sonnet4':
+                model = 'global.anthropic.claude-sonnet-4-20250514-v1:0'
+            else:
+                raise ValueError(f"Invalid Claude model: {claude_model}")
+        aws_region = os.environ.get('AWS_REGION', 'us-east-1')
+        def generate(prompt, max_tokens=1000, temperature=1.0, model=model):
+            print(f"Sending request to Anthropic AWS (model={model}, max_tokens={max_tokens}, temp={temperature})")
+
+            client = AnthropicBedrock()
+
+            message = client.messages.create(
+                model=model,
+                max_tokens=max_tokens,
+                temperature=temperature,
+                system=SYSTEM_PROMPT,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": prompt
+                            }
+                        ]
+                    }
+                ]
+            )
+            print("Received response from Anthropic AWS")
+            print(f"Response:\n{message}")
+            return message.content[0].text
+    generators['claude_aws'] = generate
+
 if PROJECT_ID:
     generate = None
     try:
@@ -44,7 +95,7 @@ if PROJECT_ID:
                 model=model,
                 max_tokens=max_tokens,
                 temperature=temperature,
-                system="You are an SMTLIB expert.",
+                system=SYSTEM_PROMPT,
                 messages=[
                     {
                         "role": "user",
@@ -126,7 +177,7 @@ if ANTHROPIC_API_KEY:
                 model=model,
                 max_tokens=max_tokens,
                 temperature=temperature,
-                system="You are an SMTLIB expert.",
+                system=SYSTEM_PROMPT,
                 messages=[
                     {
                         "role": "user",
