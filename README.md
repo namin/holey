@@ -83,8 +83,7 @@ with the following errors:
 - 9 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
 - 118 errors at at staging time
 - 175 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- 181 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
-timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
+- 181 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds)
 - 941 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 
 ### Extrapolation

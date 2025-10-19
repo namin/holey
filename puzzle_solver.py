@@ -251,8 +251,7 @@ with the following errors:
 - {self.timeout_staging_count} timeouts after 3 seconds at staging time (while generating the SMTLIB program)
 - {self.error_staging_count} errors at at staging time
 - {self.error_verify_count} SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- {self.error_smt_count + self.error_smt_var_count} SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds
-timeouts after staging (while building the SMTLIB program), errors during staging time, the SMTLIB
+- {self.error_smt_count + self.error_smt_var_count} SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds)
 - {self.total_count-self.count} (out of {self.total_count}) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 """+extrapolation
 
