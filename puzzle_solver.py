@@ -139,13 +139,13 @@ class PuzzleSolver:
                         self.success_count += 1
                         self.success_counts[ans_type] += 1
                         print("Yes! Solved for puzzle ", name)
-                        if llm_end is not None:
+                        if llm_end:
                             result_end2end = call_solvers(llm_solver, self.end2end_stats, name, lambda x: x.solve_end2end(sat_func, ans_type, name, check_result))
                             if result_end2end is not None:
                                 print('Solved by LLMs too')
                                 self.success_count_llm += 1
                                 self.success_counts_llm[ans_type] += 1
-            if not reason and result is None and llm_end is None:
+            if not reason and result is None and not llm_end:
                 varied_puzzle_sat_func, reason = vary(sat_func)
                 if varied_puzzle_sat_func is not None:
                     self.extrapolate_small_count += 1
@@ -268,7 +268,7 @@ def check_result(result, sat_func):
         return False
     return True
 
-def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None, llm_all = None, llm_end = None):
+def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None, llm_all = False, llm_end = False):
     with open(puzzle_file) as f:
         puzzles = json.load(f)
     
