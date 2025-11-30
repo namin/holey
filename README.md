@@ -1,6 +1,6 @@
 # Holey
 
-A Python library for program synthesis and symbolic execution that combines Z3's constraint solving with LLM-guided synthesis. Put holes in your Python code and let `holey` fill them using formal constraints, natural language specifications, or both.
+A Python library for program synthesis and symbolic execution that combines SMT (Z3, CVC5, ...) constraint solving with LLM-guided synthesis. Put holes in your Python code and let `holey` fill them using formal constraints, natural language specifications, or both.
 
 The symbolic execution is
 inspired by Philip Zucker's blog post [_"Symbolic Execution by Overloading `__bool__`"_](https://www.philipzucker.com/overload_bool/),
