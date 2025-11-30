@@ -2,7 +2,7 @@ import os
 from typing import List
 
 SYSTEM_PROMPT = "You are an expert." # for Anthropic only
-
+MAX_TOKENS = int(os.environ.get('MAX_TOKENS', '1000'))
 AWS_BEARER_TOKEN_BEDROCK = os.environ.get('AWS_BEARER_TOKEN_BEDROCK')
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
@@ -26,7 +26,7 @@ def dummy_generate(pkg, extra=""):
 
 generators = {}
 
-def generate(prompt, max_tokens=1000, temperature=1.0, model=None):
+def generate(prompt, max_tokens=MAX_TOKENS, temperature=1.0, model=None):
     print(f"Prompt:\n{prompt}")
     return None
 generators[None] = generate
@@ -52,7 +52,7 @@ if AWS_BEARER_TOKEN_BEDROCK:
             else:
                 raise ValueError(f"Invalid Claude model: {claude_model}")
         aws_region = os.environ.get('AWS_REGION', 'us-east-1')
-        def generate(prompt, max_tokens=1000, temperature=1.0, model=model):
+        def generate(prompt, max_tokens=MAX_TOKENS, temperature=1.0, model=model):
             print(f"Sending request to Anthropic AWS (model={model}, max_tokens={max_tokens}, temp={temperature})")
 
             client = AnthropicBedrock()
@@ -86,7 +86,7 @@ if PROJECT_ID:
     except ModuleNotFoundError:
         generate = dummy_generate('anthropic[vertex]')
     if generate is None:
-        def generate(prompt, max_tokens=1000, temperature=1.0, model="claude-sonnet-4@20250514"):
+        def generate(prompt, max_tokens=MAX_TOKENS, temperature=1.0, model="claude-sonnet-4@20250514"):
             print(f"Sending request to Anthropic Vertex (model={model}, max_tokens={max_tokens}, temp={temperature})")
 
             client = AnthropicVertex(region="us-east5", project_id=PROJECT_ID)
@@ -120,7 +120,7 @@ if PROJECT_ID:
         generate = dummy_generate('google-genai')
 
     if generate is None:
-        def generate(prompt, max_tokens=1000, temperature=1.0, model=GEMINI_MODEL):
+        def generate(prompt, max_tokens=MAX_TOKENS, temperature=1.0, model=GEMINI_MODEL):
             print(f"Sending request to Gemini Vertex (model={model}, max_tokens={max_tokens}, temp={temperature})")
 
             client = genai.Client(vertexai=True, project=PROJECT_ID, location="us-central1")
@@ -143,7 +143,7 @@ if OPENAI_API_KEY:
         OPENAI_BASE_URL = os.environ.get('OPENAI_BASE_URL')
         if OPENAI_BASE_URL:
             openai.base_url = OPENAI_BASE_URL
-        def generate(prompt, max_tokens=1000, temperature=1.0, model="gpt-4o"):
+        def generate(prompt, max_tokens=MAX_TOKENS, temperature=1.0, model="gpt-4o"):
             print(f"Sending request to OpenAI (model={model}, max_tokens={max_tokens}, temp={temperature})")
 
             completion = openai.chat.completions.create(
@@ -168,7 +168,7 @@ if ANTHROPIC_API_KEY:
     except ModuleNotFoundError:
         generate = dummy_generate('anthropic')
     if generate is None:
-        def generate(prompt, max_tokens=1000, temperature=1.0, model="claude-3-7-sonnet-20250219"):
+        def generate(prompt, max_tokens=MAX_TOKENS, temperature=1.0, model="claude-3-7-sonnet-20250219"):
             print(f"Sending request to Anthropic (model={model}, max_tokens={max_tokens}, temp={temperature})")
 
             client = anthropic.Anthropic()
@@ -203,7 +203,7 @@ if GEMINI_API_KEY:
     except ModuleNotFoundError:
         generate = dummy_generate('google-genai')
     if generate is None:
-        def generate(prompt, max_tokens=1000, temperature=1.0, model=GEMINI_MODEL):
+        def generate(prompt, max_tokens=MAX_TOKENS, temperature=1.0, model=GEMINI_MODEL):
             print(f"Sending request to Google Gemini (model={model}, max_tokens={max_tokens}, temp={temperature})")
             
             client = genai.Client(api_key=GEMINI_API_KEY)
@@ -226,7 +226,7 @@ if OLLAMA_API_KEY:
         generate = dummy_generate('ollama', extra=", or package 'anthropic' while setting ANTHROPIC_API_KEY")
     if generate is None:
         model = os.environ.get('OLLAMA_MODEL', 'gemma3:27b-it-qat')
-        def generate(prompt, max_tokens=1000, temperature=1.0, model=model):
+        def generate(prompt, max_tokens=MAX_TOKENS, temperature=1.0, model=model):
             print(f"Sending request to Ollama (model={model}, max_tokens={max_tokens}, temp={temperature})")
 
             try:
