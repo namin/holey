@@ -310,7 +310,7 @@ LLMs currently solve:
 """)
     else:
         print(solver.pretty_stats())
-        if llm_end is not None:
+        if llm_end:
             print(f"Within the symbolic success, the LLMs solves the following:")
             print(solver.pretty_counts_llm())
 
