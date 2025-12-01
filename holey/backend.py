@@ -9,6 +9,8 @@ import os
 import sexpdata
 import sys
 
+TRUNCATE = os.environ.get('TRUNCATE', 'true') != 'false'
+
 def to_smtlib_string(s):
     return '"' + ''.join(
         ch if ord(ch) < 128 else f"\\u{{{ord(ch):x}}}"
@@ -59,8 +61,9 @@ def smtlib_cmd(smt2_file, cmd=None):
 
 def print_smt(smt2):
     lines = smt2.split('\n')
-    truncated_lines = [line if len(line) < 1005 else line[0:1000] + "..." for line in lines]
-    r = '\n'.join(truncated_lines)
+    if TRUNCATE:
+        lines = [line if len(line) < 1005 else line[0:1000] + "..." for line in lines]
+    r = '\n'.join(lines)
     print(r)
     sys.stdout.flush()
     return r
