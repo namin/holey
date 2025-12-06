@@ -276,24 +276,24 @@ class SymbolicInt:
     def _python_floor_div(self, dividend, divisor, backend):
         """Helper to implement Python's floor division semantics.
         Python: rounds toward negative infinity
-        SMT-LIB div: rounds toward zero (truncating)
+        SMT-LIB div: Euclidean (remainder always non-negative)
+
+        To convert from Euclidean to floor division:
+        - If divisor < 0 and remainder != 0, subtract 1 from the quotient
         """
         self._add_nonzero_constraint(divisor, backend)
 
-        truncated = backend.UDiv(dividend, divisor)
-        remainder = backend.Mod(dividend, divisor)
-        
-        # Check if signs differ and remainder is non-zero
-        # If so, we need to subtract 1 from truncated result
-        signs_differ = backend.Not(backend.Eq(
-            backend.LT(dividend, backend.IntVal(0)), 
-            backend.LT(divisor, backend.IntVal(0))))
-        has_remainder = backend.Not(backend.Eq(remainder, backend.IntVal(0)))
-        needs_adjustment = backend.And(signs_differ, has_remainder)
-        
+        euclidean_div = backend.UDiv(dividend, divisor)
+        euclidean_mod = backend.Mod(dividend, divisor)
+
+        # Adjust when divisor < 0 and remainder != 0
+        divisor_negative = backend.LT(divisor, backend.IntVal(0))
+        has_remainder = backend.Not(backend.Eq(euclidean_mod, backend.IntVal(0)))
+        needs_adjustment = backend.And(divisor_negative, has_remainder)
+
         return backend.If(needs_adjustment,
-                         backend.Sub(truncated, backend.IntVal(1)),
-                         truncated)
+                         backend.Sub(euclidean_div, backend.IntVal(1)),
+                         euclidean_div)
     
     def __floordiv__(self, other):
         other = self.tracer.ensure_symbolic(other)
