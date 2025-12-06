@@ -144,6 +144,22 @@ class SymbolicBool:
             return SymbolicBool(not self.concrete, tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.Not(self.z3_expr), tracer=self.tracer)
 
+    def __eq__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        if not isinstance(other, SymbolicBool):
+            other = truthy(other)
+        if self.concrete is not None and hasattr(other, 'concrete') and other.concrete is not None:
+            return SymbolicBool(self.concrete == other.concrete, tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.Eq(self.z3_expr, other.z3_expr), tracer=self.tracer)
+
+    def __ne__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        if not isinstance(other, SymbolicBool):
+            other = truthy(other)
+        if self.concrete is not None and hasattr(other, 'concrete') and other.concrete is not None:
+            return SymbolicBool(self.concrete != other.concrete, tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.Not(self.tracer.backend.Eq(self.z3_expr, other.z3_expr)), tracer=self.tracer)
+
     def __add__(self, other):
         as_int = SymbolicInt(
             int(self.concrete) if self.concrete is not None else
