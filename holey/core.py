@@ -43,9 +43,10 @@ class SymbolicTracer:
             )
             self.current_branch_exploration += [branch_val]
 
+        self.branch_counter += 1
         condition = self.ensure_symbolic(condition)
         self.path_conditions.append(
-            condition.z3_expr if branch_val 
+            condition.z3_expr if branch_val
             else self.backend.Not(condition.z3_expr)
         )
         return branch_val
