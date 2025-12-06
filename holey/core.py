@@ -938,6 +938,16 @@ class SymbolicStr:
                 else:
                     raise ValueError("Slicing on symbolic strings not fully implemented.")
             key = self.tracer.ensure_symbolic(key)
+            # Add bounds check: for positive index, len > index; for negative, len >= -index
+            str_len = self.__len__()
+            if hasattr(key, 'concrete') and key.concrete is not None:
+                if key.concrete >= 0:
+                    self.tracer.add_constraint(str_len > key)
+                else:
+                    self.tracer.add_constraint(str_len >= -key.concrete)
+            else:
+                # Symbolic index - add constraint for both cases
+                self.tracer.add_constraint(str_len > key)
             return SymbolicStr(self.tracer.backend.StrIndex(self.z3_expr, key.z3_expr), tracer=self.tracer)
         if isinstance(key, slice):
             if (not isinstance(key.start, SymbolicInt) and 

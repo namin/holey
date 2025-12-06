@@ -402,6 +402,23 @@ def sym_any(iterable):
 
 def sym_all(iterable):
     """Handle all() for symbolic values"""
+    # Handle SymbolicGenerator from sym_generator()
+    if isinstance(iterable, SymbolicGenerator):
+        iterator = iterable.iterator
+        if isinstance(iterator, SymbolicZipIterator):
+            predicate = iterable.comparison
+            bounds = iterator.tracer.backend.And(
+                iterator.tracer.backend.GE(iterator.pos.z3_expr, iterator.tracer.backend.IntVal(0)),
+                iterator.tracer.backend.LT(iterator.pos.z3_expr, iterator.length.z3_expr)
+            )
+            return SymbolicBool(iterator.tracer.backend.ForAll(
+                [iterator.tracer.backend.Int(iterator.pos.z3_expr.decl().name())],
+                iterator.tracer.backend.Implies(
+                    bounds,
+                    truthy(predicate).z3_expr
+                )
+            ), tracer=iterator.tracer)
+
     if isinstance(iterable, types.GeneratorType):
         iterator = iter(iterable.gi_frame.f_locals['.0'])
         if isinstance(iterator, SymbolicRangeIterator):
