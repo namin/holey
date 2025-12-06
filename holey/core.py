@@ -259,25 +259,26 @@ class SymbolicInt:
         other = self.tracer.ensure_symbolic(other)
         return SymbolicInt(other.z3_expr / self.z3_expr, tracer=self.tracer)
     
+    def _add_nonzero_constraint(self, expr, backend):
+        """Add constraint that expr is not zero, unless it's a quantified variable."""
+        is_quantified = False
+        if hasattr(expr, 'decl') and callable(expr.decl):
+            try:
+                var_name = str(expr.decl().name())
+                is_quantified = var_name in backend.quantified_vars
+            except:
+                pass
+
+        if not is_quantified:
+            self.tracer.add_constraint(backend.Not(backend.Eq(expr, backend.IntVal(0))))
+
     def _python_floor_div(self, dividend, divisor, backend):
         """Helper to implement Python's floor division semantics.
         Python: rounds toward negative infinity
         SMT-LIB div: rounds toward zero (truncating)
         """
-        # Only add zero-check for non-quantified variables
-        # Check if divisor is a quantified variable by looking at its name
-        is_quantified = False
-        if hasattr(divisor, 'decl') and callable(divisor.decl):
-            try:
-                var_name = str(divisor.decl().name())
-                is_quantified = var_name in backend.quantified_vars
-            except:
-                pass
-        
-        if not is_quantified:
-            # Add constraint that divisor is not zero
-            self.tracer.add_constraint(backend.Not(backend.Eq(divisor, backend.IntVal(0))))
-        
+        self._add_nonzero_constraint(divisor, backend)
+
         truncated = backend.UDiv(dividend, divisor)
         remainder = backend.Mod(dividend, divisor)
         
@@ -326,13 +327,12 @@ class SymbolicInt:
         """Helper to implement Python's modulo semantics.
         Python: result has same sign as divisor
         SMT-LIB mod: result has same sign as dividend
-        
+
         For now, we just use SMT-LIB's mod directly.
         The full Python semantics would require complex logic that causes timeouts.
         Most puzzles use positive numbers where Python and SMT-LIB agree.
         """
-        # TODO: Add smarter logic that only applies Python semantics when needed
-        # (e.g., when we know signs might differ)
+        self._add_nonzero_constraint(divisor, backend)
         return backend.Mod(dividend, divisor)
 
     def __mod__(self, other):
