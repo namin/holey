@@ -376,6 +376,23 @@ def sym_not(x):
     return not x
 
 def sym_in(x, container):
+    # Handle native Python set/dict/list which don't have .contains()
+    if isinstance(container, (set, frozenset, dict, list)):
+        # For symbolic x in concrete container, check membership
+        if hasattr(x, 'tracer'):
+            tracer = x.tracer
+            # Build OR of all equality checks
+            if isinstance(container, dict):
+                container = container.keys()
+            checks = [x == tracer.ensure_symbolic(item) for item in container]
+            if not checks:
+                return SymbolicBool(False, tracer=tracer)
+            result = checks[0]
+            for check in checks[1:]:
+                result = result.__or__(check)
+            return result
+        else:
+            return x in container
     return container.contains(x)
 
 def sym_any(iterable):
