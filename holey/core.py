@@ -425,9 +425,21 @@ class SymbolicInt:
         other = self.tracer.ensure_symbolic(other)
         return SymbolicInt(self.z3_expr * (2 ** other.z3_expr), tracer=self.tracer)
 
+    def __rlshift__(self, other):
+        # other << self  =>  other * (2 ** self)
+        other = self.tracer.ensure_symbolic(other)
+        two = self.tracer.backend.IntVal(2)
+        return SymbolicInt(self.tracer.backend.Mul(other.z3_expr, self.tracer.backend.Pow(two, self.z3_expr)), tracer=self.tracer)
+
     def __rshift__(self, other):
         other = self.tracer.ensure_symbolic(other)
         return SymbolicInt(self.z3_expr / (2 ** other.z3_expr), tracer=self.tracer)
+
+    def __rrshift__(self, other):
+        # other >> self  =>  other / (2 ** self)
+        other = self.tracer.ensure_symbolic(other)
+        two = self.tracer.backend.IntVal(2)
+        return SymbolicInt(self.tracer.backend.UDiv(other.z3_expr, self.tracer.backend.Pow(two, self.z3_expr)), tracer=self.tracer)
 
     def __neg__(self):
         if self.concrete is not None:
@@ -1109,6 +1121,11 @@ class SymbolicStr:
             return SymbolicBool(self.concrete.isdigit(), tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.StrIsDigit(self.z3_expr), tracer=self.tracer)
 
+    def isalpha(self):
+        if self.concrete is not None:
+            return SymbolicBool(self.concrete.isalpha(), tracer=self.tracer)
+        return SymbolicBool(self.tracer.backend.StrIsAlpha(self.z3_expr), tracer=self.tracer)
+
     def swapcase(self):
         if self.concrete is not None:
             return SymbolicStr(self.concrete.swapcase(), tracer=self.tracer)
@@ -1201,6 +1218,9 @@ class SymbolicSlice:
 
     def __eq__(self, other):
         return self.get_slice().__eq__(other)
+
+    def __ne__(self, other):
+        return self.get_slice().__ne__(other)
 
     def upper(self):
         return self.get_slice().upper()

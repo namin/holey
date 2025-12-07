@@ -429,6 +429,17 @@ library = {
           (str.is_digit c)))))
 """
 ,
+'str.isalpha':
+"""
+(define-fun str.isalpha ((s String)) Bool
+  (and (> (str.len s) 0)
+       (forall ((i Int))
+         (=> (and (<= 0 i) (< i (str.len s)))
+             (let ((c (str.to_code (str.at s i))))
+               (or (and (>= c 65) (<= c 90))
+                   (and (>= c 97) (<= c 122))))))))
+"""
+,
 'list':
 """
 (declare-datatypes ((List 1)) 
@@ -1163,6 +1174,9 @@ class Backend():
 
     def StrIsDigit(self, x) -> MockExpr:
         return self._record("str.isdigit", x)
+
+    def StrIsAlpha(self, x) -> MockExpr:
+        return self._record("str.isalpha", x)
 
     def SwapCase(self, x) -> MockExpr:
         return self._record("swapcase", x)
