@@ -374,7 +374,10 @@ class SymbolicInt:
         if isinstance(other, SymbolicFloat):
             return SymbolicFloat(self.tracer.backend.Pow(self.z3_expr, other.z3_expr), tracer=self.tracer)
         if self.concrete is not None and other.concrete is not None:
-            return SymbolicInt(other.concrete ** self.concrete, tracer=self.tracer)
+            result = self.concrete ** other.concrete
+            if isinstance(result, float):
+                return SymbolicFloat(result, tracer=self.tracer)
+            return SymbolicInt(result, tracer=self.tracer)
         return SymbolicInt(self.tracer.backend.Pow(self.z3_expr, other.z3_expr), tracer=self.tracer)
 
     def __rpow__(self, other):
