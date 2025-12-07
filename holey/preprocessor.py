@@ -393,6 +393,21 @@ def sym_in(x, container):
             return result
         else:
             return x in container
+    # Handle Python range objects
+    if isinstance(container, range):
+        if hasattr(x, 'tracer'):
+            tracer = x.tracer
+            # x in range(start, stop, step) means:
+            # x >= start and x < stop and (x - start) % step == 0
+            start = tracer.ensure_symbolic(container.start)
+            stop = tracer.ensure_symbolic(container.stop)
+            step = tracer.ensure_symbolic(container.step)
+            result = (x >= start).__and__(x < stop)
+            if container.step != 1:
+                result = result.__and__((x - start) % step == 0)
+            return result
+        else:
+            return x in container
     return container.contains(x)
 
 def sym_any(iterable):
@@ -540,6 +555,18 @@ class HoleyWrapper(ast.NodeTransformer):
             return ast.Call(
                 func=ast.Name(id='sym_in', ctx=ast.Load()),
                 args=[node.left, node.comparators[0]],
+                keywords=[]
+            )
+        # Transform: x not in y
+        # Into: sym_not(sym_in(x, y))
+        if len(node.ops) == 1 and isinstance(node.ops[0], ast.NotIn):
+            return ast.Call(
+                func=ast.Name(id='sym_not', ctx=ast.Load()),
+                args=[ast.Call(
+                    func=ast.Name(id='sym_in', ctx=ast.Load()),
+                    args=[node.left, node.comparators[0]],
+                    keywords=[]
+                )],
                 keywords=[]
             )
         # Handle chained comparisons like a < b <= c

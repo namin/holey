@@ -1244,6 +1244,26 @@ class SymbolicSlice:
     def __ne__(self, other):
         return self.get_slice().__ne__(other)
 
+    def __lt__(self, other):
+        if isinstance(other, SymbolicSlice):
+            other = other.get_slice()
+        return self.get_slice().__lt__(other)
+
+    def __le__(self, other):
+        if isinstance(other, SymbolicSlice):
+            other = other.get_slice()
+        return self.get_slice().__le__(other)
+
+    def __gt__(self, other):
+        if isinstance(other, SymbolicSlice):
+            other = other.get_slice()
+        return self.get_slice().__gt__(other)
+
+    def __ge__(self, other):
+        if isinstance(other, SymbolicSlice):
+            other = other.get_slice()
+        return self.get_slice().__ge__(other)
+
     def upper(self):
         return self.get_slice().upper()
 
