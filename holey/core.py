@@ -105,9 +105,23 @@ class SymbolicTracer:
             return SymbolicFloat(other, tracer=self)
         if isinstance(other, str):
             return SymbolicStr(other, tracer=self)
+        if isinstance(other, list):
+            typ = find_element_type_of(other)
+            print("typ", typ, "for", other)
+            return SymbolicList(other, elementTyp=typ, tracer=self)
         if isinstance(other, SymbolicSlice):
             return other.get_slice()
         return other
+
+def find_element_type_of(xs):
+    if not xs:
+        return None
+    x = xs[0]
+    if isinstance(x, SymbolicInt):
+        return int
+    if isinstance(x, SymbolicStr):
+        return str
+    return type(x)
 
 class SymbolicBool:
     """Wrapper class for symbolic boolean expressions"""
@@ -429,7 +443,8 @@ class SymbolicInt:
 
     def __lshift__(self, other):
         other = self.tracer.ensure_symbolic(other)
-        return SymbolicInt(self.z3_expr * (2 ** other.z3_expr), tracer=self.tracer)
+        two = self.tracer.backend.IntVal(2)
+        return SymbolicInt(self.z3_expr * (two ** other.z3_expr), tracer=self.tracer)
 
     def __rlshift__(self, other):
         # other << self  =>  other * (2 ** self)
@@ -439,7 +454,8 @@ class SymbolicInt:
 
     def __rshift__(self, other):
         other = self.tracer.ensure_symbolic(other)
-        return SymbolicInt(self.z3_expr / (2 ** other.z3_expr), tracer=self.tracer)
+        two = self.tracer.backend.IntVal(2)
+        return SymbolicInt(self.z3_expr / (two ** other.z3_expr), tracer=self.tracer)
 
     def __rrshift__(self, other):
         # other >> self  =>  other / (2 ** self)
@@ -1410,9 +1426,9 @@ def make_symbolic_value(typ: Type, v: Any, tracer: Optional[SymbolicTracer] = No
     elif typ == str or typ == 'str':
         sym = SymbolicStr(v, tracer=tracer)
     elif typ == list[str] or typ == 'List[str]':
-        sym = SymbolicList(v, str, name=name, tracer=tracer)
+        sym = SymbolicList(v, str, tracer=tracer)
     elif typ == list[int] or typ == 'List[int]':
-        sym = SymbolicList(v, int, name=name, tracer=tracer)
+        sym = SymbolicList(v, int, tracer=tracer)
     else:
         raise ValueError(f"Unsupported symbolic type: {typ}")
     return sym
