@@ -488,17 +488,58 @@ class HoleyWrapper(ast.NodeTransformer):
 
     def visit_Assign(self, node):
         node = self.generic_visit(node)
-        # Handle tuple unpacking: a, b = expr -> a = expr[0]; b = expr[1]
+        # Handle tuple unpacking: a, b = expr -> _tmp = expr; a = _tmp[0]; b = _tmp[1]
+        # Also adds length constraint: len(expr) == n
+        # Using a temp variable ensures the RHS is evaluated before any LHS vars are updated
         if len(node.targets) == 1 and isinstance(node.targets[0], ast.Tuple):
             targets = node.targets[0].elts
             value = node.value
+            n = len(targets)
+
             # Create individual assignments
             assignments = []
+
+            # Generate a unique temp variable name
+            temp_name = f'_unpack_tmp_{next(counter)}'
+            temp_var = ast.Name(id=temp_name, ctx=ast.Load())
+
+            # First, assign RHS to temp: _tmp = expr
+            temp_assign = ast.Assign(
+                targets=[ast.Name(id=temp_name, ctx=ast.Store())],
+                value=value
+            )
+            ast.copy_location(temp_assign, node)
+            ast.fix_missing_locations(temp_assign)
+            assignments.append(temp_assign)
+
+            # Add a length constraint: _assert(sym_len(_tmp) == n)
+            length_check = ast.Expr(
+                value=ast.Call(
+                    func=ast.Name(id='_assert', ctx=ast.Load()),
+                    args=[
+                        ast.Compare(
+                            left=ast.Call(
+                                func=ast.Name(id='sym_len', ctx=ast.Load()),
+                                args=[temp_var],
+                                keywords=[]
+                            ),
+                            ops=[ast.Eq()],
+                            comparators=[ast.Constant(value=n)]
+                        )
+                    ],
+                    keywords=[]
+                )
+            )
+            ast.copy_location(length_check, node)
+            ast.fix_missing_locations(length_check)
+            assignments.append(length_check)
+
+            # Now extract from temp: a = _tmp[0]; b = _tmp[1]; etc
             for i, target in enumerate(targets):
                 assign = ast.Assign(
                     targets=[target],
                     value=ast.Subscript(
-                        value=value,
+                        value=temp_var,
                         slice=ast.Constant(value=i),
                         ctx=ast.Load()
                     )
