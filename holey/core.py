@@ -444,7 +444,7 @@ class SymbolicInt:
     def __lshift__(self, other):
         other = self.tracer.ensure_symbolic(other)
         two = self.tracer.backend.IntVal(2)
-        return SymbolicInt(self.z3_expr * (two ** other.z3_expr), tracer=self.tracer)
+        return SymbolicInt(self.tracer.backend.Mul(self.z3_expr, self.tracer.backend.Pow(two, other.z3_expr)), tracer=self.tracer)
 
     def __rlshift__(self, other):
         # other << self  =>  other * (2 ** self)
@@ -455,7 +455,7 @@ class SymbolicInt:
     def __rshift__(self, other):
         other = self.tracer.ensure_symbolic(other)
         two = self.tracer.backend.IntVal(2)
-        return SymbolicInt(self.z3_expr / (two ** other.z3_expr), tracer=self.tracer)
+        return SymbolicInt(self.tracer.backend.Div(self.z3_expr, self.tracer.backend.Pow(two, other.z3_expr)), tracer=self.tracer)
 
     def __rrshift__(self, other):
         # other >> self  =>  other / (2 ** self)
@@ -483,6 +483,15 @@ class SymbolicInt:
     def __xor__(self, other):
         other = self.tracer.ensure_symbolic(other)
         return SymbolicInt(self.tracer.backend.Xor(self.z3_expr, other.z3_expr), tracer=self.tracer)
+
+    def __rand__(self, other):
+        return self.__and__(other)
+
+    def __ror__(self, other):
+        return self.__or__(other)
+
+    def __rxor__(self, other):
+        return self.__xor__(other)
 
     def __index__(self):
         if self.concrete is not None:
@@ -851,18 +860,33 @@ class SymbolicList:
     def append(self, item):
         """Append item to list (mutates in place for concrete lists)"""
         if self.concrete is not None:
-            item = self.tracer.ensure_symbolic(item)
-            self.concrete.append(item)
-            # Update z3_expr to reflect new list
-            converted_values = []
-            for elem in self.concrete:
-                if hasattr(elem, 'z3_expr'):
-                    converted_values.append(elem.z3_expr)
-                else:
-                    converted_values.append(elem)
-            self.z3_expr = self.tracer.backend.ListVal(converted_values, self.tracer.backend.Type(self.elementTyp))
+            self.concrete.append(self.tracer.ensure_symbolic(item))
         else:
             raise NotImplementedError("Cannot append to fully symbolic list")
+
+    def pop(self, index=-1):
+        """Remove and return item at index (mutates in place for concrete lists)"""
+        if self.concrete is not None:
+            return self.concrete.pop(index)
+        else:
+            raise NotImplementedError("Cannot pop from fully symbolic list")
+
+    def remove(self, item):
+        """Remove first occurrence of item (mutates in place for concrete lists)"""
+        if self.concrete is not None:
+            # Need custom removal since symbolic == returns SymbolicBool
+            for i, elem in enumerate(self.concrete):
+                eq = elem == item
+                # Check if equality is concretely true
+                if hasattr(eq, 'concrete') and eq.concrete:
+                    self.concrete.pop(i)
+                    return
+                elif isinstance(eq, bool) and eq:
+                    self.concrete.pop(i)
+                    return
+            raise ValueError("list.remove(x): x not in list")
+        else:
+            raise NotImplementedError("Cannot remove from fully symbolic list")
 
 class SymbolicStrIterator:
     _counter = 0
