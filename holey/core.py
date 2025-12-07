@@ -726,9 +726,11 @@ class SymbolicList:
                 # Build an If expression to select the right value
                 result = None
                 for i, item in enumerate(self.concrete):
+                    item = self.tracer.ensure_symbolic(item)
                     if result is None:
                         result = item
                     else:
+                        result = self.tracer.ensure_symbolic(result)
                         result = make_symbolic_value(self.elementTyp,
                             self.tracer.backend.If(
                                 self.tracer.backend.Or(key.z3_expr == i, key.z3_expr == -n+i),
@@ -845,6 +847,22 @@ class SymbolicList:
         if self.concrete is not None:
             return SymbolicBool(not self.concrete, tracer=self.tracer)
         return self != []
+
+    def append(self, item):
+        """Append item to list (mutates in place for concrete lists)"""
+        if self.concrete is not None:
+            item = self.tracer.ensure_symbolic(item)
+            self.concrete.append(item)
+            # Update z3_expr to reflect new list
+            converted_values = []
+            for elem in self.concrete:
+                if hasattr(elem, 'z3_expr'):
+                    converted_values.append(elem.z3_expr)
+                else:
+                    converted_values.append(elem)
+            self.z3_expr = self.tracer.backend.ListVal(converted_values, self.tracer.backend.Type(self.elementTyp))
+        else:
+            raise NotImplementedError("Cannot append to fully symbolic list")
 
 class SymbolicStrIterator:
     _counter = 0
