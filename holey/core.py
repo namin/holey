@@ -276,20 +276,25 @@ class SymbolicInt:
         other = self.tracer.ensure_symbolic(other)
         return SymbolicInt(other.z3_expr / self.z3_expr, tracer=self.tracer)
     
-    def _add_nonzero_constraint(self, expr, backend):
-        """Add constraint that expr is not zero, unless it's a quantified variable."""
+    def _add_nonzero_constraint(self, divisor):
+        """Add constraint that divisor is not zero, unless it's concrete non-zero or a quantified variable."""
+        # Skip if we know the concrete value is non-zero
+        if divisor.concrete is not None and divisor.concrete != 0:
+            return
+
+        backend = self.tracer.backend
         is_quantified = False
-        if hasattr(expr, 'decl') and callable(expr.decl):
+        if hasattr(divisor.z3_expr, 'decl') and callable(divisor.z3_expr.decl):
             try:
-                var_name = str(expr.decl().name())
+                var_name = str(divisor.z3_expr.decl().name())
                 is_quantified = var_name in backend.quantified_vars
             except:
                 pass
 
         if not is_quantified:
-            self.tracer.add_constraint(backend.Not(backend.Eq(expr, backend.IntVal(0))))
+            self.tracer.add_constraint(backend.Not(backend.Eq(divisor.z3_expr, backend.IntVal(0))))
 
-    def _python_floor_div(self, dividend, divisor, backend):
+    def _python_floor_div(self, dividend, divisor):
         """Helper to implement Python's floor division semantics.
         Python: rounds toward negative infinity
         SMT-LIB div: Euclidean (remainder always non-negative)
@@ -297,28 +302,29 @@ class SymbolicInt:
         To convert from Euclidean to floor division:
         - If divisor < 0 and remainder != 0, subtract 1 from the quotient
         """
-        self._add_nonzero_constraint(divisor, backend)
+        self._add_nonzero_constraint(divisor)
 
-        euclidean_div = backend.UDiv(dividend, divisor)
-        euclidean_mod = backend.Mod(dividend, divisor)
+        backend = self.tracer.backend
+        euclidean_div = backend.UDiv(dividend.z3_expr, divisor.z3_expr)
+        euclidean_mod = backend.Mod(dividend.z3_expr, divisor.z3_expr)
 
         # Adjust when divisor < 0 and remainder != 0
-        divisor_negative = backend.LT(divisor, backend.IntVal(0))
+        divisor_negative = backend.LT(divisor.z3_expr, backend.IntVal(0))
         has_remainder = backend.Not(backend.Eq(euclidean_mod, backend.IntVal(0)))
         needs_adjustment = backend.And(divisor_negative, has_remainder)
 
         return backend.If(needs_adjustment,
                          backend.Sub(euclidean_div, backend.IntVal(1)),
                          euclidean_div)
-    
+
     def __floordiv__(self, other):
         other = self.tracer.ensure_symbolic(other)
-        result = self._python_floor_div(self.z3_expr, other.z3_expr, self.tracer.backend)
+        result = self._python_floor_div(self, other)
         return SymbolicInt(result, tracer=self.tracer)
-    
+
     def __rfloordiv__(self, other):
         other = self.tracer.ensure_symbolic(other)
-        result = self._python_floor_div(other.z3_expr, self.z3_expr, self.tracer.backend)
+        result = self._python_floor_div(other, self)
         return SymbolicInt(result, tracer=self.tracer)
     
     def __radd__(self, other):
@@ -340,7 +346,7 @@ class SymbolicInt:
                                                   -self.z3_expr), 
                            tracer=self.tracer)
 
-    def _python_mod(self, dividend, divisor, backend):
+    def _python_mod(self, dividend, divisor):
         """Helper to implement Python's modulo semantics.
         Python: result has same sign as divisor
         SMT-LIB mod: result has same sign as dividend
@@ -349,23 +355,23 @@ class SymbolicInt:
         The full Python semantics would require complex logic that causes timeouts.
         Most puzzles use positive numbers where Python and SMT-LIB agree.
         """
-        self._add_nonzero_constraint(divisor, backend)
-        return backend.Mod(dividend, divisor)
+        self._add_nonzero_constraint(divisor)
+        return self.tracer.backend.Mod(dividend.z3_expr, divisor.z3_expr)
 
     def __mod__(self, other):
         other = self.tracer.ensure_symbolic(other)
         if self.concrete is not None and other.concrete is not None:
             return SymbolicInt(self.concrete % other.concrete, tracer=self.tracer)
-        
-        result = self._python_mod(self.z3_expr, other.z3_expr, self.tracer.backend)
+
+        result = self._python_mod(self, other)
         return SymbolicInt(result, tracer=self.tracer)
 
     def __rmod__(self, other):
         other = self.tracer.ensure_symbolic(other)
         if self.concrete is not None and other.concrete is not None:
             return SymbolicInt(other.concrete % self.concrete, tracer=self.tracer)
-        
-        result = self._python_mod(other.z3_expr, self.z3_expr, self.tracer.backend)
+
+        result = self._python_mod(other, self)
         return SymbolicInt(result, tracer=self.tracer)
 
 
