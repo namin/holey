@@ -198,7 +198,7 @@ class SymbolicBool:
         
     def __radd__(self, other):
         return self.__add__(other)
-    
+
 class SymbolicInt:
     """Wrapper class for symbolic integer expressions"""
     def __init__(self, value: Optional[Any] = None, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
