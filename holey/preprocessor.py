@@ -450,9 +450,10 @@ def sym_all(iterable):
         iterator = iterable.iterator
         if isinstance(iterator, SymbolicZipIterator):
             predicate = iterable.comparison
+            length = iterator.tracer.ensure_symbolic(iterator.length)
             bounds = iterator.tracer.backend.And(
                 iterator.tracer.backend.GE(iterator.pos.z3_expr, iterator.tracer.backend.IntVal(0)),
-                iterator.tracer.backend.LT(iterator.pos.z3_expr, iterator.length.z3_expr)
+                iterator.tracer.backend.LT(iterator.pos.z3_expr, length.z3_expr)
             )
             return SymbolicBool(iterator.tracer.backend.ForAll(
                 [iterator.tracer.backend.Int(iterator.pos.z3_expr.decl().name())],
