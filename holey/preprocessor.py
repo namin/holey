@@ -454,6 +454,30 @@ class HoleyWrapper(ast.NodeTransformer):
         self.path.pop()
         return result
 
+    def visit_Assign(self, node):
+        node = self.generic_visit(node)
+        # Handle tuple unpacking: a, b = expr -> a = expr[0]; b = expr[1]
+        if len(node.targets) == 1 and isinstance(node.targets[0], ast.Tuple):
+            targets = node.targets[0].elts
+            value = node.value
+            # Create individual assignments
+            assignments = []
+            for i, target in enumerate(targets):
+                assign = ast.Assign(
+                    targets=[target],
+                    value=ast.Subscript(
+                        value=value,
+                        slice=ast.Constant(value=i),
+                        ctx=ast.Load()
+                    )
+                )
+                # Copy location info from original node
+                ast.copy_location(assign, node)
+                ast.fix_missing_locations(assign)
+                assignments.append(assign)
+            return assignments
+        return node
+
     def visit_Assert(self, node):
         node = self.generic_visit(node)
         # Convert: assert test [, msg]
