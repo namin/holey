@@ -704,6 +704,17 @@ class SymbolicList:
             return SymbolicList(self.tracer.backend.ListSlice(self.z3_expr, start.z3_expr, stop.z3_expr, step.z3_expr, self.tracer.backend.Type(self.elementTyp)), self.elementTyp, tracer=self.tracer)
         else:
             key = self.tracer.ensure_symbolic(key)
+            # Add length constraint to ensure the list has enough elements
+            list_len = self.__len__()
+            if hasattr(key, 'concrete') and key.concrete is not None:
+                if key.concrete >= 0:
+                    self.tracer.add_constraint(list_len > key)
+                else:
+                    self.tracer.add_constraint(list_len >= -key.concrete)
+            else:
+                # For symbolic index, add constraint for positive case
+                # (list.get handles negative indices internally)
+                self.tracer.add_constraint(list_len > key)
             return make_symbolic_value(self.elementTyp, self.tracer.backend.ListGet(self.z3_expr, key.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
 
     def __iter__(self):
