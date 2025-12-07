@@ -521,8 +521,19 @@ class SymbolicFloat:
         other = self.tracer.ensure_symbolic(other)
         if self.concrete is not None and other.concrete is not None:
             return SymbolicFloat(self.concrete ** other.concrete, tracer=self.tracer)
+        # For small non-negative integer exponents, expand to multiplication
+        # Z3's ^ operator doesn't work well with Real base and Int exponent
+        if hasattr(other, 'concrete') and other.concrete is not None:
+            n = other.concrete
+            if isinstance(n, int) and 0 <= n <= 10:
+                if n == 0:
+                    return SymbolicFloat(1.0, tracer=self.tracer)
+                result = self.z3_expr
+                for _ in range(n - 1):
+                    result = self.tracer.backend.Mul(result, self.z3_expr)
+                return SymbolicFloat(result, tracer=self.tracer)
         return SymbolicFloat(self.tracer.backend.Pow(self.z3_expr, other.z3_expr), tracer=self.tracer)
-    
+
     def __rpow__(self, other):
         other = self.tracer.ensure_symbolic(other)
         return SymbolicFloat(self.tracer.backend.Pow(other.z3_expr, self.z3_expr), tracer=self.tracer)
