@@ -1115,6 +1115,8 @@ class SymbolicStr:
                 ),
                 tracer=self.tracer
             )
+        elif isinstance(other, SymbolicSlice):
+            return self + other.get_slice()
         raise ValueError("Not implemented: __add__")
 
     def __radd__(self, other):
@@ -1127,6 +1129,15 @@ class SymbolicStr:
                 tracer=self.tracer
             )
         raise ValueError("Not implemented: __radd__")
+
+    def __mul__(self, other):
+        """String repetition: str * n"""
+        other = self.tracer.ensure_symbolic(other)
+        return SymbolicStr(self.tracer.backend.StrMul(self.z3_expr, other.z3_expr), tracer=self.tracer)
+
+    def __rmul__(self, other):
+        """String repetition: n * str"""
+        return self.__mul__(other)
 
     # For comparison operations
     def __eq__(self, other):
@@ -1224,7 +1235,12 @@ class SymbolicSlice:
         self.tracer = tracer
 
     def __add__(self, other):
-        return self.get_slice() + other.get_slice()
+        if isinstance(other, SymbolicSlice):
+            other = other.get_slice()
+        return self.get_slice() + other
+
+    def __radd__(self, other):
+        return other + self.get_slice()
 
     def __and__(self, other):
         other = self.tracer.ensure_symbolic(other)
