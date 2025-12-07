@@ -369,8 +369,16 @@ class SymbolicInt:
         return SymbolicInt(result, tracer=self.tracer)
 
 
-    def __pow__(self, other):
+    def __pow__(self, other, mod=None):
         other = self.tracer.ensure_symbolic(other)
+        if mod is not None:
+            # Modular exponentiation: (self ** other) % mod
+            mod = self.tracer.ensure_symbolic(mod)
+            if self.concrete is not None and other.concrete is not None and mod.concrete is not None:
+                return SymbolicInt(pow(self.concrete, other.concrete, mod.concrete), tracer=self.tracer)
+            # For symbolic: compute (base ^ exp) mod m
+            pow_result = self.tracer.backend.Pow(self.z3_expr, other.z3_expr)
+            return SymbolicInt(self.tracer.backend.Mod(pow_result, mod.z3_expr), tracer=self.tracer)
         if isinstance(other, SymbolicFloat):
             return SymbolicFloat(self.tracer.backend.Pow(self.z3_expr, other.z3_expr), tracer=self.tracer)
         if self.concrete is not None and other.concrete is not None:
