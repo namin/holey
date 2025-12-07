@@ -596,6 +596,9 @@ class HoleyWrapper(ast.NodeTransformer):
 
     def visit_List(self, node):
         node = self.generic_visit(node)
+        # Don't wrap lists that are assignment targets (Store context)
+        if isinstance(node.ctx, ast.Store):
+            return node
         return ast.Call(
             func=ast.Name(id='wrap_list', ctx=ast.Load()),
             args=[node],
