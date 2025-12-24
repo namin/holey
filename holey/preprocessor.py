@@ -265,6 +265,39 @@ def sym_zip(*iterables):
     if all(hasattr(it, 'concrete') and it.concrete is not None for it in symbolic_iterables):
         return zip(*[it.concrete for it in symbolic_iterables])
 
+    # Check if ANY iterable has a known concrete length
+    # If so, we can iterate concretely using the minimum length
+    concrete_lengths = []
+    for it in iterables:
+        if isinstance(it, (list, tuple)):
+            concrete_lengths.append(len(it))
+        elif isinstance(it, (BoundedSymbolicList, BoundedSymbolicSlice)):
+            concrete_lengths.append(len(list(it)))
+        elif hasattr(it, 'concrete') and it.concrete is not None:
+            concrete_lengths.append(len(it.concrete))
+
+    if concrete_lengths:
+        # We have at least one concrete length - iterate concretely
+        min_len = min(concrete_lengths)
+        result = []
+        for i in range(min_len):
+            elements = []
+            for it in iterables:
+                if isinstance(it, (list, tuple)):
+                    elements.append(it[i])
+                elif isinstance(it, (BoundedSymbolicList, BoundedSymbolicSlice)):
+                    elements.append(list(it)[i])
+                elif hasattr(it, 'concrete') and it.concrete is not None:
+                    elements.append(it.concrete[i])
+                elif hasattr(it, '__getitem__'):
+                    # Symbolic list - use concrete index
+                    elements.append(it[i])
+                else:
+                    # Fallback - try indexing
+                    elements.append(it[i])
+            result.append(tuple(elements))
+        return result
+
     return SymbolicZipIterator(symbolic_iterables, tracer)
 
 def sym_ord(x):
