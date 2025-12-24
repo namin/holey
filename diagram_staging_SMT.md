@@ -10,7 +10,9 @@ flowchart TB
     SMTGeneration["<b>SMT Constraint Generation</b><br>as a Side Effect<br><tt>(x > 5)</tt>"] --> SMTSolver
     
     SMTSolver["<b>SMT Solver</b><br>Z3 or other SMT solver<br>Find Values: <tt>x = 6</tt>"] --> |Return solution| PythonCode
-    
+
+    PythonCode --> |Check solution| PythonCode
+
     classDef python fill:#e3f2fd,stroke:#2196f3,stroke-width:2px,color:black;
     classDef execution fill:#fff8e1,stroke:#ffc107,stroke-width:2px,color:black;
     classDef generation fill:#e8f5e9,stroke:#4caf50,stroke-width:2px,color:black;
