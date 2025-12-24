@@ -51,12 +51,15 @@ class PuzzleSolver:
     def detect_list_size(self, sat_func: str) -> Optional[int]:
         """Detect required list size from sat function.
 
-        Only looks for patterns that directly constrain list size:
+        Looks for patterns that directly constrain list size:
         - len(x) == N or len(li) == N (explicit length constraint)
+        - len(x) == param where param has a default value (parameter-based)
+        - len(x) == len(param) where param is a string/list with default
         - x[:N] or li[:N] slicing on the answer variable
         - all(...) with range(N) where the iteration uses x[:i] pattern
+        - li[i] or li[i+1] access inside range(N) loops
 
-        Does NOT use range(N) from general loops as this causes false positives.
+        Does NOT use range(N) from general loops without answer variable access.
         """
         try:
             tree = ast.parse(sat_func)
@@ -64,53 +67,100 @@ class PuzzleSolver:
             return None
 
         sizes = []
+        answer_vars = ('x', 'li', 'l', 'nums', 'arr', 'lst', 'seq', 'colors', 'ans')
+
+        # Extract parameter default values from function signature
+        param_defaults = {}
+        if tree.body and isinstance(tree.body[0], ast.FunctionDef):
+            func = tree.body[0]
+            args = func.args.args
+            defaults = func.args.defaults
+            # Defaults align to the end of args
+            num_defaults = len(defaults)
+            for i, default in enumerate(defaults):
+                arg_idx = len(args) - num_defaults + i
+                arg_name = args[arg_idx].arg
+                if isinstance(default, ast.Constant):
+                    if isinstance(default.value, int):
+                        param_defaults[arg_name] = default.value
+                    elif isinstance(default.value, str):
+                        param_defaults[arg_name] = len(default.value)
+                elif isinstance(default, ast.List):
+                    param_defaults[arg_name] = len(default.elts)
 
         for node in ast.walk(tree):
-            # Look for len(x) == N or len(li) == N comparisons
+            # Look for len(x) == N or len(x) == param comparisons
             if isinstance(node, ast.Compare):
                 if isinstance(node.left, ast.Call):
                     if isinstance(node.left.func, ast.Name) and node.left.func.id == 'len':
-                        # Check if it's len(x) or len(li) - the answer variable
                         if node.left.args and isinstance(node.left.args[0], ast.Name):
                             var_name = node.left.args[0].id
-                            if var_name in ('x', 'li', 'nums', 'arr', 'lst'):
+                            if var_name in answer_vars:
                                 for comparator in node.comparators:
+                                    # Direct numeric literal
                                     if isinstance(comparator, ast.Constant) and isinstance(comparator.value, int):
                                         sizes.append(comparator.value)
+                                    # Parameter reference: len(li) == n
+                                    elif isinstance(comparator, ast.Name) and comparator.id in param_defaults:
+                                        sizes.append(param_defaults[comparator.id])
+                                    # len(param): len(li) == len(s) where s is a string param
+                                    elif isinstance(comparator, ast.Call):
+                                        if isinstance(comparator.func, ast.Name) and comparator.func.id == 'len':
+                                            if comparator.args and isinstance(comparator.args[0], ast.Name):
+                                                param_name = comparator.args[0].id
+                                                if param_name in param_defaults:
+                                                    sizes.append(param_defaults[param_name])
 
             # Look for x[:N] or li[:N] slicing on answer variable
             if isinstance(node, ast.Subscript):
-                if isinstance(node.value, ast.Name) and node.value.id in ('x', 'li', 'nums', 'arr', 'lst'):
+                if isinstance(node.value, ast.Name) and node.value.id in answer_vars:
                     if isinstance(node.slice, ast.Slice):
                         if node.slice.upper is not None:
                             if isinstance(node.slice.upper, ast.Constant) and isinstance(node.slice.upper.value, int):
                                 sizes.append(node.slice.upper.value)
 
-            # Look for all(...for i in range(N)) with x[:i] pattern inside
-            # Handles both generator expressions and list comprehensions
+            # Look for all/any(...for i in range(N)) patterns
             if isinstance(node, ast.Call):
-                if isinstance(node.func, ast.Name) and node.func.id == 'all':
+                if isinstance(node.func, ast.Name) and node.func.id in ('all', 'any'):
                     if node.args:
                         arg0 = node.args[0]
-                        # Handle both GeneratorExp and ListComp
                         if isinstance(arg0, (ast.GeneratorExp, ast.ListComp)):
                             gen = arg0
                             elt = gen.elt
                             generators = gen.generators
-                            # Check if generator uses range(N)
                             for comp in generators:
                                 if isinstance(comp.iter, ast.Call):
                                     if isinstance(comp.iter.func, ast.Name) and comp.iter.func.id == 'range':
                                         if comp.iter.args:
                                             range_arg = comp.iter.args[-1] if len(comp.iter.args) > 1 else comp.iter.args[0]
+                                            range_val = None
                                             if isinstance(range_arg, ast.Constant) and isinstance(range_arg.value, int):
-                                                # Check if the generator body references x[:i] or li[:i]
+                                                range_val = range_arg.value
+                                            elif isinstance(range_arg, ast.Name) and range_arg.id in param_defaults:
+                                                range_val = param_defaults[range_arg.id]
+
+                                            if range_val is not None:
+                                                # Check if body references answer var with indexing
+                                                # Collect all index patterns, don't break early
+                                                found_access = False
+                                                max_offset = 0
                                                 for subnode in ast.walk(elt):
                                                     if isinstance(subnode, ast.Subscript):
-                                                        if isinstance(subnode.value, ast.Name) and subnode.value.id in ('x', 'li'):
+                                                        if isinstance(subnode.value, ast.Name) and subnode.value.id in answer_vars:
+                                                            # Check for slice (li[:i]) or index (li[i], li[i+1])
                                                             if isinstance(subnode.slice, ast.Slice):
-                                                                sizes.append(range_arg.value)
-                                                                break
+                                                                found_access = True
+                                                            elif isinstance(subnode.slice, ast.BinOp):
+                                                                # li[i+1] pattern - need size range_val + offset
+                                                                if isinstance(subnode.slice.op, ast.Add):
+                                                                    if isinstance(subnode.slice.right, ast.Constant):
+                                                                        max_offset = max(max_offset, subnode.slice.right.value)
+                                                                        found_access = True
+                                                            elif isinstance(subnode.slice, ast.Name):
+                                                                # li[i] pattern - need size range_val
+                                                                found_access = True
+                                                if found_access:
+                                                    sizes.append(range_val + max_offset)
 
         if sizes:
             return max(sizes)  # Return largest detected size
