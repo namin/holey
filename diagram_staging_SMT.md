@@ -2,8 +2,6 @@
 
 ```mermaid
 flowchart TB
-    PythonCode --> |Check solution| PythonCode
-
     PythonCode["<b>Python Code</b><br><tt>def sat(x): return x > 5</tt>"] --> SymbolicExecution
     
     SymbolicExecution["<b>Symbolic Execution</b><br>Overloaded Operations<br>Symbolic Variables"] --> SMTGeneration
