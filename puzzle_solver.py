@@ -363,9 +363,56 @@ def call_solvers(llm_solvers, stats, name, callback):
                 best = result
     return best
 
+def infer_ans_type(sat_func: str) -> Optional[str]:
+    """Infer answer type from the first parameter's type hint in a sat function."""
+    import ast
+    try:
+        tree = ast.parse(sat_func)
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef) and node.name == 'sat':
+                if node.args.args:
+                    first_arg = node.args.args[0]
+                    if first_arg.annotation:
+                        return ast.unparse(first_arg.annotation)
+    except:
+        pass
+    return None
+
+def solve_sat_file(sat_file: str, ans_type: Optional[str], smtlib_backends: list, llm_solver=None, llm_all=False, llm_end=False):
+    """Solve a single Python file containing a sat function."""
+    with open(sat_file) as f:
+        sat_func = f.read()
+
+    if not ans_type:
+        ans_type = infer_ans_type(sat_func)
+        if ans_type:
+            print(f"Inferred ans_type: {ans_type}")
+        else:
+            print("Could not infer ans_type. Please provide --ans-type.")
+            return None
+
+    solver = PuzzleSolver()
+    solver.total_count = 1
+    solver.llm_solver = llm_solver
+
+    puzzle_data = {
+        'name': sat_file,
+        'sat_function': sat_func,
+        'ans_type': ans_type
+    }
+
+    if llm_all:
+        return solver.solve_puzzle_llm(puzzle_data, llm_solver)
+    else:
+        return solver.solve_puzzle(puzzle_data, smtlib_backends, llm_solver, llm_end)
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
+    parser.add_argument('--sat-file', help='path to a Python file containing a sat function')
+    parser.add_argument('--ans-type',
+                        choices=['int', 'str', 'float', 'bool', 'List[int]', 'List[str]'],
+                        help='answer type (inferred from type hints if not provided)')
     parser.add_argument('--puzzle-file', default="benchmarks/PythonProgrammingPuzzles/puzzles/puzzles.json",
                       help='path to the puzzle JSON file')
     parser.add_argument('--name-prefix',
@@ -390,9 +437,13 @@ if __name__ == "__main__":
     parser.add_argument('--llm-all', action='store_true', help='Ask LLMs end-to-end')
     parser.add_argument('--llm-end', action='store_true', help='Ask LLMs end-to-end on success only')
     args = parser.parse_args()
-    
+
     llm_solver = None
     if args.llm:
         from holey import llm_generators
         llm_solver = {k: LLMSolver(v) for k,v in llm_generators.items()}
-    run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end)
+
+    if args.sat_file:
+        solve_sat_file(args.sat_file, args.ans_type, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end)
+    else:
+        run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end)
