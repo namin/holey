@@ -793,12 +793,20 @@ class SymbolicList:
         return SymbolicInt(self.tracer.backend.ListLength(self.z3_expr, self.tracer.backend.Type(self.elementTyp)), tracer=self.tracer)
 
     def __add__(self, other):
+        # Handle BoundedSymbolicList: return SymbolicList with concrete elements
+        if isinstance(other, (BoundedSymbolicList, BoundedSymbolicSlice)):
+            if self.concrete is not None:
+                return SymbolicList(self.concrete + list(other), self.elementTyp, tracer=self.tracer)
         other = self.tracer.ensure_symbolic(other)
         if self.concrete is not None and other.concrete is not None:
             return SymbolicList(self.concrete + other.concrete, self.elementTyp, tracer=self.tracer)
         return SymbolicList(self.tracer.backend.ListAppend(self.z3_expr, other.z3_expr, self.tracer.backend.Type(self.elementTyp)), self.elementTyp, tracer=self.tracer)
 
     def __radd__(self, other):
+        # Handle BoundedSymbolicList: return SymbolicList with concrete elements
+        if isinstance(other, (BoundedSymbolicList, BoundedSymbolicSlice)):
+            if self.concrete is not None:
+                return SymbolicList(list(other) + self.concrete, self.elementTyp, tracer=self.tracer)
         other = self.tracer.ensure_symbolic(other)
         if self.concrete is not None and other.concrete is not None:
             return SymbolicList(other.concrete + self.concrete, self.elementTyp, tracer=self.tracer)
