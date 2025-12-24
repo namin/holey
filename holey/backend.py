@@ -1264,4 +1264,100 @@ class Backend():
         """Count occurrences of a value in a list"""
         return self._record("list.count."+element_type.lower(), lst, val)
 
+    def BoundedList(self, name: str, size: int, element_type: str) -> 'BoundedListVars':
+        """Create a bounded list with individual variables"""
+        return BoundedListVars(self, name, size, element_type)
+
+class BoundedListVars:
+    """Represents a bounded list using individual variables instead of recursive (List Int)"""
+    def __init__(self, backend, name: str, size: int, element_type: str):
+        self.backend = backend
+        self.name = name
+        self.size = size
+        self.element_type = element_type
+        self.vars = []
+
+        # Create individual variables for each element
+        for i in range(size):
+            var_name = f"{name}_e{i}"
+            if element_type == "Int":
+                var = backend.Int(var_name)
+            elif element_type == "String":
+                var = backend.String(var_name)
+            elif element_type == "Bool":
+                var = backend.Bool(var_name)
+            elif element_type == "Real":
+                var = backend.Real(var_name)
+            else:
+                raise ValueError(f"Unsupported bounded list element type: {element_type}")
+            self.vars.append(var)
+
+    def get(self, idx):
+        """Get element at index - handles both concrete and symbolic indices"""
+        if isinstance(idx, int):
+            if idx < 0:
+                idx = self.size + idx
+            if 0 <= idx < self.size:
+                return self.vars[idx]
+            raise IndexError(f"Index {idx} out of bounds for list of size {self.size}")
+
+        # For symbolic index, build ITE chain
+        if isinstance(idx, MockExpr):
+            # Handle negative indices symbolically
+            idx_expr = idx
+            result = self.vars[0]  # Default to first element
+            for i in range(self.size - 1, -1, -1):
+                result = self.backend.If(
+                    self.backend.Or(
+                        self.backend.Eq(idx_expr, self.backend.IntVal(i)),
+                        self.backend.Eq(idx_expr, self.backend.IntVal(i - self.size))
+                    ),
+                    self.vars[i],
+                    result
+                )
+            return result
+
+        raise ValueError(f"Unsupported index type: {type(idx)}")
+
+    def sum(self):
+        """Get sum of all elements"""
+        if not self.vars:
+            return self.backend.IntVal(0)
+        return self.backend.Add(*self.vars)
+
+    def length(self):
+        """Get length of list"""
+        return self.backend.IntVal(self.size)
+
+    def prefix_sum(self, end_idx):
+        """Get sum of elements from 0 to end_idx (exclusive)"""
+        if isinstance(end_idx, int):
+            if end_idx <= 0:
+                return self.backend.IntVal(0)
+            if end_idx >= self.size:
+                return self.sum()
+            return self.backend.Add(*self.vars[:end_idx])
+
+        # For symbolic end index, build ITE chain
+        if isinstance(end_idx, MockExpr):
+            result = self.backend.IntVal(0)
+            for i in range(self.size, 0, -1):
+                if i == 1:
+                    prefix_sum = self.vars[0]
+                else:
+                    prefix_sum = self.backend.Add(*self.vars[:i])
+                result = self.backend.If(
+                    self.backend.Eq(end_idx, self.backend.IntVal(i)),
+                    prefix_sum,
+                    result
+                )
+            return result
+
+        raise ValueError(f"Unsupported end_idx type: {type(end_idx)}")
+
+    def to_smt2(self):
+        """Return SMT2 representation for get-value"""
+        return " ".join(var.to_smt2() for var in self.vars)
+
+
 default_backend = Backend

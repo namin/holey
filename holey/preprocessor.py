@@ -1,4 +1,4 @@
-from .core import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicList, SymbolicRange, SymbolicRangeIterator, SymbolicStr, SymbolicSlice, truthy
+from .core import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicList, SymbolicRange, SymbolicRangeIterator, SymbolicStr, SymbolicSlice, truthy, BoundedSymbolicList, BoundedSymbolicSlice
 from .backend import default_backend
 import ast
 from typing import List, Any, Dict, Optional, Tuple
@@ -68,14 +68,26 @@ class SymbolicZipIterator:
 
 def sym_sum(iterable):
     """Symbolic summation that maintains symbolic operations"""
-    # Handle SymbolicList directly without iteration
     from holey.core import SymbolicList, SymbolicInt, SymbolicSlice
+
+    # Handle BoundedSymbolicSlice (from BoundedSymbolicList slicing)
+    if isinstance(iterable, BoundedSymbolicSlice):
+        return iterable.sum()
+
+    # Handle BoundedSymbolicList directly
+    if isinstance(iterable, BoundedSymbolicList):
+        if iterable.elementTyp == int:
+            return SymbolicInt(iterable.bounded_vars.sum(), tracer=iterable.tracer)
+        # For non-int lists, fall back to iteration
+        return sum(iterable)
+
+    # Handle SymbolicList directly without iteration
     if isinstance(iterable, SymbolicList):
         if iterable.elementTyp == int:
             return SymbolicInt(iterable.tracer.backend.ListSum(iterable.z3_expr), tracer=iterable.tracer)
         # For non-int lists, fall back to iteration
         return sum(iterable)
-    
+
     # Handle SymbolicSlice - need to compute sum of slice
     if isinstance(iterable, SymbolicSlice):
         # Use the sum method we just added
@@ -236,12 +248,55 @@ def sym_zip(*iterables):
     if tracer is None:
         return zip(*iterables)  # If no symbolic values, use regular zip
 
+    # Check if all iterables are bounded (BoundedSymbolicList or BoundedSymbolicSlice)
+    # These can be iterated concretely since they have known sizes
+    all_bounded = all(
+        isinstance(it, (BoundedSymbolicList, BoundedSymbolicSlice))
+        for it in iterables
+    )
+    if all_bounded:
+        # Iterate concretely over bounded lists/slices
+        return zip(*[list(it) for it in iterables])
+
     # Convert all items to symbolic form
     symbolic_iterables = [tracer.ensure_symbolic(it) for it in iterables]
-    
+
     # If all concrete, use regular zip
     if all(hasattr(it, 'concrete') and it.concrete is not None for it in symbolic_iterables):
         return zip(*[it.concrete for it in symbolic_iterables])
+
+    # Check if ANY iterable has a known concrete length
+    # If so, we can iterate concretely using the minimum length
+    concrete_lengths = []
+    for it in iterables:
+        if isinstance(it, (list, tuple)):
+            concrete_lengths.append(len(it))
+        elif isinstance(it, (BoundedSymbolicList, BoundedSymbolicSlice)):
+            concrete_lengths.append(len(list(it)))
+        elif hasattr(it, 'concrete') and it.concrete is not None:
+            concrete_lengths.append(len(it.concrete))
+
+    if concrete_lengths:
+        # We have at least one concrete length - iterate concretely
+        min_len = min(concrete_lengths)
+        result = []
+        for i in range(min_len):
+            elements = []
+            for it in iterables:
+                if isinstance(it, (list, tuple)):
+                    elements.append(it[i])
+                elif isinstance(it, (BoundedSymbolicList, BoundedSymbolicSlice)):
+                    elements.append(list(it)[i])
+                elif hasattr(it, 'concrete') and it.concrete is not None:
+                    elements.append(it.concrete[i])
+                elif hasattr(it, '__getitem__'):
+                    # Symbolic list - use concrete index
+                    elements.append(it[i])
+                else:
+                    # Fallback - try indexing
+                    elements.append(it[i])
+            result.append(tuple(elements))
+        return result
 
     return SymbolicZipIterator(symbolic_iterables, tracer)
 
@@ -304,7 +359,68 @@ def sym_len(x):
         return x.__len__()
     if isinstance(x, SymbolicList):
         return x.__len__()
+    if isinstance(x, BoundedSymbolicList):
+        return x.__len__()
+    # Handle set() of bounded list elements - check for distinctness
+    if isinstance(x, set):
+        elems = list(x)
+        if elems and all(isinstance(e, SymbolicInt) for e in elems):
+            # This is likely set(bounded_list) - return a SymbolicInt that
+            # equals len(elems) only when all elements are distinct
+            tracer = elems[0].tracer
+            n = len(elems)
+            # Build pairwise distinctness constraints
+            distinct_constraints = []
+            for i in range(n):
+                for j in range(i + 1, n):
+                    ei = elems[i].z3_expr if elems[i].z3_expr is not None else tracer.backend.IntVal(elems[i].concrete)
+                    ej = elems[j].z3_expr if elems[j].z3_expr is not None else tracer.backend.IntVal(elems[j].concrete)
+                    distinct_constraints.append(tracer.backend.Not(tracer.backend.Eq(ei, ej)))
+            if distinct_constraints:
+                # Return a SymbolicInt that is n when all distinct, undefined otherwise
+                # We record the constraint - when this is compared to n, the constraint is added
+                all_distinct = tracer.backend.And(*distinct_constraints) if len(distinct_constraints) > 1 else distinct_constraints[0]
+                # Return a special object that, when compared to n, adds the distinctness constraint
+                return SymbolicSetLen(n, all_distinct, tracer)
+            return SymbolicInt(n, tracer=tracer)
     return len(x)
+
+
+class SymbolicSetLen:
+    """Represents len(set(x)) for a bounded list - equals n only if all elements are distinct"""
+    def __init__(self, n, distinct_constraint, tracer):
+        self.n = n
+        self.distinct_constraint = distinct_constraint
+        self.tracer = tracer
+
+    def __eq__(self, other):
+        if isinstance(other, int):
+            if other == self.n:
+                # len(set(x)) == n means all elements must be distinct
+                return SymbolicBool(self.distinct_constraint, tracer=self.tracer)
+            else:
+                # len(set(x)) == m where m != n is false (we have n elements)
+                return SymbolicBool(False, tracer=self.tracer)
+        if isinstance(other, SymbolicInt):
+            if other.concrete is not None:
+                return self.__eq__(other.concrete)
+            # Symbolic comparison - n if distinct, else less
+            return SymbolicBool(
+                self.tracer.backend.And(
+                    self.distinct_constraint,
+                    self.tracer.backend.Eq(self.tracer.backend.IntVal(self.n), other.z3_expr)
+                ),
+                tracer=self.tracer
+            )
+        return NotImplemented
+
+    def __ne__(self, other):
+        eq = self.__eq__(other)
+        if isinstance(eq, SymbolicBool):
+            if eq.concrete is not None:
+                return SymbolicBool(not eq.concrete, tracer=self.tracer)
+            return SymbolicBool(self.tracer.backend.Not(eq.z3_expr), tracer=self.tracer)
+        return NotImplemented
 
 def sym_str(x):
     if isinstance(x, SymbolicInt):
@@ -793,12 +909,23 @@ def create_namespace(tracer):
         'sym_sorted': sym_sorted
     }
 
-def driver(sat_func, typ, cmds=None, llm_solver=None):
+def driver(sat_func, typ, cmds=None, llm_solver=None, list_size=None):
+    """Run symbolic execution on a sat function.
+
+    Args:
+        sat_func: The Python sat function source code
+        typ: The type of the symbolic variable
+        cmds: SMT solver commands to use
+        llm_solver: Optional LLM solver for guidance
+        list_size: For list types, optional size bound. If provided, uses BoundedSymbolicList
+                   which is much faster for SMT solving. When None with list type, uses
+                   the slower but more general recursive list encoding.
+    """
     reset()
     backend = default_backend(cmds)
     tracer = SymbolicTracer(backend=backend, llm_solver=llm_solver)
     namespace = create_namespace(tracer)
-    sym_var = make_symbolic(typ, 'x', tracer)
+    sym_var = make_symbolic(typ, 'x', tracer, size=list_size)
     namespace['x'] = sym_var
     exec(inject(sat_func), namespace)
     sat = namespace['sat']

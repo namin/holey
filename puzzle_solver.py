@@ -2,6 +2,7 @@ from holey import drive_sat, LLMSolver
 import copy
 import re
 import json
+import ast
 from func_timeout import func_timeout, FunctionTimedOut
 import traceback
 from typing import List, Any, Dict, Optional, Tuple
@@ -44,9 +45,133 @@ class PuzzleSolver:
         self.show_llm_matrix = False
         self.names_of_extrapolated_puzzles = []
         self.names_of_successfully_extrapolated_puzzles = []
+        self.use_bounded_lists = False  # Controlled by command-line flag
+        self.bounded_list_max_size = 200  # Maximum size for bounded lists
 
-    def symbolic_solve1(self, typ, sat_func: str, ans_type: str, name: str, cmds, llm_solver) -> Optional[str]:
-        sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver)
+    def detect_list_size(self, sat_func: str) -> Optional[int]:
+        """Detect required list size from sat function.
+
+        Looks for patterns that directly constrain list size:
+        - len(x) == N or len(li) == N (explicit length constraint)
+        - len(x) == param where param has a default value (parameter-based)
+        - len(x) == len(param) where param is a string/list with default
+        - x[:N] or li[:N] slicing on the answer variable
+        - all(...) with range(N) where the iteration uses x[:i] pattern
+        - li[i] or li[i+1] access inside range(N) loops
+
+        Does NOT use range(N) from general loops without answer variable access.
+        """
+        try:
+            tree = ast.parse(sat_func)
+        except:
+            return None
+
+        sizes = []
+        answer_vars = ('x', 'li', 'l', 'nums', 'arr', 'lst', 'seq', 'colors', 'ans')
+
+        # Extract parameter default values from function signature
+        param_defaults = {}
+        if tree.body and isinstance(tree.body[0], ast.FunctionDef):
+            func = tree.body[0]
+            args = func.args.args
+            defaults = func.args.defaults
+            # Defaults align to the end of args
+            num_defaults = len(defaults)
+            for i, default in enumerate(defaults):
+                arg_idx = len(args) - num_defaults + i
+                arg_name = args[arg_idx].arg
+                if isinstance(default, ast.Constant):
+                    if isinstance(default.value, int):
+                        param_defaults[arg_name] = default.value
+                    elif isinstance(default.value, str):
+                        param_defaults[arg_name] = len(default.value)
+                elif isinstance(default, ast.List):
+                    param_defaults[arg_name] = len(default.elts)
+
+        for node in ast.walk(tree):
+            # Look for len(x) == N or len(x) == param comparisons
+            if isinstance(node, ast.Compare):
+                if isinstance(node.left, ast.Call):
+                    if isinstance(node.left.func, ast.Name) and node.left.func.id == 'len':
+                        if node.left.args and isinstance(node.left.args[0], ast.Name):
+                            var_name = node.left.args[0].id
+                            if var_name in answer_vars:
+                                for comparator in node.comparators:
+                                    # Direct numeric literal
+                                    if isinstance(comparator, ast.Constant) and isinstance(comparator.value, int):
+                                        sizes.append(comparator.value)
+                                    # Parameter reference: len(li) == n
+                                    elif isinstance(comparator, ast.Name) and comparator.id in param_defaults:
+                                        sizes.append(param_defaults[comparator.id])
+                                    # len(param): len(li) == len(s) where s is a string param
+                                    elif isinstance(comparator, ast.Call):
+                                        if isinstance(comparator.func, ast.Name) and comparator.func.id == 'len':
+                                            if comparator.args and isinstance(comparator.args[0], ast.Name):
+                                                param_name = comparator.args[0].id
+                                                if param_name in param_defaults:
+                                                    sizes.append(param_defaults[param_name])
+
+            # Look for x[:N] or li[:N] slicing on answer variable
+            if isinstance(node, ast.Subscript):
+                if isinstance(node.value, ast.Name) and node.value.id in answer_vars:
+                    if isinstance(node.slice, ast.Slice):
+                        if node.slice.upper is not None:
+                            if isinstance(node.slice.upper, ast.Constant) and isinstance(node.slice.upper.value, int):
+                                sizes.append(node.slice.upper.value)
+
+            # Look for all/any/sum(...for i in range(N)) patterns
+            if isinstance(node, ast.Call):
+                if isinstance(node.func, ast.Name) and node.func.id in ('all', 'any', 'sum'):
+                    if node.args:
+                        arg0 = node.args[0]
+                        if isinstance(arg0, (ast.GeneratorExp, ast.ListComp)):
+                            gen = arg0
+                            elt = gen.elt
+                            generators = gen.generators
+                            for comp in generators:
+                                if isinstance(comp.iter, ast.Call):
+                                    if isinstance(comp.iter.func, ast.Name) and comp.iter.func.id == 'range':
+                                        if comp.iter.args:
+                                            # range(stop) -> args[0], range(start, stop[, step]) -> args[1]
+                                            if len(comp.iter.args) == 1:
+                                                range_arg = comp.iter.args[0]  # range(stop)
+                                            else:
+                                                range_arg = comp.iter.args[1]  # range(start, stop) or range(start, stop, step)
+                                            range_val = None
+                                            if isinstance(range_arg, ast.Constant) and isinstance(range_arg.value, int):
+                                                range_val = range_arg.value
+                                            elif isinstance(range_arg, ast.Name) and range_arg.id in param_defaults:
+                                                range_val = param_defaults[range_arg.id]
+
+                                            if range_val is not None:
+                                                # Check if body references answer var with indexing
+                                                # Collect all index patterns, don't break early
+                                                found_access = False
+                                                max_offset = 0
+                                                for subnode in ast.walk(elt):
+                                                    if isinstance(subnode, ast.Subscript):
+                                                        if isinstance(subnode.value, ast.Name) and subnode.value.id in answer_vars:
+                                                            # Check for slice (li[:i]) or index (li[i], li[i+1])
+                                                            if isinstance(subnode.slice, ast.Slice):
+                                                                found_access = True
+                                                            elif isinstance(subnode.slice, ast.BinOp):
+                                                                # li[i+1] pattern - need size range_val + offset
+                                                                if isinstance(subnode.slice.op, ast.Add):
+                                                                    if isinstance(subnode.slice.right, ast.Constant):
+                                                                        max_offset = max(max_offset, subnode.slice.right.value)
+                                                                        found_access = True
+                                                            elif isinstance(subnode.slice, ast.Name):
+                                                                # li[i] pattern - need size range_val
+                                                                found_access = True
+                                                if found_access:
+                                                    sizes.append(range_val + max_offset)
+
+        if sizes:
+            return max(sizes)  # Return largest detected size
+        return None
+
+    def symbolic_solve1(self, typ, sat_func: str, ans_type: str, name: str, cmds, llm_solver, list_size=None) -> Optional[str]:
+        sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver, list_size=list_size)
         tracer = sym_var.tracer
         with capture_output() as captured:
             solution = tracer.solution()
@@ -73,10 +198,18 @@ class PuzzleSolver:
             self.error_unsupported_answer_type += 1
             return None
 
+        # Detect list size for bounded list mode
+        list_size = None
+        if self.use_bounded_lists and ans_type in ['List[int]', 'List[str]']:
+            detected_size = self.detect_list_size(sat_func)
+            if detected_size is not None and detected_size <= self.bounded_list_max_size:
+                list_size = detected_size
+                print(f"Using bounded list with size {list_size}")
+
         if counting:
             self.count += 1
             self.counts[ans_type] += 1
-        tracer, sym_var, solution, log = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=None)
+        tracer, sym_var, solution, log = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=None, list_size=list_size)
         if False and llm_solver and solution is None:
             tracer_llm, sym_var_llm, solution_llm, log_llm = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=llm_solver)
             if solution is not None:
@@ -268,10 +401,10 @@ def check_result(result, sat_func):
         return False
     return True
 
-def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None, llm_all = False, llm_end = False):
+def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None, llm_all = False, llm_end = False, use_bounded_lists = False, bounded_list_max_size = 100):
     with open(puzzle_file) as f:
         puzzles = json.load(f)
-    
+
     total = len(puzzles)
     print(f"Starting with {total} puzzles...")
 
@@ -282,10 +415,14 @@ def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None,
         puzzles = [p for p in puzzles if any(p.get('name', '').endswith(name_suffix) for name_suffix in name_suffixes)]
     if answer_types:
         puzzles = [p for p in puzzles if p['ans_type'] in answer_types]
-        
+
     solver = PuzzleSolver()
     solver.total_count = total
     solver.llm_solver = llm_solver
+    solver.use_bounded_lists = use_bounded_lists
+    solver.bounded_list_max_size = bounded_list_max_size
+    if use_bounded_lists:
+        print(f"Using bounded list encoding (max size: {bounded_list_max_size})")
 
     print(f"Running benchmarks on {len(puzzles)} puzzles...")
     if name_prefixes:
@@ -436,6 +573,10 @@ if __name__ == "__main__":
     parser.add_argument('--llm', action='store_true', help='fallback to LLMs')
     parser.add_argument('--llm-all', action='store_true', help='Ask LLMs end-to-end')
     parser.add_argument('--llm-end', action='store_true', help='Ask LLMs end-to-end on success only')
+    parser.add_argument('--no-bounded-lists', action='store_true',
+                       help='Disable bounded list optimization for lists with known sizes')
+    parser.add_argument('--bounded-list-max-size', type=int, default=200,
+                       help='Maximum size for bounded lists (default: 200)')
     args = parser.parse_args()
 
     llm_solver = None
@@ -446,4 +587,4 @@ if __name__ == "__main__":
     if args.sat_file:
         solve_sat_file(args.sat_file, args.ans_type, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end)
     else:
-        run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end)
+        run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size)
