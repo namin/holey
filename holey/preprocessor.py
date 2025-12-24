@@ -1,4 +1,4 @@
-from .core import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicList, SymbolicRange, SymbolicRangeIterator, SymbolicStr, SymbolicSlice, truthy
+from .core import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicList, SymbolicRange, SymbolicRangeIterator, SymbolicStr, SymbolicSlice, truthy, BoundedSymbolicList, BoundedSymbolicSlice
 from .backend import default_backend
 import ast
 from typing import List, Any, Dict, Optional, Tuple
@@ -68,14 +68,26 @@ class SymbolicZipIterator:
 
 def sym_sum(iterable):
     """Symbolic summation that maintains symbolic operations"""
-    # Handle SymbolicList directly without iteration
     from holey.core import SymbolicList, SymbolicInt, SymbolicSlice
+
+    # Handle BoundedSymbolicSlice (from BoundedSymbolicList slicing)
+    if isinstance(iterable, BoundedSymbolicSlice):
+        return iterable.sum()
+
+    # Handle BoundedSymbolicList directly
+    if isinstance(iterable, BoundedSymbolicList):
+        if iterable.elementTyp == int:
+            return SymbolicInt(iterable.bounded_vars.sum(), tracer=iterable.tracer)
+        # For non-int lists, fall back to iteration
+        return sum(iterable)
+
+    # Handle SymbolicList directly without iteration
     if isinstance(iterable, SymbolicList):
         if iterable.elementTyp == int:
             return SymbolicInt(iterable.tracer.backend.ListSum(iterable.z3_expr), tracer=iterable.tracer)
         # For non-int lists, fall back to iteration
         return sum(iterable)
-    
+
     # Handle SymbolicSlice - need to compute sum of slice
     if isinstance(iterable, SymbolicSlice):
         # Use the sum method we just added
@@ -793,12 +805,23 @@ def create_namespace(tracer):
         'sym_sorted': sym_sorted
     }
 
-def driver(sat_func, typ, cmds=None, llm_solver=None):
+def driver(sat_func, typ, cmds=None, llm_solver=None, list_size=None):
+    """Run symbolic execution on a sat function.
+
+    Args:
+        sat_func: The Python sat function source code
+        typ: The type of the symbolic variable
+        cmds: SMT solver commands to use
+        llm_solver: Optional LLM solver for guidance
+        list_size: For list types, optional size bound. If provided, uses BoundedSymbolicList
+                   which is much faster for SMT solving. When None with list type, uses
+                   the slower but more general recursive list encoding.
+    """
     reset()
     backend = default_backend(cmds)
     tracer = SymbolicTracer(backend=backend, llm_solver=llm_solver)
     namespace = create_namespace(tracer)
-    sym_var = make_symbolic(typ, 'x', tracer)
+    sym_var = make_symbolic(typ, 'x', tracer, size=list_size)
     namespace['x'] = sym_var
     exec(inject(sat_func), namespace)
     sat = namespace['sat']

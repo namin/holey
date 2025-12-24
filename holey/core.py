@@ -94,7 +94,19 @@ class SymbolicTracer:
         return None
 
     def solution_var(self, model, var):
-        return  model[var.name]
+        # Handle BoundedSymbolicList - extract individual variables
+        if isinstance(var, BoundedSymbolicList):
+            result = []
+            for i in range(var.size):
+                var_name = f"{var.name}_e{i}"
+                if var_name in model:
+                    result.append(model[var_name])
+                else:
+                    # Variable not in model - use default or raise
+                    print(f"Warning: {var_name} not in model")
+                    return None
+            return result
+        return model[var.name]
     
     def ensure_symbolic(self, other):
         if isinstance(other, bool):
@@ -888,6 +900,226 @@ class SymbolicList:
         else:
             raise NotImplementedError("Cannot remove from fully symbolic list")
 
+
+class BoundedSymbolicList:
+    """A symbolic list with known size, using individual variables instead of recursive (List Int).
+
+    This encoding is much faster for SMT solvers because it avoids quantifiers over list indices
+    and recursive list helper functions.
+    """
+    def __init__(self, size: int, elementTyp, name: str, tracer: Optional['SymbolicTracer'] = None):
+        self.tracer = tracer or SymbolicTracer()
+        self.elementTyp = elementTyp
+        self.size = size
+        self.name = name
+        self.concrete = None
+        self.z3_expr = None  # Compatibility with SymbolicList (not used, but needed for type checks)
+
+        # Create bounded list with individual variables
+        self.bounded_vars = self.tracer.backend.BoundedList(
+            name, size, self.tracer.backend.Type(elementTyp)
+        )
+
+    def __eq__(self, other):
+        if isinstance(other, (list, SymbolicList)):
+            other_list = self.tracer.ensure_symbolic(other) if isinstance(other, list) else other
+            if hasattr(other_list, 'concrete') and other_list.concrete is not None:
+                # Compare element by element
+                if len(other_list.concrete) != self.size:
+                    return SymbolicBool(False, tracer=self.tracer)
+                constraints = []
+                for i, item in enumerate(other_list.concrete):
+                    item = self.tracer.ensure_symbolic(item)
+                    constraints.append(self.tracer.backend.Eq(
+                        self.bounded_vars.get(i),
+                        item.z3_expr
+                    ))
+                if constraints:
+                    return SymbolicBool(self.tracer.backend.And(*constraints), tracer=self.tracer)
+                return SymbolicBool(True, tracer=self.tracer)
+        return SymbolicBool(False, tracer=self.tracer)
+
+    def __ne__(self, other):
+        eq = self.__eq__(other)
+        if isinstance(eq, SymbolicBool):
+            if eq.concrete is not None:
+                return SymbolicBool(not eq.concrete, tracer=self.tracer)
+            return SymbolicBool(self.tracer.backend.Not(eq.z3_expr), tracer=self.tracer)
+        return not eq
+
+    def __contains__(self, item):
+        item = self.tracer.ensure_symbolic(item)
+        # Build OR of equality checks for each element
+        checks = [self.tracer.backend.Eq(self.bounded_vars.get(i), item.z3_expr)
+                  for i in range(self.size)]
+        if checks:
+            return SymbolicBool(self.tracer.backend.Or(*checks), tracer=self.tracer)
+        return SymbolicBool(False, tracer=self.tracer)
+
+    def contains(self, item):
+        return self.tracer.ensure_symbolic(self.__contains__(item))
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            # Handle slicing
+            start = key.start if key.start is not None else 0
+            stop = key.stop if key.stop is not None else self.size
+            step = key.step if key.step is not None else 1
+
+            # If all indices are concrete, return a BoundedSymbolicSlice
+            if all(isinstance(x, int) for x in [start, stop, step]):
+                return BoundedSymbolicSlice(self, start, stop, step)
+            # For symbolic indices, return a SymbolicSlice-like object
+            return BoundedSymbolicSlice(self, start, stop, step)
+
+        # Handle indexing
+        if isinstance(key, int):
+            # Concrete index
+            if key < 0:
+                key = self.size + key
+            return make_symbolic_value(self.elementTyp, self.bounded_vars.get(key), tracer=self.tracer)
+        elif isinstance(key, SymbolicInt):
+            if key.concrete is not None:
+                idx = key.concrete
+                if idx < 0:
+                    idx = self.size + idx
+                return make_symbolic_value(self.elementTyp, self.bounded_vars.get(idx), tracer=self.tracer)
+            else:
+                # Symbolic index - use ITE chain
+                return make_symbolic_value(self.elementTyp, self.bounded_vars.get(key.z3_expr), tracer=self.tracer)
+        else:
+            raise ValueError(f"Unsupported index type: {type(key)}")
+
+    def __iter__(self):
+        # Return an iterator over the elements
+        for i in range(self.size):
+            yield make_symbolic_value(self.elementTyp, self.bounded_vars.get(i), tracer=self.tracer)
+
+    def __len__(self):
+        return SymbolicInt(self.size, tracer=self.tracer)
+
+    def __add__(self, other):
+        # For now, adding bounded lists creates a regular symbolic list
+        other = self.tracer.ensure_symbolic(other)
+        my_elems = [make_symbolic_value(self.elementTyp, self.bounded_vars.get(i), tracer=self.tracer)
+                    for i in range(self.size)]
+        if hasattr(other, 'concrete') and other.concrete is not None:
+            return SymbolicList(my_elems + list(other.concrete), self.elementTyp, tracer=self.tracer)
+        raise NotImplementedError("Cannot add bounded list to fully symbolic list")
+
+    def __radd__(self, other):
+        other = self.tracer.ensure_symbolic(other)
+        my_elems = [make_symbolic_value(self.elementTyp, self.bounded_vars.get(i), tracer=self.tracer)
+                    for i in range(self.size)]
+        if isinstance(other, list):
+            # Raw list on left side
+            return SymbolicList(list(other) + my_elems, self.elementTyp, tracer=self.tracer)
+        if hasattr(other, 'concrete') and other.concrete is not None:
+            return SymbolicList(list(other.concrete) + my_elems, self.elementTyp, tracer=self.tracer)
+        raise NotImplementedError("Cannot add fully symbolic list to bounded list")
+
+    def index(self, item):
+        item = self.tracer.ensure_symbolic(item)
+        # Build nested ITE: if e0 == item then 0 else if e1 == item then 1 else ...
+        result = self.tracer.backend.IntVal(-1)  # Not found
+        for i in range(self.size - 1, -1, -1):
+            result = self.tracer.backend.If(
+                self.tracer.backend.Eq(self.bounded_vars.get(i), item.z3_expr),
+                self.tracer.backend.IntVal(i),
+                result
+            )
+        return SymbolicInt(result, tracer=self.tracer)
+
+    def count(self, item):
+        item = self.tracer.ensure_symbolic(item)
+        # Sum of (1 if ei == item else 0) for all i
+        terms = []
+        for i in range(self.size):
+            term = self.tracer.backend.If(
+                self.tracer.backend.Eq(self.bounded_vars.get(i), item.z3_expr),
+                self.tracer.backend.IntVal(1),
+                self.tracer.backend.IntVal(0)
+            )
+            terms.append(term)
+        if terms:
+            return SymbolicInt(self.tracer.backend.Add(*terms), tracer=self.tracer)
+        return SymbolicInt(0, tracer=self.tracer)
+
+    def __not__(self):
+        return SymbolicBool(self.size == 0, tracer=self.tracer)
+
+
+class BoundedSymbolicSlice:
+    """A slice of a BoundedSymbolicList - used for prefix sums etc."""
+    def __init__(self, bounded_list, start, stop, step=1):
+        self.bounded_list = bounded_list
+        self.tracer = bounded_list.tracer
+        self.start = start
+        self.stop = stop
+        self.step = step
+
+    def sum(self):
+        """Sum elements in the slice - optimized for prefix sums"""
+        # Handle concrete start
+        start_val = self.start if isinstance(self.start, int) else (
+            self.start.concrete if hasattr(self.start, 'concrete') and self.start.concrete is not None else None
+        )
+
+        if start_val is not None and start_val == 0:
+            # This is a prefix sum li[:stop]
+            stop = self.stop
+            if isinstance(stop, int):
+                return SymbolicInt(self.bounded_list.bounded_vars.prefix_sum(stop), tracer=self.tracer)
+            elif isinstance(stop, SymbolicInt):
+                if stop.concrete is not None:
+                    return SymbolicInt(self.bounded_list.bounded_vars.prefix_sum(stop.concrete), tracer=self.tracer)
+                else:
+                    return SymbolicInt(self.bounded_list.bounded_vars.prefix_sum(stop.z3_expr), tracer=self.tracer)
+
+        # General case: build sum with conditions
+        terms = []
+        for i in range(self.bounded_list.size):
+            # Check if index i is in range [start, stop)
+            in_range = self.tracer.backend.And(
+                self.tracer.backend.GE(
+                    self.tracer.backend.IntVal(i),
+                    self.start.z3_expr if isinstance(self.start, SymbolicInt) else self.tracer.backend.IntVal(self.start)
+                ),
+                self.tracer.backend.LT(
+                    self.tracer.backend.IntVal(i),
+                    self.stop.z3_expr if isinstance(self.stop, SymbolicInt) else self.tracer.backend.IntVal(self.stop)
+                )
+            )
+            term = self.tracer.backend.If(
+                in_range,
+                self.bounded_list.bounded_vars.get(i),
+                self.tracer.backend.IntVal(0)
+            )
+            terms.append(term)
+
+        if terms:
+            return SymbolicInt(self.tracer.backend.Add(*terms), tracer=self.tracer)
+        return SymbolicInt(0, tracer=self.tracer)
+
+    def __iter__(self):
+        # Iterate over elements in the slice
+        start = self.start if isinstance(self.start, int) else 0
+        stop = self.stop if isinstance(self.stop, int) else self.bounded_list.size
+        step = self.step if isinstance(self.step, int) else 1
+
+        for i in range(start, min(stop, self.bounded_list.size), step):
+            yield make_symbolic_value(
+                self.bounded_list.elementTyp,
+                self.bounded_list.bounded_vars.get(i),
+                tracer=self.tracer
+            )
+
+    def get_slice(self):
+        """Return the slice as a SymbolicList (for compatibility)"""
+        elements = list(self)
+        return SymbolicList(elements, self.bounded_list.elementTyp, tracer=self.tracer)
+
+
 class SymbolicStrIterator:
     _counter = 0
     
@@ -1475,8 +1707,16 @@ def fresh_symbolic(var):
     typ = type(var).__name__.lower().replace('symbolic', '')
     return make_symbolic(typ, var.name, var.tracer)
 
-def make_symbolic(typ: Type, name: str, tracer: Optional[SymbolicTracer] = None) -> Any:
-    """Create a new symbolic variable of given type"""
+def make_symbolic(typ: Type, name: str, tracer: Optional[SymbolicTracer] = None, size: Optional[int] = None) -> Any:
+    """Create a new symbolic variable of given type.
+
+    Args:
+        typ: The type of the symbolic variable
+        name: Variable name
+        tracer: The symbolic tracer
+        size: For list types, optional size bound. If provided, uses BoundedSymbolicList
+              which is much faster for SMT solving.
+    """
     if typ == int or typ == 'int':
         sym = SymbolicInt(name=name, tracer=tracer)
     elif typ == bool or typ == 'bool':
@@ -1486,9 +1726,15 @@ def make_symbolic(typ: Type, name: str, tracer: Optional[SymbolicTracer] = None)
     elif typ == str or typ == 'str':
         sym = SymbolicStr(name=name, tracer=tracer)
     elif typ == list[str] or typ == 'List[str]':
-        sym = SymbolicList(None, str, name=name, tracer=tracer)
+        if size is not None:
+            sym = BoundedSymbolicList(size, str, name=name, tracer=tracer)
+        else:
+            sym = SymbolicList(None, str, name=name, tracer=tracer)
     elif typ == list[int] or typ == 'List[int]':
-        sym = SymbolicList(None, int, name=name, tracer=tracer)
+        if size is not None:
+            sym = BoundedSymbolicList(size, int, name=name, tracer=tracer)
+        else:
+            sym = SymbolicList(None, int, name=name, tracer=tracer)
     else:
         raise ValueError(f"Unsupported symbolic type: {typ}")
     return sym
