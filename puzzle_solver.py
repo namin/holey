@@ -132,7 +132,11 @@ class PuzzleSolver:
                                 if isinstance(comp.iter, ast.Call):
                                     if isinstance(comp.iter.func, ast.Name) and comp.iter.func.id == 'range':
                                         if comp.iter.args:
-                                            range_arg = comp.iter.args[-1] if len(comp.iter.args) > 1 else comp.iter.args[0]
+                                            # range(stop) -> args[0], range(start, stop[, step]) -> args[1]
+                                            if len(comp.iter.args) == 1:
+                                                range_arg = comp.iter.args[0]  # range(stop)
+                                            else:
+                                                range_arg = comp.iter.args[1]  # range(start, stop) or range(start, stop, step)
                                             range_val = None
                                             if isinstance(range_arg, ast.Constant) and isinstance(range_arg.value, int):
                                                 range_val = range_arg.value

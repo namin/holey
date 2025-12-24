@@ -248,9 +248,19 @@ def sym_zip(*iterables):
     if tracer is None:
         return zip(*iterables)  # If no symbolic values, use regular zip
 
+    # Check if all iterables are bounded (BoundedSymbolicList or BoundedSymbolicSlice)
+    # These can be iterated concretely since they have known sizes
+    all_bounded = all(
+        isinstance(it, (BoundedSymbolicList, BoundedSymbolicSlice))
+        for it in iterables
+    )
+    if all_bounded:
+        # Iterate concretely over bounded lists/slices
+        return zip(*[list(it) for it in iterables])
+
     # Convert all items to symbolic form
     symbolic_iterables = [tracer.ensure_symbolic(it) for it in iterables]
-    
+
     # If all concrete, use regular zip
     if all(hasattr(it, 'concrete') and it.concrete is not None for it in symbolic_iterables):
         return zip(*[it.concrete for it in symbolic_iterables])
