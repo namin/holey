@@ -119,9 +119,9 @@ class PuzzleSolver:
                             if isinstance(node.slice.upper, ast.Constant) and isinstance(node.slice.upper.value, int):
                                 sizes.append(node.slice.upper.value)
 
-            # Look for all/any(...for i in range(N)) patterns
+            # Look for all/any/sum(...for i in range(N)) patterns
             if isinstance(node, ast.Call):
-                if isinstance(node.func, ast.Name) and node.func.id in ('all', 'any'):
+                if isinstance(node.func, ast.Name) and node.func.id in ('all', 'any', 'sum'):
                     if node.args:
                         arg0 = node.args[0]
                         if isinstance(arg0, (ast.GeneratorExp, ast.ListComp)):

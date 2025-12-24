@@ -1119,6 +1119,30 @@ class BoundedSymbolicSlice:
         elements = list(self)
         return SymbolicList(elements, self.bounded_list.elementTyp, tracer=self.tracer)
 
+    def __add__(self, other):
+        """Concatenate two slices or a slice with another list"""
+        my_elems = list(self)
+        if isinstance(other, BoundedSymbolicSlice):
+            other_elems = list(other)
+            return SymbolicList(my_elems + other_elems, self.bounded_list.elementTyp, tracer=self.tracer)
+        if isinstance(other, BoundedSymbolicList):
+            other_elems = list(other)
+            return SymbolicList(my_elems + other_elems, self.bounded_list.elementTyp, tracer=self.tracer)
+        if isinstance(other, list):
+            return SymbolicList(my_elems + other, self.bounded_list.elementTyp, tracer=self.tracer)
+        if hasattr(other, 'concrete') and other.concrete is not None:
+            return SymbolicList(my_elems + list(other.concrete), self.bounded_list.elementTyp, tracer=self.tracer)
+        raise NotImplementedError(f"Cannot add BoundedSymbolicSlice to {type(other)}")
+
+    def __radd__(self, other):
+        """Handle other + slice"""
+        my_elems = list(self)
+        if isinstance(other, list):
+            return SymbolicList(other + my_elems, self.bounded_list.elementTyp, tracer=self.tracer)
+        if hasattr(other, 'concrete') and other.concrete is not None:
+            return SymbolicList(list(other.concrete) + my_elems, self.bounded_list.elementTyp, tracer=self.tracer)
+        raise NotImplementedError(f"Cannot add {type(other)} to BoundedSymbolicSlice")
+
 
 class SymbolicStrIterator:
     _counter = 0

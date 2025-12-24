@@ -326,7 +326,68 @@ def sym_len(x):
         return x.__len__()
     if isinstance(x, SymbolicList):
         return x.__len__()
+    if isinstance(x, BoundedSymbolicList):
+        return x.__len__()
+    # Handle set() of bounded list elements - check for distinctness
+    if isinstance(x, set):
+        elems = list(x)
+        if elems and all(isinstance(e, SymbolicInt) for e in elems):
+            # This is likely set(bounded_list) - return a SymbolicInt that
+            # equals len(elems) only when all elements are distinct
+            tracer = elems[0].tracer
+            n = len(elems)
+            # Build pairwise distinctness constraints
+            distinct_constraints = []
+            for i in range(n):
+                for j in range(i + 1, n):
+                    ei = elems[i].z3_expr if elems[i].z3_expr is not None else tracer.backend.IntVal(elems[i].concrete)
+                    ej = elems[j].z3_expr if elems[j].z3_expr is not None else tracer.backend.IntVal(elems[j].concrete)
+                    distinct_constraints.append(tracer.backend.Not(tracer.backend.Eq(ei, ej)))
+            if distinct_constraints:
+                # Return a SymbolicInt that is n when all distinct, undefined otherwise
+                # We record the constraint - when this is compared to n, the constraint is added
+                all_distinct = tracer.backend.And(*distinct_constraints) if len(distinct_constraints) > 1 else distinct_constraints[0]
+                # Return a special object that, when compared to n, adds the distinctness constraint
+                return SymbolicSetLen(n, all_distinct, tracer)
+            return SymbolicInt(n, tracer=tracer)
     return len(x)
+
+
+class SymbolicSetLen:
+    """Represents len(set(x)) for a bounded list - equals n only if all elements are distinct"""
+    def __init__(self, n, distinct_constraint, tracer):
+        self.n = n
+        self.distinct_constraint = distinct_constraint
+        self.tracer = tracer
+
+    def __eq__(self, other):
+        if isinstance(other, int):
+            if other == self.n:
+                # len(set(x)) == n means all elements must be distinct
+                return SymbolicBool(self.distinct_constraint, tracer=self.tracer)
+            else:
+                # len(set(x)) == m where m != n is false (we have n elements)
+                return SymbolicBool(False, tracer=self.tracer)
+        if isinstance(other, SymbolicInt):
+            if other.concrete is not None:
+                return self.__eq__(other.concrete)
+            # Symbolic comparison - n if distinct, else less
+            return SymbolicBool(
+                self.tracer.backend.And(
+                    self.distinct_constraint,
+                    self.tracer.backend.Eq(self.tracer.backend.IntVal(self.n), other.z3_expr)
+                ),
+                tracer=self.tracer
+            )
+        return NotImplemented
+
+    def __ne__(self, other):
+        eq = self.__eq__(other)
+        if isinstance(eq, SymbolicBool):
+            if eq.concrete is not None:
+                return SymbolicBool(not eq.concrete, tracer=self.tracer)
+            return SymbolicBool(self.tracer.backend.Not(eq.z3_expr), tracer=self.tracer)
+        return NotImplemented
 
 def sym_str(x):
     if isinstance(x, SymbolicInt):
