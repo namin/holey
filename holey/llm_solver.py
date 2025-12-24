@@ -84,9 +84,9 @@ For example, list results like this:
             if ans_type == 'int':
                 try:
                     result = int(result)
-                except ValueError as e:
+                except (ValueError, TypeError) as e:
                     print('LLM returned bad type for int', e)
-                    break
+                    continue
             if not check_result(result, sat_func):
                 print('LLM result fails to verify for puzzle '+name)
             else:
