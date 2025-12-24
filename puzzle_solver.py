@@ -46,7 +46,7 @@ class PuzzleSolver:
         self.names_of_extrapolated_puzzles = []
         self.names_of_successfully_extrapolated_puzzles = []
         self.use_bounded_lists = False  # Controlled by command-line flag
-        self.bounded_list_max_size = 100  # Maximum size for bounded lists
+        self.bounded_list_max_size = 200  # Maximum size for bounded lists
 
     def detect_list_size(self, sat_func: str) -> Optional[int]:
         """Detect required list size from sat function.
@@ -575,8 +575,8 @@ if __name__ == "__main__":
     parser.add_argument('--llm-end', action='store_true', help='Ask LLMs end-to-end on success only')
     parser.add_argument('--bounded-lists', action='store_true',
                        help='Use bounded list encoding (individual variables) for faster solving')
-    parser.add_argument('--bounded-list-max-size', type=int, default=100,
-                       help='Maximum size for bounded lists (default: 100)')
+    parser.add_argument('--bounded-list-max-size', type=int, default=200,
+                       help='Maximum size for bounded lists (default: 200)')
     args = parser.parse_args()
 
     llm_solver = None
