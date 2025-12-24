@@ -573,8 +573,8 @@ if __name__ == "__main__":
     parser.add_argument('--llm', action='store_true', help='fallback to LLMs')
     parser.add_argument('--llm-all', action='store_true', help='Ask LLMs end-to-end')
     parser.add_argument('--llm-end', action='store_true', help='Ask LLMs end-to-end on success only')
-    parser.add_argument('--bounded-lists', action='store_true',
-                       help='Use bounded list encoding (individual variables) for faster solving')
+    parser.add_argument('--no-bounded-lists', action='store_true',
+                       help='Disable bounded list optimization for lists with known sizes')
     parser.add_argument('--bounded-list-max-size', type=int, default=200,
                        help='Maximum size for bounded lists (default: 200)')
     args = parser.parse_args()
@@ -587,4 +587,4 @@ if __name__ == "__main__":
     if args.sat_file:
         solve_sat_file(args.sat_file, args.ans_type, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end)
     else:
-        run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, args.bounded_lists, args.bounded_list_max_size)
+        run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size)
