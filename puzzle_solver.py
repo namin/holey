@@ -378,7 +378,7 @@ def infer_ans_type(sat_func: str) -> Optional[str]:
         pass
     return None
 
-def solve_sat_file(sat_file: str, ans_type: Optional[str], smtlib_backends: list):
+def solve_sat_file(sat_file: str, ans_type: Optional[str], smtlib_backends: list, llm_solver=None, llm_all=False, llm_end=False):
     """Solve a single Python file containing a sat function."""
     with open(sat_file) as f:
         sat_func = f.read()
@@ -393,7 +393,7 @@ def solve_sat_file(sat_file: str, ans_type: Optional[str], smtlib_backends: list
 
     solver = PuzzleSolver()
     solver.total_count = 1
-    solver.llm_solver = None
+    solver.llm_solver = llm_solver
 
     puzzle_data = {
         'name': sat_file,
@@ -401,7 +401,10 @@ def solve_sat_file(sat_file: str, ans_type: Optional[str], smtlib_backends: list
         'ans_type': ans_type
     }
 
-    return solver.solve_puzzle(puzzle_data, smtlib_backends, None, False)
+    if llm_all:
+        return solver.solve_puzzle_llm(puzzle_data, llm_solver)
+    else:
+        return solver.solve_puzzle(puzzle_data, smtlib_backends, llm_solver, llm_end)
 
 if __name__ == "__main__":
     import argparse
@@ -435,11 +438,12 @@ if __name__ == "__main__":
     parser.add_argument('--llm-end', action='store_true', help='Ask LLMs end-to-end on success only')
     args = parser.parse_args()
 
+    llm_solver = None
+    if args.llm:
+        from holey import llm_generators
+        llm_solver = {k: LLMSolver(v) for k,v in llm_generators.items()}
+
     if args.sat_file:
-        solve_sat_file(args.sat_file, args.ans_type, args.smtlib_backends)
+        solve_sat_file(args.sat_file, args.ans_type, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end)
     else:
-        llm_solver = None
-        if args.llm:
-            from holey import llm_generators
-            llm_solver = {k: LLMSolver(v) for k,v in llm_generators.items()}
         run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end)
