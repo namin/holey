@@ -515,7 +515,7 @@ def infer_ans_type(sat_func: str) -> Optional[str]:
         pass
     return None
 
-def solve_sat_file(sat_file: str, ans_type: Optional[str], smtlib_backends: list, llm_solver=None, llm_all=False, llm_end=False):
+def solve_sat_file(sat_file: str, ans_type: Optional[str], smtlib_backends: list, llm_solver=None, llm_all=False, llm_end=False, use_bounded_lists=True, bounded_list_max_size=200):
     """Solve a single Python file containing a sat function."""
     with open(sat_file) as f:
         sat_func = f.read()
@@ -531,6 +531,10 @@ def solve_sat_file(sat_file: str, ans_type: Optional[str], smtlib_backends: list
     solver = PuzzleSolver()
     solver.total_count = 1
     solver.llm_solver = llm_solver
+    solver.use_bounded_lists = use_bounded_lists
+    solver.bounded_list_max_size = bounded_list_max_size
+    if use_bounded_lists:
+        print(f"Using bounded list encoding (max size: {bounded_list_max_size})")
 
     puzzle_data = {
         'name': sat_file,
@@ -585,6 +589,6 @@ if __name__ == "__main__":
         llm_solver = {k: LLMSolver(v) for k,v in llm_generators.items()}
 
     if args.sat_file:
-        solve_sat_file(args.sat_file, args.ans_type, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end)
+        solve_sat_file(args.sat_file, args.ans_type, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size)
     else:
         run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size)
