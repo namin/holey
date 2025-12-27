@@ -401,7 +401,7 @@ def check_result(result, sat_func):
         return False
     return True
 
-def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None, llm_all = False, llm_end = False, use_bounded_lists = False, bounded_list_max_size = 100):
+def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None, llm_all = False, llm_end = False, use_bounded_lists = False, bounded_list_max_size = 100, show_shrunk = False):
     with open(puzzle_file) as f:
         puzzles = json.load(f)
 
@@ -450,6 +450,10 @@ LLMs currently solve:
         if llm_end:
             print(f"Within the symbolic success, the LLMs solves the following:")
             print(solver.pretty_counts_llm())
+
+    if show_shrunk and solver.names_of_extrapolated_puzzles:
+        print("\n### Puzzles with successfully solved smaller variations:")
+        print(' '.join(solver.names_of_extrapolated_puzzles))
 
 def vary(sat_func):
     # Find all large constants
@@ -581,6 +585,8 @@ if __name__ == "__main__":
                        help='Disable bounded list optimization for lists with known sizes')
     parser.add_argument('--bounded-list-max-size', type=int, default=200,
                        help='Maximum size for bounded lists (default: 200)')
+    parser.add_argument('--show-shrunk', action='store_true',
+                       help='Show puzzles where the smaller variation was successfully solved')
     args = parser.parse_args()
 
     llm_solver = None
@@ -591,4 +597,4 @@ if __name__ == "__main__":
     if args.sat_file:
         solve_sat_file(args.sat_file, args.ans_type, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size)
     else:
-        run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size)
+        run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, args.show_shrunk)
