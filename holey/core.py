@@ -14,16 +14,20 @@ class SymbolicTracer:
         self.current_branch_exploration = []
         self.remaining_branch_explorations = []
 
-    def driver(self, thunk):
+    def driver(self, thunk, max_branches=1000):
+        branch_count = 0
         while True:
             result = thunk()
             self.add_constraint(result)
             if self.remaining_branch_explorations == []:
                 return
-            else:
-                self.current_branch_exploration = self.remaining_branch_explorations.pop()
-                self.branch_counter = 0
-                self.path_conditions = []
+            branch_count += 1
+            if branch_count >= max_branches:
+                print(f"Warning: hit max branch limit ({max_branches}), {len(self.remaining_branch_explorations)} branches unexplored")
+                return
+            self.current_branch_exploration = self.remaining_branch_explorations.pop()
+            self.branch_counter = 0
+            self.path_conditions = []
 
     def branch(self, condition):
         """Handle branching with optional LLM guidance"""
