@@ -1739,6 +1739,12 @@ def fresh_symbolic(var):
     typ = type(var).__name__.lower().replace('symbolic', '')
     return make_symbolic(typ, var.name, var.tracer)
 
+_list_type_map = {
+    list[str]: str, 'List[str]': str,
+    list[int]: int, 'List[int]': int,
+    list[float]: float, 'List[float]': float,
+}
+
 def make_symbolic(typ: Type, name: str, tracer: Optional[SymbolicTracer] = None, size: Optional[int] = None) -> Any:
     """Create a new symbolic variable of given type.
 
@@ -1757,21 +1763,12 @@ def make_symbolic(typ: Type, name: str, tracer: Optional[SymbolicTracer] = None,
         sym = SymbolicFloat(name=name, tracer=tracer)
     elif typ == str or typ == 'str':
         sym = SymbolicStr(name=name, tracer=tracer)
-    elif typ == list[str] or typ == 'List[str]':
+    elif typ in _list_type_map:
+        elem_type = _list_type_map[typ]
         if size is not None:
-            sym = BoundedSymbolicList(size, str, name=name, tracer=tracer)
+            sym = BoundedSymbolicList(size, elem_type, name=name, tracer=tracer)
         else:
-            sym = SymbolicList(None, str, name=name, tracer=tracer)
-    elif typ == list[int] or typ == 'List[int]':
-        if size is not None:
-            sym = BoundedSymbolicList(size, int, name=name, tracer=tracer)
-        else:
-            sym = SymbolicList(None, int, name=name, tracer=tracer)
-    elif typ == list[float] or typ == 'List[float]':
-        if size is not None:
-            sym = BoundedSymbolicList(size, float, name=name, tracer=tracer)
-        else:
-            sym = SymbolicList(None, float, name=name, tracer=tracer)
+            sym = SymbolicList(None, elem_type, name=name, tracer=tracer)
     else:
         raise ValueError(f"Unsupported symbolic type: {typ}")
     return sym
