@@ -1744,6 +1744,7 @@ list_type_map = {
     list[int]: int, 'List[int]': int,
     list[float]: float, 'List[float]': float,
     list[bool]: bool, 'List[bool]': bool,
+    list[list[int]]: list[int], 'List[List[int]]': list[int],
 }
 
 type_map = {
@@ -1789,10 +1790,9 @@ def make_symbolic_value(typ: Type, v: Any, tracer: Optional[SymbolicTracer] = No
         sym = SymbolicFloat(v, tracer=tracer)
     elif typ == str or typ == 'str':
         sym = SymbolicStr(v, tracer=tracer)
-    elif typ == list[str] or typ == 'List[str]':
-        sym = SymbolicList(v, str, tracer=tracer)
-    elif typ == list[int] or typ == 'List[int]':
-        sym = SymbolicList(v, int, tracer=tracer)
+    elif typ in list_type_map:
+        elem_type = list_type_map[typ]
+        sym = SymbolicList(v, elem_type, tracer=tracer)
     else:
         raise ValueError(f"Unsupported symbolic type: {typ}")
     return sym

@@ -2,7 +2,7 @@
 SMTLIB backend for collecting and displaying constraints.
 """
 from dataclasses import dataclass, field
-from typing import Any, List, Dict, Optional
+from typing import Any, List, Dict, Optional, get_origin, get_args
 import tempfile
 import subprocess
 import os
@@ -1207,6 +1207,9 @@ class Backend():
             return "Real"
         if typ == str:
             return "String"
+        if get_origin(typ) is list:
+            elem_type = get_args(typ)[0]
+            return f"(List {self.Type(elem_type)})"
         raise ValueError("Unsupported type " + str(typ))
 
     def List(self, name: str, element_type: str) -> MockExpr:
