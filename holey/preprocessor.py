@@ -388,10 +388,28 @@ def sym_len(x):
 
 class SymbolicSetLen:
     """Represents len(set(x)) for a bounded list - equals n only if all elements are distinct"""
+    _counter = 0
+
     def __init__(self, n, distinct_constraint, tracer):
         self.n = n
         self.distinct_constraint = distinct_constraint
         self.tracer = tracer
+        self.concrete = None  # Always None since value depends on distinctness
+
+        # Create z3_expr as a fresh symbolic integer with appropriate constraints
+        var_name = f'_set_len_{SymbolicSetLen._counter}'
+        SymbolicSetLen._counter += 1
+        self.z3_expr = tracer.backend.Int(var_name)
+
+        # Add constraints: 0 <= set_len <= n
+        tracer.add_constraint(tracer.backend.GE(self.z3_expr, tracer.backend.IntVal(0)))
+        tracer.add_constraint(tracer.backend.LE(self.z3_expr, tracer.backend.IntVal(n)))
+
+        # set_len == n ⟺ all elements are distinct
+        tracer.add_constraint(tracer.backend.Eq(
+            tracer.backend.Eq(self.z3_expr, tracer.backend.IntVal(n)),
+            distinct_constraint
+        ))
 
     def __eq__(self, other):
         if isinstance(other, int):
