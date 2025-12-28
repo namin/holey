@@ -416,7 +416,8 @@ class MockExpr:
 
 # from lib to users
 library_deps = {
-'list': ['str.split', 'python.join', 'list.slice', 'list.real'],
+'list': ['str.split', 'python.join', 'list.slice', 'list.length.real', 'list.get.real'],
+'list.length.real': ['list.get.real']
 }
 
 library = {
@@ -531,13 +532,15 @@ library = {
           (list.count.real (tail l) val))))
 """
 ,
-'list.get.real':
+'list.length.real':
 """
 (define-fun-rec list.length.real ((l (List Real))) Int
   (ite (= l (as nil (List Real)))
        0
        (+ 1 (list.length.real (tail l)))))
-
+""",
+'list.get.real':
+"""
 (define-fun-rec list.get.real ((l (List Real)) (idx Int)) Real
   (ite (< idx 0)
        (list.get.real l (+ (list.length.real l) idx))
