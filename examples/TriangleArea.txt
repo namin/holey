@@ -1,0 +1,24 @@
+Inferred ans_type: int
+Using bounded list encoding (max size: 200)
+sat_func def sat(height: int, area=2642925075, base=211434006):
+    return base * height == 2 * area
+
+modified_func def sat(height: int, area=wrap_int(2642925075), base=wrap_int(211434006)):
+    return base * height == wrap_int(2) * area
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (= (* 211434006 x) 5285850150))
+(check-sat)
+(get-model)
+
+running backend z3
+### output for z3
+sat
+(
+  (define-fun x () Int
+    25)
+)
+
+Found solution 25
+Yes! Solved for puzzle  ./examples/TriangleArea.py

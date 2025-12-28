@@ -1,0 +1,23 @@
+Inferred ans_type: float
+Using bounded list encoding (max size: 200)
+sat_func def sat(root: float, coeffs=[1, 2, 3, 17]):
+    return abs(sum(coeff * (root ** i) for i, coeff in enumerate(coeffs))) < 1e-4
+modified_func def sat(root: float, coeffs=wrap_list([wrap_int(1), wrap_int(2), wrap_int(3), wrap_int(17)])):
+    return abs(sym_sum(sym_generator((coeff * root ** i for i, coeff in enumerate(coeffs))))) < 0.0001
+### smt2
+(set-logic ALL)
+(declare-const x Real)
+(assert (< (ite (>= (+ (+ (+ (+ (* 1 1.0) 0) (* 2 x)) (* 3 (* x x))) (* 17 (* (* x x) x))) 0) (+ (+ (+ (+ (* 1 1.0) 0) (* 2 x)) (* 3 (* x x))) (* 17 (* (* x x) x))) (- (+ (+ (+ (+ (* 1 1.0) 0) (* 2 x)) (* 3 (* x x))) (* 17 (* (* x x) x))))) 0.0001))
+(check-sat)
+(get-model)
+
+running backend z3
+### output for z3
+sat
+(
+  (define-fun x () Real
+    (- (/ 5567.0 16384.0)))
+)
+
+Found solution -0.33978271484375
+Yes! Solved for puzzle  ./examples/OddDegreePolynomialRoot.py

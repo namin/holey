@@ -1,0 +1,5 @@
+(set-logic ALL)
+(declare-const x Int)
+(assert (= (* 211434006 x) 5285850150))
+(check-sat)
+(get-model)

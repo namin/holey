@@ -1,0 +1,81 @@
+Inferred ans_type: List[int]
+Using bounded list encoding (max size: 200)
+sat_func def sat(li: List[int]):
+    return all(sum(li[:i]) == 2 ** i - 1 for i in range(20))
+Using bounded list with size 20
+modified_func def sat(li: List[int]):
+    return all(sym_generator((sym_sum(li[:i]) == wrap_int(2) ** i - wrap_int(1) for i in sym_range(20))))
+### smt2
+(set-logic ALL)
+(declare-const x_e0 Int)
+(declare-const x_e1 Int)
+(declare-const x_e2 Int)
+(declare-const x_e3 Int)
+(declare-const x_e4 Int)
+(declare-const x_e5 Int)
+(declare-const x_e6 Int)
+(declare-const x_e7 Int)
+(declare-const x_e8 Int)
+(declare-const x_e9 Int)
+(declare-const x_e10 Int)
+(declare-const x_e11 Int)
+(declare-const x_e12 Int)
+(declare-const x_e13 Int)
+(declare-const x_e14 Int)
+(declare-const x_e15 Int)
+(declare-const x_e16 Int)
+(declare-const x_e17 Int)
+(declare-const x_e18 Int)
+(declare-const x_e19 Int)
+(assert (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (= 0 0) (= (+ x_e0) 1)) (= (+ x_e0 x_e1) 3)) (= (+ x_e0 x_e1 x_e2) 7)) (= (+ x_e0 x_e1 x_e2 x_e3) 15)) (= (+ x_e0 x_e1 x_e2 x_e3 x_e4) 31)) (= (+ x_e0 x_e1 x_e2 x_e3 x_e4 x_e5) 63)) (= (+ x_e0 x_e1 x_e2 x_e3 x_e4 x_e5 x_e6) 127)) (= (+ x_e0 x_e1 x_e2 x_e3 x_e4 x_e5 x_e6 x_e7) 255)) (= (+ x_e0 x_e1 x_e2 x_e3 x_e4 x_e5 x_e6 x_e7 x_e8) 511)) (= (+ x_e0 x_e1 x_e2 x_e3 x_e4 x_e5 x_e6 x_e7 x_e8 x_e9) 1023)) (= (+ x_e0 x_e1 x_e2 x_e3 x_e4 x_e5 x_e6 x_e7 x_e8 x_e9 x_e10) 2047)) (= (+ x_e0 x_e1 x_e2 x_e3 x_e4 x_e5 x_e6 x_e7 x_e8 x_e9 x_e10 x_e11) 4095)) (= (+ x_e0 x_e1 x_e2 x_e3 x_e4 x_e5 x_e6 x_e7 x_e8 x_e9 x_e10 x_e11 x_e12) 8191)) (= (+ x_e0 x_e1 x_e2 x_e3 x_e4 x_e5 x_e6 x_e7 x_e8 x_e9 x_e10 x_e11 x_e12 x_e13) 16383)) (= (+ x_e0 x_e1 x_e2 x_e3 x_e4 x_e5 x_e6 x_e7 x_e8 x_e9 x_e10 x_e11 x_e12 x_e13 x_e14) 32767)) (= (+ x_e0 x_e1 x_e2 x_e3 x_e4 x_e5 x_e6 x_e7 x_e8 x_e9 x_e10 x_e11 x_e12 x_e13 ...
+(check-sat)
+(get-model)
+
+running backend z3
+### output for z3
+sat
+(
+  (define-fun x_e13 () Int
+    8192)
+  (define-fun x_e2 () Int
+    4)
+  (define-fun x_e1 () Int
+    2)
+  (define-fun x_e17 () Int
+    131072)
+  (define-fun x_e14 () Int
+    16384)
+  (define-fun x_e12 () Int
+    4096)
+  (define-fun x_e11 () Int
+    2048)
+  (define-fun x_e5 () Int
+    32)
+  (define-fun x_e10 () Int
+    1024)
+  (define-fun x_e9 () Int
+    512)
+  (define-fun x_e7 () Int
+    128)
+  (define-fun x_e8 () Int
+    256)
+  (define-fun x_e6 () Int
+    64)
+  (define-fun x_e3 () Int
+    8)
+  (define-fun x_e15 () Int
+    32768)
+  (define-fun x_e4 () Int
+    16)
+  (define-fun x_e16 () Int
+    65536)
+  (define-fun x_e18 () Int
+    262144)
+  (define-fun x_e0 () Int
+    1)
+  (define-fun x_e19 () Int
+    0)
+)
+
+Found solution [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 0]
+Yes! Solved for puzzle  ./examples/Study_15.py

@@ -1,0 +1,130 @@
+Inferred ans_type: List[int]
+Using bounded list encoding (max size: 200)
+sat_func def sat(ans: List[int], m=200004931, n=66679984):
+    gcd, a, b = ans
+    return m % gcd == n % gcd == 0 and a * m + b * n == gcd and gcd > 0
+modified_func def sat(ans: List[int], m=wrap_int(200004931), n=wrap_int(66679984)):
+    _unpack_tmp_0 = ans
+    _assert(sym_len(_unpack_tmp_0) == 3)
+    gcd = _unpack_tmp_0[0]
+    a = _unpack_tmp_0[1]
+    b = _unpack_tmp_0[2]
+    return (m % gcd == n % gcd).__and__(n % gcd == wrap_int(0)).__and__(a * m + b * n == gcd).__and__(gcd > wrap_int(0))
+### smt2
+(set-logic ALL)
+
+(declare-datatypes ((List 1)) 
+    ((par (T) ((cons (head T) (tail (List T))) (nil)))))
+
+(define-fun-rec list.length.int ((l (List Int))) Int
+  (ite (= l (as nil (List Int)))
+       0
+       (+ 1 (list.length.int (tail l)))))
+
+(define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
+  (ite (= idx 0)
+       (head l)
+       (list.get.int (tail l) (- idx 1)))))
+
+(define-fun-rec list.index.rec.int ((i Int) (l (List Int)) (val Int)) Int
+  (ite (= l (as nil (List Int)))
+       -1
+       (ite (= (head l) val)
+            i
+            (list.index.rec.int (+ 1 i) (tail l) val))))
+
+(define-fun list.index.int ((l (List Int)) (val Int)) Int
+  (list.index.rec.int 0 l val))
+
+(define-fun-rec list.length.string ((l (List String))) Int
+  (ite (= l (as nil (List String)))
+       0
+       (+ 1 (list.length.string (tail l)))))
+
+(define-fun-rec list.get.string ((l (List String)) (idx Int)) String
+  (ite (< idx 0)
+       (list.get.string l (+ (list.length.string l) idx))
+  (ite (= idx 0)
+       (head l)
+       (list.get.string (tail l) (- idx 1)))))
+
+(define-fun-rec list.sum.int ((l (List Int))) Int
+  (ite (= l (as nil (List Int)))
+       0
+       (+ (head l) (list.sum.int (tail l)))))
+
+(define-fun-rec list.append.int ((l1 (List Int)) (l2 (List Int))) (List Int)
+  (ite (= l1 (as nil (List Int)))
+       l2
+       (cons (head l1) (list.append.int (tail l1) l2))))
+
+(define-fun-rec list.append.string ((l1 (List String)) (l2 (List String))) (List String)
+  (ite (= l1 (as nil (List String)))
+       l2
+       (cons (head l1) (list.append.string (tail l1) l2))))
+
+(define-fun-rec list.map_add.int ((l (List Int)) (val Int)) (List Int)
+  (ite (= l (as nil (List Int)))
+       (as nil (List Int))
+       (cons (+ (head l) val) (list.map_add.int (tail l) val))))
+
+
+(define-fun-rec list.count.int ((l (List Int)) (val Int)) Int
+  (ite (= l (as nil (List Int)))
+       0
+       (+ (ite (= (head l) val) 1 0)
+          (list.count.int (tail l) val))))
+
+(define-fun list.contains.int ((l (List Int)) (val Int)) Bool
+  (> (list.count.int l val) 0))
+
+(define-fun-rec list.count.string ((l (List String)) (val String)) Int
+  (ite (= l (as nil (List String)))
+       0
+       (+ (ite (= (head l) val) 1 0)
+          (list.count.string (tail l) val))))
+
+(define-fun list.contains.string ((l (List String)) (val String)) Bool
+  (> (list.count.string l val) 0))
+
+(define-fun-rec list.count.bool ((l (List Bool)) (val Bool)) Int
+  (ite (= l (as nil (List Bool)))
+       0
+       (+ (ite (= (head l) val) 1 0)
+          (list.count.bool (tail l) val))))
+
+(define-fun-rec list.count.real ((l (List Real)) (val Real)) Int
+  (ite (= l (as nil (List Real)))
+       0
+       (+ (ite (= (head l) val) 1 0)
+          (list.count.real (tail l) val))))
+
+(declare-const x (List Int))
+(assert (= (list.length.int x) 3))
+(assert (> (list.length.int x) 0))
+(assert (> (list.length.int x) 1))
+(assert (> (list.length.int x) 2))
+(assert (not (= (list.get.int x 0) 0)))
+(assert (not (= (list.get.int x 0) 0)))
+(assert (not (= (list.get.int x 0) 0)))
+(assert (and (and (and (= (mod 200004931 (list.get.int x 0)) (mod 66679984 (list.get.int x 0))) (= (mod 66679984 (list.get.int x 0)) 0)) (= (+ (* (list.get.int x 1) 200004931) (* (list.get.int x 2) 66679984)) (list.get.int x 0))) (> (list.get.int x 0) 0)))
+(check-sat)
+(get-model)
+
+running backend z3
+### output for z3
+sat
+(
+  (define-fun x () (List Int)
+    (cons 35021 (cons (- 1) (cons 3 (as nil (List Int))))))
+  (define-fun div0 ((x!0 Int) (x!1 Int)) Int
+    (ite (and (= x!0 66679984) (= x!1 35021)) 1904
+      5711))
+  (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
+    0)
+)
+
+Found solution [35021, -1, 3]
+Yes! Solved for puzzle  ./examples/CertifiedGCD.py

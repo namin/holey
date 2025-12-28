@@ -1,0 +1,30 @@
+Inferred ans_type: int
+Using bounded list encoding (max size: 200)
+sat_func def sat(x: int) -> bool:
+  if x > 5:
+    return x < 10
+  else:
+    return x == 0
+modified_func def sat(x: int) -> bool:
+    if x > wrap_int(5):
+        return x < wrap_int(10)
+    else:
+        return x == wrap_int(0)
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (=> (> x 5) (< x 10)))
+(assert (=> (not (> x 5)) (= x 0)))
+(check-sat)
+(get-model)
+
+running backend z3
+### output for z3
+sat
+(
+  (define-fun x () Int
+    0)
+)
+
+Found solution 0
+Yes! Solved for puzzle  ./examples/branch.py

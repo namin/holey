@@ -1,0 +1,23 @@
+Inferred ans_type: int
+Using bounded list encoding (max size: 200)
+sat_func def sat(m: int, hello=[1, 31, 3, 2, 0, 18, 32, -4, 2, -1000, 3502145, 3502145, 21, 18, 2, 60]):
+    return m in hello and not any(m < i for i in hello)
+modified_func def sat(m: int, hello=wrap_list([wrap_int(1), wrap_int(31), wrap_int(3), wrap_int(2), wrap_int(0), wrap_int(18), wrap_int(32), -wrap_int(4), wrap_int(2), -wrap_int(1000), wrap_int(3502145), wrap_int(3502145), wrap_int(21), wrap_int(18), wrap_int(2), wrap_int(60)])):
+    return sym_in(m, hello).__and__(sym_not(any(sym_generator((m < i for i in hello)))))
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (and (or (= x 1) (= x 31) (= x 3) (= x 2) (= x 0) (= x 18) (= x 32) (= x -4) (= x 2) (= x -1000) (= x 3502145) (= x 3502145) (= x 21) (= x 18) (= x 2) (= x 60)) (not (or (or (or (or (or (or (or (or (or (or (or (or (or (or (or (< x 1) (< x 31)) (< x 3)) (< x 2)) (< x 0)) (< x 18)) (< x 32)) (< x -4)) (< x 2)) (< x -1000)) (< x 3502145)) (< x 3502145)) (< x 21)) (< x 18)) (< x 2)) (< x 60)))))
+(check-sat)
+(get-model)
+
+running backend z3
+### output for z3
+sat
+(
+  (define-fun x () Int
+    3502145)
+)
+
+Found solution 3502145
+Yes! Solved for puzzle  ./examples/MaxInt.py

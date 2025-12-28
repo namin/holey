@@ -1,0 +1,5 @@
+(set-logic ALL)
+(declare-const x Int)
+(assert (and (or (= x 1) (= x 31) (= x 3) (= x 2) (= x 0) (= x 18) (= x 32) (= x -4) (= x 2) (= x -1000) (= x 3502145) (= x 3502145) (= x 21) (= x 18) (= x 2) (= x 60)) (not (or (or (or (or (or (or (or (or (or (or (or (or (or (or (or (< x 1) (< x 31)) (< x 3)) (< x 2)) (< x 0)) (< x 18)) (< x 32)) (< x -4)) (< x 2)) (< x -1000)) (< x 3502145)) (< x 3502145)) (< x 21)) (< x 18)) (< x 2)) (< x 60)))))
+(check-sat)
+(get-model)
