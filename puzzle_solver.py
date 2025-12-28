@@ -1,4 +1,5 @@
 from holey import drive_sat, LLMSolver
+from holey.core import list_type_map
 import copy
 import re
 import json
@@ -566,9 +567,10 @@ if __name__ == "__main__":
                         nargs='+',
                         default=[],
                         help='only run puzzles whose names ends with this suffix')
+    valid_answer_types = ['int', 'str', 'float', 'bool'] + [k for k in list_type_map if isinstance(k, str)]
     parser.add_argument('--answer-types',
                         nargs='+',
-                        choices=['int', 'str', 'float', 'bool', 'List[int]', 'List[str]', 'List[float]'],
+                        choices=valid_answer_types,
                         default=None,
                         help='only run some answer types (default: all types)')
     parser.add_argument('--smtlib-backends',
