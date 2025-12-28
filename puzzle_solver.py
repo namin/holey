@@ -196,7 +196,7 @@ class PuzzleSolver:
         if not typ:
             print("Unsupported answer type", ans_type)
             self.error_unsupported_answer_type += 1
-            return None
+            return None, ""
 
         # Detect list size for bounded list mode
         list_size = None
@@ -566,7 +566,7 @@ if __name__ == "__main__":
                         help='only run puzzles whose names ends with this suffix')
     parser.add_argument('--answer-types',
                         nargs='+',
-                        choices=['int', 'str', 'float', 'bool', 'List[int]', 'List[str]'],
+                        choices=['int', 'str', 'float', 'bool', 'List[int]', 'List[str]', 'List[float]'],
                         default=None,
                         help='only run some answer types (default: all types)')
     parser.add_argument('--smtlib-backends',
