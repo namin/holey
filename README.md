@@ -73,20 +73,26 @@ python puzzle_solver.py --name-prefix ListIn:1  --llm
 
 ## Current status
 
-The symbolic execution currently solves:
-- 62% (222 out of 360) of `int` puzzles,
-- 33% (118 out of 363) of `str` puzzles,
-- 18% (9 out of 51) of `float` puzzles,
-- 45% (349 out of 774) overall.
+The symbolic execution alone currently solves:
+- 65% (235 out of 360) of `int` puzzles,
+- 44% (160 out of 363) of `str` puzzles,
+- 18% (106 out of 591) of `List[int]` puzzles,
+- 22% (31 out of 141) of `List[str]` puzzles,
+- 53% (27 out of 51) of `float` puzzles,
+- 37% (559 out of 1506) overall.
 
 with the following errors:
-- 9 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
-- 118 errors at at staging time
-- 175 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- 181 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds)
-- 941 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
+- 62 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
+- 304 errors at at staging time
+- 30 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- 563 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds)
+- 209 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 
 ### Extrapolation
+- 208 smaller problems tried
+- 48 successes on smaller problem
+
+### Earlier extrapolation results
 - 123 smaller problems tried
 - 11 successes on smaller problem
 - 9 successful extrapolations
@@ -120,7 +126,7 @@ Study_1:0 PandigitalSquare:0 WeirdDecodeVowels:0 TripleDouble:0 MaxDelta:0 MinCo
 `│   ├──` [`llm.py`](holey/llm.py) _support for LLM generation and code extraction_<br/>
 `│   └──` [`preprocessor.py`](holey/preprocessor.py) _includes node transformer and sat driver_<br/>
 `├──` [`log`](log)<br/>
-`│   └──` [`results.txt`](log/results.txt) _example run_<br/>
+`│   └──` [`results_symbolic_all.txt`](log/results_symbolic_all.txt) _example run_<br/>
 `├──` [`puzzle_solver.py`](puzzle_solver.py) _main routine for benchmark solver_<br/>
 `├──` [`pyproject.toml`](pyproject.toml)<br/>
 `└──` [`tests`](tests)<br/>
