@@ -48,4 +48,4 @@ sat
 )
 
 Found solution [1, 1, 1, 0, 1, 0, 1, 1, 1, 1]
-Yes! Solved for puzzle  ./examples/bounded.py
+Yes! Solved for puzzle  examples/bounded.py

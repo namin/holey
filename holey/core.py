@@ -14,7 +14,7 @@ class SymbolicTracer:
         self.current_branch_exploration = []
         self.remaining_branch_explorations = []
 
-    def driver(self, thunk, max_branches=1000):
+    def driver(self, thunk, max_branches=None):
         branch_count = 0
         while True:
             result = thunk()
@@ -22,7 +22,7 @@ class SymbolicTracer:
             if self.remaining_branch_explorations == []:
                 return
             branch_count += 1
-            if branch_count >= max_branches:
+            if max_branches is not None and branch_count >= max_branches:
                 print(f"Warning: hit max branch limit ({max_branches}), {len(self.remaining_branch_explorations)} branches unexplored")
                 return
             self.current_branch_exploration = self.remaining_branch_explorations.pop()

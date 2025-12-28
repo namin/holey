@@ -21,4 +21,4 @@ sat
 )
 
 Found solution 25
-Yes! Solved for puzzle  ./examples/TriangleArea.py
+Yes! Solved for puzzle  examples/TriangleArea.py

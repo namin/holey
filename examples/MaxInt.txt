@@ -20,4 +20,4 @@ sat
 )
 
 Found solution 3502145
-Yes! Solved for puzzle  ./examples/MaxInt.py
+Yes! Solved for puzzle  examples/MaxInt.py

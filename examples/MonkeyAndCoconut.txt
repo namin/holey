@@ -32,4 +32,4 @@ sat
 )
 
 Found solution 15621
-Yes! Solved for puzzle  ./examples/MonkeyAndCoconut.py
+Yes! Solved for puzzle  examples/MonkeyAndCoconut.py

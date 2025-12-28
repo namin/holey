@@ -27,4 +27,4 @@ sat
 )
 
 Found solution 0
-Yes! Solved for puzzle  ./examples/branch.py
+Yes! Solved for puzzle  examples/branch.py
