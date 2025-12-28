@@ -571,8 +571,8 @@ if __name__ == "__main__":
     parser.add_argument('--answer-types',
                         nargs='+',
                         choices=['int', 'str', 'float', 'bool', 'List[int]', 'List[str]'],
-                        default=['int', 'str'],
-                        help='only run some answer types')
+                        default=None,
+                        help='only run some answer types (default: all types)')
     parser.add_argument('--smtlib-backends',
                         nargs='+',
                         choices=['z3', 'cvc5'],
