@@ -1778,7 +1778,8 @@ def make_symbolic(typ: Type, name: str, tracer: Optional[SymbolicTracer] = None,
         sym = SymbolicStr(name=name, tracer=tracer)
     elif typ in list_type_map:
         elem_type = list_type_map[typ]
-        if size is not None:
+        scalar_types = {int, str, float, bool}
+        if size is not None and elem_type in scalar_types:
             sym = BoundedSymbolicList(size, elem_type, name=name, tracer=tracer)
         else:
             sym = SymbolicList(None, elem_type, name=name, tracer=tracer)
