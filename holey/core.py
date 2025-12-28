@@ -1743,7 +1743,12 @@ list_type_map = {
     list[str]: str, 'List[str]': str,
     list[int]: int, 'List[int]': int,
     list[float]: float, 'List[float]': float,
-    list[bool]: float, 'List[bool]': float,
+    list[bool]: bool, 'List[bool]': bool,
+}
+
+type_map = {
+    'int': int, 'str': str, 'float': float, 'bool': bool,
+    **{k: list[v] for k, v in list_type_map.items() if isinstance(k, str)}
 }
 
 def make_symbolic(typ: Type, name: str, tracer: Optional[SymbolicTracer] = None, size: Optional[int] = None) -> Any:

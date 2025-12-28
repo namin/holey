@@ -1,5 +1,5 @@
 from holey import drive_sat, LLMSolver
-from holey.core import list_type_map
+from holey.core import type_map
 import copy
 import re
 import json
@@ -181,21 +181,7 @@ class PuzzleSolver:
         return tracer, sym_var, solution, log
 
     def symbolic_solve(self, sat_func: str, ans_type: str, name: str, cmds, llm_solver, counting=True) -> Optional[str]:
-        typ = None
-        if ans_type == 'int':
-            typ = int
-        elif ans_type == 'str':
-            typ = str
-        elif ans_type == 'float':
-            typ = float
-        elif ans_type == 'bool':
-            typ = bool
-        elif ans_type == 'List[int]':
-            typ = list[int]
-        elif ans_type == 'List[str]':
-            typ = list[str]
-        elif ans_type == 'List[float]':
-            typ = list[float]
+        typ = type_map.get(ans_type)
         if not typ:
             print("Unsupported answer type", ans_type)
             self.error_unsupported_answer_type += 1
@@ -567,7 +553,7 @@ if __name__ == "__main__":
                         nargs='+',
                         default=[],
                         help='only run puzzles whose names ends with this suffix')
-    valid_answer_types = ['int', 'str', 'float', 'bool'] + [k for k in list_type_map if isinstance(k, str)]
+    valid_answer_types = list(type_map.keys())
     parser.add_argument('--answer-types',
                         nargs='+',
                         choices=valid_answer_types,
