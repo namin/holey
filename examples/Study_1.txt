@@ -30,7 +30,7 @@ running backend z3
 ### output for z3
 timeout
 
-Could not find any solution for puzzle ./examples/Study_1.py
+Could not find any solution for puzzle examples/Study_1.py
 One large constant for extrapolation
 Solving simpler variation replaced 1000 with 3
 sat_func def sat(s: str):

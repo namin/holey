@@ -34,4 +34,4 @@ sat
 )
 
 Found solution 7
-Yes! Solved for puzzle  ./examples/branch2.py
+Yes! Solved for puzzle  examples/branch2.py

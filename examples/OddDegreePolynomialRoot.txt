@@ -20,4 +20,4 @@ sat
 )
 
 Found solution -0.33978271484375
-Yes! Solved for puzzle  ./examples/OddDegreePolynomialRoot.py
+Yes! Solved for puzzle  examples/OddDegreePolynomialRoot.py
