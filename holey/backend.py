@@ -416,8 +416,12 @@ class MockExpr:
 
 # from lib to users
 library_deps = {
-'list': ['str.split', 'python.join', 'list.slice', 'list.length.real', 'list.get.real'],
-'list.length.real': ['list.get.real']
+'list': ['str.split', 'python.join', 'list.slice', 'list.length.real', 'list.get.real',
+         'list.length.list_int', 'list.get.list_int', 'list.count.list_int',
+         'list.contains.list_int', 'list.append.list_int'],
+'list.length.real': ['list.get.real'],
+'list.length.list_int': ['list.get.list_int', 'list.count.list_int', 'list.contains.list_int', 'list.append.list_int'],
+'list.count.list_int': ['list.contains.list_int']
 }
 
 library = {
@@ -547,6 +551,42 @@ library = {
   (ite (= idx 0)
        (head l)
        (list.get.real (tail l) (- idx 1)))))
+""",
+'list.length.list_int':
+"""
+(define-fun-rec list.length.list_int ((l (List (List Int)))) Int
+  (ite (= l (as nil (List (List Int))))
+       0
+       (+ 1 (list.length.list_int (tail l)))))
+""",
+'list.get.list_int':
+"""
+(define-fun-rec list.get.list_int ((l (List (List Int))) (idx Int)) (List Int)
+  (ite (< idx 0)
+       (list.get.list_int l (+ (list.length.list_int l) idx))
+  (ite (= idx 0)
+       (head l)
+       (list.get.list_int (tail l) (- idx 1)))))
+""",
+'list.count.list_int':
+"""
+(define-fun-rec list.count.list_int ((l (List (List Int))) (val (List Int))) Int
+  (ite (= l (as nil (List (List Int))))
+       0
+       (+ (ite (= (head l) val) 1 0)
+          (list.count.list_int (tail l) val))))
+""",
+'list.contains.list_int':
+"""
+(define-fun list.contains.list_int ((l (List (List Int))) (val (List Int))) Bool
+  (> (list.count.list_int l val) 0))
+""",
+'list.append.list_int':
+"""
+(define-fun-rec list.append.list_int ((l1 (List (List Int))) (l2 (List (List Int)))) (List (List Int))
+  (ite (= l1 (as nil (List (List Int))))
+       l2
+       (cons (head l1) (list.append.list_int (tail l1) l2))))
 """,
 'list.slice':
 """
@@ -1212,6 +1252,19 @@ class Backend():
             return f"(List {self.Type(elem_type)})"
         raise ValueError("Unsupported type " + str(typ))
 
+    def _type_suffix(self, element_type: str) -> str:
+        """Convert SMTLIB type string to valid function suffix.
+
+        Examples:
+            "Int" -> "int"
+            "String" -> "string"
+            "(List Int)" -> "list_int"
+        """
+        if element_type.startswith("(List "):
+            inner = element_type[6:-1]  # extract inner type
+            return "list_" + self._type_suffix(inner)
+        return element_type.lower()
+
     def List(self, name: str, element_type: str) -> MockExpr:
         """Declare a list variable with elements of the given type"""
         full_type = f"(List {element_type})"
@@ -1244,21 +1297,21 @@ class Backend():
 
     def ListLength(self, lst, element_type) -> MockExpr:
         """Get the length of a list"""
-        return self._record("list.length."+element_type.lower(), lst)
+        return self._record("list.length."+self._type_suffix(element_type), lst)
 
     def ListGet(self, lst, idx, element_type) -> MockExpr:
         """Get an element from a list at the given index"""
-        return self._record("list.get."+element_type.lower(), lst, idx)
+        return self._record("list.get."+self._type_suffix(element_type), lst, idx)
 
     def ListSlice(self, lst, start, stop, step, element_type) -> MockExpr:
-        return self._record("list.slice."+element_type.lower(), lst, start, stop, step)
+        return self._record("list.slice."+self._type_suffix(element_type), lst, start, stop, step)
 
     def ListContains(self, lst, val, element_type) -> MockExpr:
         """Check if a list contains a value"""
-        return self._record("list.contains."+element_type.lower(), lst, val)
+        return self._record("list.contains."+self._type_suffix(element_type), lst, val)
 
     def ListIndex(self, lst, val, element_type) -> MockExpr:
-        return self._record("list.index."+element_type.lower(), lst, val)
+        return self._record("list.index."+self._type_suffix(element_type), lst, val)
 
     def ListSum(self, lst) -> MockExpr:
         """Get the sum of all elements in a list"""
@@ -1266,7 +1319,7 @@ class Backend():
 
     def ListAppend(self, lst1, lst2, element_type) -> MockExpr:
         """Append two lists"""
-        return self._record("list.append."+element_type.lower(), lst1, lst2)
+        return self._record("list.append."+self._type_suffix(element_type), lst1, lst2)
 
     def ListMapAdd(self, lst, val) -> MockExpr:
         """Add a value to each element in a list"""
@@ -1282,7 +1335,7 @@ class Backend():
 
     def ListCount(self, lst, val, element_type: str) -> MockExpr:
         """Count occurrences of a value in a list"""
-        return self._record("list.count."+element_type.lower(), lst, val)
+        return self._record("list.count."+self._type_suffix(element_type), lst, val)
 
     def BoundedList(self, name: str, size: int, element_type: str) -> 'BoundedListVars':
         """Create a bounded list with individual variables"""
