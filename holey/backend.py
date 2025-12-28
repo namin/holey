@@ -348,7 +348,16 @@ class MockExpr:
         if self.op == "IntVal":
             return str(self.args[0])
         elif self.op == "RealVal":
-            return str(self.args[0])
+            val = self.args[0]
+            # SMT-LIB2 doesn't understand scientific notation like 1e-06
+            # Format as decimal or fraction
+            if isinstance(val, float):
+                # Use fixed-point notation with enough precision
+                formatted = f"{val:.15f}".rstrip('0').rstrip('.')
+                if '.' not in formatted:
+                    formatted += '.0'
+                return formatted
+            return str(val)
         elif self.op == "BoolVal":
             return str(self.args[0]).lower()
         elif self.op == 'str.val':
