@@ -83,7 +83,7 @@ The symbolic execution alone currently solves:
 
 with the following errors:
 - 62 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
-- 304 errors at at staging time
+- 304 errors at staging time
 - 30 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
 - 563 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds)
 - 209 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
