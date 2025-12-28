@@ -1767,6 +1767,11 @@ def make_symbolic(typ: Type, name: str, tracer: Optional[SymbolicTracer] = None,
             sym = BoundedSymbolicList(size, int, name=name, tracer=tracer)
         else:
             sym = SymbolicList(None, int, name=name, tracer=tracer)
+    elif typ == list[float] or typ == 'List[float]':
+        if size is not None:
+            sym = BoundedSymbolicList(size, float, name=name, tracer=tracer)
+        else:
+            sym = SymbolicList(None, float, name=name, tracer=tracer)
     else:
         raise ValueError(f"Unsupported symbolic type: {typ}")
     return sym

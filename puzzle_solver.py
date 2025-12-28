@@ -193,6 +193,8 @@ class PuzzleSolver:
             typ = list[int]
         elif ans_type == 'List[str]':
             typ = list[str]
+        elif ans_type == 'List[float]':
+            typ = list[float]
         if not typ:
             print("Unsupported answer type", ans_type)
             self.error_unsupported_answer_type += 1
