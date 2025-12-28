@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from holey import drive_sat, LLMSolver
 from holey.core import type_map
 import copy
