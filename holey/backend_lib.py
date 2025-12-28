@@ -9,15 +9,15 @@ Dependencies are listed as: entry -> [entries it requires]
 # ELEMENT TYPES for List operations
 # =============================================================================
 
-# Maps suffix -> (SMT type, nil expression)
+# Maps suffix -> (SMT type, nil expression, is_numeric)
 ELEMENT_TYPES = {
-    'int': ('Int', '(as nil (List Int))'),
-    'string': ('String', '(as nil (List String))'),
-    'real': ('Real', '(as nil (List Real))'),
-    'bool': ('Bool', '(as nil (List Bool))'),
-    'list_int': ('(List Int)', '(as nil (List (List Int)))'),
-    'list_list_int': ('(List (List Int))', '(as nil (List (List (List Int))))'),
-    'list_real': ('(List Real)', '(as nil (List (List Real)))'),
+    'int': ('Int', '(as nil (List Int))', True),
+    'string': ('String', '(as nil (List String))', False),
+    'real': ('Real', '(as nil (List Real))', True),
+    'bool': ('Bool', '(as nil (List Bool))', False),
+    'list_int': ('(List Int)', '(as nil (List (List Int)))', False),
+    'list_list_int': ('(List (List Int))', '(as nil (List (List (List Int))))', False),
+    'list_real': ('(List Real)', '(as nil (List (List Real)))', False),
 }
 
 # =============================================================================
@@ -110,6 +110,31 @@ def make_list_slice(suffix, elem_type, nil_expr):
                     {nil_expr})))))))
 '''
 
+def make_list_index(suffix, elem_type, nil_expr):
+    """Generate list.index for finding first occurrence of a value."""
+    list_type = f'(List {elem_type})'
+    return f'''
+(define-fun-rec list.index.rec.{suffix} ((i Int) (l {list_type}) (val {elem_type})) Int
+  (ite (= l {nil_expr})
+       -1
+       (ite (= (head l) val)
+            i
+            (list.index.rec.{suffix} (+ 1 i) (tail l) val))))
+
+(define-fun list.index.{suffix} ((l {list_type}) (val {elem_type})) Int
+  (list.index.rec.{suffix} 0 l val))
+'''
+
+def make_list_sum(suffix, elem_type, nil_expr, zero_val):
+    """Generate list.sum for numeric types."""
+    list_type = f'(List {elem_type})'
+    return f'''
+(define-fun-rec list.sum.{suffix} ((l {list_type})) {elem_type}
+  (ite (= l {nil_expr})
+       {zero_val}
+       (+ (head l) (list.sum.{suffix} (tail l)))))
+'''
+
 # =============================================================================
 # GENERATE list operations for all element types
 # =============================================================================
@@ -119,7 +144,7 @@ def generate_list_library():
     lib = {}
     deps = {}
 
-    for suffix, (elem_type, nil_expr) in ELEMENT_TYPES.items():
+    for suffix, (elem_type, nil_expr, is_numeric) in ELEMENT_TYPES.items():
         # list.length.{suffix}
         lib[f'list.length.{suffix}'] = make_list_length(suffix, elem_type, nil_expr)
         deps[f'list.length.{suffix}'] = ['list']
@@ -147,6 +172,16 @@ def generate_list_library():
         # list.slice.{suffix}
         lib[f'list.slice.{suffix}'] = make_list_slice(suffix, elem_type, nil_expr)
         deps[f'list.slice.{suffix}'] = ['list', 'list.adjust_index', f'list.length.{suffix}', f'list.get.{suffix}', f'list.reverse.{suffix}']
+
+        # list.index.{suffix} - for all types
+        lib[f'list.index.{suffix}'] = make_list_index(suffix, elem_type, nil_expr)
+        deps[f'list.index.{suffix}'] = ['list']
+
+        # list.sum.{suffix} - only for numeric types
+        if is_numeric:
+            zero_val = '0' if elem_type == 'Int' else '0.0'
+            lib[f'list.sum.{suffix}'] = make_list_sum(suffix, elem_type, nil_expr, zero_val)
+            deps[f'list.sum.{suffix}'] = ['list']
 
     return lib, deps
 
@@ -176,33 +211,35 @@ library_static = {
 
 # === LIST[INT] SPECIAL FUNCTIONS ===
 
-'list.index.int':
-"""
-(define-fun-rec list.index.rec.int ((i Int) (l (List Int)) (val Int)) Int
-  (ite (= l (as nil (List Int)))
-       -1
-       (ite (= (head l) val)
-            i
-            (list.index.rec.int (+ 1 i) (tail l) val))))
-
-(define-fun list.index.int ((l (List Int)) (val Int)) Int
-  (list.index.rec.int 0 l val))
-""",
-
-'list.sum.int':
-"""
-(define-fun-rec list.sum.int ((l (List Int))) Int
-  (ite (= l (as nil (List Int)))
-       0
-       (+ (head l) (list.sum.int (tail l)))))
-""",
-
 'list.map_add.int':
 """
 (define-fun-rec list.map_add.int ((l (List Int)) (val Int)) (List Int)
   (ite (= l (as nil (List Int)))
        (as nil (List Int))
        (cons (+ (head l) val) (list.map_add.int (tail l) val))))
+""",
+
+# =============================================================================
+# STRING HELPERS (shared)
+# =============================================================================
+
+'str.case_helpers':
+"""
+; Check if a single character is uppercase (A-Z)
+(define-fun char.is_upper ((c String)) Bool
+  (and (>= (str.to_code c) 65) (<= (str.to_code c) 90)))
+
+; Check if a single character is lowercase (a-z)
+(define-fun char.is_lower ((c String)) Bool
+  (and (>= (str.to_code c) 97) (<= (str.to_code c) 122)))
+
+; Convert uppercase char to lowercase
+(define-fun char.to_lower ((c String)) String
+  (str.from_code (+ (str.to_code c) 32)))
+
+; Convert lowercase char to uppercase
+(define-fun char.to_upper ((c String)) String
+  (str.from_code (- (str.to_code c) 32)))
 """,
 
 # =============================================================================
@@ -304,29 +341,11 @@ library_static = {
 
 'swapcase':
 """
-(define-fun is_upper ((c String)) Bool
-  (and
-    (>= (str.to_code c) 65)
-    (<= (str.to_code c) 90)))
-
-(define-fun is_lower ((c String)) Bool
-  (and
-    (>= (str.to_code c) 97)
-    (<= (str.to_code c) 122)))
-
-(define-fun to_lower ((c String)) String
-  (let ((code (str.to_code c)))
-    (str.from_code (+ code 32))))
-
-(define-fun to_upper ((c String)) String
-  (let ((code (str.to_code c)))
-    (str.from_code (- code 32))))
-
 (define-fun swapcase_char ((c String)) String
-  (ite (is_upper c)
-       (to_lower c)
-       (ite (is_lower c)
-            (to_upper c)
+  (ite (char.is_upper c)
+       (char.to_lower c)
+       (ite (char.is_lower c)
+            (char.to_upper c)
             c)))
 
 (define-fun-rec swapcase_helper ((i Int) (n Int) (s String)) String
@@ -420,25 +439,19 @@ library_static = {
 
 'isupper':
 """
-(define-fun is-upper-char ((c String)) Bool
-  (and (>= (str.to_code c) 65) (<= (str.to_code c) 90)))
-
 (define-fun-rec isupper ((s String)) Bool
   (ite (= s "")
        true
-       (and (is-upper-char (str.at s 0))
+       (and (char.is_upper (str.at s 0))
             (isupper (str.substr s 1 (- (str.len s) 1))))))
 """,
 
 'islower':
 """
-(define-fun is-lower-char ((c String)) Bool
-  (and (>= (str.to_code c) (str.to_code "a")) (<= (str.to_code c) (str.to_code "z"))))
-
 (define-fun-rec islower ((s String)) Bool
   (ite (= s "")
        true
-       (and (is-lower-char (str.at s 0))
+       (and (char.is_lower (str.at s 0))
             (islower (str.substr s 1 (- (str.len s) 1))))))
 """,
 
@@ -539,23 +552,24 @@ library_static = {
 library_deps_static = {
     'list': [],
     'list.adjust_index': [],
-    'list.index.int': ['list'],
-    'list.sum.int': ['list'],
     'list.map_add.int': ['list'],
+    # String helpers
+    'str.case_helpers': [],
+    # String functions
     'str.isdigit': [],
     'str.isalpha': [],
     'str.sorted': [],
     'str.split': [],
     'python.join': [],
-    'swapcase': [],
+    'swapcase': ['str.case_helpers'],
     'str_multiply': [],
     'python.int': [],
     'python.str.at': [],
     'python.str.substr': [],
     'str.to.float': [],
     'str.reverse': [],
-    'isupper': [],
-    'islower': [],
+    'isupper': ['str.case_helpers'],
+    'islower': ['str.case_helpers'],
     'str.upper': [],
     'str.lower': [],
     'str.count': [],
