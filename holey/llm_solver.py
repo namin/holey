@@ -12,6 +12,12 @@ class LLMSolver:
 
     def extrapolate(self, sat_func_small, sat_func_large, reason, result_small, ans_type: str, name: str, check_result, log) -> Optional[str]:
         print('Extrapolating...')
+        log_text = f"""
+It might not be helpful (in which case you can ignore it), but here is the log with the SMTLIB program that didn't work out for the bigger predicate:
+```
+{log}
+```
+""" if False else "" # log is never useful
         prompt = f"""Given the smaller satisfiability predicate:
 ```python
 {sat_func_small}
@@ -26,11 +32,7 @@ Answer with a few possibilities/guesses, each time just an executable Python exp
 For example, list results like this:
 - `"hellohellohello"`
 - `"hello"*3`
-
-It might not be helpful (in which case you can ignore it), but here is the log with the SMTLIB program that didn't work out for the bigger predicate:
-```
-{log}
-```
+{log_text}
 """
         return self.result_from_prompt(prompt, sat_func_large, ans_type, name, check_result)
 
