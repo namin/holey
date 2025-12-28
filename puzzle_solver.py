@@ -519,18 +519,17 @@ def infer_ans_type(sat_func: str) -> Optional[str]:
         pass
     return None
 
-def solve_sat_file(sat_file: str, ans_type: Optional[str], smtlib_backends: list, llm_solver=None, llm_all=False, llm_end=False, use_bounded_lists=True, bounded_list_max_size=200):
+def solve_sat_file(sat_file: str, smtlib_backends: list, llm_solver=None, llm_all=False, llm_end=False, use_bounded_lists=True, bounded_list_max_size=200):
     """Solve a single Python file containing a sat function."""
     with open(sat_file) as f:
         sat_func = f.read()
 
-    if not ans_type:
-        ans_type = infer_ans_type(sat_func)
-        if ans_type:
-            print(f"Inferred ans_type: {ans_type}")
-        else:
-            print("Could not infer ans_type. Please provide --ans-type.")
-            return None
+    ans_type = infer_ans_type(sat_func)
+    if ans_type:
+        print(f"Inferred ans_type: {ans_type}")
+    else:
+        print("Could not infer ans_type from type hints.")
+        return None
 
     solver = PuzzleSolver()
     solver.total_count = 1
@@ -555,9 +554,6 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--sat-file', help='path to a Python file containing a sat function')
-    parser.add_argument('--ans-type',
-                        choices=['int', 'str', 'float', 'bool', 'List[int]', 'List[str]'],
-                        help='answer type (inferred from type hints if not provided)')
     parser.add_argument('--puzzle-file', default="benchmarks/PythonProgrammingPuzzles/puzzles/puzzles.json",
                       help='path to the puzzle JSON file')
     parser.add_argument('--name-prefix',
@@ -595,6 +591,6 @@ if __name__ == "__main__":
         llm_solver = {k: LLMSolver(v) for k,v in llm_generators.items()}
 
     if args.sat_file:
-        solve_sat_file(args.sat_file, args.ans_type, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size)
+        solve_sat_file(args.sat_file, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size)
     else:
         run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, args.show_shrunk)
