@@ -14,16 +14,20 @@ class SymbolicTracer:
         self.current_branch_exploration = []
         self.remaining_branch_explorations = []
 
-    def driver(self, thunk):
+    def driver(self, thunk, max_branches=1000):
+        branch_count = 0
         while True:
             result = thunk()
             self.add_constraint(result)
             if self.remaining_branch_explorations == []:
                 return
-            else:
-                self.current_branch_exploration = self.remaining_branch_explorations.pop()
-                self.branch_counter = 0
-                self.path_conditions = []
+            branch_count += 1
+            if branch_count >= max_branches:
+                print(f"Warning: hit max branch limit ({max_branches}), {len(self.remaining_branch_explorations)} branches unexplored")
+                return
+            self.current_branch_exploration = self.remaining_branch_explorations.pop()
+            self.branch_counter = 0
+            self.path_conditions = []
 
     def branch(self, condition):
         """Handle branching with optional LLM guidance"""
@@ -1744,6 +1748,9 @@ list_type_map = {
     list[int]: int, 'List[int]': int,
     list[float]: float, 'List[float]': float,
     list[bool]: bool, 'List[bool]': bool,
+    list[list[int]]: list[int], 'List[List[int]]': list[int],
+    list[list[list[int]]]: list[list[int]], 'List[List[List[int]]]': list[list[int]],
+    list[list[float]]: list[float], 'List[List[float]]': list[float],
 }
 
 type_map = {
@@ -1771,7 +1778,8 @@ def make_symbolic(typ: Type, name: str, tracer: Optional[SymbolicTracer] = None,
         sym = SymbolicStr(name=name, tracer=tracer)
     elif typ in list_type_map:
         elem_type = list_type_map[typ]
-        if size is not None:
+        scalar_types = {int, str, float, bool}
+        if size is not None and elem_type in scalar_types:
             sym = BoundedSymbolicList(size, elem_type, name=name, tracer=tracer)
         else:
             sym = SymbolicList(None, elem_type, name=name, tracer=tracer)
@@ -1789,10 +1797,9 @@ def make_symbolic_value(typ: Type, v: Any, tracer: Optional[SymbolicTracer] = No
         sym = SymbolicFloat(v, tracer=tracer)
     elif typ == str or typ == 'str':
         sym = SymbolicStr(v, tracer=tracer)
-    elif typ == list[str] or typ == 'List[str]':
-        sym = SymbolicList(v, str, tracer=tracer)
-    elif typ == list[int] or typ == 'List[int]':
-        sym = SymbolicList(v, int, tracer=tracer)
+    elif typ in list_type_map:
+        elem_type = list_type_map[typ]
+        sym = SymbolicList(v, elem_type, tracer=tracer)
     else:
         raise ValueError(f"Unsupported symbolic type: {typ}")
     return sym

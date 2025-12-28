@@ -679,6 +679,70 @@ class HoleyWrapper(ast.NodeTransformer):
             return assignments
         return node
 
+    def visit_For(self, node):
+        node = self.generic_visit(node)
+        # Handle tuple/list unpacking in for loops:
+        # for [i, j] in seq: body  ->  for _tmp in seq: i = _tmp[0]; j = _tmp[1]; body
+        if isinstance(node.target, (ast.Tuple, ast.List)):
+            targets = node.target.elts
+            n = len(targets)
+
+            # Create temp variable name
+            temp_name = f'_for_tmp_{next(counter)}'
+            temp_var = ast.Name(id=temp_name, ctx=ast.Load())
+
+            # New for loop with simple target
+            new_target = ast.Name(id=temp_name, ctx=ast.Store())
+
+            # Create unpacking statements at start of body
+            unpacking = []
+
+            # Length constraint
+            length_check = ast.Expr(
+                value=ast.Call(
+                    func=ast.Name(id='_assert', ctx=ast.Load()),
+                    args=[
+                        ast.Compare(
+                            left=ast.Call(
+                                func=ast.Name(id='sym_len', ctx=ast.Load()),
+                                args=[temp_var],
+                                keywords=[]
+                            ),
+                            ops=[ast.Eq()],
+                            comparators=[ast.Constant(value=n)]
+                        )
+                    ],
+                    keywords=[]
+                )
+            )
+            ast.fix_missing_locations(length_check)
+            unpacking.append(length_check)
+
+            # Individual assignments: i = _tmp[0], j = _tmp[1], etc
+            for i, target in enumerate(targets):
+                assign = ast.Assign(
+                    targets=[target],
+                    value=ast.Subscript(
+                        value=temp_var,
+                        slice=ast.Constant(value=i),
+                        ctx=ast.Load()
+                    )
+                )
+                ast.fix_missing_locations(assign)
+                unpacking.append(assign)
+
+            # Create new for node with unpacking at start of body
+            new_node = ast.For(
+                target=new_target,
+                iter=node.iter,
+                body=unpacking + node.body,
+                orelse=node.orelse
+            )
+            ast.copy_location(new_node, node)
+            ast.fix_missing_locations(new_node)
+            return new_node
+        return node
+
     def visit_Assert(self, node):
         node = self.generic_visit(node)
         # Convert: assert test [, msg]

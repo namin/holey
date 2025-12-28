@@ -2,7 +2,7 @@
 SMTLIB backend for collecting and displaying constraints.
 """
 from dataclasses import dataclass, field
-from typing import Any, List, Dict, Optional
+from typing import Any, List, Dict, Optional, get_origin, get_args
 import tempfile
 import subprocess
 import os
@@ -348,7 +348,16 @@ class MockExpr:
         if self.op == "IntVal":
             return str(self.args[0])
         elif self.op == "RealVal":
-            return str(self.args[0])
+            val = self.args[0]
+            # SMT-LIB2 doesn't understand scientific notation like 1e-06
+            # Format as decimal or fraction
+            if isinstance(val, float):
+                # Use fixed-point notation with enough precision
+                formatted = f"{val:.15f}".rstrip('0').rstrip('.')
+                if '.' not in formatted:
+                    formatted += '.0'
+                return formatted
+            return str(val)
         elif self.op == "BoolVal":
             return str(self.args[0]).lower()
         elif self.op == 'str.val':
@@ -416,8 +425,38 @@ class MockExpr:
 
 # from lib to users
 library_deps = {
-'list': ['str.split', 'python.join', 'list.slice', 'list.length.real', 'list.get.real'],
-'list.length.real': ['list.get.real']
+'list': ['str.split', 'python.join', 'list.slice',
+         # real (float)
+         'list.length.real', 'list.get.real', 'list.contains.real', 'list.append.real',
+         # bool
+         'list.length.bool', 'list.get.bool', 'list.contains.bool', 'list.append.bool',
+         # list[int]
+         'list.length.list_int', 'list.get.list_int', 'list.count.list_int',
+         'list.contains.list_int', 'list.append.list_int',
+         # list[list[int]]
+         'list.length.list_list_int', 'list.get.list_list_int', 'list.count.list_list_int',
+         'list.contains.list_list_int', 'list.append.list_list_int',
+         # list[real] (list[float])
+         'list.length.list_real', 'list.get.list_real', 'list.count.list_real',
+         'list.contains.list_real', 'list.append.list_real'],
+'list.length.real': ['list.get.real', 'list.contains.real', 'list.append.real'],
+'list.count.real': ['list.contains.real'],
+'list.length.bool': ['list.get.bool', 'list.contains.bool', 'list.append.bool'],
+'list.count.bool': ['list.contains.bool'],
+'list.length.list_int': ['list.get.list_int', 'list.count.list_int', 'list.contains.list_int', 'list.append.list_int'],
+'list.count.list_int': ['list.contains.list_int'],
+'list.length.list_list_int': ['list.get.list_list_int', 'list.count.list_list_int', 'list.contains.list_list_int', 'list.append.list_list_int'],
+'list.count.list_list_int': ['list.contains.list_list_int'],
+'list.length.list_real': ['list.get.list_real', 'list.count.list_real', 'list.contains.list_real', 'list.append.list_real'],
+'list.count.list_real': ['list.contains.list_real'],
+# slice dependencies
+'list.slice': ['list.slice.real', 'list.slice.bool', 'list.slice.string', 'list.slice.list_int', 'list.slice.list_list_int', 'list.slice.list_real'],
+'list.slice.real': [],
+'list.slice.bool': [],
+'list.slice.string': [],
+'list.slice.list_int': [],
+'list.slice.list_list_int': [],
+'list.slice.list_real': []
 }
 
 library = {
@@ -548,6 +587,154 @@ library = {
        (head l)
        (list.get.real (tail l) (- idx 1)))))
 """,
+'list.length.list_int':
+"""
+(define-fun-rec list.length.list_int ((l (List (List Int)))) Int
+  (ite (= l (as nil (List (List Int))))
+       0
+       (+ 1 (list.length.list_int (tail l)))))
+""",
+'list.get.list_int':
+"""
+(define-fun-rec list.get.list_int ((l (List (List Int))) (idx Int)) (List Int)
+  (ite (< idx 0)
+       (list.get.list_int l (+ (list.length.list_int l) idx))
+  (ite (= idx 0)
+       (head l)
+       (list.get.list_int (tail l) (- idx 1)))))
+""",
+'list.count.list_int':
+"""
+(define-fun-rec list.count.list_int ((l (List (List Int))) (val (List Int))) Int
+  (ite (= l (as nil (List (List Int))))
+       0
+       (+ (ite (= (head l) val) 1 0)
+          (list.count.list_int (tail l) val))))
+""",
+'list.contains.list_int':
+"""
+(define-fun list.contains.list_int ((l (List (List Int))) (val (List Int))) Bool
+  (> (list.count.list_int l val) 0))
+""",
+'list.append.list_int':
+"""
+(define-fun-rec list.append.list_int ((l1 (List (List Int))) (l2 (List (List Int)))) (List (List Int))
+  (ite (= l1 (as nil (List (List Int))))
+       l2
+       (cons (head l1) (list.append.list_int (tail l1) l2))))
+""",
+'list.contains.real':
+"""
+(define-fun list.contains.real ((l (List Real)) (val Real)) Bool
+  (> (list.count.real l val) 0))
+""",
+'list.append.real':
+"""
+(define-fun-rec list.append.real ((l1 (List Real)) (l2 (List Real))) (List Real)
+  (ite (= l1 (as nil (List Real)))
+       l2
+       (cons (head l1) (list.append.real (tail l1) l2))))
+""",
+'list.length.bool':
+"""
+(define-fun-rec list.length.bool ((l (List Bool))) Int
+  (ite (= l (as nil (List Bool)))
+       0
+       (+ 1 (list.length.bool (tail l)))))
+""",
+'list.get.bool':
+"""
+(define-fun-rec list.get.bool ((l (List Bool)) (idx Int)) Bool
+  (ite (< idx 0)
+       (list.get.bool l (+ (list.length.bool l) idx))
+  (ite (= idx 0)
+       (head l)
+       (list.get.bool (tail l) (- idx 1)))))
+""",
+'list.contains.bool':
+"""
+(define-fun list.contains.bool ((l (List Bool)) (val Bool)) Bool
+  (> (list.count.bool l val) 0))
+""",
+'list.append.bool':
+"""
+(define-fun-rec list.append.bool ((l1 (List Bool)) (l2 (List Bool))) (List Bool)
+  (ite (= l1 (as nil (List Bool)))
+       l2
+       (cons (head l1) (list.append.bool (tail l1) l2))))
+""",
+'list.length.list_list_int':
+"""
+(define-fun-rec list.length.list_list_int ((l (List (List (List Int))))) Int
+  (ite (= l (as nil (List (List (List Int)))))
+       0
+       (+ 1 (list.length.list_list_int (tail l)))))
+""",
+'list.get.list_list_int':
+"""
+(define-fun-rec list.get.list_list_int ((l (List (List (List Int)))) (idx Int)) (List (List Int))
+  (ite (< idx 0)
+       (list.get.list_list_int l (+ (list.length.list_list_int l) idx))
+  (ite (= idx 0)
+       (head l)
+       (list.get.list_list_int (tail l) (- idx 1)))))
+""",
+'list.count.list_list_int':
+"""
+(define-fun-rec list.count.list_list_int ((l (List (List (List Int)))) (val (List (List Int)))) Int
+  (ite (= l (as nil (List (List (List Int)))))
+       0
+       (+ (ite (= (head l) val) 1 0)
+          (list.count.list_list_int (tail l) val))))
+""",
+'list.contains.list_list_int':
+"""
+(define-fun list.contains.list_list_int ((l (List (List (List Int)))) (val (List (List Int)))) Bool
+  (> (list.count.list_list_int l val) 0))
+""",
+'list.append.list_list_int':
+"""
+(define-fun-rec list.append.list_list_int ((l1 (List (List (List Int)))) (l2 (List (List (List Int))))) (List (List (List Int)))
+  (ite (= l1 (as nil (List (List (List Int)))))
+       l2
+       (cons (head l1) (list.append.list_list_int (tail l1) l2))))
+""",
+'list.length.list_real':
+"""
+(define-fun-rec list.length.list_real ((l (List (List Real)))) Int
+  (ite (= l (as nil (List (List Real))))
+       0
+       (+ 1 (list.length.list_real (tail l)))))
+""",
+'list.get.list_real':
+"""
+(define-fun-rec list.get.list_real ((l (List (List Real))) (idx Int)) (List Real)
+  (ite (< idx 0)
+       (list.get.list_real l (+ (list.length.list_real l) idx))
+  (ite (= idx 0)
+       (head l)
+       (list.get.list_real (tail l) (- idx 1)))))
+""",
+'list.count.list_real':
+"""
+(define-fun-rec list.count.list_real ((l (List (List Real))) (val (List Real))) Int
+  (ite (= l (as nil (List (List Real))))
+       0
+       (+ (ite (= (head l) val) 1 0)
+          (list.count.list_real (tail l) val))))
+""",
+'list.contains.list_real':
+"""
+(define-fun list.contains.list_real ((l (List (List Real))) (val (List Real))) Bool
+  (> (list.count.list_real l val) 0))
+""",
+'list.append.list_real':
+"""
+(define-fun-rec list.append.list_real ((l1 (List (List Real))) (l2 (List (List Real)))) (List (List Real))
+  (ite (= l1 (as nil (List (List Real))))
+       l2
+       (cons (head l1) (list.append.list_real (tail l1) l2))))
+""",
 'list.slice':
 """
 (define-fun list.adjust_index ((idx Int) (len Int)) Int
@@ -578,17 +765,221 @@ library = {
                (adj_stop (list.adjust_index stop len)))
            (ite (> step 0)
                 ;; For positive step
-                (list.reverse.int 
+                (list.reverse.int
                   (list.slice.int.helper l adj_start adj_stop step (as nil (List Int)))
                   (as nil (List Int)))
                 ;; For negative step, reverse parameters
                 (let ((real_start (- len 1 adj_start))
                       (real_stop (- len 1 adj_stop)))
-                  (list.reverse.int 
+                  (list.reverse.int
                     (list.slice.int.helper l real_start real_stop (ite (< step 0) (- 0 step) step) (as nil (List Int)))
                     (as nil (List Int)))))))))
 """
 ,
+'list.slice.real':
+"""
+(define-fun list.valid_index.real ((l (List Real)) (idx Int)) Bool
+  (and (>= idx 0) (< idx (list.length.real l))))
+
+(define-fun-rec list.slice.real.helper ((l (List Real)) (curr Int) (stop Int) (step Int) (result (List Real))) (List Real)
+  (ite (or (and (> step 0) (>= curr stop))
+           (and (< step 0) (<= curr stop))
+           (not (list.valid_index.real l curr)))
+       result
+       (let ((new_result (cons (list.get.real l curr) result)))
+         (list.slice.real.helper l (+ curr step) stop step new_result))))
+
+(define-fun-rec list.reverse.real ((l (List Real)) (acc (List Real))) (List Real)
+  (ite (= l (as nil (List Real)))
+       acc
+       (list.reverse.real (tail l) (cons (head l) acc))))
+
+(define-fun list.slice.real ((l (List Real)) (start Int) (stop Int) (step Int)) (List Real)
+  (let ((len (list.length.real l)))
+    (ite (= step 0)
+         (as nil (List Real))
+         (let ((adj_start (list.adjust_index start len))
+               (adj_stop (list.adjust_index stop len)))
+           (ite (> step 0)
+                (list.reverse.real
+                  (list.slice.real.helper l adj_start adj_stop step (as nil (List Real)))
+                  (as nil (List Real)))
+                (let ((real_start (- len 1 adj_start))
+                      (real_stop (- len 1 adj_stop)))
+                  (list.reverse.real
+                    (list.slice.real.helper l real_start real_stop (ite (< step 0) (- 0 step) step) (as nil (List Real)))
+                    (as nil (List Real)))))))))
+""",
+'list.slice.bool':
+"""
+(define-fun list.valid_index.bool ((l (List Bool)) (idx Int)) Bool
+  (and (>= idx 0) (< idx (list.length.bool l))))
+
+(define-fun-rec list.slice.bool.helper ((l (List Bool)) (curr Int) (stop Int) (step Int) (result (List Bool))) (List Bool)
+  (ite (or (and (> step 0) (>= curr stop))
+           (and (< step 0) (<= curr stop))
+           (not (list.valid_index.bool l curr)))
+       result
+       (let ((new_result (cons (list.get.bool l curr) result)))
+         (list.slice.bool.helper l (+ curr step) stop step new_result))))
+
+(define-fun-rec list.reverse.bool ((l (List Bool)) (acc (List Bool))) (List Bool)
+  (ite (= l (as nil (List Bool)))
+       acc
+       (list.reverse.bool (tail l) (cons (head l) acc))))
+
+(define-fun list.slice.bool ((l (List Bool)) (start Int) (stop Int) (step Int)) (List Bool)
+  (let ((len (list.length.bool l)))
+    (ite (= step 0)
+         (as nil (List Bool))
+         (let ((adj_start (list.adjust_index start len))
+               (adj_stop (list.adjust_index stop len)))
+           (ite (> step 0)
+                (list.reverse.bool
+                  (list.slice.bool.helper l adj_start adj_stop step (as nil (List Bool)))
+                  (as nil (List Bool)))
+                (let ((real_start (- len 1 adj_start))
+                      (real_stop (- len 1 adj_stop)))
+                  (list.reverse.bool
+                    (list.slice.bool.helper l real_start real_stop (ite (< step 0) (- 0 step) step) (as nil (List Bool)))
+                    (as nil (List Bool)))))))))
+""",
+'list.slice.string':
+"""
+(define-fun list.valid_index.string ((l (List String)) (idx Int)) Bool
+  (and (>= idx 0) (< idx (list.length.string l))))
+
+(define-fun-rec list.slice.string.helper ((l (List String)) (curr Int) (stop Int) (step Int) (result (List String))) (List String)
+  (ite (or (and (> step 0) (>= curr stop))
+           (and (< step 0) (<= curr stop))
+           (not (list.valid_index.string l curr)))
+       result
+       (let ((new_result (cons (list.get.string l curr) result)))
+         (list.slice.string.helper l (+ curr step) stop step new_result))))
+
+(define-fun-rec list.reverse.string ((l (List String)) (acc (List String))) (List String)
+  (ite (= l (as nil (List String)))
+       acc
+       (list.reverse.string (tail l) (cons (head l) acc))))
+
+(define-fun list.slice.string ((l (List String)) (start Int) (stop Int) (step Int)) (List String)
+  (let ((len (list.length.string l)))
+    (ite (= step 0)
+         (as nil (List String))
+         (let ((adj_start (list.adjust_index start len))
+               (adj_stop (list.adjust_index stop len)))
+           (ite (> step 0)
+                (list.reverse.string
+                  (list.slice.string.helper l adj_start adj_stop step (as nil (List String)))
+                  (as nil (List String)))
+                (let ((real_start (- len 1 adj_start))
+                      (real_stop (- len 1 adj_stop)))
+                  (list.reverse.string
+                    (list.slice.string.helper l real_start real_stop (ite (< step 0) (- 0 step) step) (as nil (List String)))
+                    (as nil (List String)))))))))
+""",
+'list.slice.list_int':
+"""
+(define-fun list.valid_index.list_int ((l (List (List Int))) (idx Int)) Bool
+  (and (>= idx 0) (< idx (list.length.list_int l))))
+
+(define-fun-rec list.slice.list_int.helper ((l (List (List Int))) (curr Int) (stop Int) (step Int) (result (List (List Int)))) (List (List Int))
+  (ite (or (and (> step 0) (>= curr stop))
+           (and (< step 0) (<= curr stop))
+           (not (list.valid_index.list_int l curr)))
+       result
+       (let ((new_result (cons (list.get.list_int l curr) result)))
+         (list.slice.list_int.helper l (+ curr step) stop step new_result))))
+
+(define-fun-rec list.reverse.list_int ((l (List (List Int))) (acc (List (List Int)))) (List (List Int))
+  (ite (= l (as nil (List (List Int))))
+       acc
+       (list.reverse.list_int (tail l) (cons (head l) acc))))
+
+(define-fun list.slice.list_int ((l (List (List Int))) (start Int) (stop Int) (step Int)) (List (List Int))
+  (let ((len (list.length.list_int l)))
+    (ite (= step 0)
+         (as nil (List (List Int)))
+         (let ((adj_start (list.adjust_index start len))
+               (adj_stop (list.adjust_index stop len)))
+           (ite (> step 0)
+                (list.reverse.list_int
+                  (list.slice.list_int.helper l adj_start adj_stop step (as nil (List (List Int))))
+                  (as nil (List (List Int))))
+                (let ((real_start (- len 1 adj_start))
+                      (real_stop (- len 1 adj_stop)))
+                  (list.reverse.list_int
+                    (list.slice.list_int.helper l real_start real_stop (ite (< step 0) (- 0 step) step) (as nil (List (List Int))))
+                    (as nil (List (List Int))))))))))
+""",
+'list.slice.list_list_int':
+"""
+(define-fun list.valid_index.list_list_int ((l (List (List (List Int)))) (idx Int)) Bool
+  (and (>= idx 0) (< idx (list.length.list_list_int l))))
+
+(define-fun-rec list.slice.list_list_int.helper ((l (List (List (List Int)))) (curr Int) (stop Int) (step Int) (result (List (List (List Int))))) (List (List (List Int)))
+  (ite (or (and (> step 0) (>= curr stop))
+           (and (< step 0) (<= curr stop))
+           (not (list.valid_index.list_list_int l curr)))
+       result
+       (let ((new_result (cons (list.get.list_list_int l curr) result)))
+         (list.slice.list_list_int.helper l (+ curr step) stop step new_result))))
+
+(define-fun-rec list.reverse.list_list_int ((l (List (List (List Int)))) (acc (List (List (List Int))))) (List (List (List Int)))
+  (ite (= l (as nil (List (List (List Int)))))
+       acc
+       (list.reverse.list_list_int (tail l) (cons (head l) acc))))
+
+(define-fun list.slice.list_list_int ((l (List (List (List Int)))) (start Int) (stop Int) (step Int)) (List (List (List Int)))
+  (let ((len (list.length.list_list_int l)))
+    (ite (= step 0)
+         (as nil (List (List (List Int))))
+         (let ((adj_start (list.adjust_index start len))
+               (adj_stop (list.adjust_index stop len)))
+           (ite (> step 0)
+                (list.reverse.list_list_int
+                  (list.slice.list_list_int.helper l adj_start adj_stop step (as nil (List (List (List Int)))))
+                  (as nil (List (List (List Int)))))
+                (let ((real_start (- len 1 adj_start))
+                      (real_stop (- len 1 adj_stop)))
+                  (list.reverse.list_list_int
+                    (list.slice.list_list_int.helper l real_start real_stop (ite (< step 0) (- 0 step) step) (as nil (List (List (List Int)))))
+                    (as nil (List (List (List Int)))))))))))
+""",
+'list.slice.list_real':
+"""
+(define-fun list.valid_index.list_real ((l (List (List Real))) (idx Int)) Bool
+  (and (>= idx 0) (< idx (list.length.list_real l))))
+
+(define-fun-rec list.slice.list_real.helper ((l (List (List Real))) (curr Int) (stop Int) (step Int) (result (List (List Real)))) (List (List Real))
+  (ite (or (and (> step 0) (>= curr stop))
+           (and (< step 0) (<= curr stop))
+           (not (list.valid_index.list_real l curr)))
+       result
+       (let ((new_result (cons (list.get.list_real l curr) result)))
+         (list.slice.list_real.helper l (+ curr step) stop step new_result))))
+
+(define-fun-rec list.reverse.list_real ((l (List (List Real))) (acc (List (List Real)))) (List (List Real))
+  (ite (= l (as nil (List (List Real))))
+       acc
+       (list.reverse.list_real (tail l) (cons (head l) acc))))
+
+(define-fun list.slice.list_real ((l (List (List Real))) (start Int) (stop Int) (step Int)) (List (List Real))
+  (let ((len (list.length.list_real l)))
+    (ite (= step 0)
+         (as nil (List (List Real)))
+         (let ((adj_start (list.adjust_index start len))
+               (adj_stop (list.adjust_index stop len)))
+           (ite (> step 0)
+                (list.reverse.list_real
+                  (list.slice.list_real.helper l adj_start adj_stop step (as nil (List (List Real))))
+                  (as nil (List (List Real))))
+                (let ((real_start (- len 1 adj_start))
+                      (real_stop (- len 1 adj_stop)))
+                  (list.reverse.list_real
+                    (list.slice.list_real.helper l real_start real_stop (ite (< step 0) (- 0 step) step) (as nil (List (List Real))))
+                    (as nil (List (List Real))))))))))
+""",
 'str.split':
 """
 ; Helper function to check if a character matches the delimiter
@@ -1207,7 +1598,23 @@ class Backend():
             return "Real"
         if typ == str:
             return "String"
+        if get_origin(typ) is list:
+            elem_type = get_args(typ)[0]
+            return f"(List {self.Type(elem_type)})"
         raise ValueError("Unsupported type " + str(typ))
+
+    def _type_suffix(self, element_type: str) -> str:
+        """Convert SMTLIB type string to valid function suffix.
+
+        Examples:
+            "Int" -> "int"
+            "String" -> "string"
+            "(List Int)" -> "list_int"
+        """
+        if element_type.startswith("(List "):
+            inner = element_type[6:-1]  # extract inner type
+            return "list_" + self._type_suffix(inner)
+        return element_type.lower()
 
     def List(self, name: str, element_type: str) -> MockExpr:
         """Declare a list variable with elements of the given type"""
@@ -1241,21 +1648,21 @@ class Backend():
 
     def ListLength(self, lst, element_type) -> MockExpr:
         """Get the length of a list"""
-        return self._record("list.length."+element_type.lower(), lst)
+        return self._record("list.length."+self._type_suffix(element_type), lst)
 
     def ListGet(self, lst, idx, element_type) -> MockExpr:
         """Get an element from a list at the given index"""
-        return self._record("list.get."+element_type.lower(), lst, idx)
+        return self._record("list.get."+self._type_suffix(element_type), lst, idx)
 
     def ListSlice(self, lst, start, stop, step, element_type) -> MockExpr:
-        return self._record("list.slice."+element_type.lower(), lst, start, stop, step)
+        return self._record("list.slice."+self._type_suffix(element_type), lst, start, stop, step)
 
     def ListContains(self, lst, val, element_type) -> MockExpr:
         """Check if a list contains a value"""
-        return self._record("list.contains."+element_type.lower(), lst, val)
+        return self._record("list.contains."+self._type_suffix(element_type), lst, val)
 
     def ListIndex(self, lst, val, element_type) -> MockExpr:
-        return self._record("list.index."+element_type.lower(), lst, val)
+        return self._record("list.index."+self._type_suffix(element_type), lst, val)
 
     def ListSum(self, lst) -> MockExpr:
         """Get the sum of all elements in a list"""
@@ -1263,7 +1670,7 @@ class Backend():
 
     def ListAppend(self, lst1, lst2, element_type) -> MockExpr:
         """Append two lists"""
-        return self._record("list.append."+element_type.lower(), lst1, lst2)
+        return self._record("list.append."+self._type_suffix(element_type), lst1, lst2)
 
     def ListMapAdd(self, lst, val) -> MockExpr:
         """Add a value to each element in a list"""
@@ -1279,7 +1686,7 @@ class Backend():
 
     def ListCount(self, lst, val, element_type: str) -> MockExpr:
         """Count occurrences of a value in a list"""
-        return self._record("list.count."+element_type.lower(), lst, val)
+        return self._record("list.count."+self._type_suffix(element_type), lst, val)
 
     def BoundedList(self, name: str, size: int, element_type: str) -> 'BoundedListVars':
         """Create a bounded list with individual variables"""
