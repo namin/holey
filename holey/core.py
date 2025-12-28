@@ -1745,6 +1745,8 @@ list_type_map = {
     list[float]: float, 'List[float]': float,
     list[bool]: bool, 'List[bool]': bool,
     list[list[int]]: list[int], 'List[List[int]]': list[int],
+    list[list[list[int]]]: list[list[int]], 'List[List[List[int]]]': list[list[int]],
+    list[list[float]]: list[float], 'List[List[float]]': list[float],
 }
 
 type_map = {

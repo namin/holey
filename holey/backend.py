@@ -416,12 +416,30 @@ class MockExpr:
 
 # from lib to users
 library_deps = {
-'list': ['str.split', 'python.join', 'list.slice', 'list.length.real', 'list.get.real',
+'list': ['str.split', 'python.join', 'list.slice',
+         # real (float)
+         'list.length.real', 'list.get.real', 'list.contains.real', 'list.append.real',
+         # bool
+         'list.length.bool', 'list.get.bool', 'list.contains.bool', 'list.append.bool',
+         # list[int]
          'list.length.list_int', 'list.get.list_int', 'list.count.list_int',
-         'list.contains.list_int', 'list.append.list_int'],
-'list.length.real': ['list.get.real'],
+         'list.contains.list_int', 'list.append.list_int',
+         # list[list[int]]
+         'list.length.list_list_int', 'list.get.list_list_int', 'list.count.list_list_int',
+         'list.contains.list_list_int', 'list.append.list_list_int',
+         # list[real] (list[float])
+         'list.length.list_real', 'list.get.list_real', 'list.count.list_real',
+         'list.contains.list_real', 'list.append.list_real'],
+'list.length.real': ['list.get.real', 'list.contains.real', 'list.append.real'],
+'list.count.real': ['list.contains.real'],
+'list.length.bool': ['list.get.bool', 'list.contains.bool', 'list.append.bool'],
+'list.count.bool': ['list.contains.bool'],
 'list.length.list_int': ['list.get.list_int', 'list.count.list_int', 'list.contains.list_int', 'list.append.list_int'],
-'list.count.list_int': ['list.contains.list_int']
+'list.count.list_int': ['list.contains.list_int'],
+'list.length.list_list_int': ['list.get.list_list_int', 'list.count.list_list_int', 'list.contains.list_list_int', 'list.append.list_list_int'],
+'list.count.list_list_int': ['list.contains.list_list_int'],
+'list.length.list_real': ['list.get.list_real', 'list.count.list_real', 'list.contains.list_real', 'list.append.list_real'],
+'list.count.list_real': ['list.contains.list_real']
 }
 
 library = {
@@ -587,6 +605,118 @@ library = {
   (ite (= l1 (as nil (List (List Int))))
        l2
        (cons (head l1) (list.append.list_int (tail l1) l2))))
+""",
+'list.contains.real':
+"""
+(define-fun list.contains.real ((l (List Real)) (val Real)) Bool
+  (> (list.count.real l val) 0))
+""",
+'list.append.real':
+"""
+(define-fun-rec list.append.real ((l1 (List Real)) (l2 (List Real))) (List Real)
+  (ite (= l1 (as nil (List Real)))
+       l2
+       (cons (head l1) (list.append.real (tail l1) l2))))
+""",
+'list.length.bool':
+"""
+(define-fun-rec list.length.bool ((l (List Bool))) Int
+  (ite (= l (as nil (List Bool)))
+       0
+       (+ 1 (list.length.bool (tail l)))))
+""",
+'list.get.bool':
+"""
+(define-fun-rec list.get.bool ((l (List Bool)) (idx Int)) Bool
+  (ite (< idx 0)
+       (list.get.bool l (+ (list.length.bool l) idx))
+  (ite (= idx 0)
+       (head l)
+       (list.get.bool (tail l) (- idx 1)))))
+""",
+'list.contains.bool':
+"""
+(define-fun list.contains.bool ((l (List Bool)) (val Bool)) Bool
+  (> (list.count.bool l val) 0))
+""",
+'list.append.bool':
+"""
+(define-fun-rec list.append.bool ((l1 (List Bool)) (l2 (List Bool))) (List Bool)
+  (ite (= l1 (as nil (List Bool)))
+       l2
+       (cons (head l1) (list.append.bool (tail l1) l2))))
+""",
+'list.length.list_list_int':
+"""
+(define-fun-rec list.length.list_list_int ((l (List (List (List Int))))) Int
+  (ite (= l (as nil (List (List (List Int)))))
+       0
+       (+ 1 (list.length.list_list_int (tail l)))))
+""",
+'list.get.list_list_int':
+"""
+(define-fun-rec list.get.list_list_int ((l (List (List (List Int)))) (idx Int)) (List (List Int))
+  (ite (< idx 0)
+       (list.get.list_list_int l (+ (list.length.list_list_int l) idx))
+  (ite (= idx 0)
+       (head l)
+       (list.get.list_list_int (tail l) (- idx 1)))))
+""",
+'list.count.list_list_int':
+"""
+(define-fun-rec list.count.list_list_int ((l (List (List (List Int)))) (val (List (List Int)))) Int
+  (ite (= l (as nil (List (List (List Int)))))
+       0
+       (+ (ite (= (head l) val) 1 0)
+          (list.count.list_list_int (tail l) val))))
+""",
+'list.contains.list_list_int':
+"""
+(define-fun list.contains.list_list_int ((l (List (List (List Int)))) (val (List (List Int)))) Bool
+  (> (list.count.list_list_int l val) 0))
+""",
+'list.append.list_list_int':
+"""
+(define-fun-rec list.append.list_list_int ((l1 (List (List (List Int)))) (l2 (List (List (List Int))))) (List (List (List Int)))
+  (ite (= l1 (as nil (List (List (List Int)))))
+       l2
+       (cons (head l1) (list.append.list_list_int (tail l1) l2))))
+""",
+'list.length.list_real':
+"""
+(define-fun-rec list.length.list_real ((l (List (List Real)))) Int
+  (ite (= l (as nil (List (List Real))))
+       0
+       (+ 1 (list.length.list_real (tail l)))))
+""",
+'list.get.list_real':
+"""
+(define-fun-rec list.get.list_real ((l (List (List Real))) (idx Int)) (List Real)
+  (ite (< idx 0)
+       (list.get.list_real l (+ (list.length.list_real l) idx))
+  (ite (= idx 0)
+       (head l)
+       (list.get.list_real (tail l) (- idx 1)))))
+""",
+'list.count.list_real':
+"""
+(define-fun-rec list.count.list_real ((l (List (List Real))) (val (List Real))) Int
+  (ite (= l (as nil (List (List Real))))
+       0
+       (+ (ite (= (head l) val) 1 0)
+          (list.count.list_real (tail l) val))))
+""",
+'list.contains.list_real':
+"""
+(define-fun list.contains.list_real ((l (List (List Real))) (val (List Real))) Bool
+  (> (list.count.list_real l val) 0))
+""",
+'list.append.list_real':
+"""
+(define-fun-rec list.append.list_real ((l1 (List (List Real))) (l2 (List (List Real)))) (List (List Real))
+  (ite (= l1 (as nil (List (List Real))))
+       l2
+       (cons (head l1) (list.append.list_real (tail l1) l2))))
 """,
 'list.slice':
 """
