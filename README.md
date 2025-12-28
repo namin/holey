@@ -126,7 +126,7 @@ Study_1:0 PandigitalSquare:0 WeirdDecodeVowels:0 TripleDouble:0 MaxDelta:0 MinCo
 `│   ├──` [`llm.py`](holey/llm.py) _support for LLM generation and code extraction_<br/>
 `│   └──` [`preprocessor.py`](holey/preprocessor.py) _includes node transformer and sat driver_<br/>
 `├──` [`log`](log)<br/>
-`│   └──` [`results_symbolic_all.txt`](log/results_symbolic_all.txt) _example run_<br/>
+`│   └──` [`results.txt`](log/results.txt) _example run_<br/>
 `├──` [`puzzle_solver.py`](puzzle_solver.py) _main routine for benchmark solver_<br/>
 `├──` [`pyproject.toml`](pyproject.toml)<br/>
 `└──` [`tests`](tests)<br/>
