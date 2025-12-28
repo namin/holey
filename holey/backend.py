@@ -63,7 +63,7 @@ def print_smt(smt2):
     lines = smt2.split('\n')
     if TRUNCATE:
         lines = [line if len(line) < 1005 else line[0:1000] + "..." for line in lines]
-        lines = lines[:1000] + ["..."] if len(lines) > 1000 else lines
+        lines = (lines[:500] + [";; ..."] + lines[500:]) if len(lines) > 1000 else lines
     r = '\n'.join(lines)
     print(r)
     sys.stdout.flush()
