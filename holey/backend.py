@@ -439,7 +439,15 @@ library_deps = {
 'list.length.list_list_int': ['list.get.list_list_int', 'list.count.list_list_int', 'list.contains.list_list_int', 'list.append.list_list_int'],
 'list.count.list_list_int': ['list.contains.list_list_int'],
 'list.length.list_real': ['list.get.list_real', 'list.count.list_real', 'list.contains.list_real', 'list.append.list_real'],
-'list.count.list_real': ['list.contains.list_real']
+'list.count.list_real': ['list.contains.list_real'],
+# slice dependencies
+'list.slice': ['list.slice.real', 'list.slice.bool', 'list.slice.string', 'list.slice.list_int', 'list.slice.list_list_int', 'list.slice.list_real'],
+'list.slice.real': [],
+'list.slice.bool': [],
+'list.slice.string': [],
+'list.slice.list_int': [],
+'list.slice.list_list_int': [],
+'list.slice.list_real': []
 }
 
 library = {
@@ -748,17 +756,221 @@ library = {
                (adj_stop (list.adjust_index stop len)))
            (ite (> step 0)
                 ;; For positive step
-                (list.reverse.int 
+                (list.reverse.int
                   (list.slice.int.helper l adj_start adj_stop step (as nil (List Int)))
                   (as nil (List Int)))
                 ;; For negative step, reverse parameters
                 (let ((real_start (- len 1 adj_start))
                       (real_stop (- len 1 adj_stop)))
-                  (list.reverse.int 
+                  (list.reverse.int
                     (list.slice.int.helper l real_start real_stop (ite (< step 0) (- 0 step) step) (as nil (List Int)))
                     (as nil (List Int)))))))))
 """
 ,
+'list.slice.real':
+"""
+(define-fun list.valid_index.real ((l (List Real)) (idx Int)) Bool
+  (and (>= idx 0) (< idx (list.length.real l))))
+
+(define-fun-rec list.slice.real.helper ((l (List Real)) (curr Int) (stop Int) (step Int) (result (List Real))) (List Real)
+  (ite (or (and (> step 0) (>= curr stop))
+           (and (< step 0) (<= curr stop))
+           (not (list.valid_index.real l curr)))
+       result
+       (let ((new_result (cons (list.get.real l curr) result)))
+         (list.slice.real.helper l (+ curr step) stop step new_result))))
+
+(define-fun-rec list.reverse.real ((l (List Real)) (acc (List Real))) (List Real)
+  (ite (= l (as nil (List Real)))
+       acc
+       (list.reverse.real (tail l) (cons (head l) acc))))
+
+(define-fun list.slice.real ((l (List Real)) (start Int) (stop Int) (step Int)) (List Real)
+  (let ((len (list.length.real l)))
+    (ite (= step 0)
+         (as nil (List Real))
+         (let ((adj_start (list.adjust_index start len))
+               (adj_stop (list.adjust_index stop len)))
+           (ite (> step 0)
+                (list.reverse.real
+                  (list.slice.real.helper l adj_start adj_stop step (as nil (List Real)))
+                  (as nil (List Real)))
+                (let ((real_start (- len 1 adj_start))
+                      (real_stop (- len 1 adj_stop)))
+                  (list.reverse.real
+                    (list.slice.real.helper l real_start real_stop (ite (< step 0) (- 0 step) step) (as nil (List Real)))
+                    (as nil (List Real)))))))))
+""",
+'list.slice.bool':
+"""
+(define-fun list.valid_index.bool ((l (List Bool)) (idx Int)) Bool
+  (and (>= idx 0) (< idx (list.length.bool l))))
+
+(define-fun-rec list.slice.bool.helper ((l (List Bool)) (curr Int) (stop Int) (step Int) (result (List Bool))) (List Bool)
+  (ite (or (and (> step 0) (>= curr stop))
+           (and (< step 0) (<= curr stop))
+           (not (list.valid_index.bool l curr)))
+       result
+       (let ((new_result (cons (list.get.bool l curr) result)))
+         (list.slice.bool.helper l (+ curr step) stop step new_result))))
+
+(define-fun-rec list.reverse.bool ((l (List Bool)) (acc (List Bool))) (List Bool)
+  (ite (= l (as nil (List Bool)))
+       acc
+       (list.reverse.bool (tail l) (cons (head l) acc))))
+
+(define-fun list.slice.bool ((l (List Bool)) (start Int) (stop Int) (step Int)) (List Bool)
+  (let ((len (list.length.bool l)))
+    (ite (= step 0)
+         (as nil (List Bool))
+         (let ((adj_start (list.adjust_index start len))
+               (adj_stop (list.adjust_index stop len)))
+           (ite (> step 0)
+                (list.reverse.bool
+                  (list.slice.bool.helper l adj_start adj_stop step (as nil (List Bool)))
+                  (as nil (List Bool)))
+                (let ((real_start (- len 1 adj_start))
+                      (real_stop (- len 1 adj_stop)))
+                  (list.reverse.bool
+                    (list.slice.bool.helper l real_start real_stop (ite (< step 0) (- 0 step) step) (as nil (List Bool)))
+                    (as nil (List Bool)))))))))
+""",
+'list.slice.string':
+"""
+(define-fun list.valid_index.string ((l (List String)) (idx Int)) Bool
+  (and (>= idx 0) (< idx (list.length.string l))))
+
+(define-fun-rec list.slice.string.helper ((l (List String)) (curr Int) (stop Int) (step Int) (result (List String))) (List String)
+  (ite (or (and (> step 0) (>= curr stop))
+           (and (< step 0) (<= curr stop))
+           (not (list.valid_index.string l curr)))
+       result
+       (let ((new_result (cons (list.get.string l curr) result)))
+         (list.slice.string.helper l (+ curr step) stop step new_result))))
+
+(define-fun-rec list.reverse.string ((l (List String)) (acc (List String))) (List String)
+  (ite (= l (as nil (List String)))
+       acc
+       (list.reverse.string (tail l) (cons (head l) acc))))
+
+(define-fun list.slice.string ((l (List String)) (start Int) (stop Int) (step Int)) (List String)
+  (let ((len (list.length.string l)))
+    (ite (= step 0)
+         (as nil (List String))
+         (let ((adj_start (list.adjust_index start len))
+               (adj_stop (list.adjust_index stop len)))
+           (ite (> step 0)
+                (list.reverse.string
+                  (list.slice.string.helper l adj_start adj_stop step (as nil (List String)))
+                  (as nil (List String)))
+                (let ((real_start (- len 1 adj_start))
+                      (real_stop (- len 1 adj_stop)))
+                  (list.reverse.string
+                    (list.slice.string.helper l real_start real_stop (ite (< step 0) (- 0 step) step) (as nil (List String)))
+                    (as nil (List String)))))))))
+""",
+'list.slice.list_int':
+"""
+(define-fun list.valid_index.list_int ((l (List (List Int))) (idx Int)) Bool
+  (and (>= idx 0) (< idx (list.length.list_int l))))
+
+(define-fun-rec list.slice.list_int.helper ((l (List (List Int))) (curr Int) (stop Int) (step Int) (result (List (List Int)))) (List (List Int))
+  (ite (or (and (> step 0) (>= curr stop))
+           (and (< step 0) (<= curr stop))
+           (not (list.valid_index.list_int l curr)))
+       result
+       (let ((new_result (cons (list.get.list_int l curr) result)))
+         (list.slice.list_int.helper l (+ curr step) stop step new_result))))
+
+(define-fun-rec list.reverse.list_int ((l (List (List Int))) (acc (List (List Int)))) (List (List Int))
+  (ite (= l (as nil (List (List Int))))
+       acc
+       (list.reverse.list_int (tail l) (cons (head l) acc))))
+
+(define-fun list.slice.list_int ((l (List (List Int))) (start Int) (stop Int) (step Int)) (List (List Int))
+  (let ((len (list.length.list_int l)))
+    (ite (= step 0)
+         (as nil (List (List Int)))
+         (let ((adj_start (list.adjust_index start len))
+               (adj_stop (list.adjust_index stop len)))
+           (ite (> step 0)
+                (list.reverse.list_int
+                  (list.slice.list_int.helper l adj_start adj_stop step (as nil (List (List Int))))
+                  (as nil (List (List Int))))
+                (let ((real_start (- len 1 adj_start))
+                      (real_stop (- len 1 adj_stop)))
+                  (list.reverse.list_int
+                    (list.slice.list_int.helper l real_start real_stop (ite (< step 0) (- 0 step) step) (as nil (List (List Int))))
+                    (as nil (List (List Int))))))))))
+""",
+'list.slice.list_list_int':
+"""
+(define-fun list.valid_index.list_list_int ((l (List (List (List Int)))) (idx Int)) Bool
+  (and (>= idx 0) (< idx (list.length.list_list_int l))))
+
+(define-fun-rec list.slice.list_list_int.helper ((l (List (List (List Int)))) (curr Int) (stop Int) (step Int) (result (List (List (List Int))))) (List (List (List Int)))
+  (ite (or (and (> step 0) (>= curr stop))
+           (and (< step 0) (<= curr stop))
+           (not (list.valid_index.list_list_int l curr)))
+       result
+       (let ((new_result (cons (list.get.list_list_int l curr) result)))
+         (list.slice.list_list_int.helper l (+ curr step) stop step new_result))))
+
+(define-fun-rec list.reverse.list_list_int ((l (List (List (List Int)))) (acc (List (List (List Int))))) (List (List (List Int)))
+  (ite (= l (as nil (List (List (List Int)))))
+       acc
+       (list.reverse.list_list_int (tail l) (cons (head l) acc))))
+
+(define-fun list.slice.list_list_int ((l (List (List (List Int)))) (start Int) (stop Int) (step Int)) (List (List (List Int)))
+  (let ((len (list.length.list_list_int l)))
+    (ite (= step 0)
+         (as nil (List (List (List Int))))
+         (let ((adj_start (list.adjust_index start len))
+               (adj_stop (list.adjust_index stop len)))
+           (ite (> step 0)
+                (list.reverse.list_list_int
+                  (list.slice.list_list_int.helper l adj_start adj_stop step (as nil (List (List (List Int)))))
+                  (as nil (List (List (List Int)))))
+                (let ((real_start (- len 1 adj_start))
+                      (real_stop (- len 1 adj_stop)))
+                  (list.reverse.list_list_int
+                    (list.slice.list_list_int.helper l real_start real_stop (ite (< step 0) (- 0 step) step) (as nil (List (List (List Int)))))
+                    (as nil (List (List (List Int)))))))))))
+""",
+'list.slice.list_real':
+"""
+(define-fun list.valid_index.list_real ((l (List (List Real))) (idx Int)) Bool
+  (and (>= idx 0) (< idx (list.length.list_real l))))
+
+(define-fun-rec list.slice.list_real.helper ((l (List (List Real))) (curr Int) (stop Int) (step Int) (result (List (List Real)))) (List (List Real))
+  (ite (or (and (> step 0) (>= curr stop))
+           (and (< step 0) (<= curr stop))
+           (not (list.valid_index.list_real l curr)))
+       result
+       (let ((new_result (cons (list.get.list_real l curr) result)))
+         (list.slice.list_real.helper l (+ curr step) stop step new_result))))
+
+(define-fun-rec list.reverse.list_real ((l (List (List Real))) (acc (List (List Real)))) (List (List Real))
+  (ite (= l (as nil (List (List Real))))
+       acc
+       (list.reverse.list_real (tail l) (cons (head l) acc))))
+
+(define-fun list.slice.list_real ((l (List (List Real))) (start Int) (stop Int) (step Int)) (List (List Real))
+  (let ((len (list.length.list_real l)))
+    (ite (= step 0)
+         (as nil (List (List Real)))
+         (let ((adj_start (list.adjust_index start len))
+               (adj_stop (list.adjust_index stop len)))
+           (ite (> step 0)
+                (list.reverse.list_real
+                  (list.slice.list_real.helper l adj_start adj_stop step (as nil (List (List Real))))
+                  (as nil (List (List Real))))
+                (let ((real_start (- len 1 adj_start))
+                      (real_stop (- len 1 adj_stop)))
+                  (list.reverse.list_real
+                    (list.slice.list_real.helper l real_start real_stop (ite (< step 0) (- 0 step) step) (as nil (List (List Real))))
+                    (as nil (List (List Real))))))))))
+""",
 'str.split':
 """
 ; Helper function to check if a character matches the delimiter
