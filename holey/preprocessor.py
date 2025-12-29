@@ -522,6 +522,54 @@ def sym_not(x):
         return x.__not__()
     return not x
 
+def sym_ite(cond, then_val, else_val):
+    """Symbolic if-then-else without branching."""
+    # Find tracer
+    tracer = None
+    for v in (cond, then_val, else_val):
+        if hasattr(v, 'tracer'):
+            tracer = v.tracer
+            break
+
+    # All concrete
+    if tracer is None:
+        return then_val if cond else else_val
+
+    # Concrete condition
+    if hasattr(cond, 'concrete') and cond.concrete is not None:
+        return then_val if cond.concrete else else_val
+
+    # Get z3 condition
+    cond = tracer.ensure_symbolic(cond)
+    cond_z3 = cond.z3_expr if hasattr(cond, 'z3_expr') else tracer.backend.BoolVal(bool(cond))
+
+    # Ensure symbolic values
+    then_val = tracer.ensure_symbolic(then_val)
+    else_val = tracer.ensure_symbolic(else_val)
+
+    # Build ITE and wrap in same type as then_val
+    ite_z3 = tracer.backend.If(cond_z3, then_val.z3_expr, else_val.z3_expr)
+    return type(then_val)(ite_z3, tracer=tracer)
+
+def sym_implies(cond, consequent):
+    """Symbolic implication without branching."""
+    tracer = None
+    for v in (cond, consequent):
+        if hasattr(v, 'tracer'):
+            tracer = v.tracer
+            break
+
+    if tracer is None:
+        return (not cond) or consequent
+
+    cond = tracer.ensure_symbolic(cond)
+    consequent = tracer.ensure_symbolic(consequent)
+
+    cond_z3 = cond.z3_expr if hasattr(cond, 'z3_expr') else tracer.backend.BoolVal(bool(cond))
+    cons_z3 = consequent.z3_expr if hasattr(consequent, 'z3_expr') else tracer.backend.BoolVal(bool(consequent))
+
+    return SymbolicBool(tracer.backend.Implies(cond_z3, cons_z3), tracer=tracer)
+
 def sym_in(x, container):
     # Handle native Python set/dict/list which don't have .contains()
     if isinstance(container, (set, frozenset, dict, list)):
@@ -958,9 +1006,72 @@ class HoleyWrapper(ast.NodeTransformer):
             keywords=[]
         )
 
-def inject(sat_func):
+class HoleyWrapperITE(HoleyWrapper):
+    """Subclass that transforms if-statements to ITE expressions.
+
+    Used as fallback when normal branching hits max_branches limit.
+    """
+
+    def visit_If(self, node):
+        """Transform if-statements to ITE expressions to avoid branching."""
+        node = self.generic_visit(node)
+
+        # Only transform simple cases with no else clause
+        if node.orelse:
+            return node
+
+        # Pattern 1: if COND: VAR = VALUE
+        if (len(node.body) == 1 and
+            isinstance(node.body[0], ast.Assign) and
+            len(node.body[0].targets) == 1 and
+            isinstance(node.body[0].targets[0], ast.Name)):
+
+            var_name = node.body[0].targets[0].id
+            value = node.body[0].value
+
+            # VAR = sym_ite(COND, VALUE, VAR)
+            new_node = ast.Assign(
+                targets=[ast.Name(id=var_name, ctx=ast.Store())],
+                value=ast.Call(
+                    func=ast.Name(id='sym_ite', ctx=ast.Load()),
+                    args=[node.test, value, ast.Name(id=var_name, ctx=ast.Load())],
+                    keywords=[]
+                )
+            )
+            ast.copy_location(new_node, node)
+            ast.fix_missing_locations(new_node)
+            return new_node
+
+        # Pattern 2: if COND: assert X (already transformed to _assert)
+        if (len(node.body) == 1 and
+            isinstance(node.body[0], ast.Expr) and
+            isinstance(node.body[0].value, ast.Call) and
+            isinstance(node.body[0].value.func, ast.Name) and
+            node.body[0].value.func.id == '_assert'):
+
+            assertion = node.body[0].value.args[0]
+
+            # _assert(sym_implies(COND, X))
+            new_node = ast.Expr(
+                value=ast.Call(
+                    func=ast.Name(id='_assert', ctx=ast.Load()),
+                    args=[ast.Call(
+                        func=ast.Name(id='sym_implies', ctx=ast.Load()),
+                        args=[node.test, assertion],
+                        keywords=[]
+                    )],
+                    keywords=[]
+                )
+            )
+            ast.copy_location(new_node, node)
+            ast.fix_missing_locations(new_node)
+            return new_node
+
+        return node
+
+def inject(sat_func, wrapper_class=HoleyWrapper):
     tree = ast.parse(sat_func)
-    modified_tree = HoleyWrapper().visit(tree)
+    modified_tree = wrapper_class().visit(tree)
     modified_func = ast.unparse(modified_tree)
     print('modified_func', modified_func)
     return modified_func
@@ -990,10 +1101,12 @@ def create_namespace(tracer):
         "sym_sum": sym_sum,
         'sym_zip': sym_zip,
         'sym_generator': sym_generator,
-        'sym_sorted': sym_sorted
+        'sym_sorted': sym_sorted,
+        'sym_ite': sym_ite,
+        'sym_implies': sym_implies
     }
 
-def driver(sat_func, typ, cmds=None, llm_solver=None, list_size=None):
+def driver(sat_func, typ, cmds=None, llm_solver=None, list_size=None, wrapper_class=HoleyWrapper):
     """Run symbolic execution on a sat function.
 
     Args:
@@ -1004,6 +1117,8 @@ def driver(sat_func, typ, cmds=None, llm_solver=None, list_size=None):
         list_size: For list types, optional size bound. If provided, uses BoundedSymbolicList
                    which is much faster for SMT solving. When None with list type, uses
                    the slower but more general recursive list encoding.
+        wrapper_class: AST transformer class to use. Default is HoleyWrapper.
+                       Use HoleyWrapperITE to avoid branching via ITE expressions.
     """
     reset()
     backend = default_backend(cmds)
@@ -1011,7 +1126,7 @@ def driver(sat_func, typ, cmds=None, llm_solver=None, list_size=None):
     namespace = create_namespace(tracer)
     sym_var = make_symbolic(typ, 'x', tracer, size=list_size)
     namespace['x'] = sym_var
-    exec(inject(sat_func), namespace)
+    exec(inject(sat_func, wrapper_class), namespace)
     sat = namespace['sat']
     tracer.driver(lambda: sat(sym_var))
     return sym_var
