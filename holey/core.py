@@ -15,16 +15,21 @@ class SymbolicTracer:
         self.remaining_branch_explorations = []
 
     def driver(self, thunk, max_branches=None):
+        """Run symbolic execution, exploring branches.
+
+        Returns True if all branches were explored successfully,
+        False if max_branches was hit (incomplete exploration).
+        """
         branch_count = 0
         while True:
             result = thunk()
             self.add_constraint(result)
             if self.remaining_branch_explorations == []:
-                return
+                return True
             branch_count += 1
             if max_branches is not None and branch_count >= max_branches:
                 print(f"Warning: hit max branch limit ({max_branches}), {len(self.remaining_branch_explorations)} branches unexplored")
-                return
+                return False
             self.current_branch_exploration = self.remaining_branch_explorations.pop()
             self.branch_counter = 0
             self.path_conditions = []

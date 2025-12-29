@@ -1106,7 +1106,7 @@ def create_namespace(tracer):
         'sym_implies': sym_implies
     }
 
-def driver(sat_func, typ, cmds=None, llm_solver=None, list_size=None, wrapper_class=HoleyWrapper):
+def driver(sat_func, typ, cmds=None, llm_solver=None, list_size=None, wrapper_class=HoleyWrapper, max_branches=None):
     """Run symbolic execution on a sat function.
 
     Args:
@@ -1119,6 +1119,7 @@ def driver(sat_func, typ, cmds=None, llm_solver=None, list_size=None, wrapper_cl
                    the slower but more general recursive list encoding.
         wrapper_class: AST transformer class to use. Default is HoleyWrapper.
                        Use HoleyWrapperITE to avoid branching via ITE expressions.
+        max_branches: Maximum number of branches to explore. None means unlimited.
     """
     reset()
     backend = default_backend(cmds)
@@ -1128,5 +1129,6 @@ def driver(sat_func, typ, cmds=None, llm_solver=None, list_size=None, wrapper_cl
     namespace['x'] = sym_var
     exec(inject(sat_func, wrapper_class), namespace)
     sat = namespace['sat']
-    tracer.driver(lambda: sat(sym_var))
+    ok = tracer.driver(lambda: sat(sym_var), max_branches=max_branches)
+    sym_var.ok = ok
     return sym_var
