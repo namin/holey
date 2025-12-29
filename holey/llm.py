@@ -9,7 +9,7 @@ OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 OLLAMA_API_KEY = os.environ.get('OLLAMA_API_KEY')
 PROJECT_ID = os.environ.get('PROJECT_ID') or os.environ.get('GOOGLE_CLOUD_PROJECT')
-
+LLM_PROVIDER = os.environ.get('LLM_PROVIDER')
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 
 def is_docker():
@@ -266,6 +266,10 @@ def extract_code_blocks(response: str) -> List[str]:
         code = response.strip()
         blocks = [code]
     return blocks
+
+if LLM_PROVIDER:
+    ps = LLM_PROVIDER.split()
+    generators = {k: generators[k] for k in ps if k in generators}
 
 if __name__ == '__main__':
     print(list(generators.keys()))
