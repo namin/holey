@@ -43,6 +43,7 @@ modified_func def sat(ans: List[int], m=wrap_int(200004931), n=wrap_int(66679984
 (get-model)
 
 running backend z3
+running backend cvc5
 ### output for z3
 sat
 (
@@ -54,6 +55,8 @@ sat
   (define-fun mod0 ((x!0 Int) (x!1 Int)) Int
     0)
 )
+### output for cvc5
+cvc5 interrupted by timeout.
 
 Found solution [35021, -1, 3]
 Yes! Solved for puzzle  examples/CertifiedGCD.py

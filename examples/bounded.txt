@@ -22,6 +22,7 @@ modified_func def sat(li: List[int]):
 (get-model)
 
 running backend z3
+running backend cvc5
 ### output for z3
 sat
 (
@@ -45,6 +46,20 @@ sat
     1)
   (define-fun x_e3 () Int
     0)
+)
+### output for cvc5
+sat
+(
+(define-fun x_e0 () Int (- 1))
+(define-fun x_e1 () Int (- 1))
+(define-fun x_e2 () Int (- 1))
+(define-fun x_e3 () Int 0)
+(define-fun x_e4 () Int 1)
+(define-fun x_e5 () Int 1)
+(define-fun x_e6 () Int 1)
+(define-fun x_e7 () Int 1)
+(define-fun x_e8 () Int 1)
+(define-fun x_e9 () Int 0)
 )
 
 Found solution [1, 1, 1, 0, 1, 0, 1, 1, 1, 1]

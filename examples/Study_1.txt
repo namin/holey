@@ -27,8 +27,11 @@ modified_func def sat(s: str):
 (get-model)
 
 running backend z3
+running backend cvc5
 ### output for z3
 timeout
+### output for cvc5
+cvc5 interrupted by timeout.
 
 Could not find any solution for puzzle examples/Study_1.py
 One large constant for extrapolation
@@ -60,11 +63,17 @@ modified_func def sat(s: str):
 (get-model)
 
 running backend z3
+running backend cvc5
 ### output for z3
 sat
 (
   (define-fun x () String
     "oCoDo")
+)
+### output for cvc5
+sat
+(
+(define-fun x () String "oBoAo")
 )
 
 Found solution oCoDo

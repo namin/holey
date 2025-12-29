@@ -13,11 +13,17 @@ modified_func def sat(height: int, area=wrap_int(2642925075), base=wrap_int(2114
 (get-model)
 
 running backend z3
+running backend cvc5
 ### output for z3
 sat
 (
   (define-fun x () Int
     25)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 25)
 )
 
 Found solution 25

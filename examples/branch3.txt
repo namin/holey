@@ -33,11 +33,17 @@ modified_func def sat(x: int) -> bool:
 (get-model)
 
 running backend z3
+running backend cvc5
 ### output for z3
 sat
 (
   (define-fun x () Int
     6)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 0)
 )
 
 Found solution 6

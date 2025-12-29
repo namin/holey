@@ -24,12 +24,15 @@ modified_func def sat(n: int):
 (get-model)
 
 running backend z3
+running backend cvc5
 ### output for z3
 sat
 (
   (define-fun x () Int
     15621)
 )
+### output for cvc5
+cvc5 interrupted by timeout.
 
 Found solution 15621
 Yes! Solved for puzzle  examples/MonkeyAndCoconut.py

@@ -46,11 +46,17 @@ modified_func def sat(hands: List[int], target_angle=wrap_int(45)):
 (get-model)
 
 running backend z3
+running backend cvc5
 ### output for z3
 sat
 (
   (define-fun x () (List Int)
     (cons 7 (cons 30 nil)))
+)
+### output for cvc5
+sat
+(
+(define-fun x () (List Int) ((as cons (List Int)) 7 ((as cons (List Int)) 30 (as nil (List Int)))))
 )
 
 Found solution [7, 30]

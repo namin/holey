@@ -12,11 +12,17 @@ modified_func def sat(m: int, hello=wrap_list([wrap_int(1), wrap_int(31), wrap_i
 (get-model)
 
 running backend z3
+running backend cvc5
 ### output for z3
 sat
 (
   (define-fun x () Int
     3502145)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 3502145)
 )
 
 Found solution 3502145

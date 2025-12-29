@@ -28,6 +28,7 @@ def extract_smt(txt_content: str) -> str:
 def run_solver(py_file: Path, no_bounded: bool = False) -> str:
     """Run puzzle_solver.py on a SAT file and return output."""
     cmd = [sys.executable, 'puzzle_solver.py', '--sat-file', str(py_file)]
+    cmd += ['--smtlib-backends', 'z3', 'cvc5']
     if no_bounded:
         cmd.append('--no-bounded-list')
 

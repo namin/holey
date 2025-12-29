@@ -12,12 +12,15 @@ modified_func def sat(root: float, coeffs=wrap_list([wrap_int(1), wrap_int(2), w
 (get-model)
 
 running backend z3
+running backend cvc5
 ### output for z3
 sat
 (
   (define-fun x () Real
     (- (/ 5567.0 16384.0)))
 )
+### output for cvc5
+cvc5 interrupted by timeout.
 
 Found solution -0.33978271484375
 Yes! Solved for puzzle  examples/OddDegreePolynomialRoot.py

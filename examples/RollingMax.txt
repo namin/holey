@@ -51,11 +51,17 @@ modified_func def sat(maxes: List[int], nums=wrap_list([-wrap_int(15), -wrap_int
 (get-model)
 
 running backend z3
+running backend cvc5
 ### output for z3
 sat
 (
   (define-fun x () (List Int)
     (cons (- 15) (cons (- 6) nil)))
+)
+### output for cvc5
+sat
+(
+(define-fun x () (List Int) ((as cons (List Int)) (- 15) ((as cons (List Int)) (- 6) (as nil (List Int)))))
 )
 
 Found solution [-15, -6]

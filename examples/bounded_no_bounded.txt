@@ -37,6 +37,7 @@ modified_func def sat(li: List[int]):
 (get-model)
 
 running backend z3
+running backend cvc5
 ### output for z3
 sat
 (
@@ -44,6 +45,11 @@ sat
     (let ((a!1 (cons 38 (cons 36 (cons 37 (cons 35 nil))))))
 (let ((a!2 (cons 33 (cons 11 (cons 34 (cons 11 a!1))))))
   (cons 32 (cons 31 a!2)))))
+)
+### output for cvc5
+sat
+(
+(define-fun x () (List Int) ((as cons (List Int)) 0 ((as cons (List Int)) 1 ((as cons (List Int)) 1 ((as cons (List Int)) 0 ((as cons (List Int)) 1 ((as cons (List Int)) 1 ((as cons (List Int)) 1 ((as cons (List Int)) 1 ((as cons (List Int)) 1 ((as cons (List Int)) 1 (as nil (List Int)))))))))))))
 )
 
 Found solution [32, 31, 33, 11, 34, 11, 38, 36, 37, 35]

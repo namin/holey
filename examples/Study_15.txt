@@ -32,6 +32,7 @@ modified_func def sat(li: List[int]):
 (get-model)
 
 running backend z3
+running backend cvc5
 ### output for z3
 sat
 (
@@ -76,6 +77,8 @@ sat
   (define-fun x_e19 () Int
     0)
 )
+### output for cvc5
+(error "Parse Error: tmp.smt2:22.122: invalid kind 'ADD', expected Terms with kind ADD must have at least 2 children and at most 67108863 children (the one under construction has 1)")
 
 Found solution [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 0]
 Yes! Solved for puzzle  examples/Study_15.py
