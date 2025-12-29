@@ -1,0 +1,8 @@
+(set-logic ALL)
+(declare-const x Int)
+(assert (=> (and (> x 5) (> x 10) (> x 20)) (= (mod x 2) 0)))
+(assert (=> (and (> x 5) (> x 10) (not (> x 20))) (= (mod x 2) 1)))
+(assert (=> (and (> x 5) (not (> x 10))) (< x 10)))
+(assert (=> (not (> x 5)) (= x 0)))
+(check-sat)
+(get-model)
