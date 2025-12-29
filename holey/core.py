@@ -1726,14 +1726,18 @@ class SymbolicRangeIterator:
         return None
 
     def _simplify_diff(self, expr):
-        """Pattern match: (- (+ a c) a) → c"""
+        """Pattern match: (- (+ a c) a) → c
+
+        Uses to_smt2() for canonical comparison of subexpressions.
+        """
         if expr.op == '-' and len(expr.args) == 2:
             left, right = expr.args
             if hasattr(left, 'op') and left.op == '+' and len(left.args) == 2:
                 # Check (- (+ a c) a) → c or (- (+ c a) a) → c
-                if str(left.args[0]) == str(right) and left.args[1].op == 'IntVal':
+                # Compare using canonical SMT-LIB representation
+                if left.args[0].to_smt2() == right.to_smt2() and left.args[1].op == 'IntVal':
                     return left.args[1].args[0]
-                if str(left.args[1]) == str(right) and left.args[0].op == 'IntVal':
+                if left.args[1].to_smt2() == right.to_smt2() and left.args[0].op == 'IntVal':
                     return left.args[0].args[0]
         return None
 
