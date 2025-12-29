@@ -47,7 +47,6 @@ class PuzzleSolver:
         self.show_llm_matrix = False
         self.names_of_extrapolated_puzzles = []
         self.use_ite = False
-        self.ite_limit = None
         self.names_of_successfully_extrapolated_puzzles = []
         self.use_bounded_lists = False  # Controlled by command-line flag
         self.bounded_list_max_size = 200  # Maximum size for bounded lists
@@ -176,13 +175,7 @@ class PuzzleSolver:
 
     def symbolic_solve1(self, typ, sat_func: str, ans_type: str, name: str, cmds, llm_solver, list_size=None) -> Optional[str]:
         wrapper_class = HoleyWrapperITE if self.use_ite else HoleyWrapper
-        sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver, list_size=list_size, wrapper_class=wrapper_class, max_branches=self.ite_limit)
-
-        # If ite_limit was set and we hit it, fallback to ITE mode
-        if self.ite_limit is not None and not sym_var.ok and not self.use_ite:
-            print(f"Branch limit hit, retrying with ITE mode...")
-            sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver, list_size=list_size, wrapper_class=HoleyWrapperITE)
-
+        sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver, list_size=list_size, wrapper_class=wrapper_class)
         tracer = sym_var.tracer
         with capture_output() as captured:
             solution = tracer.solution()
@@ -400,7 +393,7 @@ def check_result(result, sat_func):
         return False
     return True
 
-def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None, llm_all = False, llm_end = False, use_bounded_lists = False, bounded_list_max_size = 100, show_shrunk = False, use_ite = False, ite_limit = None):
+def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None, llm_all = False, llm_end = False, use_bounded_lists = False, bounded_list_max_size = 100, show_shrunk = False, use_ite = False):
     with open(puzzle_file) as f:
         puzzles = json.load(f)
 
@@ -421,7 +414,6 @@ def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None,
     solver.use_bounded_lists = use_bounded_lists
     solver.bounded_list_max_size = bounded_list_max_size
     solver.use_ite = use_ite
-    solver.ite_limit = ite_limit
     if use_bounded_lists:
         print(f"Using bounded list encoding (max size: {bounded_list_max_size})")
 
@@ -520,7 +512,7 @@ def infer_ans_type(sat_func: str) -> Optional[str]:
         pass
     return None
 
-def solve_sat_file(sat_file: str, smtlib_backends: list, llm_solver=None, llm_all=False, llm_end=False, use_bounded_lists=True, bounded_list_max_size=200, use_ite=False, ite_limit=None):
+def solve_sat_file(sat_file: str, smtlib_backends: list, llm_solver=None, llm_all=False, llm_end=False, use_bounded_lists=True, bounded_list_max_size=200, use_ite=False):
     """Solve a single Python file containing a sat function."""
     with open(sat_file) as f:
         sat_func = f.read()
@@ -538,7 +530,6 @@ def solve_sat_file(sat_file: str, smtlib_backends: list, llm_solver=None, llm_al
     solver.use_bounded_lists = use_bounded_lists
     solver.bounded_list_max_size = bounded_list_max_size
     solver.use_ite = use_ite
-    solver.ite_limit = ite_limit
     if use_bounded_lists:
         print(f"Using bounded list encoding (max size: {bounded_list_max_size})")
 
@@ -589,8 +580,6 @@ if __name__ == "__main__":
                        help='Show puzzles where the smaller variation was successfully solved')
     parser.add_argument('--ite', action='store_true',
                        help='Use ITE mode to avoid branching (for branch explosion cases)')
-    parser.add_argument('--ite-limit', type=int, default=None,
-                       help='Max branches before falling back to ITE mode (default: no limit)')
     args = parser.parse_args()
 
     llm_solver = None
@@ -599,6 +588,6 @@ if __name__ == "__main__":
         llm_solver = {k: LLMSolver(v) for k,v in llm_generators.items()}
 
     if args.sat_file:
-        solve_sat_file(args.sat_file, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, args.ite, args.ite_limit)
+        solve_sat_file(args.sat_file, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, args.ite)
     else:
-        run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, args.show_shrunk, args.ite, args.ite_limit)
+        run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, args.show_shrunk, args.ite)
