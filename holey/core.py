@@ -14,7 +14,7 @@ class SymbolicTracer:
         self.current_branch_exploration = []
         self.remaining_branch_explorations = []
 
-    def driver(self, thunk, max_branches=1000):
+    def driver(self, thunk, max_branches=None):
         branch_count = 0
         while True:
             result = thunk()
