@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Regenerate example output files (.txt and .smt) from .py SAT files."""
 
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -30,7 +31,10 @@ def run_solver(py_file: Path, no_bounded: bool = False) -> str:
     if no_bounded:
         cmd.append('--no-bounded-list')
 
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    env = os.environ.copy()
+    env['TRUNCATE'] = 'true'
+
+    result = subprocess.run(cmd, capture_output=True, text=True, env=env)
     return result.stdout + result.stderr
 
 
