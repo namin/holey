@@ -14,7 +14,7 @@ class SymbolicTracer:
         self.current_branch_exploration = []
         self.remaining_branch_explorations = []
 
-    def driver(self, thunk, max_branches=None):
+    def driver(self, thunk, max_branches=1000):
         branch_count = 0
         while True:
             result = thunk()
@@ -163,10 +163,18 @@ class SymbolicBool:
 
     def __and__(self, other):
         other = self.tracer.ensure_symbolic(other)
+        if not isinstance(other, SymbolicBool):
+            other = truthy(other)
+        if self.concrete is not None and hasattr(other, 'concrete') and other.concrete is not None:
+            return SymbolicBool(self.concrete and other.concrete, tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.And(self.z3_expr, truthy(other).z3_expr), tracer=self.tracer)
-    
+
     def __or__(self, other):
         other = self.tracer.ensure_symbolic(other)
+        if not isinstance(other, SymbolicBool):
+            other = truthy(other)
+        if self.concrete is not None and hasattr(other, 'concrete') and other.concrete is not None:
+            return SymbolicBool(self.concrete or other.concrete, tracer=self.tracer)
         return SymbolicBool(self.tracer.backend.Or(self.z3_expr, truthy(other).z3_expr), tracer=self.tracer)
     
     def __not__(self):
