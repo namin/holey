@@ -46,7 +46,7 @@ class PuzzleSolver:
         self.end2end_stats = defaultdict(list)
         self.show_llm_matrix = False
         self.names_of_extrapolated_puzzles = []
-        self.use_ite = False
+        self.use_ite = True
         self.names_of_successfully_extrapolated_puzzles = []
         self.use_bounded_lists = False  # Controlled by command-line flag
         self.bounded_list_max_size = 200  # Maximum size for bounded lists
@@ -578,8 +578,8 @@ if __name__ == "__main__":
                        help='Maximum size for bounded lists (default: 200)')
     parser.add_argument('--show-shrunk', action='store_true',
                        help='Show puzzles where the smaller variation was successfully solved')
-    parser.add_argument('--ite', action='store_true',
-                       help='Use ITE mode to avoid branching (for branch explosion cases)')
+    parser.add_argument('--no-ite', action='store_true',
+                       help='Disable ITE mode (use explicit branching instead)')
     args = parser.parse_args()
 
     llm_solver = None
@@ -588,6 +588,6 @@ if __name__ == "__main__":
         llm_solver = {k: LLMSolver(v) for k,v in llm_generators.items()}
 
     if args.sat_file:
-        solve_sat_file(args.sat_file, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, args.ite)
+        solve_sat_file(args.sat_file, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, not args.no_ite)
     else:
-        run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, args.show_shrunk, args.ite)
+        run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, args.show_shrunk, not args.no_ite)
