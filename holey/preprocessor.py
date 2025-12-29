@@ -336,6 +336,8 @@ def sym_int(x, base=None):
         return SymbolicInt(x.tracer.backend.StrToInt(*args), tracer=x.tracer)
     if isinstance(x, SymbolicFloat):
         assert base is None
+        if x.concrete is not None:
+            return SymbolicInt(int(x.concrete), tracer=x.tracer)
         return SymbolicInt(x.tracer.backend.ToInt(x.z3_expr), tracer=x.tracer)
     if isinstance(x, SymbolicInt):
         assert base is None

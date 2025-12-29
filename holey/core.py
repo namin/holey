@@ -424,6 +424,8 @@ class SymbolicInt:
             pow_result = self.tracer.backend.Pow(self.z3_expr, other.z3_expr)
             return SymbolicInt(self.tracer.backend.Mod(pow_result, mod.z3_expr), tracer=self.tracer)
         if isinstance(other, SymbolicFloat):
+            if self.concrete is not None and other.concrete is not None:
+                return SymbolicFloat(self.concrete ** other.concrete, tracer=self.tracer)
             return SymbolicFloat(self.tracer.backend.Pow(self.z3_expr, other.z3_expr), tracer=self.tracer)
         if self.concrete is not None and other.concrete is not None:
             result = self.concrete ** other.concrete
