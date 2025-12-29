@@ -440,7 +440,7 @@ class MockSolver:
 
     def add(self, constraint):
         if str(constraint) == 'True':
-            print('Skipping constant true constraint')
+            #print('Skipping constant true constraint')
             return
         assert isinstance(constraint, MockExpr), "found bad constraint " + str(constraint) + " of type " + str(type(constraint))
         self.constraints.append(constraint)
