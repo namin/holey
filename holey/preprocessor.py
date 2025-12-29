@@ -607,9 +607,28 @@ def sym_in(x, container):
 
 def sym_any(iterable):
     if isinstance(iterable, types.GeneratorType):
+        from holey.core import SymbolicStrIterator, SymbolicListIterator
         iterator = iter(iterable.gi_frame.f_locals['.0'])
         if isinstance(iterator, SymbolicRangeIterator):
             predicate = next(iterable)
+            # Get bounds from forall_conditions (added by __next__)
+            if iterator.tracer.forall_conditions:
+                var_expr, bounds_expr = iterator.tracer.forall_conditions[-1]
+                # Remove from forall_conditions since we're handling it here
+                iterator.tracer.forall_conditions.pop()
+                # For any(), create: not(forall i. (bounds(i) => not predicate(i)))
+                # This is equivalent to: exists i. (bounds(i) & predicate(i))
+                var_decl = iterator.tracer.backend.Int(var_expr.decl().name())
+                return SymbolicBool(iterator.tracer.backend.Not(
+                    iterator.tracer.backend.ForAll(
+                        [var_decl],
+                        iterator.tracer.backend.Implies(
+                            bounds_expr,
+                            iterator.tracer.backend.Not(truthy(predicate).z3_expr)
+                        )
+                    )
+                ), tracer=iterator.tracer)
+            # Fallback if forall_conditions wasn't populated
             bounds = iterator.get_bounds()
             return SymbolicBool(iterator.tracer.backend.Not(
                 iterator.tracer.backend.Implies(
@@ -617,6 +636,34 @@ def sym_any(iterable):
                     iterator.tracer.backend.Not(truthy(predicate).z3_expr)
                 )
             ), tracer=iterator.tracer)
+        elif isinstance(iterator, (SymbolicStrIterator, SymbolicListIterator)):
+            # String and list iterators use position-based iteration
+            # Get the quantifier variable and bounds that will be added by __next__
+            # We need to peek at what variable will be created
+            next_counter = SymbolicStrIterator._counter if isinstance(iterator, SymbolicStrIterator) else SymbolicListIterator._counter
+            var_name = f'str_pos_{next_counter}' if isinstance(iterator, SymbolicStrIterator) else f'list_pos_{next_counter}'
+
+            # Mark variable as quantified BEFORE evaluating predicate to prevent declaration
+            iterator.tracer.backend.quantified_vars.add(var_name)
+
+            predicate = next(iterable)
+            # Get the quantifier variable and bounds from forall_conditions
+            if iterator.tracer.forall_conditions:
+                var_expr, bounds = iterator.tracer.forall_conditions[-1]
+                # Remove from forall_conditions since we're handling it here
+                iterator.tracer.forall_conditions.pop()
+                # Create Exists quantifier: exists i. (bounds(i) & predicate(i))
+                # Which is equivalent to: not(forall i. (bounds(i) => not predicate(i)))
+                var_decl = iterator.tracer.backend.Int(var_expr.decl().name())
+                return SymbolicBool(iterator.tracer.backend.Not(
+                    iterator.tracer.backend.ForAll(
+                        [var_decl],
+                        iterator.tracer.backend.Implies(
+                            bounds,
+                            iterator.tracer.backend.Not(truthy(predicate).z3_expr)
+                        )
+                    )
+                ), tracer=iterator.tracer)
 
     # Default case for concrete lists/other iterables
     conditions = list(iterable)
@@ -648,12 +695,26 @@ def sym_all(iterable):
             ), tracer=iterator.tracer)
 
     if isinstance(iterable, types.GeneratorType):
+        from holey.core import SymbolicStrIterator, SymbolicListIterator
         iterator = iter(iterable.gi_frame.f_locals['.0'])
         if isinstance(iterator, SymbolicRangeIterator):
             predicate = next(iterable)
+            # Get bounds from forall_conditions (added by __next__)
+            if iterator.tracer.forall_conditions:
+                var_expr, bounds_expr = iterator.tracer.forall_conditions[-1]
+                # Remove from forall_conditions since we're handling it here
+                iterator.tracer.forall_conditions.pop()
+                # For all(), create: forall i. (bounds(i) => predicate(i))
+                var_decl = iterator.tracer.backend.Int(var_expr.decl().name())
+                return SymbolicBool(iterator.tracer.backend.ForAll(
+                    [var_decl],
+                    iterator.tracer.backend.Implies(
+                        bounds_expr,
+                        truthy(predicate).z3_expr
+                    )
+                ), tracer=iterator.tracer)
+            # Fallback if forall_conditions wasn't populated
             bounds = iterator.get_bounds()
-            # For all(), we want: forall i. (bounds(i) => predicate(i))
-            # This is handled by returning a special marker that add_constraint will recognize
             return SymbolicBool(iterator.tracer.backend.ForAll(
                 [iterator.tracer.backend.Int(iterator.var.z3_expr.decl().name())],
                 iterator.tracer.backend.Implies(
@@ -661,6 +722,25 @@ def sym_all(iterable):
                     truthy(predicate).z3_expr
                 )
             ), tracer=iterator.tracer)
+        elif isinstance(iterator, (SymbolicStrIterator, SymbolicListIterator)):
+            # String and list iterators use position-based iteration
+            # The iterator has already added to forall_conditions in its __next__ method
+            predicate = next(iterable)
+            # Get the quantifier variable and bounds from forall_conditions
+            # They were added by the iterator's __next__ method
+            if iterator.tracer.forall_conditions:
+                var_expr, bounds = iterator.tracer.forall_conditions[-1]
+                # Remove from forall_conditions since we're handling it here
+                iterator.tracer.forall_conditions.pop()
+                # Create ForAll quantifier
+                var_decl = iterator.tracer.backend.Int(var_expr.decl().name())
+                return SymbolicBool(iterator.tracer.backend.ForAll(
+                    [var_decl],
+                    iterator.tracer.backend.Implies(
+                        bounds,
+                        truthy(predicate).z3_expr
+                    )
+                ), tracer=iterator.tracer)
         # Convert generator to list and ensure boolean conditions
         iterable = [x for x in list(iterable)]
     result = None

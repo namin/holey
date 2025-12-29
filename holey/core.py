@@ -1700,7 +1700,10 @@ class SymbolicRangeIterator:
         if self.used:
             raise StopIteration
         self.used = True
-        # Don't add to forall_conditions here - let sym_all/sym_any handle it
+        # Add to forall_conditions so that any constraints added during predicate
+        # evaluation get wrapped in the ForAll quantifier
+        bounds = self.get_bounds()
+        self.tracer.forall_conditions.append((self.var.z3_expr, bounds.z3_expr))
         return self.var
     
     def get_bounds(self):
