@@ -1685,26 +1685,89 @@ class SymbolicRangeIterator:
     def __init__(self, sym_range):
         self.tracer = sym_range.tracer
         self.sym_range = sym_range
-        # Create fresh variable for the iterator
-        var_name = f'i_{SymbolicRange._counter}'
-        SymbolicRange._counter += 1
-        # Mark as quantified so it's not declared in the header
-        self.tracer.backend.quantified_vars.add(var_name)
-        self.var = SymbolicInt(name=var_name, tracer=sym_range.tracer)
-        self.used = False
-    
+        self.iteration_count = 0
+        self.unroll_mode = False
+
+        # Try to determine iteration count for unrolling
+        # Works when (end - start) simplifies to a concrete value
+        length = self._compute_length(sym_range.start, sym_range.end, sym_range.step)
+
+        if length and 0 < length <= 100:
+            self.unroll_mode = True
+            self.iterations_to_unroll = length
+        else:
+            # Quantified mode for all()/any()
+            var_name = f'i_{SymbolicRange._counter}'
+            SymbolicRange._counter += 1
+            self.tracer.backend.quantified_vars.add(var_name)
+            self.var = SymbolicInt(name=var_name, tracer=sym_range.tracer)
+            self.used = False
+
+    def _compute_length(self, start, end, step):
+        """Compute iteration count if possible, handling symbolic ranges like range(x, x+5)"""
+        step_val = 1 if step is None else (step if isinstance(step, int) else step.concrete if hasattr(step, 'concrete') else 1)
+
+        # Try concrete bounds
+        start_concrete = start if isinstance(start, int) else (start.concrete if hasattr(start, 'concrete') else None)
+        end_concrete = end if isinstance(end, int) else (end.concrete if hasattr(end, 'concrete') else None)
+        if start_concrete is not None and end_concrete is not None:
+            return int((end_concrete - start_concrete) / step_val)
+
+        # Try pattern matching on symbolic expression: (x+5) - x → 5
+        try:
+            diff = end - start
+            if hasattr(diff, 'z3_expr') and hasattr(diff.z3_expr, 'op'):
+                concrete_val = self._simplify_diff(diff.z3_expr)
+                if concrete_val is not None:
+                    return int(concrete_val / step_val)
+        except:
+            pass
+
+        return None
+
+    def _simplify_diff(self, expr):
+        """Pattern match: (- (+ a c) a) → c"""
+        if expr.op == '-' and len(expr.args) == 2:
+            left, right = expr.args
+            if hasattr(left, 'op') and left.op == '+' and len(left.args) == 2:
+                # Check (- (+ a c) a) → c or (- (+ c a) a) → c
+                if str(left.args[0]) == str(right) and left.args[1].op == 'IntVal':
+                    return left.args[1].args[0]
+                if str(left.args[1]) == str(right) and left.args[0].op == 'IntVal':
+                    return left.args[0].args[0]
+        return None
+
     def __iter__(self):
         return self
-    
+
     def __next__(self):
-        if self.used:
-            raise StopIteration
-        self.used = True
-        # Add to forall_conditions so that any constraints added during predicate
-        # evaluation get wrapped in the ForAll quantifier
-        bounds = self.get_bounds()
-        self.tracer.forall_conditions.append((self.var.z3_expr, bounds.z3_expr))
-        return self.var
+        if self.unroll_mode:
+            # Unroll mode: yield multiple times with concrete iteration offsets
+            if self.iteration_count >= self.iterations_to_unroll:
+                raise StopIteration
+
+            # Create fresh variable for this iteration
+            var_name = f'i_{SymbolicRange._counter}'
+            SymbolicRange._counter += 1
+            var = SymbolicInt(name=var_name, tracer=self.tracer)
+
+            # Add constraint: var == start + iteration_count * step
+            step = 1 if self.sym_range.step is None else self.sym_range.step
+            offset = SymbolicInt(self.iteration_count, tracer=self.tracer) * step
+            expected_value = self.sym_range.start + offset
+            self.tracer.add_constraint(var == expected_value)
+
+            self.iteration_count += 1
+            return var
+        else:
+            # Quantified mode for all()/any()
+            if self.used:
+                raise StopIteration
+            self.used = True
+            # Add to forall_conditions so constraints get wrapped in ForAll
+            bounds = self.get_bounds()
+            self.tracer.forall_conditions.append((self.var.z3_expr, bounds.z3_expr))
+            return self.var
     
     def get_bounds(self):
         """Get bounds constraints including step if present"""
