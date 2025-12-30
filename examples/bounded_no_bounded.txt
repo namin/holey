@@ -1,8 +1,9 @@
 Inferred ans_type: List[int]
 sat_func def sat(li: List[int]):
-    return len(li) == 10 and li.count(li[3]) == 2
+    return (len(li) == 5 and
+            li.count(li[3]) == 2)
 modified_func def sat(li: List[int]):
-    return (sym_len(li) == wrap_int(10)).__and__(li.count(li[wrap_int(3)]) == wrap_int(2))
+    return (sym_len(li) == wrap_int(5)).__and__(li.count(li[wrap_int(3)]) == wrap_int(2))
 ### smt2
 (set-logic ALL)
 
@@ -32,7 +33,7 @@ modified_func def sat(li: List[int]):
 
 (declare-const x (List Int))
 (assert (> (list.length.int x) 3))
-(assert (and (= (list.length.int x) 10) (= (list.count.int x (list.get.int x 3)) 2)))
+(assert (and (= (list.length.int x) 5) (= (list.count.int x (list.get.int x 3)) 2)))
 (check-sat)
 (get-model)
 
@@ -42,15 +43,14 @@ running backend cvc5
 sat
 (
   (define-fun x () (List Int)
-    (let ((a!1 (cons 38 (cons 36 (cons 37 (cons 35 nil))))))
-(let ((a!2 (cons 33 (cons 11 (cons 34 (cons 11 a!1))))))
-  (cons 32 (cons 31 a!2)))))
+    (let ((a!1 (cons 16 (cons 6 (cons 6 (cons 18 nil))))))
+  (cons 17 a!1)))
 )
 ### output for cvc5
 sat
 (
-(define-fun x () (List Int) ((as cons (List Int)) 0 ((as cons (List Int)) 1 ((as cons (List Int)) 1 ((as cons (List Int)) 0 ((as cons (List Int)) 1 ((as cons (List Int)) 1 ((as cons (List Int)) 1 ((as cons (List Int)) 1 ((as cons (List Int)) 1 ((as cons (List Int)) 1 (as nil (List Int)))))))))))))
+(define-fun x () (List Int) ((as cons (List Int)) 0 ((as cons (List Int)) 1 ((as cons (List Int)) 1 ((as cons (List Int)) 0 ((as cons (List Int)) 1 (as nil (List Int))))))))
 )
 
-Found solution [32, 31, 33, 11, 34, 11, 38, 36, 37, 35]
+Found solution [17, 16, 6, 6, 18]
 Yes! Solved for puzzle  examples/bounded.py

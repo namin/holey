@@ -1,10 +1,11 @@
 Inferred ans_type: List[int]
 Using bounded list encoding (max size: 200)
 sat_func def sat(li: List[int]):
-    return len(li) == 10 and li.count(li[3]) == 2
-Using bounded list with size 10
+    return (len(li) == 5 and
+            li.count(li[3]) == 2)
+Using bounded list with size 5
 modified_func def sat(li: List[int]):
-    return (sym_len(li) == wrap_int(10)).__and__(li.count(li[wrap_int(3)]) == wrap_int(2))
+    return (sym_len(li) == wrap_int(5)).__and__(li.count(li[wrap_int(3)]) == wrap_int(2))
 ### smt2
 (set-logic ALL)
 (declare-const x_e0 Int)
@@ -12,12 +13,7 @@ modified_func def sat(li: List[int]):
 (declare-const x_e2 Int)
 (declare-const x_e3 Int)
 (declare-const x_e4 Int)
-(declare-const x_e5 Int)
-(declare-const x_e6 Int)
-(declare-const x_e7 Int)
-(declare-const x_e8 Int)
-(declare-const x_e9 Int)
-(assert (and true (= (+ (ite (= x_e0 x_e3) 1 0) (ite (= x_e1 x_e3) 1 0) (ite (= x_e2 x_e3) 1 0) (ite (= x_e3 x_e3) 1 0) (ite (= x_e4 x_e3) 1 0) (ite (= x_e5 x_e3) 1 0) (ite (= x_e6 x_e3) 1 0) (ite (= x_e7 x_e3) 1 0) (ite (= x_e8 x_e3) 1 0) (ite (= x_e9 x_e3) 1 0)) 2)))
+(assert (and true (= (+ (ite (= x_e0 x_e3) 1 0) (ite (= x_e1 x_e3) 1 0) (ite (= x_e2 x_e3) 1 0) (ite (= x_e3 x_e3) 1 0) (ite (= x_e4 x_e3) 1 0)) 2)))
 (check-sat)
 (get-model)
 
@@ -28,21 +24,11 @@ sat
 (
   (define-fun x_e0 () Int
     1)
-  (define-fun x_e2 () Int
-    1)
-  (define-fun x_e5 () Int
-    0)
-  (define-fun x_e7 () Int
-    1)
-  (define-fun x_e9 () Int
-    1)
   (define-fun x_e1 () Int
     1)
+  (define-fun x_e2 () Int
+    0)
   (define-fun x_e4 () Int
-    1)
-  (define-fun x_e6 () Int
-    1)
-  (define-fun x_e8 () Int
     1)
   (define-fun x_e3 () Int
     0)
@@ -52,15 +38,10 @@ sat
 (
 (define-fun x_e0 () Int (- 1))
 (define-fun x_e1 () Int (- 1))
-(define-fun x_e2 () Int (- 1))
+(define-fun x_e2 () Int 0)
 (define-fun x_e3 () Int 0)
 (define-fun x_e4 () Int 1)
-(define-fun x_e5 () Int 1)
-(define-fun x_e6 () Int 1)
-(define-fun x_e7 () Int 1)
-(define-fun x_e8 () Int 1)
-(define-fun x_e9 () Int 0)
 )
 
-Found solution [1, 1, 1, 0, 1, 0, 1, 1, 1, 1]
+Found solution [1, 1, 0, 0, 1]
 Yes! Solved for puzzle  examples/bounded.py

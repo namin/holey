@@ -26,6 +26,6 @@
 
 (declare-const x (List Int))
 (assert (> (list.length.int x) 3))
-(assert (and (= (list.length.int x) 10) (= (list.count.int x (list.get.int x 3)) 2)))
+(assert (and (= (list.length.int x) 5) (= (list.count.int x (list.get.int x 3)) 2)))
 (check-sat)
 (get-model)
