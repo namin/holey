@@ -363,6 +363,8 @@ def sym_len(x):
         return x.__len__()
     if isinstance(x, BoundedSymbolicList):
         return x.__len__()
+    if isinstance(x, SymbolicSet):
+        return x.__len__()
     # Handle set() of bounded list elements - check for distinctness
     if isinstance(x, set):
         elems = list(x)
@@ -441,6 +443,207 @@ class SymbolicSetLen:
                 return SymbolicBool(not eq.concrete, tracer=self.tracer)
             return SymbolicBool(self.tracer.backend.Not(eq.z3_expr), tracer=self.tracer)
         return NotImplemented
+
+
+class SymbolicSet:
+    """Represents a set of symbolic elements without using hash."""
+
+    def __init__(self, elements, tracer=None):
+        self.elements = list(elements)  # Store as list to avoid hashing
+        self.tracer = tracer or (elements[0].tracer if elements and hasattr(elements[0], 'tracer') else None)
+
+        # Check if all elements are concrete
+        self.concrete = None
+        if all(hasattr(e, 'concrete') and e.concrete is not None for e in self.elements):
+            self.concrete = set(e.concrete for e in self.elements)
+        elif all(isinstance(e, (str, int, float, bool)) and not hasattr(e, 'z3_expr') for e in self.elements):
+            self.concrete = set(self.elements)
+
+    def __iter__(self):
+        if self.concrete is not None:
+            return iter(self.concrete)
+        return iter(self.elements)
+
+    def __eq__(self, other):
+        """Compare with another set.
+
+        For SymbolicSet == concrete_set:
+        1. Check that we have the right number of elements
+        2. Check that all our elements are in the other set
+        3. Check that all our elements are distinct
+        """
+        if self.concrete is not None:
+            if isinstance(other, set):
+                return self.concrete == other
+            if isinstance(other, SymbolicSet) and other.concrete is not None:
+                return self.concrete == other.concrete
+
+        if isinstance(other, set):
+            # Comparing symbolic set to concrete set
+            n = len(self.elements)
+            m = len(other)
+
+            # Must have same number of elements for equality
+            if n != m:
+                return SymbolicBool(False, tracer=self.tracer)
+
+            # Build constraints:
+            # 1. Each element must be in the expected set
+            # 2. All elements must be pairwise distinct
+            constraints = []
+
+            # Convert concrete set to list for comparison
+            other_list = list(other)
+
+            # Each element must match one of the expected values
+            for elem in self.elements:
+                elem_matches = []
+                for expected in other_list:
+                    expected_sym = self.tracer.ensure_symbolic(expected) if self.tracer else expected
+                    if hasattr(elem, 'z3_expr') and hasattr(expected_sym, 'z3_expr'):
+                        elem_matches.append(self.tracer.backend.Eq(elem.z3_expr, expected_sym.z3_expr))
+                    elif hasattr(elem, '__eq__'):
+                        eq_result = elem == expected
+                        if isinstance(eq_result, SymbolicBool):
+                            elem_matches.append(eq_result.z3_expr)
+                        else:
+                            elem_matches.append(self.tracer.backend.BoolVal(bool(eq_result)))
+                if elem_matches:
+                    constraints.append(self.tracer.backend.Or(*elem_matches) if len(elem_matches) > 1 else elem_matches[0])
+
+            # All elements must be pairwise distinct
+            for i in range(n):
+                for j in range(i + 1, n):
+                    ei, ej = self.elements[i], self.elements[j]
+                    if hasattr(ei, 'z3_expr') and hasattr(ej, 'z3_expr'):
+                        constraints.append(self.tracer.backend.Not(self.tracer.backend.Eq(ei.z3_expr, ej.z3_expr)))
+                    elif hasattr(ei, '__ne__'):
+                        ne_result = ei != ej
+                        if isinstance(ne_result, SymbolicBool):
+                            constraints.append(ne_result.z3_expr)
+                        else:
+                            constraints.append(self.tracer.backend.BoolVal(bool(ne_result)))
+
+            if constraints:
+                result = self.tracer.backend.And(*constraints) if len(constraints) > 1 else constraints[0]
+                return SymbolicBool(result, tracer=self.tracer)
+            return SymbolicBool(True, tracer=self.tracer)
+
+        if isinstance(other, SymbolicSet):
+            # Both are symbolic sets - this is more complex
+            # For now, fall back to checking both contain the same elements
+            raise ValueError("SymbolicSet == SymbolicSet comparison not yet implemented")
+
+        return NotImplemented
+
+    def __ne__(self, other):
+        eq = self.__eq__(other)
+        if isinstance(eq, SymbolicBool):
+            if eq.concrete is not None:
+                return SymbolicBool(not eq.concrete, tracer=self.tracer)
+            return SymbolicBool(self.tracer.backend.Not(eq.z3_expr), tracer=self.tracer)
+        if isinstance(eq, bool):
+            return not eq
+        return NotImplemented
+
+    def __le__(self, other):
+        """Subset comparison: self <= other means all elements of self are in other."""
+        if self.concrete is not None and isinstance(other, set):
+            return self.concrete <= other
+        if self.concrete is not None and isinstance(other, SymbolicSet) and other.concrete is not None:
+            return self.concrete <= other.concrete
+
+        if isinstance(other, set):
+            # Each element of self must be in other
+            other_list = list(other)
+            constraints = []
+            for elem in self.elements:
+                elem_matches = []
+                for expected in other_list:
+                    expected_sym = self.tracer.ensure_symbolic(expected) if self.tracer else expected
+                    if hasattr(elem, 'z3_expr') and hasattr(expected_sym, 'z3_expr'):
+                        elem_matches.append(self.tracer.backend.Eq(elem.z3_expr, expected_sym.z3_expr))
+                    elif hasattr(elem, '__eq__'):
+                        eq_result = elem == expected
+                        if isinstance(eq_result, SymbolicBool):
+                            elem_matches.append(eq_result.z3_expr)
+                        else:
+                            elem_matches.append(self.tracer.backend.BoolVal(bool(eq_result)))
+                if elem_matches:
+                    constraints.append(self.tracer.backend.Or(*elem_matches) if len(elem_matches) > 1 else elem_matches[0])
+            if constraints:
+                result = self.tracer.backend.And(*constraints) if len(constraints) > 1 else constraints[0]
+                return SymbolicBool(result, tracer=self.tracer)
+            return SymbolicBool(True, tracer=self.tracer)
+        return NotImplemented
+
+    def __len__(self):
+        """Return the length. For symbolic sets, returns a SymbolicSetLen."""
+        if self.concrete is not None:
+            return len(self.concrete)
+
+        n = len(self.elements)
+
+        # Build distinctness constraints
+        distinct_constraints = []
+        for i in range(n):
+            for j in range(i + 1, n):
+                ei, ej = self.elements[i], self.elements[j]
+                if hasattr(ei, 'z3_expr') and hasattr(ej, 'z3_expr'):
+                    distinct_constraints.append(self.tracer.backend.Not(self.tracer.backend.Eq(ei.z3_expr, ej.z3_expr)))
+
+        if distinct_constraints:
+            all_distinct = self.tracer.backend.And(*distinct_constraints) if len(distinct_constraints) > 1 else distinct_constraints[0]
+            return SymbolicSetLen(n, all_distinct, self.tracer)
+        return n
+
+
+def sym_set(iterable):
+    """Create a symbolic set from an iterable.
+
+    Unlike Python's set(), this doesn't require elements to be hashable.
+    Instead, it stores elements in a list and provides symbolic set operations.
+    """
+    # Handle SymbolicStr specially - can't iterate over symbolic string
+    if isinstance(iterable, SymbolicStr):
+        if iterable.concrete is not None:
+            return set(iterable.concrete)
+        raise ValueError("Cannot create set from fully symbolic string - use bounded iteration instead")
+
+    # Handle concrete strings
+    if isinstance(iterable, str):
+        return set(iterable)
+
+    # For unbounded SymbolicList, must use native set() - can't collect all elements
+    # (SymbolicListIterator uses forall quantification, yields only one element)
+    if isinstance(iterable, SymbolicList):
+        return set(iterable)
+
+    # For BoundedSymbolicList, collect elements and create SymbolicSet
+    # (needed for set operations like comparison, containment)
+    if isinstance(iterable, BoundedSymbolicList):
+        elements = list(iterable)
+        tracer = iterable.tracer
+        return SymbolicSet(elements, tracer=tracer)
+
+    # For other iterables, collect elements first
+    elements = list(iterable)
+
+    # Try native set if elements are hashable
+    try:
+        return set(elements)
+    except (TypeError, ValueError):
+        pass  # Elements not hashable or have symbolic hash, fall through to SymbolicSet
+
+    # Find tracer
+    tracer = None
+    for e in elements:
+        if hasattr(e, 'tracer') and e.tracer is not None:
+            tracer = e.tracer
+            break
+
+    return SymbolicSet(elements, tracer=tracer)
+
 
 def sym_str(x):
     if isinstance(x, SymbolicInt):
@@ -1023,7 +1226,7 @@ class HoleyWrapper(ast.NodeTransformer):
     def visit_Call(self, node):
         node = self.generic_visit(node)
         if isinstance(node.func, ast.Name):
-            if node.func.id in ['int', 'float', 'str', 'len', 'range', 'bin', 'ord', 'chr', 'sum', 'zip', 'sorted']:
+            if node.func.id in ['int', 'float', 'str', 'len', 'range', 'bin', 'ord', 'chr', 'sum', 'zip', 'sorted', 'set']:
                 return ast.Call(
                     func=ast.Name(id='sym_'+node.func.id, ctx=ast.Load()),
                     args=node.args,
@@ -1068,8 +1271,8 @@ class HoleyWrapper(ast.NodeTransformer):
         )
     
     def visit_SetComp(self, node):
-        """Transform set comprehension to set(list comprehension)
-        {expr for x in iter} -> set([expr for x in iter])
+        """Transform set comprehension to sym_set(list comprehension)
+        {expr for x in iter} -> sym_set([expr for x in iter])
         This allows symbolic execution to track the values.
         """
         # Convert SetComp to ListComp
@@ -1079,9 +1282,9 @@ class HoleyWrapper(ast.NodeTransformer):
         )
         # Visit the list comprehension to apply transformations
         list_comp = self.generic_visit(list_comp)
-        # Wrap in set() call
+        # Wrap in sym_set() call
         return ast.Call(
-            func=ast.Name(id='set', ctx=ast.Load()),
+            func=ast.Name(id='sym_set', ctx=ast.Load()),
             args=[list_comp],
             keywords=[]
         )
@@ -1183,7 +1386,8 @@ def create_namespace(tracer):
         'sym_generator': sym_generator,
         'sym_sorted': sym_sorted,
         'sym_ite': sym_ite,
-        'sym_implies': sym_implies
+        'sym_implies': sym_implies,
+        'sym_set': sym_set
     }
 
 def driver(sat_func, typ, cmds=None, llm_solver=None, list_size=None, wrapper_class=HoleyWrapper):
