@@ -163,6 +163,18 @@ class SymbolicBool:
 
     def __and__(self, other):
         other = self.tracer.ensure_symbolic(other)
+        # Python semantics: `a and b` returns `a` if falsy, else `b`
+        if isinstance(other, SymbolicInt):
+            # bool and int -> int (0 if bool is false, int value if bool is true)
+            if self.concrete is False:
+                return SymbolicInt(0, tracer=self.tracer)
+            elif self.concrete is True:
+                return other
+            else:
+                return SymbolicInt(
+                    self.tracer.backend.If(self.z3_expr, other.z3_expr, self.tracer.backend.IntVal(0)),
+                    tracer=self.tracer
+                )
         if not isinstance(other, SymbolicBool):
             other = truthy(other)
         if self.concrete is not None and hasattr(other, 'concrete') and other.concrete is not None:
@@ -500,8 +512,17 @@ class SymbolicInt:
 
     def __and__(self, other):
         other = self.tracer.ensure_symbolic(other)
+        # Python semantics: `a and b` returns `a` if a is falsy, else `b`
+        if isinstance(other, SymbolicInt):
+            if self.concrete == 0:
+                return SymbolicInt(0, tracer=self.tracer)
+            elif self.concrete is not None:  # non-zero concrete
+                return other
+            else:
+                return SymbolicInt(self.tracer.backend.If(truthy(self).z3_expr, other.z3_expr, self.z3_expr), tracer=self.tracer)
+        # Fallback to bool for other types
         return SymbolicBool(self.tracer.backend.And(truthy(self).z3_expr, truthy(other).z3_expr), tracer=self.tracer)
-    
+
     def __or__(self, other):
         other = self.tracer.ensure_symbolic(other)
         return SymbolicInt(self.tracer.backend.If(truthy(self).z3_expr, self.z3_expr, other.z3_expr), tracer=self.tracer)
