@@ -182,13 +182,7 @@ def sym_sum(iterable):
         # Handle boolean conditions
         conditions = list(iterable)
         if conditions:
-            # Find first condition with a tracer
-            tracer = None
-            for cond in conditions:
-                if hasattr(cond, 'tracer'):
-                    tracer = cond.tracer
-                    break
-            
+            tracer = first_tracer(conditions)
             if tracer:
                 terms = []
                 for cond in conditions:
@@ -636,11 +630,7 @@ def sym_set(iterable):
         pass  # Elements not hashable or have symbolic hash, fall through to SymbolicSet
 
     # Find tracer
-    tracer = None
-    for e in elements:
-        if hasattr(e, 'tracer') and e.tracer is not None:
-            tracer = e.tracer
-            break
+    tracer = first_tracer(elements)
 
     return SymbolicSet(elements, tracer=tracer)
 
@@ -728,11 +718,7 @@ def sym_not(x):
 def sym_ite(cond, then_val, else_val):
     """Symbolic if-then-else without branching."""
     # Find tracer
-    tracer = None
-    for v in (cond, then_val, else_val):
-        if hasattr(v, 'tracer'):
-            tracer = v.tracer
-            break
+    tracer = first_tracer([cond, then_val, else_val])
 
     # All concrete
     if tracer is None:
@@ -756,11 +742,7 @@ def sym_ite(cond, then_val, else_val):
 
 def sym_implies(cond, consequent):
     """Symbolic implication without branching."""
-    tracer = None
-    for v in (cond, consequent):
-        if hasattr(v, 'tracer'):
-            tracer = v.tracer
-            break
+    tracer = first_tracer([cond, consequent])
 
     if tracer is None:
         return (not cond) or consequent
