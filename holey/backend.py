@@ -665,6 +665,9 @@ class Backend():
     def StrPrefixOf(self, x, y) -> MockExpr:
         return self._record("str.prefixof", x, y)
 
+    def StrSuffixOf(self, x, y) -> MockExpr:
+        return self._record("str.suffixof", x, y)
+
     def String(self, name: str) -> MockExpr:
         self.solver.declarations.append((name, 'String'))
         return self._record("String", name)

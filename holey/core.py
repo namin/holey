@@ -1470,6 +1470,10 @@ class SymbolicStr:
         prefix = self.tracer.ensure_symbolic(prefix)
         return SymbolicBool(self.tracer.backend.StrPrefixOf(prefix.z3_expr, self.z3_expr), tracer=self.tracer)
 
+    def endswith(self, suffix):
+        suffix = self.tracer.ensure_symbolic(suffix)
+        return SymbolicBool(self.tracer.backend.StrSuffixOf(suffix.z3_expr, self.z3_expr), tracer=self.tracer)
+
     def isupper(self):
         if self.concrete is not None:
             return SymbolicBool(self.concrete.isupper(), tracer=self.tracer)

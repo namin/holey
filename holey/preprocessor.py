@@ -457,6 +457,11 @@ class SymbolicSet:
         elif all(isinstance(e, (str, int, float, bool)) and not hasattr(e, 'z3_expr') for e in self.elements):
             self.concrete = set(self.elements)
 
+    def __iter__(self):
+        if self.concrete is not None:
+            return iter(self.concrete)
+        return iter(self.elements)
+
     def __eq__(self, other):
         """Compare with another set.
 
