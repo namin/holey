@@ -400,13 +400,14 @@ class PuzzleSolver:
 
 The symbolic execution{'' if self.llm_solver else ' alone'} currently solves:
 {self.pretty_counts()}
+{solver_stats_section}
 with the following errors:
 - {self.timeout_staging_count} timeouts after 3 seconds at staging time (while generating the SMTLIB program)
 - {self.error_staging_count} errors at staging time
 - {self.error_verify_count} SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
 - {self.error_smt_count + self.error_smt_var_count} SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds)
 - {self.total_count-self.count} (out of {self.total_count}) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
-"""+extrapolation+solver_stats_section
+"""+extrapolation
 
 def check_result(result, sat_func):
     namespace = {'List': list}
