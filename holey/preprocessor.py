@@ -359,6 +359,8 @@ def sym_len(x):
         return x.__len__()
     if isinstance(x, SymbolicSet):
         return x.__len__()
+    if isinstance(x, UnboundedSymbolicSet):
+        return x.__len__()
     # Handle set() of bounded list elements - check for distinctness
     if isinstance(x, set):
         elems = list(x)
@@ -437,6 +439,30 @@ class SymbolicSetLen:
                 return SymbolicBool(not eq.concrete, tracer=self.tracer)
             return SymbolicBool(self.tracer.backend.Not(eq.z3_expr), tracer=self.tracer)
         return NotImplemented
+
+
+class UnboundedSymbolicSet:
+    """Represents set(unbounded_list) where we can't enumerate elements.
+
+    This is used when sym_set is called on an unbounded SymbolicList.
+    We can't compute distinctness constraints, but we can track the source list
+    and provide bounds on the set length.
+    """
+    _counter = 0
+
+    def __init__(self, source_list, tracer):
+        self.source_list = source_list
+        self.tracer = tracer
+        self._len_var = None  # Lazily created when __len__ is called
+
+    def __len__(self):
+        if self._len_var is None:
+            # Use the list.set_len SMT function to get the cardinality of distinct elements
+            element_type = self.tracer.backend.Type(self.source_list.elementTyp)
+            set_len_expr = self.tracer.backend.ListSetLen(self.source_list.z3_expr, element_type)
+            self._len_var = SymbolicInt(set_len_expr, tracer=self.tracer)
+
+        return self._len_var
 
 
 class SymbolicSet:
@@ -608,10 +634,10 @@ def sym_set(iterable):
     if isinstance(iterable, str):
         return set(iterable)
 
-    # For unbounded SymbolicList, must use native set() - can't collect all elements
-    # (SymbolicListIterator uses forall quantification, yields only one element)
+    # For unbounded SymbolicList, we cannot enumerate elements (forall mode yields only one).
+    # Return an UnboundedSymbolicSet that tracks the source list for proper len(set(x)) handling.
     if isinstance(iterable, SymbolicList):
-        return set(iterable)
+        return UnboundedSymbolicSet(iterable, tracer=iterable.tracer)
 
     # For BoundedSymbolicList, collect elements and create SymbolicSet
     # (needed for set operations like comparison, containment)
@@ -1391,7 +1417,7 @@ def create_namespace(tracer):
         'sym_set': sym_set
     }
 
-def driver(sat_func, typ, cmds=None, llm_solver=None, list_size=None, wrapper_class=HoleyWrapper):
+def driver(sat_func, typ, cmds=None, llm_solver=None, list_size=None, wrapper_class=HoleyWrapper, puzzle_name=None, solver_stats=None):
     """Run symbolic execution on a sat function.
 
     Args:
@@ -1404,9 +1430,11 @@ def driver(sat_func, typ, cmds=None, llm_solver=None, list_size=None, wrapper_cl
                    the slower but more general recursive list encoding.
         wrapper_class: AST transformer class to use. Default is HoleyWrapper.
                        Use HoleyWrapperITE to avoid branching via ITE expressions.
+        puzzle_name: Optional name of the puzzle for solver statistics tracking.
+        solver_stats: Optional SolverStats instance for recording solver outcomes.
     """
     reset()
-    backend = default_backend(cmds)
+    backend = default_backend(cmds, puzzle_name=puzzle_name, solver_stats=solver_stats)
     tracer = SymbolicTracer(backend=backend, llm_solver=llm_solver)
     namespace = create_namespace(tracer)
     sym_var = make_symbolic(typ, 'x', tracer, size=list_size)

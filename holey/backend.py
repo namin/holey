@@ -69,7 +69,7 @@ def print_smt(smt2):
     sys.stdout.flush()
     return r
 
-def run_smt(smt2, cmds=None):
+def run_smt(smt2, cmds=None, puzzle_name=None, solver_stats=None):
     print('### smt2')
     print_smt(smt2)
 
@@ -83,7 +83,7 @@ def run_smt(smt2, cmds=None):
         ps = []
         for cmd in cmds or [None]:
             ps.append((cmd,
-                       subprocess.Popen(smtlib_cmd(smt2_file, cmd), 
+                       subprocess.Popen(smtlib_cmd(smt2_file, cmd),
                                         stdout=subprocess.PIPE,
                                         stderr=subprocess.PIPE,
                                         text=True)))
@@ -104,6 +104,10 @@ def run_smt(smt2, cmds=None):
         first_flag = None
         first_model = None
         for (cmd, (flag, model)) in parsed:
+            # Record solver result if stats tracking is enabled
+            if solver_stats is not None and puzzle_name is not None and cmd is not None:
+                solver_stats.add(puzzle_name, cmd, flag)
+
             if flag == 'sat':
                 return flag, model
             elif flag == 'unsat':
@@ -438,11 +442,13 @@ from .backend_lib import library, library_deps, resolve_dependencies, emit_libra
 
 @dataclass
 class MockSolver:
-    def __init__(self):
+    def __init__(self, puzzle_name=None, solver_stats=None):
         self.constraints = []
         self.declarations = []
         self.extra_text = ""
         self._model = {}
+        self.puzzle_name = puzzle_name
+        self.solver_stats = solver_stats
 
     def add_text(self, text):
         self.extra_text += "\n" + text
@@ -453,7 +459,7 @@ class MockSolver:
             return
         assert isinstance(constraint, MockExpr), "found bad constraint " + str(constraint) + " of type " + str(type(constraint))
         self.constraints.append(constraint)
-    
+
     def model(self):
         return self._model
 
@@ -489,15 +495,17 @@ class MockSolver:
 
         smt2 += self.extra_text
 
-        flag, model = run_smt(smt2, cmd)
+        flag, model = run_smt(smt2, cmd, self.puzzle_name, self.solver_stats)
         self._model = model
         return flag
 
 class Backend():
-    def __init__(self, cmds=None):
+    def __init__(self, cmds=None, puzzle_name=None, solver_stats=None):
         self.cmds = cmds
+        self.puzzle_name = puzzle_name
+        self.solver_stats = solver_stats
         self.operations = []
-        self.solver = MockSolver()
+        self.solver = MockSolver(puzzle_name=puzzle_name, solver_stats=solver_stats)
         self.stack = []
         self.quantified_vars = set()
 
@@ -795,6 +803,10 @@ class Backend():
     def ListLength(self, lst, element_type) -> MockExpr:
         """Get the length of a list"""
         return self._record("list.length."+self._type_suffix(element_type), lst)
+
+    def ListSetLen(self, lst, element_type) -> MockExpr:
+        """Get the number of distinct elements in a list (cardinality of set(list))"""
+        return self._record("list.set_len."+self._type_suffix(element_type), lst)
 
     def ListGet(self, lst, idx, element_type) -> MockExpr:
         """Get an element from a list at the given index"""

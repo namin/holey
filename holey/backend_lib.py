@@ -70,6 +70,18 @@ def make_list_contains(suffix, elem_type, nil_expr):
   (> (list.count.{suffix} l val) 0))
 '''
 
+def make_list_set_len(suffix, elem_type, nil_expr):
+    """Count distinct elements in a list (cardinality of set(list))."""
+    list_type = f'(List {elem_type})'
+    return f'''
+(define-fun-rec list.set_len.{suffix} ((l {list_type})) Int
+  (ite (= l {nil_expr})
+       0
+       (ite (list.contains.{suffix} (tail l) (head l))
+            (list.set_len.{suffix} (tail l))
+            (+ 1 (list.set_len.{suffix} (tail l))))))
+'''
+
 def make_list_reverse(suffix, elem_type, nil_expr):
     list_type = f'(List {elem_type})'
     return f'''
@@ -164,6 +176,10 @@ def generate_list_library():
         # list.contains.{suffix}
         lib[f'list.contains.{suffix}'] = make_list_contains(suffix, elem_type, nil_expr)
         deps[f'list.contains.{suffix}'] = ['list', f'list.count.{suffix}']
+
+        # list.set_len.{suffix} - count distinct elements
+        lib[f'list.set_len.{suffix}'] = make_list_set_len(suffix, elem_type, nil_expr)
+        deps[f'list.set_len.{suffix}'] = ['list', f'list.contains.{suffix}']
 
         # list.reverse.{suffix}
         lib[f'list.reverse.{suffix}'] = make_list_reverse(suffix, elem_type, nil_expr)

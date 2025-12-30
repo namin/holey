@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from holey import drive_sat, LLMSolver, HoleyWrapper, HoleyWrapperITE
+from holey import drive_sat, LLMSolver, HoleyWrapper, HoleyWrapperITE, SolverStats
 from holey.core import type_map
 import copy
 import re
@@ -50,6 +50,7 @@ class PuzzleSolver:
         self.names_of_successfully_extrapolated_puzzles = []
         self.use_bounded_lists = False  # Controlled by command-line flag
         self.bounded_list_max_size = 200  # Maximum size for bounded lists
+        self.solver_stats = SolverStats()  # Track per-solver outcomes
 
     def detect_list_size(self, sat_func: str) -> Optional[int]:
         """Detect required list size from sat function.
@@ -175,7 +176,8 @@ class PuzzleSolver:
 
     def symbolic_solve1(self, typ, sat_func: str, ans_type: str, name: str, cmds, llm_solver, list_size=None) -> Optional[str]:
         wrapper_class = HoleyWrapperITE if self.use_ite else HoleyWrapper
-        sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver, list_size=list_size, wrapper_class=wrapper_class)
+        sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver, list_size=list_size, wrapper_class=wrapper_class,
+                           puzzle_name=name, solver_stats=self.solver_stats)
         tracer = sym_var.tracer
         with capture_output() as captured:
             solution = tracer.solution()
@@ -201,9 +203,9 @@ class PuzzleSolver:
         if counting:
             self.count += 1
             self.counts[ans_type] += 1
-        tracer, sym_var, solution, log = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=None, list_size=list_size)
+        tracer, sym_var, solution, log = self.symbolic_solve1(typ, sat_func, ans_type, name, cmds, llm_solver=None, list_size=list_size)
         if False and llm_solver and solution is None:
-            tracer_llm, sym_var_llm, solution_llm, log_llm = self.symbolic_solve1(typ, sat_func, ans_type, str, cmds, llm_solver=llm_solver)
+            tracer_llm, sym_var_llm, solution_llm, log_llm = self.symbolic_solve1(typ, sat_func, ans_type, name, cmds, llm_solver=llm_solver)
             if solution is not None:
                 tracer, sym_var, solution, log = tracer_llm, sym_var_llm, solution_llm, log_llm
         if solution is None:
@@ -257,9 +259,11 @@ class PuzzleSolver:
             if result is not None:
                 if not check_result(result, sat_func):
                     self.error_verify_count += 1
+                    self.solver_stats.update_verified(name, False)
                     print("WARNING: Solution verification failed for puzzle "+name)
                     result = None
                 else:
+                    self.solver_stats.update_verified(name, True)
                     if not reason:
                         self.success_count += 1
                         self.success_counts[ans_type] += 1
@@ -367,6 +371,12 @@ class PuzzleSolver:
 {self.extrapolation_matrix()}
 """
 
+        solver_stats_section = ""
+        if self.solver_stats.get_puzzles():
+            solver_stats_section = f"""
+{self.solver_stats.summary_table()}
+"""
+
         return f"""
 ## Current status
 
@@ -378,7 +388,7 @@ with the following errors:
 - {self.error_verify_count} SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
 - {self.error_smt_count + self.error_smt_var_count} SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds)
 - {self.total_count-self.count} (out of {self.total_count}) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
-"""+extrapolation
+"""+extrapolation+solver_stats_section
 
 def check_result(result, sat_func):
     namespace = {'List': list}
