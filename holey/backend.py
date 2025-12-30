@@ -420,9 +420,18 @@ class MockExpr:
 
     def decl(self):
         return self
-        
+
     def name(self) -> str:
         return self._name if self._name else str(self)
+
+    def contains_var(self, var_name: str) -> bool:
+        """Check if this expression references the given variable name"""
+        if self._name == var_name or (self.op == "Int" and self.args == [var_name]):
+            return True
+        return any(
+            (arg.contains_var(var_name) if isinstance(arg, MockExpr) else arg == var_name)
+            for arg in self.args
+        )
 
 # Import library definitions from separate module
 from .backend_lib import library, library_deps, resolve_dependencies, emit_library

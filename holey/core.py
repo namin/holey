@@ -60,7 +60,7 @@ class SymbolicTracer:
         constraint = truthy(constraint)
         if hasattr(constraint, 'z3_expr'):
             constraint = constraint.z3_expr
-            
+
         if self.llm_solver:
             self.llm_solver.add_constraint_refinements(constraint, self.backend)
 
@@ -71,15 +71,14 @@ class SymbolicTracer:
             )
 
         if self.forall_conditions:
+            # Only wrap in forall if constraint actually uses the forall variable
             for var_expr, bounds_expr in self.forall_conditions:
-                var_decl = self.backend.Int(var_expr.decl().name())
-                constraint = self.backend.ForAll(
-                    [var_decl],
-                    self.backend.Implies(
-                        bounds_expr,
-                        constraint
+                var_name = var_expr.decl().name()
+                if hasattr(constraint, 'contains_var') and constraint.contains_var(var_name):
+                    constraint = self.backend.ForAll(
+                        [self.backend.Int(var_name)],
+                        self.backend.Implies(bounds_expr, constraint)
                     )
-                )
 
         self.backend.solver.add(constraint)
     
