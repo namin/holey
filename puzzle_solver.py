@@ -174,10 +174,10 @@ class PuzzleSolver:
             return max(sizes)  # Return largest detected size
         return None
 
-    def symbolic_solve1(self, typ, sat_func: str, ans_type: str, name: str, cmds, llm_solver, list_size=None) -> Optional[str]:
+    def symbolic_solve1(self, typ, sat_func: str, ans_type: str, name: str, cmds, llm_solver, list_size=None, stats_name=None) -> Optional[str]:
         wrapper_class = HoleyWrapperITE if self.use_ite else HoleyWrapper
         sym_var = drive_sat(sat_func, typ, cmds, llm_solver=llm_solver, list_size=list_size, wrapper_class=wrapper_class,
-                           puzzle_name=name, solver_stats=self.solver_stats)
+                           puzzle_name=stats_name if stats_name is not None else name, solver_stats=self.solver_stats)
         tracer = sym_var.tracer
         with capture_output() as captured:
             solution = tracer.solution()
@@ -203,9 +203,10 @@ class PuzzleSolver:
         if counting:
             self.count += 1
             self.counts[ans_type] += 1
-        tracer, sym_var, solution, log = self.symbolic_solve1(typ, sat_func, ans_type, name, cmds, llm_solver=None, list_size=list_size)
+        stats_name = name if counting else name + "_smaller"
+        tracer, sym_var, solution, log = self.symbolic_solve1(typ, sat_func, ans_type, name, cmds, llm_solver=None, list_size=list_size, stats_name=stats_name)
         if False and llm_solver and solution is None:
-            tracer_llm, sym_var_llm, solution_llm, log_llm = self.symbolic_solve1(typ, sat_func, ans_type, name, cmds, llm_solver=llm_solver)
+            tracer_llm, sym_var_llm, solution_llm, log_llm = self.symbolic_solve1(typ, sat_func, ans_type, name, cmds, llm_solver=llm_solver, stats_name=stats_name)
             if solution is not None:
                 tracer, sym_var, solution, log = tracer_llm, sym_var_llm, solution_llm, log_llm
         if solution is None:
@@ -225,16 +226,16 @@ class PuzzleSolver:
 
         # If running all solvers, verify each sat result individually
         if self.solver_stats.run_all_solvers:
-            for sat_result in self.solver_stats.get_sat_results(name):
+            for sat_result in self.solver_stats.get_sat_results(stats_name):
                 if sat_result.model is not None:
                     try:
                         sol_var = tracer.solution_var(sat_result.model, sym_var)
                         if sol_var is not None:
                             sol = sol_var if str(typ).startswith('list') or isinstance(sol_var, typ) else typ(str(sol_var))
                             verified = check_result(sol, sat_func)
-                            self.solver_stats.update_verified(name, verified, solver=sat_result.solver)
+                            self.solver_stats.update_verified(stats_name, verified, solver=sat_result.solver)
                     except Exception:
-                        self.solver_stats.update_verified(name, False, solver=sat_result.solver)
+                        self.solver_stats.update_verified(stats_name, False, solver=sat_result.solver)
 
         return result, log
 
@@ -259,6 +260,7 @@ class PuzzleSolver:
 
     def solve_puzzle(self, puzzle_data: Any, cmds, llm_solver, llm_end, reason=None) -> Optional[str]:
         name = puzzle_data.get('name', '')
+        stats_name = name if not reason else name + "_smaller"
         sat_func = puzzle_data.get('sat_function', puzzle_data.get('sat', ''))
         if not sat_func:
             print("Missing sat_func")
@@ -275,13 +277,13 @@ class PuzzleSolver:
                     self.error_verify_count += 1
                     # Only update all solvers if not running all_solvers (which verifies individually)
                     if not self.solver_stats.run_all_solvers:
-                        self.solver_stats.update_verified(name, False)
+                        self.solver_stats.update_verified(stats_name, False)
                     print("WARNING: Solution verification failed for puzzle "+name)
                     result = None
                 else:
                     # Only update all solvers if not running all_solvers (which verifies individually)
                     if not self.solver_stats.run_all_solvers:
-                        self.solver_stats.update_verified(name, True)
+                        self.solver_stats.update_verified(stats_name, True)
                     if not reason:
                         self.success_count += 1
                         self.success_counts[ans_type] += 1
