@@ -33,7 +33,7 @@ def run_solver(py_file: Path, no_bounded: bool = False) -> str:
         cmd.append('--no-bounded-list')
 
     env = os.environ.copy()
-    env['TRUNCATE'] = 'true'
+    env['TRUNCATE'] = 'false'
 
     result = subprocess.run(cmd, capture_output=True, text=True, env=env)
     return result.stdout + result.stderr
