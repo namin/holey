@@ -222,6 +222,20 @@ class PuzzleSolver:
             return None, log
         result = solution_var if str(typ).startswith('list') or isinstance(solution_var, typ) else typ(str(solution_var))
         print("Found solution", result)
+
+        # If running all solvers, verify each sat result individually
+        if self.solver_stats.run_all_solvers:
+            for sat_result in self.solver_stats.get_sat_results(name):
+                if sat_result.model is not None:
+                    try:
+                        sol_var = tracer.solution_var(sat_result.model, sym_var)
+                        if sol_var is not None:
+                            sol = sol_var if str(typ).startswith('list') or isinstance(sol_var, typ) else typ(str(sol_var))
+                            verified = check_result(sol, sat_func)
+                            self.solver_stats.update_verified(name, verified, solver=sat_result.solver)
+                    except Exception:
+                        self.solver_stats.update_verified(name, False, solver=sat_result.solver)
+
         return result, log
 
     def solve_puzzle_llm(self, puzzle_data: Any, llm_solver) -> Optional[str]:
@@ -259,11 +273,15 @@ class PuzzleSolver:
             if result is not None:
                 if not check_result(result, sat_func):
                     self.error_verify_count += 1
-                    self.solver_stats.update_verified(name, False)
+                    # Only update all solvers if not running all_solvers (which verifies individually)
+                    if not self.solver_stats.run_all_solvers:
+                        self.solver_stats.update_verified(name, False)
                     print("WARNING: Solution verification failed for puzzle "+name)
                     result = None
                 else:
-                    self.solver_stats.update_verified(name, True)
+                    # Only update all solvers if not running all_solvers (which verifies individually)
+                    if not self.solver_stats.run_all_solvers:
+                        self.solver_stats.update_verified(name, True)
                     if not reason:
                         self.success_count += 1
                         self.success_counts[ans_type] += 1

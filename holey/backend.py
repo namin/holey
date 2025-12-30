@@ -112,7 +112,7 @@ def run_smt(smt2, cmds=None, puzzle_name=None, solver_stats=None):
         for (cmd, (flag, model)) in parsed:
             # Record solver result if stats tracking is enabled
             if solver_stats is not None and puzzle_name is not None and cmd is not None:
-                solver_stats.add(puzzle_name, cmd, flag)
+                solver_stats.add(puzzle_name, cmd, flag, model=model if flag == 'sat' else None)
 
             # Track first definitive result
             if result_flag is None:

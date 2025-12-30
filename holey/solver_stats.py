@@ -16,6 +16,7 @@ class SolverResult:
     status: str  # 'sat', 'unsat', 'unknown', 'timeout', 'error'
     verified: Optional[bool] = None  # Did result pass check_result?
     time_ms: Optional[float] = None  # Optional timing
+    model: Optional[Dict] = None  # The model if sat
 
 
 class SolverStats:
@@ -29,23 +30,35 @@ class SolverStats:
         self.run_all_solvers = run_all_solvers
 
     def add(self, puzzle_name: str, solver: str, status: str,
-            verified: Optional[bool] = None, time_ms: Optional[float] = None):
+            verified: Optional[bool] = None, time_ms: Optional[float] = None,
+            model: Optional[Dict] = None):
         """Record a solver result."""
         result = SolverResult(
             puzzle_name=puzzle_name,
             solver=solver,
             status=status,
             verified=verified,
-            time_ms=time_ms
+            time_ms=time_ms,
+            model=model
         )
         self.results.append(result)
         self._puzzle_solvers[puzzle_name][solver] = result
 
-    def update_verified(self, puzzle_name: str, verified: bool):
-        """Update verification status for all results of a puzzle."""
+    def update_verified(self, puzzle_name: str, verified: bool, solver: Optional[str] = None):
+        """Update verification status for results of a puzzle.
+
+        If solver is specified, only update that solver's result.
+        Otherwise, update all sat results for the puzzle.
+        """
         for result in self.results:
             if result.puzzle_name == puzzle_name and result.status == 'sat':
-                result.verified = verified
+                if solver is None or result.solver == solver:
+                    result.verified = verified
+
+    def get_sat_results(self, puzzle_name: str) -> List[SolverResult]:
+        """Get all sat results for a puzzle (for verification)."""
+        return [r for r in self.results
+                if r.puzzle_name == puzzle_name and r.status == 'sat']
 
     def get_solvers(self) -> List[str]:
         """Get list of all solvers that have been used."""
@@ -76,23 +89,25 @@ class SolverStats:
         for puzzle in puzzles:
             row_parts = [puzzle]
             puzzle_results = self._puzzle_solvers[puzzle]
-            verified = None
+            any_verified = False
 
             for solver in solvers:
                 if solver in puzzle_results:
                     result = puzzle_results[solver]
                     status_symbol = self._status_symbol(result.status)
+                    # Append verification mark to sat results
+                    if result.status == 'sat' and result.verified is True:
+                        status_symbol += "✓"
+                        any_verified = True
+                    elif result.status == 'sat' and result.verified is False:
+                        status_symbol += "✗"
                     row_parts.append(status_symbol)
-                    if result.verified is not None:
-                        verified = result.verified
                 else:
                     row_parts.append("-")
 
-            # Add verified column
-            if verified is True:
+            # Add overall verified column (any solver verified)
+            if any_verified:
                 row_parts.append("✓")
-            elif verified is False:
-                row_parts.append("✗")
             else:
                 row_parts.append("-")
 
