@@ -21,10 +21,12 @@ class SolverResult:
 class SolverStats:
     """Collects and reports solver statistics across puzzles."""
 
-    def __init__(self):
+    def __init__(self, run_all_solvers: bool = False):
         self.results: List[SolverResult] = []
         # Track which puzzle used which solver for the final result
         self._puzzle_solvers: Dict[str, Dict[str, SolverResult]] = defaultdict(dict)
+        # When True, run all solvers even after one returns sat/unsat
+        self.run_all_solvers = run_all_solvers
 
     def add(self, puzzle_name: str, solver: str, status: str,
             verified: Optional[bool] = None, time_ms: Optional[float] = None):

@@ -26,7 +26,7 @@ def capture_output():
         sys.stderr = old_stderr
 
 class PuzzleSolver:
-    def __init__(self):
+    def __init__(self, all_solvers=False):
         self.count = 0
         self.counts = defaultdict(int)
         self.success_count = 0
@@ -50,7 +50,7 @@ class PuzzleSolver:
         self.names_of_successfully_extrapolated_puzzles = []
         self.use_bounded_lists = False  # Controlled by command-line flag
         self.bounded_list_max_size = 200  # Maximum size for bounded lists
-        self.solver_stats = SolverStats()  # Track per-solver outcomes
+        self.solver_stats = SolverStats(run_all_solvers=all_solvers)  # Track per-solver outcomes
 
     def detect_list_size(self, sat_func: str) -> Optional[int]:
         """Detect required list size from sat function.
@@ -403,7 +403,7 @@ def check_result(result, sat_func):
         return False
     return True
 
-def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None, llm_all = False, llm_end = False, use_bounded_lists = False, bounded_list_max_size = 100, show_shrunk = False, use_ite = False):
+def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None, llm_all = False, llm_end = False, use_bounded_lists = False, bounded_list_max_size = 100, show_shrunk = False, use_ite = False, all_solvers = False):
     with open(puzzle_file) as f:
         puzzles = json.load(f)
 
@@ -418,7 +418,7 @@ def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None,
     if answer_types:
         puzzles = [p for p in puzzles if p['ans_type'] in answer_types]
 
-    solver = PuzzleSolver()
+    solver = PuzzleSolver(all_solvers=all_solvers)
     solver.total_count = total
     solver.llm_solver = llm_solver
     solver.use_bounded_lists = use_bounded_lists
@@ -522,7 +522,7 @@ def infer_ans_type(sat_func: str) -> Optional[str]:
         pass
     return None
 
-def solve_sat_file(sat_file: str, smtlib_backends: list, llm_solver=None, llm_all=False, llm_end=False, use_bounded_lists=True, bounded_list_max_size=200, use_ite=False):
+def solve_sat_file(sat_file: str, smtlib_backends: list, llm_solver=None, llm_all=False, llm_end=False, use_bounded_lists=True, bounded_list_max_size=200, use_ite=False, all_solvers=False):
     """Solve a single Python file containing a sat function."""
     with open(sat_file) as f:
         sat_func = f.read()
@@ -534,7 +534,7 @@ def solve_sat_file(sat_file: str, smtlib_backends: list, llm_solver=None, llm_al
         print("Could not infer ans_type from type hints.")
         return None
 
-    solver = PuzzleSolver()
+    solver = PuzzleSolver(all_solvers=all_solvers)
     solver.total_count = 1
     solver.llm_solver = llm_solver
     solver.use_bounded_lists = use_bounded_lists
@@ -590,6 +590,8 @@ if __name__ == "__main__":
                        help='Show puzzles where the smaller variation was successfully solved')
     parser.add_argument('--no-ite', action='store_true',
                        help='Disable ITE mode (use explicit branching instead)')
+    parser.add_argument('--all-solvers', action='store_true',
+                       help='Run all solvers for complete statistics (slower but more detailed)')
     args = parser.parse_args()
 
     llm_solver = None
@@ -598,6 +600,6 @@ if __name__ == "__main__":
         llm_solver = {k: LLMSolver(v) for k,v in llm_generators.items()}
 
     if args.sat_file:
-        solve_sat_file(args.sat_file, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, not args.no_ite)
+        solve_sat_file(args.sat_file, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, not args.no_ite, args.all_solvers)
     else:
-        run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, args.show_shrunk, not args.no_ite)
+        run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, args.show_shrunk, not args.no_ite, args.all_solvers)

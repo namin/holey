@@ -101,20 +101,38 @@ def run_smt(smt2, cmds=None, puzzle_name=None, solver_stats=None):
 
             parsed.append((cmd, parse_output(output)))
 
+        # Check if we should run all solvers for stats
+        run_all = solver_stats is not None and solver_stats.run_all_solvers
+
         first_flag = None
         first_model = None
+        result_flag = None
+        result_model = None
+
         for (cmd, (flag, model)) in parsed:
             # Record solver result if stats tracking is enabled
             if solver_stats is not None and puzzle_name is not None and cmd is not None:
                 solver_stats.add(puzzle_name, cmd, flag)
 
-            if flag == 'sat':
-                return flag, model
-            elif flag == 'unsat':
-                return flag, model
-            elif first_flag is None:
+            # Track first definitive result
+            if result_flag is None:
+                if flag == 'sat':
+                    result_flag, result_model = flag, model
+                elif flag == 'unsat':
+                    result_flag, result_model = flag, model
+
+            # Track first result of any kind
+            if first_flag is None:
                 first_flag = flag
                 first_model = model
+
+            # Early return if not collecting all stats
+            if not run_all and result_flag is not None:
+                return result_flag, result_model
+
+        # Return best result found
+        if result_flag is not None:
+            return result_flag, result_model
         return first_flag, first_model
     finally:
         os.unlink(smt2_file)
