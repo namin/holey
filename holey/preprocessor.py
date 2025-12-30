@@ -1208,6 +1208,25 @@ class HoleyWrapper(ast.NodeTransformer):
     def visit_Call(self, node):
         node = self.generic_visit(node)
         if isinstance(node.func, ast.Name):
+            # Transform all([expr for x in iter]) -> all(expr for x in iter)
+            # and any([expr for x in iter]) -> any(expr for x in iter)
+            # This allows sym_all/sym_any to intercept the generator and properly
+            # construct the forall/exists quantifier
+            if node.func.id in ['all', 'any']:
+                if len(node.args) == 1 and isinstance(node.args[0], ast.ListComp):
+                    list_comp = node.args[0]
+                    # Convert ListComp to GeneratorExp (same structure, different node type)
+                    gen_exp = ast.GeneratorExp(
+                        elt=list_comp.elt,
+                        generators=list_comp.generators
+                    )
+                    ast.copy_location(gen_exp, list_comp)
+                    # Don't wrap in sym_generator - sym_all/sym_any handle raw generators
+                    return ast.Call(
+                        func=node.func,
+                        args=[gen_exp],
+                        keywords=node.keywords
+                    )
             if node.func.id in ['int', 'float', 'str', 'len', 'range', 'bin', 'ord', 'chr', 'sum', 'zip', 'sorted', 'set']:
                 return ast.Call(
                     func=ast.Name(id='sym_'+node.func.id, ctx=ast.Load()),
