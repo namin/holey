@@ -4,6 +4,6 @@
 (declare-const x_e2 Int)
 (declare-const x_e3 Int)
 (declare-const x_e4 Int)
-(assert (and true (= (+ (ite (= x_e0 x_e3) 1 0) (ite (= x_e1 x_e3) 1 0) (ite (= x_e2 x_e3) 1 0) (ite (= x_e3 x_e3) 1 0) (ite (= x_e4 x_e3) 1 0)) 2)))
+(assert (= (+ (ite (= x_e0 x_e3) 1 0) (ite (= x_e1 x_e3) 1 0) (ite (= x_e2 x_e3) 1 0) (ite (= x_e3 x_e3) 1 0) (ite (= x_e4 x_e3) 1 0)) 2))
 (check-sat)
 (get-model)

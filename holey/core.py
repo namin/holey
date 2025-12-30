@@ -178,6 +178,8 @@ class SymbolicBool:
             other = truthy(other)
         if self.concrete is not None and hasattr(other, 'concrete') and other.concrete is not None:
             return SymbolicBool(self.concrete and other.concrete, tracer=self.tracer)
+        if self.concrete is not None and self.concrete:
+            return other
         return SymbolicBool(self.tracer.backend.And(self.z3_expr, truthy(other).z3_expr), tracer=self.tracer)
 
     def __or__(self, other):
