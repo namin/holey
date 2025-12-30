@@ -614,21 +614,20 @@ def sym_set(iterable):
     if isinstance(iterable, str):
         return set(iterable)
 
-    elements = list(iterable)
+    # For SymbolicList/BoundedSymbolicList, just pass directly to set()
+    # Python's set() will iterate and collect elements, and sym_len handles
+    # the resulting set of SymbolicInt elements specially
+    if isinstance(iterable, (SymbolicList, BoundedSymbolicList)):
+        return set(iterable)
 
-    # If all elements are concrete and hashable, use regular set
+    # For other iterables, try native set first
     try:
-        concrete_elements = []
-        for e in elements:
-            if hasattr(e, 'concrete') and e.concrete is not None:
-                concrete_elements.append(e.concrete)
-            elif not hasattr(e, 'z3_expr'):
-                concrete_elements.append(e)
-            else:
-                raise ValueError("Has symbolic element")
-        return set(concrete_elements)
-    except (TypeError, ValueError):
-        pass
+        return set(iterable)
+    except TypeError:
+        pass  # Elements not hashable, fall through to SymbolicSet
+
+    # Convert to list for SymbolicSet (for non-hashable elements)
+    elements = list(iterable)
 
     # Find tracer
     tracer = None
