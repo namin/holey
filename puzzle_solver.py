@@ -397,10 +397,9 @@ class PuzzleSolver:
 
         return f"""
 ## Current status
-
+{solver_stats_section}
 The symbolic execution{'' if self.llm_solver else ' alone'} currently solves:
 {self.pretty_counts()}
-{solver_stats_section}
 with the following errors:
 - {self.timeout_staging_count} timeouts after 3 seconds at staging time (while generating the SMTLIB program)
 - {self.error_staging_count} errors at staging time
