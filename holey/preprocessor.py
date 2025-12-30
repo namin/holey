@@ -388,7 +388,6 @@ def sym_len(x):
 
 class SymbolicSetLen:
     """Represents len(set(x)) for a bounded list - equals n only if all elements are distinct"""
-    _counter = 0
 
     def __init__(self, n, distinct_constraint, tracer):
         self.n = n
@@ -397,8 +396,7 @@ class SymbolicSetLen:
         self.concrete = None  # Always None since value depends on distinctness
 
         # Create z3_expr as a fresh symbolic integer with appropriate constraints
-        var_name = f'_set_len_{SymbolicSetLen._counter}'
-        SymbolicSetLen._counter += 1
+        var_name = f'_set_len_{tracer.backend.next_id()}'
         self.z3_expr = tracer.backend.Int(var_name)
 
         # Add constraints: 0 <= set_len <= n
@@ -448,7 +446,6 @@ class UnboundedSymbolicSet:
     We can't compute distinctness constraints, but we can track the source list
     and provide bounds on the set length.
     """
-    _counter = 0
 
     def __init__(self, source_list, tracer):
         self.source_list = source_list
@@ -849,14 +846,7 @@ def sym_any(iterable):
             ), tracer=iterator.tracer)
         elif isinstance(iterator, (SymbolicStrIterator, SymbolicListIterator)):
             # String and list iterators use position-based iteration
-            # Get the quantifier variable and bounds that will be added by __next__
-            # We need to peek at what variable will be created
-            next_counter = SymbolicStrIterator._counter if isinstance(iterator, SymbolicStrIterator) else SymbolicListIterator._counter
-            var_name = f'str_pos_{next_counter}' if isinstance(iterator, SymbolicStrIterator) else f'list_pos_{next_counter}'
-
-            # Mark variable as quantified BEFORE evaluating predicate to prevent declaration
-            iterator.tracer.backend.quantified_vars.add(var_name)
-
+            # The iterator's __next__ adds the variable to quantified_vars before creating SymbolicInt
             predicate = next(iterable)
             # Get the quantifier variable and bounds from forall_conditions
             if iterator.tracer.forall_conditions:

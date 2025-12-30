@@ -670,8 +670,6 @@ class SymbolicFloat:
         return self.__str__()
 
 class SymbolicListIterator:
-    _counter = 0
-    
     def __init__(self, sym_list):
         self.tracer = sym_list.tracer
         self.sym_list = sym_list
@@ -680,19 +678,18 @@ class SymbolicListIterator:
         self.used = False
         # Store the initial forall conditions count to restore later
         self.initial_forall_count = len(self.tracer.forall_conditions)
-        
+
     def __iter__(self):
         return self
-        
+
     def __next__(self):
         if self.used:
             # Clear the forall conditions we added when iteration completes
             self.tracer.forall_conditions = self.tracer.forall_conditions[:self.initial_forall_count]
             raise StopIteration
-            
+
         # Create position variable directly as a variable in forall
-        pos_name = f'list_pos_{SymbolicListIterator._counter}'
-        SymbolicListIterator._counter += 1
+        pos_name = f'list_pos_{self.tracer.backend.next_id()}'
         self.tracer.backend.quantified_vars.add(pos_name)        
         pos_var = SymbolicInt(name=pos_name, tracer=self.tracer)
         
@@ -1187,8 +1184,6 @@ class BoundedSymbolicSlice:
 
 
 class SymbolicStrIterator:
-    _counter = 0
-    
     def __init__(self, sym_str):
         self.tracer = sym_str.tracer
         self.sym_str = sym_str
@@ -1196,19 +1191,18 @@ class SymbolicStrIterator:
         self.used = False
         # Store the initial forall conditions count to restore later
         self.initial_forall_count = len(self.tracer.forall_conditions)
-        
+
     def __iter__(self):
         return self
-        
+
     def __next__(self):
         if self.used:
             # Clear the forall conditions we added when iteration completes
             self.tracer.forall_conditions = self.tracer.forall_conditions[:self.initial_forall_count]
             raise StopIteration
-            
+
         # Create position variable directly as a Z3 variable in forall
-        pos_name = f'str_pos_{SymbolicStrIterator._counter}'
-        SymbolicStrIterator._counter += 1
+        pos_name = f'str_pos_{self.tracer.backend.next_id()}'
         self.tracer.backend.quantified_vars.add(pos_name)        
         pos_var = SymbolicInt(name=pos_name, tracer=self.tracer)
         
@@ -1721,8 +1715,7 @@ class SymbolicRangeIterator:
             self.iterations_to_unroll = length
         else:
             # Quantified mode for all()/any()
-            var_name = f'i_{SymbolicRange._counter}'
-            SymbolicRange._counter += 1
+            var_name = f'i_{self.tracer.backend.next_id()}'
             self.tracer.backend.quantified_vars.add(var_name)
             self.var = SymbolicInt(name=var_name, tracer=sym_range.tracer)
             self.used = False
@@ -1775,8 +1768,7 @@ class SymbolicRangeIterator:
                 raise StopIteration
 
             # Create fresh variable for this iteration
-            var_name = f'i_{SymbolicRange._counter}'
-            SymbolicRange._counter += 1
+            var_name = f'i_{self.tracer.backend.next_id()}'
             var = SymbolicInt(name=var_name, tracer=self.tracer)
 
             # Add constraint: var == start + iteration_count * step
@@ -1804,8 +1796,7 @@ class SymbolicRangeIterator:
         
         if self.sym_range.step is not None:
             # i = start + k * step for some k >= 0
-            k = SymbolicInt(name=f'k_{SymbolicRange._counter}', tracer=self.sym_range.tracer)
-            SymbolicRange._counter += 1
+            k = SymbolicInt(name=f'k_{self.tracer.backend.next_id()}', tracer=self.sym_range.tracer)
             step_constraint = (self.var == self.sym_range.start + k * self.sym_range.step).__and__(
                              k >= 0).__and__(
                              k < (self.sym_range.end - self.sym_range.start) / self.sym_range.step)
@@ -1814,8 +1805,6 @@ class SymbolicRangeIterator:
         return bounds
 
 class SymbolicRange:
-    _counter = 0
-
     def __init__(self, start, end, step=None, tracer=None):
         self.start = start if isinstance(start, SymbolicInt) else SymbolicInt(start, tracer=tracer)
         self.end = end if isinstance(end, SymbolicInt) else SymbolicInt(end, tracer=tracer)

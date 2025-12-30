@@ -526,6 +526,11 @@ class Backend():
         self.solver = MockSolver(puzzle_name=puzzle_name, solver_stats=solver_stats)
         self.stack = []
         self.quantified_vars = set()
+        self.id_counter = 0
+
+    def next_id(self):
+        self.id_counter += 1
+        return self.id_counter
 
     def _record(self, op: str, *args) -> Any:
         """Record operation and return a MockExpr"""
