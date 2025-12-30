@@ -533,6 +533,14 @@ library_static = {
 # INT FUNCTIONS
 # =============================================================================
 
+'str.from_any_int':
+"""
+(define-fun str.from_any_int ((x Int)) String
+  (ite (< x 0)
+       (str.++ "-" (str.from_int (- x)))
+       (str.from_int x)))
+""",
+
 'python.int.xor':
 """
 (define-fun bool-to-int ((b Bool)) Int
@@ -575,6 +583,7 @@ library_deps_static = {
     'str.count': [],
     'bin': [],
     'str.from_real': [],
+    'str.from_any_int': [],
     'python.int.xor': [],
 }
 

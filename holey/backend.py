@@ -618,7 +618,9 @@ class Backend():
         return self._record("to_int", x)
 
     def IntToStr(self, x) -> MockExpr:
-        return self._record("str.from_int", x)
+        # Use str.from_any_int to handle negative integers correctly
+        # (str.from_int returns empty string for negative integers in SMT-LIB)
+        return self._record("str.from_any_int", x)
 
     def RealToStr(self, x) -> MockExpr:
         return self._record("str.from_real", x)
