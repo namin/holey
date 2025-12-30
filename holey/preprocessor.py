@@ -614,20 +614,26 @@ def sym_set(iterable):
     if isinstance(iterable, str):
         return set(iterable)
 
-    # For SymbolicList/BoundedSymbolicList, just pass directly to set()
-    # Python's set() will iterate and collect elements, and sym_len handles
-    # the resulting set of SymbolicInt elements specially
-    if isinstance(iterable, (SymbolicList, BoundedSymbolicList)):
+    # For unbounded SymbolicList, must use native set() - can't collect all elements
+    # (SymbolicListIterator uses forall quantification, yields only one element)
+    if isinstance(iterable, SymbolicList):
         return set(iterable)
 
-    # For other iterables, try native set first
-    try:
-        return set(iterable)
-    except TypeError:
-        pass  # Elements not hashable, fall through to SymbolicSet
+    # For BoundedSymbolicList, collect elements and create SymbolicSet
+    # (needed for set operations like comparison, containment)
+    if isinstance(iterable, BoundedSymbolicList):
+        elements = list(iterable)
+        tracer = iterable.tracer
+        return SymbolicSet(elements, tracer=tracer)
 
-    # Convert to list for SymbolicSet (for non-hashable elements)
+    # For other iterables, collect elements first
     elements = list(iterable)
+
+    # Try native set if elements are hashable
+    try:
+        return set(elements)
+    except (TypeError, ValueError):
+        pass  # Elements not hashable or have symbolic hash, fall through to SymbolicSet
 
     # Find tracer
     tracer = None
