@@ -9,7 +9,7 @@ See `log/results.txt`
 This file is generated with the command
 
 ```
-python puzzle_solver.py  --smtlib-backends z3 cvc5 >log/results.txt     
+PYTHONHASHSEED=0 python puzzle_solver.py  --smtlib-backends z3 cvc5 --answer-types int str float 'List[int]' 'List[str]' >log/results.txt     
 ```
 
 Focus on a puzzle with an error, debug it and propose a fix.
