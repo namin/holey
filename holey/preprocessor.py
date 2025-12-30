@@ -363,6 +363,8 @@ def sym_len(x):
         return x.__len__()
     if isinstance(x, BoundedSymbolicList):
         return x.__len__()
+    if isinstance(x, SymbolicSet):
+        return x.__len__()
     # Handle set() of bounded list elements - check for distinctness
     if isinstance(x, set):
         elems = list(x)
