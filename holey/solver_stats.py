@@ -165,4 +165,48 @@ class SolverStats:
                            f"{c['unsat']}/{c['total']} unsat, "
                            f"{c['unknown']}/{c['total']} unknown")
 
+        # Add unique solves analysis
+        if len(solvers) > 1:
+            unique_analysis = self._unique_solves_analysis(solvers)
+            if unique_analysis:
+                lines.append("")
+                lines.append(unique_analysis)
+
+        return "\n".join(lines) if lines else ""
+
+    def _unique_solves_analysis(self, solvers: List[str]) -> str:
+        """Analyze which puzzles each solver uniquely solved."""
+        # Build sets of verified sat puzzles per solver
+        solved_by: Dict[str, set] = {solver: set() for solver in solvers}
+
+        for puzzle, puzzle_results in self._puzzle_solvers.items():
+            for solver in solvers:
+                if solver in puzzle_results:
+                    result = puzzle_results[solver]
+                    if result.status == 'sat' and result.verified:
+                        solved_by[solver].add(puzzle)
+
+        # Find unique solves for each solver
+        lines = []
+        all_solved = set()
+        for solver in solvers:
+            all_solved |= solved_by[solver]
+
+        for solver in solvers:
+            others = set()
+            for other_solver in solvers:
+                if other_solver != solver:
+                    others |= solved_by[other_solver]
+            unique = solved_by[solver] - others
+            if unique:
+                lines.append(f"- **{solver}** only ({len(unique)}): {' '.join(sorted(unique))}")
+
+        # Find puzzles solved by all solvers
+        if len(solvers) > 1:
+            solved_by_all = solved_by[solvers[0]]
+            for solver in solvers[1:]:
+                solved_by_all &= solved_by[solver]
+            if solved_by_all:
+                lines.append(f"- **all solvers** ({len(solved_by_all)}): {' '.join(sorted(solved_by_all))}")
+
         return "\n".join(lines) if lines else ""
