@@ -1,0 +1,33 @@
+Inferred ans_type: int
+Using bounded list encoding (max size: 200)
+sat_func def sat(n: int):
+    for i in range(5):
+        n += n + 1
+    return n == 351
+modified_func def sat(n: int):
+    for i in sym_range(5):
+        n += n + wrap_int(1)
+    return n == wrap_int(351)
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (= (+ (+ (+ (+ (+ x (+ x 1)) (+ (+ x (+ x 1)) 1)) (+ (+ (+ x (+ x 1)) (+ (+ x (+ x 1)) 1)) 1)) (+ (+ (+ (+ x (+ x 1)) (+ (+ x (+ x 1)) 1)) (+ (+ (+ x (+ x 1)) (+ (+ x (+ x 1)) 1)) 1)) 1)) (+ (+ (+ (+ (+ x (+ x 1)) (+ (+ x (+ x 1)) 1)) (+ (+ (+ x (+ x 1)) (+ (+ x (+ x 1)) 1)) 1)) (+ (+ (+ (+ x (+ x 1)) (+ (+ x (+ x 1)) 1)) (+ (+ (+ x (+ x 1)) (+ (+ x (+ x 1)) 1)) 1)) 1)) 1)) 351))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () Int
+    10)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 10)
+)
+
+Found solution 10
+Yes! Solved for puzzle  examples/exp.py
