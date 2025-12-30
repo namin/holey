@@ -37,6 +37,9 @@ class PuzzleSolver:
         self.error_verify_count = 0
         self.error_staging_count = 0
         self.error_smt_count = 0
+        self.error_smt_unsat_count = 0
+        self.error_smt_unknown_count = 0
+        self.error_smt_timeout_count = 0
         self.error_smt_var_count = 0
         self.error_unsupported_answer_type = 0
         self.extrapolate_small_count = 0
@@ -213,6 +216,17 @@ class PuzzleSolver:
             print("Could not find any solution for puzzle " + name)
             if counting:
                 self.error_smt_count += 1
+                # Track specific non-sat status
+                puzzle_results = self.solver_stats._puzzle_solvers.get(stats_name, {})
+                if puzzle_results:
+                    # Get the status from any solver (they should agree on non-sat)
+                    status = next(iter(puzzle_results.values())).status
+                    if status == 'unsat':
+                        self.error_smt_unsat_count += 1
+                    elif status == 'timeout':
+                        self.error_smt_timeout_count += 1
+                    else:  # 'unknown' or other
+                        self.error_smt_unknown_count += 1
             return None, log
         solution_var = tracer.solution_var(solution, sym_var)
         if solution_var is None:
@@ -406,7 +420,11 @@ with the following errors:
 - {self.timeout_staging_count} timeouts after 3 seconds at staging time (while generating the SMTLIB program)
 - {self.error_staging_count} errors at staging time
 - {self.error_verify_count} SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- {self.error_smt_count + self.error_smt_var_count} SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds)
+- {self.error_smt_count + self.error_smt_var_count} SMTLIB programs returning non-`sat`:
+  - {self.error_smt_unsat_count} `unsat`
+  - {self.error_smt_unknown_count} `unknown`
+  - {self.error_smt_timeout_count} timeout (after 2 seconds)
+  - {self.error_smt_var_count} `sat` but failed to extract solution variable
 - {self.total_count-self.count} (out of {self.total_count}) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 """+extrapolation
 

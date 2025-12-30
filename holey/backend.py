@@ -144,6 +144,8 @@ def parse_output(output):
         return 'sat', model
     elif output.startswith('unsat'):
         return 'unsat', None
+    elif 'timeout' in output.lower():
+        return 'timeout', None
     else:
         return 'unknown', None
 
