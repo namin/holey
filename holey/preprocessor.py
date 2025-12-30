@@ -486,8 +486,8 @@ class SymbolicSet:
             # 2. All elements must be pairwise distinct
             constraints = []
 
-            # Convert concrete set to list for comparison
-            other_list = list(other)
+            # Convert concrete set to sorted list for deterministic comparison
+            other_list = sorted(other, key=str)
 
             # Each element must match one of the expected values
             for elem in self.elements:
@@ -548,8 +548,8 @@ class SymbolicSet:
             return self.concrete <= other.concrete
 
         if isinstance(other, set):
-            # Each element of self must be in other
-            other_list = list(other)
+            # Each element of self must be in other (sorted for deterministic output)
+            other_list = sorted(other, key=str)
             constraints = []
             for elem in self.elements:
                 elem_matches = []
