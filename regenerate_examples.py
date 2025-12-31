@@ -25,12 +25,12 @@ def extract_smt(txt_content: str) -> str:
     return '\n'.join(smt_lines)
 
 
-def run_solver(py_file: Path, no_bounded: bool = False) -> str:
+def run_solver(py_file: Path, flag: str = "") -> str:
     """Run puzzle_solver.py on a SAT file and return output."""
     cmd = [sys.executable, 'puzzle_solver.py', '--sat-file', str(py_file)]
     cmd += ['--smtlib-backends', 'z3', 'cvc5']
-    if no_bounded:
-        cmd.append('--no-bounded-list')
+    if flag:
+        cmd.append(flag)
 
     env = os.environ.copy()
     env['TRUNCATE'] = 'false'
@@ -45,35 +45,21 @@ def regenerate_example(py_file: Path, examples_dir: Path):
 
     # Generate standard (bounded) output
     print(f"Processing {py_file.name}...")
-    output = run_solver(py_file)
 
-    txt_file = examples_dir / f"{base_name}.txt"
-    smt_file = examples_dir / f"{base_name}.smt"
+    for (fn, flag) in [('', ''), ('_no_bounded', '--no-bounded-list'), ('_no_ite', '--no-ite')]:
+        txt_file = examples_dir / f"{base_name}{fn}.txt"
+        smt_file = examples_dir / f"{base_name}{fn}.smt"
 
-    txt_file.write_text(output)
-    print(f"  Wrote {txt_file.name}")
+        if txt_file.exists() or smt_file.exists():
+            print(f"  Regenerating{'' if not fn else ' '}{fn} version...")
+            output = run_solver(py_file, flag=flag)
+            txt_file.write_text(output)
+            print(f"  Wrote {txt_file.name}")
 
-    smt_content = extract_smt(output)
-    if smt_content.strip():
-        smt_file.write_text(smt_content)
-        print(f"  Wrote {smt_file.name}")
-
-    # Check if no_bounded version exists
-    no_bounded_smt = examples_dir / f"{base_name}_no_bounded.smt"
-    no_bounded_txt = examples_dir / f"{base_name}_no_bounded.txt"
-
-    if no_bounded_smt.exists() or no_bounded_txt.exists():
-        print(f"  Regenerating no_bounded version...")
-        output = run_solver(py_file, no_bounded=True)
-
-        no_bounded_txt.write_text(output)
-        print(f"  Wrote {no_bounded_txt.name}")
-
-        smt_content = extract_smt(output)
-        if smt_content.strip():
-            no_bounded_smt.write_text(smt_content)
-            print(f"  Wrote {no_bounded_smt.name}")
-
+            smt_content = extract_smt(output)
+            if smt_content.strip():
+                smt_file.write_text(smt_content)
+                print(f"  Wrote {smt_file.name}")
 
 def main():
     examples_dir = Path('examples')
