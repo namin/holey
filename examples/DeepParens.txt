@@ -1,0 +1,94 @@
+Inferred ans_type: List[int]
+Using bounded list encoding (max size: 200)
+sat_func def sat(depths: List[int], parens="()()(())()(())"):
+    groups = parens.split()
+    for depth, group in zip(depths, groups):
+        budget = depth
+        success = False
+        for c in group:
+            if c == '(':
+                budget -= 1
+                if budget == 0:
+                    success = True
+                assert budget >= 0
+            else:
+                assert c == ')'
+                budget += 1
+        assert success
+
+    return len(groups) == len(depths)
+modified_func def sat(depths: List[int], parens=wrap_str('()()(())()(())')):
+    groups = parens.split()
+    for _for_tmp_0 in sym_zip(depths, groups):
+        _assert(sym_len(_for_tmp_0) == 2)
+        depth = _for_tmp_0[0]
+        group = _for_tmp_0[1]
+        budget = depth
+        success = False
+        for c in group:
+            if c == wrap_str('('):
+                budget -= wrap_int(1)
+                success = sym_ite(budget == wrap_int(0), True, success)
+                _assert(budget >= wrap_int(0))
+            else:
+                _assert(c == wrap_str(')'))
+                budget += wrap_int(1)
+        _assert(success)
+    return sym_len(groups) == sym_len(depths)
+### smt2
+(set-logic ALL)
+
+(declare-datatypes ((List 1))
+    ((par (T) ((cons (head T) (tail (List T))) (nil)))))
+
+
+(define-fun-rec list.length.int ((l (List Int))) Int
+  (ite (= l (as nil (List Int)))
+       0
+       (+ 1 (list.length.int (tail l)))))
+
+
+(define-fun-rec list.get.int ((l (List Int)) (idx Int)) Int
+  (ite (< idx 0)
+       (list.get.int l (+ (list.length.int l) idx))
+  (ite (= idx 0)
+       (head l)
+       (list.get.int (tail l) (- idx 1)))))
+
+(declare-const x (List Int))
+(assert (> (list.length.int x) 0))
+(assert (>= (- (list.get.int x 0) 1) 0))
+(assert true)
+(assert (>= (- (+ (- (list.get.int x 0) 1) 1) 1) 0))
+(assert true)
+(assert (>= (- (+ (- (+ (- (list.get.int x 0) 1) 1) 1) 1) 1) 0))
+(assert (>= (- (- (+ (- (+ (- (list.get.int x 0) 1) 1) 1) 1) 1) 1) 0))
+(assert true)
+(assert true)
+(assert (>= (- (+ (+ (- (- (+ (- (+ (- (list.get.int x 0) 1) 1) 1) 1) 1) 1) 1) 1) 1) 0))
+(assert true)
+(assert (>= (- (+ (- (+ (+ (- (- (+ (- (+ (- (list.get.int x 0) 1) 1) 1) 1) 1) 1) 1) 1) 1) 1) 1) 0))
+(assert (>= (- (- (+ (- (+ (+ (- (- (+ (- (+ (- (list.get.int x 0) 1) 1) 1) 1) 1) 1) 1) 1) 1) 1) 1) 1) 0))
+(assert true)
+(assert true)
+(assert (ite (= (- (- (+ (- (+ (+ (- (- (+ (- (+ (- (list.get.int x 0) 1) 1) 1) 1) 1) 1) 1) 1) 1) 1) 1) 1) 0) true (ite (= (- (+ (- (+ (+ (- (- (+ (- (+ (- (list.get.int x 0) 1) 1) 1) 1) 1) 1) 1) 1) 1) 1) 1) 0) true (ite (= (- (+ (+ (- (- (+ (- (+ (- (list.get.int x 0) 1) 1) 1) 1) 1) 1) 1) 1) 1) 0) true (ite (= (- (- (+ (- (+ (- (list.get.int x 0) 1) 1) 1) 1) 1) 1) 0) true (ite (= (- (+ (- (+ (- (list.get.int x 0) 1) 1) 1) 1) 1) 0) true (ite (= (- (+ (- (list.get.int x 0) 1) 1) 1) 0) true (ite (= (- (list.get.int x 0) 1) 0) true false))))))))
+(assert (= (list.length.int x) 1))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () (List Int)
+    (cons 2 nil))
+)
+### output for cvc5
+sat
+(
+(define-fun x () (List Int) ((as cons (List Int)) 2 (as nil (List Int))))
+)
+
+Found solution [2]
+Yes! Solved for puzzle  examples/DeepParens.py

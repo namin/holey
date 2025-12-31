@@ -1,0 +1,36 @@
+Inferred ans_type: int
+Using bounded list encoding (max size: 200)
+sat_func def sat(x: int):
+    y = 10
+    if x > 10:
+        y += x
+    return y == 30
+modified_func def sat(x: int):
+    y = wrap_int(10)
+    if x > wrap_int(10):
+        y += x
+    return y == wrap_int(30)
+### smt2
+(set-logic ALL)
+(declare-const x Int)
+(assert (=> (> x 10) (= (+ 10 x) 30)))
+(assert (=> (not (> x 10)) false))
+(check-sat)
+(get-model)
+
+running backend z3
+running backend cvc5
+### output for z3
+sat
+(
+  (define-fun x () Int
+    20)
+)
+### output for cvc5
+sat
+(
+(define-fun x () Int 20)
+)
+
+Found solution 20
+Yes! Solved for puzzle  examples/if0.py

@@ -1,0 +1,5 @@
+(set-logic ALL)
+(declare-const x Int)
+(assert (= (ite (> x 10) (+ 10 x) 10) 30))
+(check-sat)
+(get-model)
