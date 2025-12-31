@@ -1,4 +1,4 @@
-from .core import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicList, SymbolicRange, SymbolicRangeIterator, SymbolicStr, SymbolicSlice, truthy, BoundedSymbolicList, BoundedSymbolicSlice
+from .core import SymbolicTracer, make_symbolic, SymbolicBool, SymbolicFloat, SymbolicInt, SymbolicList, SymbolicListComp, SymbolicRange, SymbolicRangeIterator, SymbolicStr, SymbolicSlice, truthy, BoundedSymbolicList, BoundedSymbolicSlice
 from .backend import default_backend
 import ast
 from typing import List, Any, Dict, Optional, Tuple
@@ -702,6 +702,31 @@ def wrap_list(elements, tracer=None):
     element_type = infer_element_type(elements)
     return SymbolicList(elements, element_type, tracer=tracer)
 
+def sym_listcomp(source_list, transform_func, tracer=None):
+    """Create a symbolic list comprehension.
+
+    Represents [transform_func(x) for x in source_list] symbolically.
+    When compared with a concrete list, generates element-wise constraints.
+
+    If the source list is concrete (not symbolic), just evaluates normally.
+    """
+    # Check if source_list is symbolic
+    is_symbolic = isinstance(source_list, (SymbolicList, BoundedSymbolicList, BoundedSymbolicSlice))
+
+    # Also check if it's a SymbolicList with concrete values but we still want symbolic handling
+    if isinstance(source_list, SymbolicList) and source_list.concrete is not None:
+        # Concrete SymbolicList - just evaluate normally
+        return [transform_func(x) for x in source_list.concrete]
+
+    if not is_symbolic:
+        # Regular Python list or other iterable - just evaluate normally
+        return [transform_func(x) for x in source_list]
+
+    # Symbolic list - create SymbolicListComp for proper constraint generation
+    if tracer is None:
+        tracer = first_tracer([source_list])
+    return SymbolicListComp(source_list, transform_func, tracer=tracer)
+
 def sym_range(*args):
     """Symbolic version of range that adds proper bounds"""
     if all(isinstance(arg, int) for arg in args):
@@ -1129,6 +1154,53 @@ class HoleyWrapper(ast.NodeTransformer):
                 )
         return node
 
+    def visit_ListComp(self, node):
+        """Transform list comprehension over symbolic lists.
+
+        [expr for x in iterable] -> sym_listcomp(iterable, lambda x: expr)
+
+        This allows list comprehensions to be properly compared with concrete lists
+        by generating element-wise constraints.
+        """
+        node = self.generic_visit(node)
+
+        # Only handle simple list comprehensions with one generator and no conditions
+        if len(node.generators) == 1 and not node.generators[0].ifs:
+            gen = node.generators[0]
+            # Check if the target is a simple name (not tuple unpacking)
+            if isinstance(gen.target, ast.Name):
+                var_name = gen.target.id
+                iterable = gen.iter
+
+                # Create a lambda: lambda var_name: expr
+                lambda_node = ast.Lambda(
+                    args=ast.arguments(
+                        posonlyargs=[],
+                        args=[ast.arg(arg=var_name, annotation=None)],
+                        vararg=None,
+                        kwonlyargs=[],
+                        kw_defaults=[],
+                        kwarg=None,
+                        defaults=[]
+                    ),
+                    body=node.elt
+                )
+                ast.copy_location(lambda_node, node)
+                ast.fix_missing_locations(lambda_node)
+
+                # Create sym_listcomp(iterable, lambda)
+                call = ast.Call(
+                    func=ast.Name(id='sym_listcomp', ctx=ast.Load()),
+                    args=[iterable, lambda_node],
+                    keywords=[]
+                )
+                ast.copy_location(call, node)
+                ast.fix_missing_locations(call)
+                return call
+
+        # For complex comprehensions, return as-is (will use old behavior)
+        return node
+
     def visit_Compare(self, node):
         node = self.generic_visit(node)
         # Transform: x in y
@@ -1404,7 +1476,8 @@ def create_namespace(tracer):
         'sym_sorted': sym_sorted,
         'sym_ite': sym_ite,
         'sym_implies': sym_implies,
-        'sym_set': sym_set
+        'sym_set': sym_set,
+        'sym_listcomp': lambda lst, fn: sym_listcomp(lst, fn, tracer=tracer)
     }
 
 def driver(sat_func, typ, cmds=None, llm_solver=None, list_size=None, wrapper_class=HoleyWrapper, puzzle_name=None, solver_stats=None):

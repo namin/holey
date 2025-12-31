@@ -942,6 +942,124 @@ class SymbolicList:
             raise NotImplementedError("Cannot remove from fully symbolic list")
 
 
+class SymbolicListComp:
+    """Represents a list comprehension over a symbolic list: [f(x) for x in sym_list]
+
+    When compared with a concrete list, this generates forall constraints:
+    - len(sym_list) == len(concrete)
+    - forall i. f(sym_list[i]) == concrete[i]
+    """
+    def __init__(self, source_list, transform_func, tracer: Optional['SymbolicTracer'] = None):
+        self.tracer = tracer or SymbolicTracer()
+        self.source_list = source_list
+        self.transform_func = transform_func
+        # Get element type from source list if available
+        if hasattr(source_list, 'elementTyp'):
+            self.elementTyp = source_list.elementTyp
+        else:
+            self.elementTyp = int
+
+    def __eq__(self, other):
+        """Compare list comprehension with a concrete list using forall constraints."""
+        # Handle comparison with SymbolicList or list
+        if isinstance(other, SymbolicList):
+            if other.concrete is not None:
+                target_list = other.concrete
+            else:
+                # Both sides are symbolic - need different handling
+                # For now, fall back to checking length equality
+                return self._eq_symbolic(other)
+        elif isinstance(other, (list, BoundedSymbolicList)):
+            if isinstance(other, BoundedSymbolicList):
+                target_list = list(other)
+            else:
+                target_list = other
+        else:
+            return SymbolicBool(self.tracer.backend.BoolVal(False), tracer=self.tracer)
+
+        # Get the source list length
+        src_len = self.source_list.__len__() if hasattr(self.source_list, '__len__') else len(self.source_list)
+        target_len = len(target_list)
+
+        # Length must match
+        if isinstance(src_len, SymbolicInt):
+            len_constraint = src_len == target_len
+            self.tracer.add_constraint(len_constraint)
+        elif src_len != target_len:
+            return SymbolicBool(self.tracer.backend.BoolVal(False), tracer=self.tracer)
+
+        # Build element-wise constraints
+        # For each index i in target_list: transform_func(source_list[i]) == target_list[i]
+        constraints = []
+        for i, target_elem in enumerate(target_list):
+            source_elem = self.source_list[i]
+            transformed = self.transform_func(source_elem)
+            target_elem = self.tracer.ensure_symbolic(target_elem)
+            eq_constraint = (transformed == target_elem)
+            if hasattr(eq_constraint, 'z3_expr'):
+                constraints.append(eq_constraint.z3_expr)
+            elif isinstance(eq_constraint, bool):
+                if not eq_constraint:
+                    return SymbolicBool(self.tracer.backend.BoolVal(False), tracer=self.tracer)
+            else:
+                constraints.append(eq_constraint)
+
+        if constraints:
+            result = constraints[0]
+            for c in constraints[1:]:
+                result = self.tracer.backend.And(result, c)
+            return SymbolicBool(result, tracer=self.tracer)
+        return SymbolicBool(True, tracer=self.tracer)
+
+    def _eq_symbolic(self, other):
+        """Handle comparison when both lists are fully symbolic."""
+        # Use forall quantifier
+        src_len = self.source_list.__len__()
+        other_len = other.__len__()
+
+        # Length equality
+        self.tracer.add_constraint(src_len == other_len)
+
+        # Create a quantified variable for the index
+        idx_name = f'listcomp_idx_{self.tracer.backend.next_id()}'
+        self.tracer.backend.quantified_vars.add(idx_name)
+        idx = SymbolicInt(name=idx_name, tracer=self.tracer)
+
+        # Bounds: 0 <= idx < len
+        bounds = (idx.z3_expr >= 0) & (idx.z3_expr < src_len.z3_expr)
+
+        # Get elements and transform
+        src_elem = self.source_list[idx]
+        transformed = self.transform_func(src_elem)
+        other_elem = other[idx]
+
+        # Element equality
+        eq_constraint = (transformed == other_elem)
+
+        # Build forall
+        self.tracer.forall_conditions.append((idx.z3_expr, bounds))
+        if hasattr(eq_constraint, 'z3_expr'):
+            self.tracer.add_constraint(eq_constraint)
+
+        return SymbolicBool(True, tracer=self.tracer)
+
+    def __ne__(self, other):
+        eq = self.__eq__(other)
+        if isinstance(eq, SymbolicBool):
+            if eq.concrete is not None:
+                return SymbolicBool(not eq.concrete, tracer=self.tracer)
+            return SymbolicBool(self.tracer.backend.Not(eq.z3_expr), tracer=self.tracer)
+        return not eq
+
+    def __len__(self):
+        return self.source_list.__len__() if hasattr(self.source_list, '__len__') else len(self.source_list)
+
+    def __iter__(self):
+        # When iterating, apply transform to each element
+        for elem in self.source_list:
+            yield self.transform_func(elem)
+
+
 class BoundedSymbolicList:
     """A symbolic list with known size, using individual variables instead of recursive (List Int).
 
