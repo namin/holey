@@ -34,12 +34,21 @@ class SymbolicZipIterator:
     def __next__(self):
         if self.used:
             raise StopIteration
-            
+
         # Create symbolic index
         name = f"zip_pos_{next(counter)}"
         self.tracer.backend.quantified_vars.add(name)
         self.pos = make_symbolic(int, name, tracer=self.tracer)
-        
+
+        # Add to forall_conditions so any constraints added during element access
+        # (e.g., list length bounds) get wrapped in the forall quantifier
+        length = self.tracer.ensure_symbolic(self.length)
+        bounds = self.tracer.backend.And(
+            self.tracer.backend.GE(self.pos.z3_expr, self.tracer.backend.IntVal(0)),
+            self.tracer.backend.LT(self.pos.z3_expr, length.z3_expr)
+        )
+        self.tracer.forall_conditions.append((self.pos.z3_expr, bounds))
+
         # Create character extraction for strings
         elements = []
         for it in self.iterables:
