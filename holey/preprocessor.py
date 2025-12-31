@@ -1161,8 +1161,21 @@ class HoleyWrapper(ast.NodeTransformer):
 
         This allows list comprehensions to be properly compared with concrete lists
         by generating element-wise constraints.
+
+        NOTE: Does NOT transform list comps inside all()/any() calls, since those
+        have special handling that converts them to generators for quantifier support.
         """
         node = self.generic_visit(node)
+
+        # Skip if this ListComp is a direct argument to all() or any()
+        # Those have special handling in visit_Call that converts them to generators
+        if len(self.path) >= 2:
+            parent = self.path[-2]
+            if (isinstance(parent, ast.Call) and
+                isinstance(parent.func, ast.Name) and
+                parent.func.id in ['all', 'any'] and
+                len(parent.args) == 1 and parent.args[0] is node):
+                return node
 
         # Only handle simple list comprehensions with one generator and no conditions
         if len(node.generators) == 1 and not node.generators[0].ifs:
