@@ -930,6 +930,8 @@ class BoundedListVars:
         """Get sum of all elements"""
         if not self.vars:
             return self.backend.IntVal(0)
+        if len(self.vars) == 1:
+            return self.vars[0]
         return self.backend.Add(*self.vars)
 
     def length(self):
@@ -943,6 +945,8 @@ class BoundedListVars:
                 return self.backend.IntVal(0)
             if end_idx >= self.size:
                 return self.sum()
+            if end_idx == 1:
+                return self.vars[0]
             return self.backend.Add(*self.vars[:end_idx])
 
         # For symbolic end index, build ITE chain
