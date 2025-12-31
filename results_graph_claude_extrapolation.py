@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Data
-models = ['Haiku', 'Sonnet', 'Claude']
+models = ['Haiku', 'Sonnet', 'Opus']
 with_hint = [28, 23, 35]
 without_hint = [31, 38, 40]
 total_solved = [34, 39, 41]
@@ -27,7 +27,7 @@ ax.axhline(y=total_puzzles, color='gray', linestyle='--', linewidth=1, alpha=0.7
 
 # Customize the plot
 ax.set_ylabel('Number of Puzzles Solved', fontsize=12)
-ax.set_xlabel('Model', fontsize=12)
+ax.set_xlabel('Model (Claude 4.5)', fontsize=12)
 ax.set_title('Puzzle Solving Performance Across Models', fontsize=14, fontweight='bold')
 ax.set_xticks(x)
 ax.set_xticklabels(models)
