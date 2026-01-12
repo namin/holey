@@ -12,6 +12,12 @@ The solver incorporates heuristics from LLMs in addition to symbolic execution.
 - [Diagram: overview](https://github.com/namin/holey/blob/main/diagram.md)
 - [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/namin/holey)
 
+## Examples
+
+- [satisfiability predicate in Python](https://github.com/namin/holey/blob/main/examples/MonkeyAndCoconut.py), translated to [smt](https://github.com/namin/holey/blob/main/examples/MonkeyAndCoconut.smt), full [log](https://github.com/namin/holey/blob/main/examples/MonkeyAndCoconut.txt)
+
+See more in [examples/](https://github.com/namin/holey/tree/main/examples).
+
 ## Setup
 
 ### Install dependencies
