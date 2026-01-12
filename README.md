@@ -14,7 +14,10 @@ The solver incorporates heuristics from LLMs in addition to symbolic execution.
 
 ## Examples
 
-- [satisfiability predicate in Python](https://github.com/namin/holey/blob/main/examples/MonkeyAndCoconut.py), translated to [smt](https://github.com/namin/holey/blob/main/examples/MonkeyAndCoconut.smt), full [log](https://github.com/namin/holey/blob/main/examples/MonkeyAndCoconut.txt)
+One example:
+- [satisfiability predicate in Python](https://github.com/namin/holey/blob/main/examples/MonkeyAndCoconut.py)
+- translated to [smt](https://github.com/namin/holey/blob/main/examples/MonkeyAndCoconut.smt)
+- full [log](https://github.com/namin/holey/blob/main/examples/MonkeyAndCoconut.txt)
 
 See more in [examples/](https://github.com/namin/holey/tree/main/examples).
 
