@@ -74,24 +74,27 @@ python puzzle_solver.py --name-prefix ListIn:1  --llm
 ## Current status
 
 The symbolic execution alone currently solves:
-- 65% (235 out of 360) of `int` puzzles,
-- 44% (160 out of 363) of `str` puzzles,
-- 18% (106 out of 591) of `List[int]` puzzles,
-- 22% (31 out of 141) of `List[str]` puzzles,
-- 53% (27 out of 51) of `float` puzzles,
-- 37% (559 out of 1506) overall.
+- 69% (247 out of 360) of `int` puzzles,
+- 45% (165 out of 363) of `str` puzzles,
+- 24% (142 out of 591) of `List[int]` puzzles,
+- 90% (46 out of 51) of `float` puzzles,
+- 27% (38 out of 141) of `List[str]` puzzles,
+- 42% (638 out of 1506) overall.
 
 with the following errors:
-- 62 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
-- 304 errors at staging time
-- 30 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
-- 563 SMTLIB programs returning non-`sat` (e.g. `unsat`, `unknown` or timing out after 2 seconds)
+- 51 timeouts after 3 seconds at staging time (while generating the SMTLIB program)
+- 292 errors at staging time
+- 41 SMTLIB programs returning `sat` but the original `sat` function failing on synthesized model input,
+- 493 SMTLIB programs returning non-`sat`:
+  - 75 `unsat`
+  - 165 `unknown`
+  - 253 timeout (after 2 seconds)
+  - 0 `sat` but failed to extract solution variable
 - 209 (out of 1715) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 
 ### Extrapolation
-- 208 smaller problems tried
-- 48 successes on smaller problem
-
+- 194 smaller problems tried
+- 59 successes on smaller problem
 ### Earlier extrapolation results
 - 123 smaller problems tried
 - 11 successes on smaller problem
