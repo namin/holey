@@ -14,7 +14,17 @@ The solver incorporates heuristics from LLMs in addition to symbolic execution.
 
 ## Examples
 
-One example:
+```python
+# find a string s such that sat(s) holds
+def sat(s: str):
+    return s.count('o') == 1000 and s.count('oo') == 0
+# SMT solver times out, but try 3 instead of 1000
+"oCoDo"
+# ask LLM to extrapolate from 3 to 1000
+"o" + "Co" * 999
+```
+
+Another example:
 - [satisfiability predicate in Python](https://github.com/namin/holey/blob/main/examples/MonkeyAndCoconut.py)
 - translated to [SMTLIB](https://github.com/namin/holey/blob/main/examples/MonkeyAndCoconut.smt)
 - full [log](https://github.com/namin/holey/blob/main/examples/MonkeyAndCoconut.txt)
