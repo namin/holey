@@ -28,6 +28,8 @@ class TestResult:
 class PropertyTester:
     def __init__(self, all_solvers=False):
         self.results: List[TestResult] = []
+        self.file_results: Dict[str, List[TestResult]] = {}  # Track results per file
+        self.current_file: Optional[str] = None
         self.use_ite = True
         self.use_bounded_lists = True
         self.bounded_list_max_size = 200
@@ -389,6 +391,10 @@ class PropertyTester:
 
     def test_file(self, filepath: str, cmds, prop_prefix: str = "prop_") -> List[TestResult]:
         """Test all properties in a file."""
+        import os
+        filename = os.path.basename(filepath)
+        self.current_file = filename
+
         with open(filepath) as f:
             content = f.read()
 
@@ -408,6 +414,11 @@ class PropertyTester:
                 result = self.test_property(prop_func, node.name, cmds)
                 results.append(result)
                 self.results.append(result)
+
+                # Track per-file results
+                if filename not in self.file_results:
+                    self.file_results[filename] = []
+                self.file_results[filename].append(result)
 
                 # Print result
                 self._print_result(result)
@@ -429,12 +440,42 @@ class PropertyTester:
         elif result.status == "unsupported":
             print(f"  - Unsupported: {result.message}")
 
+    def _count_by_status(self, results: List[TestResult]) -> Dict[str, int]:
+        """Count results by status."""
+        counts = {
+            "counterexample": 0,
+            "no_counterexample": 0,
+            "timeout": 0,
+            "error": 0,
+            "unsupported": 0
+        }
+        for r in results:
+            if r.status in counts:
+                counts[r.status] += 1
+        return counts
+
     def print_summary(self):
         """Print summary of all test results."""
         print(f"\n{'='*60}")
         print("SUMMARY")
         print(f"{'='*60}")
 
+        # Per-file breakdown if multiple files
+        if len(self.file_results) > 1:
+            print("\nPer-file results:")
+            print(f"{'File':<25} {'Total':>6} {'✗':>4} {'✓':>4} {'?':>4} {'!':>4} {'-':>4}")
+            print("-" * 60)
+
+            for filename in sorted(self.file_results.keys()):
+                file_res = self.file_results[filename]
+                counts = self._count_by_status(file_res)
+                print(f"{filename:<25} {len(file_res):>6} {counts['counterexample']:>4} "
+                      f"{counts['no_counterexample']:>4} {counts['timeout']:>4} "
+                      f"{counts['error']:>4} {counts['unsupported']:>4}")
+
+            print("-" * 60)
+
+        # Overall totals
         counterexamples = [r for r in self.results if r.status == "counterexample"]
         no_counterexamples = [r for r in self.results if r.status == "no_counterexample"]
         timeouts = [r for r in self.results if r.status == "timeout"]
@@ -442,7 +483,7 @@ class PropertyTester:
         unsupported = [r for r in self.results if r.status == "unsupported"]
 
         total = len(self.results)
-        print(f"Total properties tested: {total}")
+        print(f"\nTotal properties tested: {total}")
         print(f"  ✗ Counterexamples found: {len(counterexamples)}")
         print(f"  ✓ No counterexample: {len(no_counterexamples)}")
         print(f"  ? Timeouts: {len(timeouts)}")
