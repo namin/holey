@@ -457,9 +457,11 @@ class PropertyTester:
 
 def main():
     import argparse
+    import os
+    import glob
     parser = argparse.ArgumentParser(description="Property-based testing with Holey")
-    parser.add_argument('--prop-file', required=True,
-                        help='Path to Python file containing property functions')
+    parser.add_argument('--prop-file',
+                        help='Path to Python file or directory containing property functions')
     parser.add_argument('--prop-prefix', default='prop_',
                         help='Prefix for property function names (default: prop_)')
     parser.add_argument('--smtlib-backends', nargs='+', choices=['z3', 'cvc5'],
@@ -476,12 +478,32 @@ def main():
 
     args = parser.parse_args()
 
+    if not args.prop_file:
+        parser.error('--prop-file is required')
+
     tester = PropertyTester(all_solvers=args.all_solvers)
     tester.use_bounded_lists = not args.no_bounded_lists
     tester.bounded_list_max_size = args.bounded_list_max_size
     tester.use_ite = not args.no_ite
 
-    tester.test_file(args.prop_file, args.smtlib_backends, args.prop_prefix)
+    # Handle directory or single file
+    if os.path.isdir(args.prop_file):
+        # Find all .py files in directory
+        pattern = os.path.join(args.prop_file, '*.py')
+        files = sorted(glob.glob(pattern))
+        if not files:
+            print(f"No .py files found in {args.prop_file}")
+            return
+        print(f"Found {len(files)} property files in {args.prop_file}")
+        for filepath in files:
+            filename = os.path.basename(filepath)
+            print(f"\n{'#'*60}")
+            print(f"# FILE: {filename}")
+            print(f"{'#'*60}")
+            tester.test_file(filepath, args.smtlib_backends, args.prop_prefix)
+    else:
+        tester.test_file(args.prop_file, args.smtlib_backends, args.prop_prefix)
+
     tester.print_summary()
 
 
