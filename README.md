@@ -8,6 +8,7 @@ but explores all branches exhaustively instead of randomly and fleshes out the c
 
 The solver incorporates heuristics from LLMs in addition to symbolic execution.
 
+- [Slides from talk at PEPM'26](https://www.dropbox.com/scl/fi/atlhffh0qiydyo2lx5bxb/holey-pepm.pdf?rlkey=iuqmsrshkzu2fk93t475juiwn&dl=0)
 - [Diagram: multi-stage programming SMT: overloaded execution generates constraints](https://github.com/namin/holey/blob/main/diagram_staging_SMT.md)
 - [Diagram: overview](https://github.com/namin/holey/blob/main/diagram.md)
 - [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/namin/holey)
