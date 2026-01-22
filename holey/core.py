@@ -58,7 +58,9 @@ class SymbolicTracer:
     def add_constraint(self, constraint):
         """Add constraint with optional LLM refinement"""
         constraint = truthy(constraint)
-        if hasattr(constraint, 'z3_expr'):
+        if isinstance(constraint, bool):
+            constraint = self.backend.BoolVal(constraint)
+        elif hasattr(constraint, 'z3_expr'):
             constraint = constraint.z3_expr
 
         if self.llm_solver:
