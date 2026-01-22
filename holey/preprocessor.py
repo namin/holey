@@ -16,25 +16,15 @@ def sym_sorted(s):
         if s.concrete is not None:
             return SymbolicStr("".join(sorted(s.concrete)), tracer=s.tracer)
         return SymbolicStr(s.tracer.backend.StrSorted(s.z3_expr), tracer=s.tracer)
-    if isinstance(s, BoundedSymbolicList):
-        # For bounded lists with concrete elements, sort concretely
-        n = s.size
-        if n == 0:
-            return s
-        tracer = s.tracer
-        elements = [s[i] for i in range(n)]
-        if all(hasattr(e, 'concrete') and e.concrete is not None for e in elements):
-            concrete_sorted = sorted([e.concrete for e in elements])
-            return BoundedSymbolicList([SymbolicInt(v, tracer=tracer) for v in concrete_sorted], s.elementTyp, tracer=tracer)
-        # For symbolic elements, fall back to error
-        raise ValueError("Cannot sort bounded list with symbolic elements")
-    if isinstance(s, SymbolicList):
-        # For unbounded symbolic lists with concrete elements
-        if s.concrete is not None:
-            tracer = s.tracer
-            concrete_sorted = sorted(s.concrete, key=lambda x: x.concrete if hasattr(x, 'concrete') and x.concrete is not None else x)
-            return SymbolicList(concrete_sorted, s.elementTyp, tracer=tracer)
-        raise ValueError("Cannot sort fully symbolic list")
+    # For any list-like with concrete elements, just use Python's sorted
+    # This handles BoundedSymbolicList, BoundedSymbolicSlice, SymbolicList, etc.
+    if hasattr(s, '__iter__'):
+        try:
+            elements = list(s)
+            if all(hasattr(e, 'concrete') and e.concrete is not None for e in elements):
+                return sorted(elements, key=lambda x: x.concrete)
+        except (TypeError, ValueError):
+            pass
     return sorted(s)
 
 class SymbolicZipIterator:

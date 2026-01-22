@@ -413,7 +413,7 @@ library_static = {
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
 (define-fun python.int.base10 ((s String)) Int
-  (ite (str.prefixof "-" s)
+  (ite (and (str.prefixof "-" s) (> (str.len s) 1))
        (- (str.to_int (str.substr s 1 (- (str.len s) 1))))
        (str.to_int s)))
 
