@@ -551,7 +551,7 @@ class SymbolicInt:
     def __not__(self):
         if self.concrete is not None:
             return SymbolicBool(not self.concrete, tracer=self.tracer)
-        return self != 0
+        return self == 0
 
 class SymbolicFloat:
     def __init__(self, value: Optional[Any] = None, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
