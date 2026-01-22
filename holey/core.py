@@ -58,7 +58,9 @@ class SymbolicTracer:
     def add_constraint(self, constraint):
         """Add constraint with optional LLM refinement"""
         constraint = truthy(constraint)
-        if hasattr(constraint, 'z3_expr'):
+        if isinstance(constraint, bool):
+            constraint = self.backend.BoolVal(constraint)
+        elif hasattr(constraint, 'z3_expr'):
             constraint = constraint.z3_expr
 
         if self.llm_solver:
@@ -400,14 +402,41 @@ class SymbolicInt:
     def _python_mod(self, dividend, divisor):
         """Helper to implement Python's modulo semantics.
         Python: result has same sign as divisor
-        SMT-LIB mod: result has same sign as dividend
+        SMT-LIB mod: Euclidean (result always non-negative)
 
-        For now, we just use SMT-LIB's mod directly.
-        The full Python semantics would require complex logic that causes timeouts.
-        Most puzzles use positive numbers where Python and SMT-LIB agree.
+        Python mod: a % b = a - (a // b) * b
+        where // is floor division (toward negative infinity)
+
+        Key insight: For divisibility checks (mod == 0 or mod != 0), Euclidean
+        and Python mod are equivalent. The difference only matters when:
+        1. The divisor is negative, AND
+        2. We use the actual mod value (not just checking if it's 0)
+
+        Since most puzzles use positive numbers and/or divisibility checks,
+        we use simple Euclidean mod for symbolic divisors to avoid performance
+        issues. We only apply Python mod adjustment when the divisor is a
+        concrete negative value.
         """
         self._add_nonzero_constraint(divisor)
-        return self.tracer.backend.Mod(dividend.z3_expr, divisor.z3_expr)
+        backend = self.tracer.backend
+        euclidean_mod = backend.Mod(dividend.z3_expr, divisor.z3_expr)
+
+        # If divisor is concrete and positive, Euclidean mod matches Python mod
+        if divisor.concrete is not None and divisor.concrete > 0:
+            return euclidean_mod
+
+        # If divisor is concrete and negative, compute proper Python mod
+        # Python mod: when divisor < 0 and euclidean_mod > 0, result = euclidean_mod + divisor
+        if divisor.concrete is not None and divisor.concrete < 0:
+            # For concrete negative divisor, we still need to handle symbolic dividend
+            has_positive_remainder = backend.GT(euclidean_mod, backend.IntVal(0))
+            return backend.If(has_positive_remainder,
+                             backend.Add(euclidean_mod, divisor.z3_expr),
+                             euclidean_mod)
+
+        # For symbolic divisor, use Euclidean mod (most puzzles use positive numbers)
+        # This avoids performance issues from complex conditional formulas
+        return euclidean_mod
 
     def __mod__(self, other):
         other = self.tracer.ensure_symbolic(other)
@@ -549,7 +578,7 @@ class SymbolicInt:
     def __not__(self):
         if self.concrete is not None:
             return SymbolicBool(not self.concrete, tracer=self.tracer)
-        return self != 0
+        return self == 0
 
 class SymbolicFloat:
     def __init__(self, value: Optional[Any] = None, name: Optional[str] = None, tracer: Optional[SymbolicTracer] = None):
@@ -1606,6 +1635,21 @@ class SymbolicStr:
         if self.concrete is not None:
             return SymbolicStr(self.concrete.lower(), tracer=self.tracer)
         return SymbolicStr(self.tracer.backend.StrLower(self.z3_expr), tracer=self.tracer)
+
+    def strip(self):
+        if self.concrete is not None:
+            return SymbolicStr(self.concrete.strip(), tracer=self.tracer)
+        return SymbolicStr(self.tracer.backend.StrStrip(self.z3_expr), tracer=self.tracer)
+
+    def lstrip(self):
+        if self.concrete is not None:
+            return SymbolicStr(self.concrete.lstrip(), tracer=self.tracer)
+        return SymbolicStr(self.tracer.backend.StrLStrip(self.z3_expr), tracer=self.tracer)
+
+    def rstrip(self):
+        if self.concrete is not None:
+            return SymbolicStr(self.concrete.rstrip(), tracer=self.tracer)
+        return SymbolicStr(self.tracer.backend.StrRStrip(self.z3_expr), tracer=self.tracer)
 
     def isdigit(self):
         if self.concrete is not None:

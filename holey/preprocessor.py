@@ -16,6 +16,15 @@ def sym_sorted(s):
         if s.concrete is not None:
             return SymbolicStr("".join(sorted(s.concrete)), tracer=s.tracer)
         return SymbolicStr(s.tracer.backend.StrSorted(s.z3_expr), tracer=s.tracer)
+    # For any list-like with concrete elements, just use Python's sorted
+    # This handles BoundedSymbolicList, BoundedSymbolicSlice, SymbolicList, etc.
+    if hasattr(s, '__iter__'):
+        try:
+            elements = list(s)
+            if all(hasattr(e, 'concrete') and e.concrete is not None for e in elements):
+                return sorted(elements, key=lambda x: x.concrete)
+        except (TypeError, ValueError):
+            pass
     return sorted(s)
 
 class SymbolicZipIterator:

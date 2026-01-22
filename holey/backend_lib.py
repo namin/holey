@@ -412,8 +412,13 @@ library_static = {
                (to_int (^ 2.0 (to_real (- len 1)))))
             (bin-to-int (str.substr s 0 (- len 1)))))))
 
+(define-fun python.int.base10 ((s String)) Int
+  (ite (and (str.prefixof "-" s) (> (str.len s) 1))
+       (- (str.to_int (str.substr s 1 (- (str.len s) 1))))
+       (str.to_int s)))
+
 (define-fun python.int ((s String) (base Int)) Int
-  (ite (= base 10) (str.to_int s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
+  (ite (= base 10) (python.int.base10 s) (ite (= base 2) (bin-to-int s) (str-to-int s base))))
 """,
 
 'python.str.at':
@@ -478,12 +483,12 @@ library_static = {
     (ite (= len 0)
          ""
          (let ((first (str.at s 0)))
-           (str.++
-             (ite (and (str.< "a" first) (str.< first "z"))
-                  (let ((offset (- (str.to_int first) (str.to_int "a"))))
-                    (str.from_int (+ (str.to_int "A") offset)))
-                  first)
-             (str.upper (str.substr s 1 (- len 1))))))))
+           (let ((code (str.to_code first)))
+             (str.++
+               (ite (and (>= code 97) (<= code 122))
+                    (str.from_code (- code 32))
+                    first)
+               (str.upper (str.substr s 1 (- len 1)))))))))
 """,
 
 'str.lower':
@@ -493,12 +498,12 @@ library_static = {
     (ite (= len 0)
          ""
          (let ((first (str.at s 0)))
-           (str.++
-             (ite (and (str.< "A" first) (str.< first "Z"))
-                  (let ((offset (- (str.to_int first) (str.to_int "A"))))
-                    (str.from_int (+ (str.to_int "a") offset)))
-                  first)
-             (str.lower (str.substr s 1 (- len 1))))))))
+           (let ((code (str.to_code first)))
+             (str.++
+               (ite (and (>= code 65) (<= code 90))
+                    (str.from_code (+ code 32))
+                    first)
+               (str.lower (str.substr s 1 (- len 1)))))))))
 """,
 
 'str.count':
@@ -557,17 +562,48 @@ library_static = {
        (str.from_int x)))
 """,
 
+'python.str.strip':
+"""
+(define-fun-rec python.str.lstrip.helper ((s String)) String
+  (ite (= (str.len s) 0)
+       ""
+       (let ((first (str.at s 0)))
+         (ite (or (= first " ") (= first "\\t") (= first "\\n") (= first "\\r"))
+              (python.str.lstrip.helper (str.substr s 1 (- (str.len s) 1)))
+              s))))
+
+(define-fun-rec python.str.rstrip.helper ((s String)) String
+  (ite (= (str.len s) 0)
+       ""
+       (let ((last (str.at s (- (str.len s) 1))))
+         (ite (or (= last " ") (= last "\\t") (= last "\\n") (= last "\\r"))
+              (python.str.rstrip.helper (str.substr s 0 (- (str.len s) 1)))
+              s))))
+
+(define-fun python.str.lstrip ((s String)) String
+  (python.str.lstrip.helper s))
+
+(define-fun python.str.rstrip ((s String)) String
+  (python.str.rstrip.helper s))
+
+(define-fun python.str.strip ((s String)) String
+  (python.str.rstrip (python.str.lstrip s)))
+""",
+
 'python.int.xor':
 """
-(define-fun bool-to-int ((b Bool)) Int
-  (ite b 1 0))
-
-(define-fun int2bits ((x Int)) Bool
-  (= (mod (abs x) 2) 1))
+(define-fun-rec python.int.xor.rec ((x Int) (y Int) (bit Int) (result Int)) Int
+  (ite (and (= x 0) (= y 0))
+       result
+       (let ((xbit (mod x 2))
+             (ybit (mod y 2))
+             (xorbit (ite (= xbit ybit) 0 1)))
+         (python.int.xor.rec (div x 2) (div y 2) (* bit 2) (+ result (* xorbit bit))))))
 
 (define-fun python.int.xor ((x Int) (y Int)) Int
-  (let ((bits (bool-to-int (xor (int2bits x) (int2bits y)))))
-    bits))
+  (ite (and (>= x 0) (>= y 0))
+       (python.int.xor.rec x y 1 0)
+       0))
 """,
 
 }
@@ -600,6 +636,9 @@ library_deps_static = {
     'bin': [],
     'str.from_real': [],
     'str.from_any_int': [],
+    'python.str.strip': [],
+    'python.str.lstrip': ['python.str.strip'],
+    'python.str.rstrip': ['python.str.strip'],
     'python.int.xor': [],
 }
 
