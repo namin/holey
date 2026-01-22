@@ -402,14 +402,23 @@ class SymbolicInt:
     def _python_mod(self, dividend, divisor):
         """Helper to implement Python's modulo semantics.
         Python: result has same sign as divisor
-        SMT-LIB mod: result has same sign as dividend
+        SMT-LIB mod: Euclidean (result always non-negative)
 
-        For now, we just use SMT-LIB's mod directly.
-        The full Python semantics would require complex logic that causes timeouts.
-        Most puzzles use positive numbers where Python and SMT-LIB agree.
+        Python mod: a % b = a - (a // b) * b
+        where // is floor division (toward negative infinity)
         """
         self._add_nonzero_constraint(divisor)
-        return self.tracer.backend.Mod(dividend.z3_expr, divisor.z3_expr)
+        backend = self.tracer.backend
+        euclidean_mod = backend.Mod(dividend.z3_expr, divisor.z3_expr)
+
+        # When divisor < 0 and remainder > 0, adjust: result = remainder + divisor
+        divisor_negative = backend.LT(divisor.z3_expr, backend.IntVal(0))
+        has_positive_remainder = backend.GT(euclidean_mod, backend.IntVal(0))
+        needs_adjustment = backend.And(divisor_negative, has_positive_remainder)
+
+        return backend.If(needs_adjustment,
+                         backend.Add(euclidean_mod, divisor.z3_expr),
+                         euclidean_mod)
 
     def __mod__(self, other):
         other = self.tracer.ensure_symbolic(other)
