@@ -474,7 +474,7 @@ class MockSolver:
         self.extra_text += "\n" + text
 
     def add(self, constraint):
-        if str(constraint) == 'True':
+        if str(constraint) == 'true':
             return
         assert isinstance(constraint, MockExpr), "found bad constraint " + str(constraint) + " of type " + str(type(constraint))
         self.constraints.append(constraint)
