@@ -1609,6 +1609,21 @@ class SymbolicStr:
             return SymbolicStr(self.concrete.lower(), tracer=self.tracer)
         return SymbolicStr(self.tracer.backend.StrLower(self.z3_expr), tracer=self.tracer)
 
+    def strip(self):
+        if self.concrete is not None:
+            return SymbolicStr(self.concrete.strip(), tracer=self.tracer)
+        return SymbolicStr(self.tracer.backend.StrStrip(self.z3_expr), tracer=self.tracer)
+
+    def lstrip(self):
+        if self.concrete is not None:
+            return SymbolicStr(self.concrete.lstrip(), tracer=self.tracer)
+        return SymbolicStr(self.tracer.backend.StrLStrip(self.z3_expr), tracer=self.tracer)
+
+    def rstrip(self):
+        if self.concrete is not None:
+            return SymbolicStr(self.concrete.rstrip(), tracer=self.tracer)
+        return SymbolicStr(self.tracer.backend.StrRStrip(self.z3_expr), tracer=self.tracer)
+
     def isdigit(self):
         if self.concrete is not None:
             return SymbolicBool(self.concrete.isdigit(), tracer=self.tracer)

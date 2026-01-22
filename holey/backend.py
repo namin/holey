@@ -758,6 +758,15 @@ class Backend():
     def StrLower(self, x) -> MockExpr:
         return self._record("str.lower", x)
 
+    def StrStrip(self, x) -> MockExpr:
+        return self._record("python.str.strip", x)
+
+    def StrLStrip(self, x) -> MockExpr:
+        return self._record("python.str.lstrip", x)
+
+    def StrRStrip(self, x) -> MockExpr:
+        return self._record("python.str.rstrip", x)
+
     def StrIsDigit(self, x) -> MockExpr:
         return self._record("str.isdigit", x)
 

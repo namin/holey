@@ -557,6 +557,34 @@ library_static = {
        (str.from_int x)))
 """,
 
+'python.str.strip':
+"""
+(define-fun-rec python.str.lstrip.helper ((s String)) String
+  (ite (= (str.len s) 0)
+       ""
+       (let ((first (str.at s 0)))
+         (ite (or (= first " ") (= first "\\t") (= first "\\n") (= first "\\r"))
+              (python.str.lstrip.helper (str.substr s 1 (- (str.len s) 1)))
+              s))))
+
+(define-fun-rec python.str.rstrip.helper ((s String)) String
+  (ite (= (str.len s) 0)
+       ""
+       (let ((last (str.at s (- (str.len s) 1))))
+         (ite (or (= last " ") (= last "\\t") (= last "\\n") (= last "\\r"))
+              (python.str.rstrip.helper (str.substr s 0 (- (str.len s) 1)))
+              s))))
+
+(define-fun python.str.lstrip ((s String)) String
+  (python.str.lstrip.helper s))
+
+(define-fun python.str.rstrip ((s String)) String
+  (python.str.rstrip.helper s))
+
+(define-fun python.str.strip ((s String)) String
+  (python.str.rstrip (python.str.lstrip s)))
+""",
+
 'python.int.xor':
 """
 (define-fun bool-to-int ((b Bool)) Int
@@ -600,6 +628,9 @@ library_deps_static = {
     'bin': [],
     'str.from_real': [],
     'str.from_any_int': [],
+    'python.str.strip': [],
+    'python.str.lstrip': ['python.str.strip'],
+    'python.str.rstrip': ['python.str.strip'],
     'python.int.xor': [],
 }
 
