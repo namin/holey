@@ -170,7 +170,7 @@ if ANTHROPIC_API_KEY:
     except ModuleNotFoundError:
         generate = dummy_generate('anthropic')
     if generate is None:
-        def generate(prompt, max_tokens=MAX_TOKENS, temperature=1.0, model="claude-3-7-sonnet-20250219"):
+        def generate(prompt, max_tokens=MAX_TOKENS, temperature=1.0, model="claude-opus-4-6"):
             print(f"Sending request to Anthropic (model={model}, max_tokens={max_tokens}, temp={temperature})")
 
             client = anthropic.Anthropic()
