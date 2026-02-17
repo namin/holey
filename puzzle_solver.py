@@ -428,6 +428,23 @@ with the following errors:
 - {self.total_count-self.count} (out of {self.total_count}) puzzles not yet even attempted because their type is not `int` or `str`, such as `float`, `list` (of various specialization), etc.
 """+extrapolation
 
+def parse_resume_log(log_file):
+    """Parse a previous run's log file to extract attempted puzzles and results.
+
+    Returns a dict mapping puzzle_name -> True (verified) or False (attempted but not verified).
+    """
+    results = {}
+    current_puzzle = None
+    with open(log_file) as f:
+        for line in f:
+            m = re.match(r'^Solving puzzle \d+/\d+: (.+)$', line.strip())
+            if m:
+                current_puzzle = m.group(1)
+                results[current_puzzle] = False  # attempted but not yet verified
+            if current_puzzle and f'LLM result verifies for puzzle {current_puzzle}' in line:
+                results[current_puzzle] = True
+    return results
+
 def check_result(result, sat_func):
     namespace = {'List': list}
     exec(sat_func, namespace)
@@ -441,7 +458,7 @@ def check_result(result, sat_func):
         return False
     return True
 
-def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None, llm_all = False, llm_end = False, use_bounded_lists = False, bounded_list_max_size = 100, show_shrunk = False, use_ite = False, all_solvers = False):
+def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None, answer_types = None, smtlib_backends = None, llm_solver = None, llm_all = False, llm_end = False, use_bounded_lists = False, bounded_list_max_size = 100, show_shrunk = False, use_ite = False, all_solvers = False, resume_files = None):
     with open(puzzle_file) as f:
         puzzles = json.load(f)
 
@@ -456,6 +473,16 @@ def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None,
     if answer_types:
         puzzles = [p for p in puzzles if p['ans_type'] in answer_types]
 
+    # Parse resume log(s) if provided
+    resume_results = {}
+    if resume_files:
+        for resume_file in resume_files:
+            file_results = parse_resume_log(resume_file)
+            # Later files override earlier ones for duplicates
+            resume_results.update(file_results)
+            print(f"Resumed from {resume_file}: {len(file_results)} puzzles attempted, {sum(file_results.values())} verified")
+        print(f"Total resumed: {len(resume_results)} puzzles, {sum(resume_results.values())} verified")
+
     solver = PuzzleSolver(all_solvers=all_solvers)
     solver.total_count = total
     solver.llm_solver = llm_solver
@@ -465,6 +492,19 @@ def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None,
     if use_bounded_lists:
         print(f"Using bounded list encoding (max size: {bounded_list_max_size})")
 
+    # Seed counters from resume data
+    if resume_results:
+        puzzle_by_name = {p.get('name', ''): p for p in puzzles}
+        for pname, verified in resume_results.items():
+            p = puzzle_by_name.get(pname)
+            if p:
+                ans_type = p.get('ans_type', 'unknown')
+                solver.count += 1
+                solver.counts[ans_type] += 1
+                if verified:
+                    solver.success_count += 1
+                    solver.success_counts[ans_type] += 1
+
     print(f"Running benchmarks on {len(puzzles)} puzzles...")
     if name_prefixes:
         print(f"Filtered to puzzles starting with '{name_prefixes}'")
@@ -473,6 +513,12 @@ def run_benchmarks(puzzle_file: str, name_prefixes = None, name_suffixes = None,
 
     for i, puzzle in enumerate(puzzles):
         name = puzzle.get('name', 'Unknown')
+
+        if name in resume_results:
+            status = "OK" if resume_results[name] else "FAIL"
+            print(f"\nSkipping puzzle {i+1}/{len(puzzles)}: {name} (resumed: {status})")
+            continue
+
         print(f"\nSolving puzzle {i+1}/{len(puzzles)}: {name}")
 
         if llm_all:
@@ -630,6 +676,8 @@ if __name__ == "__main__":
                        help='Disable ITE mode (use explicit branching instead)')
     parser.add_argument('--short-circuit-solvers', action='store_true',
                        help='Stop after first solver returns sat/unsat (faster but incomplete stats)')
+    parser.add_argument('--resume', nargs='+', metavar='FILE',
+                       help='Resume from previous run log file(s), skipping already-attempted puzzles')
     args = parser.parse_args()
 
     llm_solver = None
@@ -640,4 +688,4 @@ if __name__ == "__main__":
     if args.sat_file:
         solve_sat_file(args.sat_file, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, not args.no_ite, not args.short_circuit_solvers)
     else:
-        run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, args.show_shrunk, not args.no_ite, not args.short_circuit_solvers)
+        run_benchmarks(args.puzzle_file, args.name_prefix, args.name_suffix, args.answer_types, args.smtlib_backends, llm_solver, args.llm_all, args.llm_end, not args.no_bounded_lists, args.bounded_list_max_size, args.show_shrunk, not args.no_ite, not args.short_circuit_solvers, args.resume)
