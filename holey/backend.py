@@ -187,10 +187,15 @@ def _parse_model(output):
                 elif type_name == 'Bool':
                     value = str(value) == 'true'
             elif isinstance(typ, list) and len(typ) >= 2:
-                # Complex type like (List Int)
-                if isinstance(typ[0], sexpdata.Symbol) and typ[0].value() == 'List':
+                # Complex type like (List Int), (Array Int Int), (Seq Int)
+                type_name = typ[0].value() if isinstance(typ[0], sexpdata.Symbol) else ''
+                if type_name == 'List':
                     element_type = typ[1].value() if isinstance(typ[1], sexpdata.Symbol) else str(typ[1])
                     value = _parse_list_value(value)
+                elif type_name == 'Array':
+                    value = _parse_array_value(value, typ)
+                elif type_name == 'Seq':
+                    value = _parse_seq_value(value)
             
             _model[var_name] = value
 
@@ -355,6 +360,93 @@ def _parse_sexp_value(sexp, bindings=None):
     # String or other primitive
     return sexp
 
+def _parse_array_value(array_sexp, typ):
+    """Parse an Array model value into a Python list.
+
+    Handles formats like:
+    - ((as const (Array Int Int)) 0) — constant array
+    - (store (store ((as const (Array Int Int)) 0) 0 1) 1 2) — store chains
+    - (lambda ((x!0 Int)) ...) — lambda form
+    """
+    # Build a dict of index -> value from store chains, then convert to list
+    stores = {}
+    default = 0
+
+    def walk(sexp):
+        nonlocal default
+        if isinstance(sexp, list) and len(sexp) >= 2:
+            if isinstance(sexp[0], sexpdata.Symbol) and sexp[0].value() == 'store':
+                # (store base idx val)
+                if len(sexp) == 4:
+                    walk(sexp[1])  # recurse into base
+                    idx = _parse_sexp_value(sexp[2])
+                    val = _parse_sexp_value(sexp[3])
+                    if isinstance(idx, int):
+                        stores[idx] = val
+                return
+            # Check for (as const ...) default value
+            if isinstance(sexp[0], list) and len(sexp[0]) >= 2:
+                first = sexp[0]
+                if (isinstance(first[0], sexpdata.Symbol) and first[0].value() == 'as'
+                        and isinstance(first[1], sexpdata.Symbol) and first[1].value() == 'const'):
+                    default = _parse_sexp_value(sexp[1])
+                    return
+        # For other forms, try to extract a default
+        default = _parse_sexp_value(sexp)
+
+    walk(array_sexp)
+
+    if not stores:
+        # Return the raw default — the caller will see a scalar, not a list
+        return []
+
+    # Convert store map to a list
+    max_idx = max(stores.keys())
+    result = []
+    for i in range(max_idx + 1):
+        result.append(stores.get(i, default))
+    return result
+
+
+def _parse_seq_value(seq_sexp):
+    """Parse a Seq model value into a Python list.
+
+    Handles formats like:
+    - (seq.++ (seq.unit 1) (seq.unit 2) ...)
+    - (seq.unit 1) — single element
+    - (as seq.empty (Seq Int)) — empty sequence
+    """
+    # Empty sequence
+    if isinstance(seq_sexp, list) and len(seq_sexp) >= 2:
+        if isinstance(seq_sexp[0], sexpdata.Symbol) and seq_sexp[0].value() == 'as':
+            second = seq_sexp[1]
+            if isinstance(second, sexpdata.Symbol) and second.value() == 'seq.empty':
+                return []
+            if isinstance(second, list) and len(second) >= 1:
+                # CVC5 format: (as (seq.empty) ...)
+                return []
+
+    # Single unit: (seq.unit val)
+    if isinstance(seq_sexp, list) and len(seq_sexp) == 2:
+        if isinstance(seq_sexp[0], sexpdata.Symbol) and seq_sexp[0].value() == 'seq.unit':
+            return [_parse_sexp_value(seq_sexp[1])]
+
+    # Concatenation: (seq.++ ...)
+    if isinstance(seq_sexp, list) and len(seq_sexp) >= 2:
+        if isinstance(seq_sexp[0], sexpdata.Symbol) and seq_sexp[0].value() == 'seq.++':
+            result = []
+            for part in seq_sexp[1:]:
+                parsed = _parse_seq_value(part)
+                if isinstance(parsed, list):
+                    result.extend(parsed)
+                else:
+                    result.append(parsed)
+            return result
+
+    # Fallback
+    return _parse_sexp_value(seq_sexp)
+
+
 @dataclass
 class MockExpr:
     op: str
@@ -513,6 +605,10 @@ class MockSolver:
         smt2 = smt2_preambule + smt2
 
         smt2 += self.extra_text
+
+        if os.environ.get('NATIVE_LIST_ENCODING', 'false') == 'true':
+            from .list_rewriter import rewrite_lists_to_native
+            smt2 = rewrite_lists_to_native(smt2)
 
         flag, model = run_smt(smt2, cmd, self.puzzle_name, self.solver_stats)
         self._model = model

@@ -676,9 +676,15 @@ if __name__ == "__main__":
                        help='Disable ITE mode (use explicit branching instead)')
     parser.add_argument('--short-circuit-solvers', action='store_true',
                        help='Stop after first solver returns sat/unsat (faster but incomplete stats)')
+    parser.add_argument('--native-list-encoding', action='store_true',
+                       help='Rewrite recursive list ADT to native SMT-LIB theories (Array/Seq)')
     parser.add_argument('--resume', action='append', metavar='FILE',
                        help='Resume from previous run log file(s), skipping already-attempted puzzles (can be repeated)')
     args = parser.parse_args()
+
+    if args.native_list_encoding:
+        import os
+        os.environ['NATIVE_LIST_ENCODING'] = 'true'
 
     llm_solver = None
     if args.llm:
