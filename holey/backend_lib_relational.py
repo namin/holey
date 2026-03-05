@@ -127,11 +127,16 @@ def make_list_sum_rel(suffix, elem_type, nil_expr, zero_val):
 def generate_list_library_relational():
     """Generate relational library entries and dependencies for all list operations.
 
-    Functions with relational versions: length, get, append, count, contains, index, sum.
-    Functions kept as recursive: reverse, slice, set_len, map_add.
+    Functions with relational versions: count, contains, index, sum, append.
+    These are "heavy" recursive operations where quantified axioms can help the
+    solver avoid unbounded recursion during search.
+
+    Functions kept as recursive: length, get, reverse, slice, set_len, map_add.
+    These are used with concrete indices/values and benefit from direct evaluation
+    via recursive unfolding rather than quantifier instantiation.
     """
-    # Get original recursive versions for functions we don't convert
     from .backend_lib import (
+        make_list_length, make_list_get,
         make_list_reverse, make_list_slice, make_list_set_len,
     )
 
@@ -139,13 +144,23 @@ def generate_list_library_relational():
     deps = {}
 
     for suffix, (elem_type, nil_expr, is_numeric) in ELEMENT_TYPES.items():
-        # Relational versions
-        lib[f'list.length.{suffix}'] = make_list_length_rel(suffix, elem_type, nil_expr)
+        # Keep as recursive — used with concrete indices, direct evaluation is faster
+        lib[f'list.length.{suffix}'] = make_list_length(suffix, elem_type, nil_expr)
         deps[f'list.length.{suffix}'] = ['list']
 
-        lib[f'list.get.{suffix}'] = make_list_get_rel(suffix, elem_type, nil_expr)
+        lib[f'list.get.{suffix}'] = make_list_get(suffix, elem_type, nil_expr)
         deps[f'list.get.{suffix}'] = ['list', f'list.length.{suffix}']
 
+        lib[f'list.reverse.{suffix}'] = make_list_reverse(suffix, elem_type, nil_expr)
+        deps[f'list.reverse.{suffix}'] = ['list']
+
+        lib[f'list.slice.{suffix}'] = make_list_slice(suffix, elem_type, nil_expr)
+        deps[f'list.slice.{suffix}'] = ['list', 'list.adjust_index', f'list.length.{suffix}', f'list.get.{suffix}', f'list.reverse.{suffix}']
+
+        lib[f'list.set_len.{suffix}'] = make_list_set_len(suffix, elem_type, nil_expr)
+        deps[f'list.set_len.{suffix}'] = ['list', f'list.contains.{suffix}']
+
+        # Relational versions — search-heavy operations benefit from axioms
         lib[f'list.append.{suffix}'] = make_list_append_rel(suffix, elem_type, nil_expr)
         deps[f'list.append.{suffix}'] = ['list']
 
@@ -154,15 +169,6 @@ def generate_list_library_relational():
 
         lib[f'list.contains.{suffix}'] = make_list_contains_rel(suffix, elem_type, nil_expr)
         deps[f'list.contains.{suffix}'] = ['list', f'list.count.{suffix}']
-
-        lib[f'list.set_len.{suffix}'] = make_list_set_len(suffix, elem_type, nil_expr)
-        deps[f'list.set_len.{suffix}'] = ['list', f'list.contains.{suffix}']
-
-        lib[f'list.reverse.{suffix}'] = make_list_reverse(suffix, elem_type, nil_expr)
-        deps[f'list.reverse.{suffix}'] = ['list']
-
-        lib[f'list.slice.{suffix}'] = make_list_slice(suffix, elem_type, nil_expr)
-        deps[f'list.slice.{suffix}'] = ['list', 'list.adjust_index', f'list.length.{suffix}', f'list.get.{suffix}', f'list.reverse.{suffix}']
 
         lib[f'list.index.{suffix}'] = make_list_index_rel(suffix, elem_type, nil_expr)
         deps[f'list.index.{suffix}'] = ['list']
