@@ -33,6 +33,11 @@ def make_list_length_rel(suffix, elem_type, nil_expr):
 (assert (forall ((h {elem_type}) (t {list_type}))
   (! (= (list.length.{suffix} (cons h t)) (+ 1 (list.length.{suffix} t)))
      :pattern ((list.length.{suffix} (cons h t))))))
+; Accessor form — fires on any non-nil list without needing cons pattern match
+(assert (forall ((l {list_type}))
+  (! (=> (not (= l {nil_expr}))
+         (= (list.length.{suffix} l) (+ 1 (list.length.{suffix} (tail l)))))
+     :pattern ((list.length.{suffix} l)))))
 (assert (forall ((l {list_type}))
   (! (>= (list.length.{suffix} l) 0)
      :pattern ((list.length.{suffix} l)))))
@@ -43,12 +48,15 @@ def make_list_get_rel(suffix, elem_type, nil_expr):
     sorts = _sort_list(list_type, 'Int')
     return f'''
 (declare-fun list.get.{suffix} {sorts} {elem_type})
-(assert (forall ((h {elem_type}) (t {list_type}))
-  (! (= (list.get.{suffix} (cons h t) 0) h)
-     :pattern ((list.get.{suffix} (cons h t) 0)))))
-(assert (forall ((h {elem_type}) (t {list_type}) (i Int))
-  (! (=> (> i 0) (= (list.get.{suffix} (cons h t) i) (list.get.{suffix} t (- i 1))))
-     :pattern ((list.get.{suffix} (cons h t) i)))))
+; Accessor form — works on any non-nil list without cons pattern matching
+(assert (forall ((l {list_type}))
+  (! (=> (not (= l {nil_expr}))
+         (= (list.get.{suffix} l 0) (head l)))
+     :pattern ((list.get.{suffix} l 0)))))
+(assert (forall ((l {list_type}) (i Int))
+  (! (=> (and (not (= l {nil_expr})) (> i 0))
+         (= (list.get.{suffix} l i) (list.get.{suffix} (tail l) (- i 1))))
+     :pattern ((list.get.{suffix} l i)))))
 (assert (forall ((l {list_type}) (i Int))
   (! (=> (< i 0) (= (list.get.{suffix} l i) (list.get.{suffix} l (+ (list.length.{suffix} l) i))))
      :pattern ((list.get.{suffix} l i)))))
@@ -62,9 +70,10 @@ def make_list_append_rel(suffix, elem_type, nil_expr):
 (assert (forall ((l2 {list_type}))
   (! (= (list.append.{suffix} {nil_expr} l2) l2)
      :pattern ((list.append.{suffix} {nil_expr} l2)))))
-(assert (forall ((h {elem_type}) (t {list_type}) (l2 {list_type}))
-  (! (= (list.append.{suffix} (cons h t) l2) (cons h (list.append.{suffix} t l2)))
-     :pattern ((list.append.{suffix} (cons h t) l2)))))
+(assert (forall ((l1 {list_type}) (l2 {list_type}))
+  (! (=> (not (= l1 {nil_expr}))
+         (= (list.append.{suffix} l1 l2) (cons (head l1) (list.append.{suffix} (tail l1) l2))))
+     :pattern ((list.append.{suffix} l1 l2)))))
 '''
 
 def make_list_count_rel(suffix, elem_type, nil_expr):
@@ -75,10 +84,11 @@ def make_list_count_rel(suffix, elem_type, nil_expr):
 (assert (forall ((val {elem_type}))
   (! (= (list.count.{suffix} {nil_expr} val) 0)
      :pattern ((list.count.{suffix} {nil_expr} val)))))
-(assert (forall ((h {elem_type}) (t {list_type}) (val {elem_type}))
-  (! (= (list.count.{suffix} (cons h t) val)
-        (+ (ite (= h val) 1 0) (list.count.{suffix} t val)))
-     :pattern ((list.count.{suffix} (cons h t) val)))))
+(assert (forall ((l {list_type}) (val {elem_type}))
+  (! (=> (not (= l {nil_expr}))
+         (= (list.count.{suffix} l val)
+            (+ (ite (= (head l) val) 1 0) (list.count.{suffix} (tail l) val))))
+     :pattern ((list.count.{suffix} l val)))))
 (assert (forall ((l {list_type}) (val {elem_type}))
   (! (>= (list.count.{suffix} l val) 0)
      :pattern ((list.count.{suffix} l val)))))
@@ -100,10 +110,11 @@ def make_list_index_rel(suffix, elem_type, nil_expr):
 (assert (forall ((i Int) (val {elem_type}))
   (! (= (list.index.rec.{suffix} i {nil_expr} val) (- 1))
      :pattern ((list.index.rec.{suffix} i {nil_expr} val)))))
-(assert (forall ((i Int) (h {elem_type}) (t {list_type}) (val {elem_type}))
-  (! (= (list.index.rec.{suffix} i (cons h t) val)
-        (ite (= h val) i (list.index.rec.{suffix} (+ 1 i) t val)))
-     :pattern ((list.index.rec.{suffix} i (cons h t) val)))))
+(assert (forall ((i Int) (l {list_type}) (val {elem_type}))
+  (! (=> (not (= l {nil_expr}))
+         (= (list.index.rec.{suffix} i l val)
+            (ite (= (head l) val) i (list.index.rec.{suffix} (+ 1 i) (tail l) val))))
+     :pattern ((list.index.rec.{suffix} i l val)))))
 
 (define-fun list.index.{suffix} ((l {list_type}) (val {elem_type})) Int
   (list.index.rec.{suffix} 0 l val))
@@ -115,9 +126,10 @@ def make_list_sum_rel(suffix, elem_type, nil_expr, zero_val):
     return f'''
 (declare-fun list.sum.{suffix} {sorts} {elem_type})
 (assert (= (list.sum.{suffix} {nil_expr}) {zero_val}))
-(assert (forall ((h {elem_type}) (t {list_type}))
-  (! (= (list.sum.{suffix} (cons h t)) (+ h (list.sum.{suffix} t)))
-     :pattern ((list.sum.{suffix} (cons h t))))))
+(assert (forall ((l {list_type}))
+  (! (=> (not (= l {nil_expr}))
+         (= (list.sum.{suffix} l) (+ (head l) (list.sum.{suffix} (tail l)))))
+     :pattern ((list.sum.{suffix} l)))))
 '''
 
 # =============================================================================
