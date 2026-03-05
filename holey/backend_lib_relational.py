@@ -137,6 +137,7 @@ def generate_list_library_relational():
     """
     from .backend_lib import (
         make_list_length, make_list_get, make_list_append,
+        make_list_count, make_list_contains,
         make_list_reverse, make_list_slice, make_list_set_len,
         make_list_sum,
     )
@@ -164,14 +165,14 @@ def generate_list_library_relational():
         lib[f'list.set_len.{suffix}'] = make_list_set_len(suffix, elem_type, nil_expr)
         deps[f'list.set_len.{suffix}'] = ['list', f'list.contains.{suffix}']
 
-        # Relational versions — search-heavy operations where quantified axioms
-        # help the solver avoid unbounded recursion
-        lib[f'list.count.{suffix}'] = make_list_count_rel(suffix, elem_type, nil_expr)
+        lib[f'list.count.{suffix}'] = make_list_count(suffix, elem_type, nil_expr)
         deps[f'list.count.{suffix}'] = ['list']
 
-        lib[f'list.contains.{suffix}'] = make_list_contains_rel(suffix, elem_type, nil_expr)
+        lib[f'list.contains.{suffix}'] = make_list_contains(suffix, elem_type, nil_expr)
         deps[f'list.contains.{suffix}'] = ['list', f'list.count.{suffix}']
 
+        # Relational version — search-heavy operation where quantified axioms
+        # help the solver avoid unbounded recursion
         lib[f'list.index.{suffix}'] = make_list_index_rel(suffix, elem_type, nil_expr)
         deps[f'list.index.{suffix}'] = ['list']
 
