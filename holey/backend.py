@@ -550,7 +550,10 @@ class MockExpr:
         )
 
 # Import library definitions from separate module
-from .backend_lib import library, library_deps, resolve_dependencies, emit_library
+if os.environ.get('RELATIONAL_PREDICATES', 'false') == 'true':
+    from .backend_lib_relational import library, library_deps, resolve_dependencies, emit_library
+else:
+    from .backend_lib import library, library_deps, resolve_dependencies, emit_library
 
 @dataclass
 class MockSolver:
