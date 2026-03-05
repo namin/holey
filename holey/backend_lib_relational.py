@@ -136,20 +136,24 @@ def generate_list_library_relational():
     via recursive unfolding rather than quantifier instantiation.
     """
     from .backend_lib import (
-        make_list_length, make_list_get,
+        make_list_length, make_list_get, make_list_append,
         make_list_reverse, make_list_slice, make_list_set_len,
+        make_list_sum,
     )
 
     lib = {}
     deps = {}
 
     for suffix, (elem_type, nil_expr, is_numeric) in ELEMENT_TYPES.items():
-        # Keep as recursive — used with concrete indices, direct evaluation is faster
+        # Keep as recursive — used with concrete values, direct evaluation is faster
         lib[f'list.length.{suffix}'] = make_list_length(suffix, elem_type, nil_expr)
         deps[f'list.length.{suffix}'] = ['list']
 
         lib[f'list.get.{suffix}'] = make_list_get(suffix, elem_type, nil_expr)
         deps[f'list.get.{suffix}'] = ['list', f'list.length.{suffix}']
+
+        lib[f'list.append.{suffix}'] = make_list_append(suffix, elem_type, nil_expr)
+        deps[f'list.append.{suffix}'] = ['list']
 
         lib[f'list.reverse.{suffix}'] = make_list_reverse(suffix, elem_type, nil_expr)
         deps[f'list.reverse.{suffix}'] = ['list']
@@ -160,10 +164,8 @@ def generate_list_library_relational():
         lib[f'list.set_len.{suffix}'] = make_list_set_len(suffix, elem_type, nil_expr)
         deps[f'list.set_len.{suffix}'] = ['list', f'list.contains.{suffix}']
 
-        # Relational versions — search-heavy operations benefit from axioms
-        lib[f'list.append.{suffix}'] = make_list_append_rel(suffix, elem_type, nil_expr)
-        deps[f'list.append.{suffix}'] = ['list']
-
+        # Relational versions — search-heavy operations where quantified axioms
+        # help the solver avoid unbounded recursion
         lib[f'list.count.{suffix}'] = make_list_count_rel(suffix, elem_type, nil_expr)
         deps[f'list.count.{suffix}'] = ['list']
 
@@ -175,7 +177,7 @@ def generate_list_library_relational():
 
         if is_numeric:
             zero_val = '0' if elem_type == 'Int' else '0.0'
-            lib[f'list.sum.{suffix}'] = make_list_sum_rel(suffix, elem_type, nil_expr, zero_val)
+            lib[f'list.sum.{suffix}'] = make_list_sum(suffix, elem_type, nil_expr, zero_val)
             deps[f'list.sum.{suffix}'] = ['list']
 
     return lib, deps
