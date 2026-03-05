@@ -10,6 +10,7 @@ import sexpdata
 import sys
 
 TRUNCATE = os.environ.get('TRUNCATE', 'true') != 'false'
+CHC = os.environ.get('CHC', 'false') == 'true'
 
 def to_smtlib_string(s):
     return '"' + ''.join(
@@ -54,10 +55,16 @@ cmd_prefixes = {
     'z3': ['z3', '-T:2'],
     'cvc5': ['cvc5', '--tlimit=2000', '--produce-model', '--fmf-fun']
 }
+cmd_prefixes_chc = {
+    'z3': ['z3', '-T:2', 'fp.engine=spacer'],
+}
 def smtlib_cmd(smt2_file, cmd=None):
-    cmd = cmd or next(iter(cmd_prefixes.keys()))
+    prefixes = cmd_prefixes_chc if CHC else cmd_prefixes
+    cmd = cmd or next(iter(prefixes.keys()))
+    if cmd not in prefixes:
+        return None
     print('running backend', cmd)
-    return cmd_prefixes[cmd] + [smt2_file]
+    return prefixes[cmd] + [smt2_file]
 
 def print_smt(smt2):
     lines = smt2.split('\n')
@@ -82,8 +89,11 @@ def run_smt(smt2, cmds=None, puzzle_name=None, solver_stats=None):
     try:
         ps = []
         for cmd in cmds or [None]:
+            smt_cmd = smtlib_cmd(smt2_file, cmd)
+            if smt_cmd is None:
+                continue
             ps.append((cmd,
-                       subprocess.Popen(smtlib_cmd(smt2_file, cmd),
+                       subprocess.Popen(smt_cmd,
                                         stdout=subprocess.PIPE,
                                         stderr=subprocess.PIPE,
                                         text=True)))
@@ -552,6 +562,8 @@ class MockExpr:
 # Import library definitions from separate module
 if os.environ.get('RELATIONAL_PREDICATES', 'false') == 'true':
     from .backend_lib_relational import library, library_deps, resolve_dependencies, emit_library
+elif CHC:
+    from .backend_lib_chc import library, library_deps, resolve_dependencies, emit_library
 else:
     from .backend_lib import library, library_deps, resolve_dependencies, emit_library
 
